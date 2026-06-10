@@ -1,0 +1,8 @@
+$realip_remote_addr
+$remote_addr
+$host
+"$request"
+$status
+$body_bytes_sent
+"$http_referer"
+"$http_user_agent"

@@ -1,0 +1,8 @@
+# Default owner for all files.
+* @nourae
+
+# Keep repository policy and automation ownership explicit.
+/.github/ @nourae
+/LICENSE @nourae
+/SECURITY.md @nourae
+/CODE_OF_CONDUCT.md @nourae

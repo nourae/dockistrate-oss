@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+busy_port="${DOCKER_MOCK_PORT_BUSY_PORT:-}"
+busy_pid="${DOCKER_MOCK_PORT_BUSY_PID:-12345}"
+busy_proc="${DOCKER_MOCK_PORT_BUSY_PROC:-busyproc}"
+busy_protocol="$(printf '%s' "${DOCKER_MOCK_PORT_BUSY_PROTOCOL:-tcp}" | tr '[:upper:]' '[:lower:]')"
+
+target_port=""
+target_protocol=""
+for arg in "$@"; do
+  case "$arg" in
+  -iTCP:*)
+    target_port="${arg#-iTCP:}"
+    target_protocol="tcp"
+    ;;
+  -iUDP:*)
+    target_port="${arg#-iUDP:}"
+    target_protocol="udp"
+    ;;
+  esac
+done
+
+if [ -n "$busy_port" ] && [ -n "$target_protocol" ] && [ "$target_port" = "$busy_port" ]; then
+  if [ "$busy_protocol" = "any" ] || [ "$busy_protocol" = "$target_protocol" ]; then
+    printf 'COMMAND     PID USER   FD   TYPE DEVICE SIZE/OFF NODE NAME\n'
+    if [ "$target_protocol" = "udp" ]; then
+      printf '%-10s %-3s test   10u  IPv4 0x0    0t0      UDP *:%s\n' "$busy_proc" "$busy_pid" "$busy_port"
+    else
+      printf '%-10s %-3s test   10u  IPv4 0x0    0t0      TCP *:%s (LISTEN)\n' "$busy_proc" "$busy_pid" "$busy_port"
+    fi
+    exit 0
+  fi
+fi
+
+exit 1

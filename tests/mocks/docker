@@ -1,0 +1,472 @@
+#!/usr/bin/env bash
+# Minimal docker stub for integration tests
+trap 'exit 0' PIPE
+
+subcommand="$1"
+shift || true
+
+mock_runtime_dir="${DOCKER_MOCK_RUNTIME_DIR:-${PWD}/state/tmp/.docker_mock}"
+
+function ensure_mock_runtime_dir() {
+  mkdir -p "$mock_runtime_dir"
+}
+
+function mock_container_meta_path() {
+  local container_name="${1:-}"
+  printf '%s/%s.meta\n' "$mock_runtime_dir" "$container_name"
+}
+
+function mock_read_meta_value() {
+  local container_name="${1:-}" key="${2:-}" meta_path=""
+  meta_path="$(mock_container_meta_path "$container_name")"
+  [ -f "$meta_path" ] || return 1
+  sed -n "s/^${key}=//p" "$meta_path" | head -n 1
+}
+
+function mock_write_container_meta() {
+  local container_name="${1:-}" status="${2:-}" labels="${3:-}" mounts="${4:-}" meta_path=""
+  [ -n "$container_name" ] || return 0
+  ensure_mock_runtime_dir
+  meta_path="$(mock_container_meta_path "$container_name")"
+  {
+    printf 'status=%s\n' "$status"
+    printf 'labels=%s\n' "$labels"
+    printf 'mounts=%s\n' "$mounts"
+  } >"$meta_path"
+}
+
+function mock_remove_container_meta() {
+  local container_name="${1:-}" meta_path=""
+  [ -n "$container_name" ] || return 0
+  meta_path="$(mock_container_meta_path "$container_name")"
+  rm -f "$meta_path"
+}
+
+function mock_update_container_status() {
+  local container_name="${1:-}" status="${2:-}" labels="" mounts=""
+  [ -n "$container_name" ] || return 0
+  labels="$(mock_read_meta_value "$container_name" labels || true)"
+  mounts="$(mock_read_meta_value "$container_name" mounts || true)"
+  mock_write_container_meta "$container_name" "$status" "$labels" "$mounts"
+}
+
+function mock_print_names() {
+  local include_all="${1:-false}" printed="" output_lines="" container_name="" status=""
+  if [ -n "${DOCKER_MOCK_PS_NAMES:-}" ]; then
+    while IFS= read -r container_name || [ -n "$container_name" ]; do
+      [ -n "$container_name" ] || continue
+      case "
+$printed" in
+      *"
+$container_name
+"*) ;;
+      *)
+        output_lines+="${container_name}"$'\n'
+        printed="${printed}${container_name}"$'\n'
+        ;;
+      esac
+    done <<<"${DOCKER_MOCK_PS_NAMES}"
+  fi
+
+  if [ ! -d "$mock_runtime_dir" ]; then
+    printf '%s' "$output_lines"
+    return 0
+  fi
+  for meta_path in "$mock_runtime_dir"/*.meta; do
+    [ -e "$meta_path" ] || continue
+    container_name="$(basename "$meta_path" .meta)"
+    case "
+$printed" in
+    *"
+$container_name
+"*) continue ;;
+    esac
+    if [ "$include_all" != "true" ]; then
+      status="$(mock_read_meta_value "$container_name" status || true)"
+      [ "$status" = "running" ] || continue
+    fi
+    output_lines+="${container_name}"$'\n'
+    printed="${printed}${container_name}"$'\n'
+  done
+
+  printf '%s' "$output_lines"
+}
+
+if [ -n "${DOCKER_MOCK_LOG_FILE:-}" ]; then
+  {
+    printf 'subcommand=%s' "$subcommand"
+    for arg in "$@"; do
+      printf ' %s' "$arg"
+    done
+    printf '\n'
+  } >>"$DOCKER_MOCK_LOG_FILE"
+fi
+
+case "$subcommand" in
+  ps)
+    include_all="false"
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        -a|--all) include_all="true" ;;
+      esac
+      shift || true
+    done
+    mock_print_names "$include_all"
+    exit 0
+    ;;
+  image)
+    image_subcommand="${1:-}"
+    shift || true
+    case "$image_subcommand" in
+      inspect)
+        if [ "${DOCKER_MOCK_IMAGE_INSPECT_FAIL:-}" = "true" ]; then
+          exit 1
+        fi
+        format=""
+        while [ $# -gt 0 ]; do
+          case "$1" in
+            -f|--format)
+              shift
+              if [ $# -gt 0 ]; then
+                format="$1"
+              fi
+              ;;
+          esac
+          shift || true
+        done
+        if [ -n "$format" ]; then
+          printf '%s\n' "${DOCKER_MOCK_IMAGE_ID:-sha256:dockistrate-mock-nginx-image}"
+        fi
+        exit 0
+        ;;
+      *)
+        exit 0
+        ;;
+    esac
+    ;;
+  inspect)
+    format=""
+    container=""
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        -f|--format)
+          shift
+          if [ $# -gt 0 ]; then
+            format="$1"
+          fi
+          ;;
+        *)
+          if [ -z "$container" ]; then
+            container="$1"
+          fi
+          ;;
+      esac
+      shift || true
+    done
+    if [[ "$format" == *".Config.Labels"* ]]; then
+      label_key=""
+      label_value=""
+      missing_label_value=""
+      pair=""
+      if [[ "$format" == *'"'* ]]; then
+        label_key="${format#*\"}"
+        label_key="${label_key%%\"*}"
+      fi
+      missing_label_value="${DOCKER_MOCK_MISSING_LABEL_OUTPUT:-}"
+      if [ -n "${DOCKER_MOCK_INSPECT_LABELS:-}" ] && [ -n "$label_key" ]; then
+        IFS=',' read -r -a __label_pairs <<< "${DOCKER_MOCK_INSPECT_LABELS}"
+        for pair in "${__label_pairs[@]}"; do
+          if [ "${pair%%=*}" = "$label_key" ]; then
+            label_value="${pair#*=}"
+          fi
+        done
+      elif [ -n "$container" ] && [ -n "$label_key" ]; then
+        pair="$(mock_read_meta_value "$container" labels || true)"
+        if [ -n "$pair" ]; then
+          IFS=',' read -r -a __label_pairs <<< "$pair"
+          for pair in "${__label_pairs[@]}"; do
+            if [ "${pair%%=*}" = "$label_key" ]; then
+              label_value="${pair#*=}"
+            fi
+          done
+        elif [ "$container" = "nginx-proxy" ] && [ "${DOCKER_MOCK_PROXY_MANAGED:-true}" = "true" ]; then
+          case "$label_key" in
+            com.dockistrate.managed) label_value="true" ;;
+            com.dockistrate.role) label_value="proxy" ;;
+            com.dockistrate.state-dir) label_value="${DOCKER_MOCK_PROXY_STATE_DIR:-${PWD}/state}" ;;
+          esac
+        fi
+      fi
+      if [ -z "$label_value" ] && [ -n "$missing_label_value" ]; then
+        label_value="$missing_label_value"
+      fi
+      [ -n "$label_value" ] && printf '%s\n' "$label_value"
+      exit 0
+    fi
+    if [[ "$format" == *".Mounts"* ]]; then
+      if [ -n "${DOCKER_MOCK_INSPECT_MOUNTS:-}" ]; then
+        printf '%s\n' "${DOCKER_MOCK_INSPECT_MOUNTS}"
+      else
+        printf '%s\n' "$(mock_read_meta_value "$container" mounts || true)"
+      fi
+      exit 0
+    fi
+    # Constant regex pattern; no user-controlled interpolation is used here.
+    if printf '%s' "$format" | grep -Eq 'NetworkSettings\.Networks.*IPAddress'; then # input-validation-audit: ignore
+      net=""
+      ip=""
+      net="$(printf '%s\n' "$format" | sed -n 's/.*if eq \\$k \"\\([^\"]*\\)\".*/\\1/p' | head -n 1)"
+      if [ -z "$net" ]; then
+        net="${format#*.NetworkSettings.Networks.}"
+        net="${net%%.IPAddress*}"
+        net="${net//[{} ]/}"
+      fi
+      if [ -n "${DOCKER_MOCK_INSPECT_NETWORK_FAIL_FOR:-}" ] && [ "$net" = "$DOCKER_MOCK_INSPECT_NETWORK_FAIL_FOR" ]; then
+        exit 1
+      fi
+      ip=""
+      if [ -n "${DOCKER_MOCK_INSPECT_NETWORK_MAP:-}" ]; then
+        IFS=',' read -r -a __net_pairs <<< "${DOCKER_MOCK_INSPECT_NETWORK_MAP}"
+        pair=""; key=""; val=""
+        for pair in "${__net_pairs[@]}"; do
+          key="${pair%%=*}"
+          val="${pair#*=}"
+          if [ "$key" = "$net" ]; then
+            ip="$val"
+            break
+          fi
+        done
+      fi
+      [ -n "$ip" ] || ip="${DOCKER_MOCK_INSPECT_NETWORK_IP:-172.30.0.2}"
+      [ -n "$ip" ] && echo "$ip"
+      exit 0
+    fi
+    if [[ "$format" == *".NetworkSettings.Ports"* ]] && [ -n "${DOCKER_MOCK_INSPECT_HOST_PORTS:-}" ]; then
+      local_port=""
+      for local_port in ${DOCKER_MOCK_INSPECT_HOST_PORTS}; do
+        printf '%s\n' "$local_port"
+      done
+      exit 0
+    fi
+    if [[ "$format" == *".NetworkSettings.Networks"* ]]; then
+      if [ -n "${DOCKER_MOCK_INSPECT_NETWORK_NAMES:-}" ]; then
+        printf '%s\n' "${DOCKER_MOCK_INSPECT_NETWORK_NAMES}"
+      else
+        printf '%s\n' "dockistrate-net"
+      fi
+      exit 0
+    fi
+    if [ -n "${DOCKER_MOCK_INSPECT_STATUS:-}" ]; then
+      inspect_status="${DOCKER_MOCK_INSPECT_STATUS}"
+    else
+      inspect_status="$(mock_read_meta_value "$container" status || true)"
+    fi
+    if [ -n "$inspect_status" ]; then
+      if [[ "$format" == *".State.Running"* ]]; then
+        [ "$inspect_status" = "running" ] && echo "true" || echo "false"
+      elif [[ "$format" == *".State.Status"* ]]; then
+        echo "$inspect_status"
+      else
+        echo "$inspect_status"
+      fi
+      exit 0
+    fi
+    exit 1
+    ;;
+  network)
+    net_subcommand="${1:-}"
+    shift || true
+    case "$net_subcommand" in
+      connect)
+        net_name="${1:-}"
+        if [ -n "${DOCKER_MOCK_NETWORK_CONNECT_FAIL_FOR:-}" ] && [ "$DOCKER_MOCK_NETWORK_CONNECT_FAIL_FOR" = "$net_name" ]; then
+          exit 1
+        fi
+        exit 0
+        ;;
+      disconnect)
+        net_name="${1:-}"
+        if [ -n "${DOCKER_MOCK_NETWORK_DISCONNECT_FAIL_FOR:-}" ] && [ "$DOCKER_MOCK_NETWORK_DISCONNECT_FAIL_FOR" = "$net_name" ]; then
+          exit 1
+        fi
+        exit 0
+        ;;
+      *)
+        # Handle docker network subcommands gracefully
+        exit 0
+        ;;
+    esac
+    ;;
+  run)
+    create_certbot=false
+    le_host_dir=""
+    sslkeylog_build_out_dir=""
+    domain=""
+    container_name=""
+    labels=""
+    mounts=""
+    arg=""
+    while [ $# -gt 0 ]; do
+      arg="$1"
+      case "$arg" in
+        --name)
+          shift
+          if [ $# -gt 0 ]; then
+            container_name="$1"
+          fi
+          ;;
+        --label)
+          shift
+          if [ $# -gt 0 ]; then
+            if [ -n "$labels" ]; then
+              labels+=","
+            fi
+            labels+="$1"
+          fi
+          ;;
+        --label=*)
+          if [ -n "$labels" ]; then
+            labels+=","
+          fi
+          labels+="${arg#--label=}"
+          ;;
+        certbot/certbot*)
+          create_certbot=true
+          ;;
+        -v)
+          shift
+          if [ $# -gt 0 ]; then
+            volume="$1"
+            source_path="${volume%%:*}"
+            remainder="${volume#*:}"
+            dest_path="${remainder%%:*}"
+            mode="${remainder#${dest_path}}"
+            rw="true"
+            if [ -n "$mode" ] && [[ "$mode" == *":ro"* ]]; then
+              rw="false"
+            fi
+            if [ -n "$mounts" ]; then
+              mounts+=$'\n'
+            fi
+            mounts+="${source_path}|${dest_path}|${rw}"
+            if [[ "$volume" == *":/etc/letsencrypt"* ]]; then
+              le_host_dir="${volume%%:/etc/letsencrypt*}"
+            fi
+            if [ "$dest_path" = "/out" ]; then
+              sslkeylog_build_out_dir="$source_path"
+            fi
+          fi
+          ;;
+        -d)
+          if [ "$create_certbot" = true ]; then
+            shift
+            if [ $# -gt 0 ]; then
+              domain="$1"
+            fi
+          fi
+          ;;
+      esac
+      shift || true
+    done
+
+    if [ -n "$sslkeylog_build_out_dir" ]; then
+      if [ "${DOCKER_MOCK_SSLKEYLOG_BUILD_FAIL:-}" = "true" ]; then
+        exit 1
+      fi
+      mkdir -p "$sslkeylog_build_out_dir"
+      printf '%s\n' 'mock sslkeylog shared object' >"${sslkeylog_build_out_dir}/sslkeylogfile.so"
+      exit 0
+    fi
+
+    if [ "$create_certbot" = true ]; then
+      if [ -z "$le_host_dir" ] && [ -n "${DOCKER_MOCK_CERTBOT_OUTPUT_DIR:-}" ]; then
+        le_host_dir="$DOCKER_MOCK_CERTBOT_OUTPUT_DIR"
+      fi
+      if [ -n "$le_host_dir" ] && [ -n "$domain" ]; then
+        mkdir -p "$le_host_dir/live/$domain"
+        printf 'FAKE CERTIFICATE for %s\n' "$domain" > "$le_host_dir/live/$domain/fullchain.pem"
+        printf 'FAKE PRIVATE KEY for %s\n' "$domain" > "$le_host_dir/live/$domain/privkey.pem"
+      fi
+    fi
+
+    if [ -n "$container_name" ]; then
+      mock_write_container_meta "$container_name" "running" "$labels" "$mounts"
+    fi
+
+    exit 0
+    ;;
+  port)
+    if [ -n "${DOCKER_MOCK_PORT_BINDINGS:-}" ]; then
+      printf '%s\n' "${DOCKER_MOCK_PORT_BINDINGS}"
+      exit 0
+    fi
+    if [ -n "${DOCKER_MOCK_INSPECT_HOST_PORTS:-}" ]; then
+      local_port=""
+      for local_port in ${DOCKER_MOCK_INSPECT_HOST_PORTS}; do
+        printf '%s/tcp -> 0.0.0.0:%s\n' "$local_port" "$local_port"
+      done
+      exit 0
+    fi
+    exit 0
+    ;;
+  exec)
+    if [ "${DOCKER_MOCK_EXEC_FAIL:-}" = "true" ]; then
+      exit 1
+    fi
+    exit 0
+    ;;
+  rm)
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        -*) ;;
+        *) mock_remove_container_meta "$1" ;;
+      esac
+      shift || true
+    done
+    exit 0
+    ;;
+  rename)
+    old_name="${1:-}"
+    new_name="${2:-}"
+    if [ -z "$old_name" ] || [ -z "$new_name" ]; then
+      exit 1
+    fi
+    meta_path="$(mock_container_meta_path "$old_name")"
+    new_meta_path="$(mock_container_meta_path "$new_name")"
+    if [ ! -f "$meta_path" ]; then
+      exit 1
+    fi
+    if [ -f "$new_meta_path" ]; then
+      exit 1
+    fi
+    ensure_mock_runtime_dir
+    mv "$meta_path" "$new_meta_path"
+    exit $?
+    ;;
+  start|restart)
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        -*) ;;
+        *) mock_update_container_status "$1" "running" ;;
+      esac
+      shift || true
+    done
+    exit 0
+    ;;
+  stop)
+    while [ $# -gt 0 ]; do
+      case "$1" in
+        -*) ;;
+        *) mock_update_container_status "$1" "exited" ;;
+      esac
+      shift || true
+    done
+    exit 0
+    ;;
+  logs|stats|info)
+    exit 0
+    ;;
+  *)
+    exit 0
+    ;;
+esac

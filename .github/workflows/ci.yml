@@ -1,0 +1,184 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  SKIP_DOCKER_CHECKS: true
+  TEST_TIMEOUT_SECONDS: 180
+  TEST_TIMEOUT_INTEGRATION_SECONDS: 900
+  TEST_TIMEOUT_PERSISTED_RENDER_SECONDS: 600
+  TEST_TIMEOUT_GRACE_SECONDS: 5
+  SHUNIT2_TIMING_TOP: 20
+
+jobs:
+  syntax-and-fast-tests:
+    name: Syntax and fast tests (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install macOS test dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew list coreutils >/dev/null 2>&1 || brew install coreutils
+          command -v gtimeout
+          gtimeout --version | head -1
+
+      - name: Prefer system Bash on macOS
+        if: runner.os == 'macOS'
+        run: echo "PATH=/bin:/usr/bin:${PATH}" >> "$GITHUB_ENV"
+
+      - name: Verify macOS Bash resolution
+        if: runner.os == 'macOS'
+        run: |
+          test "$(command -v bash)" = "/bin/bash"
+          bash --version
+
+      - name: Print Bash version
+        run: /bin/bash --version
+
+      - name: Bash syntax check
+        shell: bash
+        run: |
+          while IFS= read -r file; do
+            /bin/bash -n "$file"
+          done < <(git ls-files '*.sh' '*.bash')
+
+      - name: Install ShellCheck
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: ShellCheck project scripts
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          git ls-files '*.sh' '*.bash' |
+            grep -v '^tests/lib/shunit2' |
+            xargs shellcheck --severity=error
+
+      - name: Run fast test suite
+        run: TEST_RUN_SUITE=fast /bin/bash ./tests/run.sh
+
+  persisted-render:
+    name: Persisted render validation (ubuntu-latest)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Print Bash version
+        run: /bin/bash --version
+
+      - name: Run persisted render validation
+        run: TEST_RUN_SUITE=persisted-render /bin/bash ./tests/run.sh
+
+  integration-cli:
+    name: Integration CLI (${{ matrix.os }}, shard ${{ matrix.shard_index }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        shard_index:
+          - 0
+          - 1
+          - 2
+          - 3
+    env:
+      TEST_SHARD_TOTAL: 4
+      TEST_SHARD_INDEX: ${{ matrix.shard_index }}
+      TEST_TIMEOUT_INTEGRATION_SECONDS: 1800
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install macOS test dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew list coreutils >/dev/null 2>&1 || brew install coreutils
+          command -v gtimeout
+          gtimeout --version | head -1
+
+      - name: Prefer system Bash on macOS
+        if: runner.os == 'macOS'
+        run: echo "PATH=/bin:/usr/bin:${PATH}" >> "$GITHUB_ENV"
+
+      - name: Verify macOS Bash resolution
+        if: runner.os == 'macOS'
+        run: |
+          test "$(command -v bash)" = "/bin/bash"
+          bash --version
+
+      - name: Run CLI integration suite
+        run: |
+          /bin/bash ./tests/lib/run_with_timeout.sh \
+            "$TEST_TIMEOUT_INTEGRATION_SECONDS" \
+            "$TEST_TIMEOUT_GRACE_SECONDS" \
+            "tests/integration/test_cli.sh shard ${TEST_SHARD_INDEX}/${TEST_SHARD_TOTAL}" \
+            -- /bin/bash ./tests/integration/test_cli.sh
+
+  integration-feature-configs:
+    name: Feature config integration (${{ matrix.os }}, shard ${{ matrix.shard_index }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+        shard_index:
+          - 0
+          - 1
+          - 2
+          - 3
+    env:
+      TEST_SHARD_TOTAL: 4
+      TEST_SHARD_INDEX: ${{ matrix.shard_index }}
+      TEST_TIMEOUT_INTEGRATION_SECONDS: 2400
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Install macOS test dependencies
+        if: runner.os == 'macOS'
+        run: |
+          brew list coreutils >/dev/null 2>&1 || brew install coreutils
+          command -v gtimeout
+          gtimeout --version | head -1
+
+      - name: Prefer system Bash on macOS
+        if: runner.os == 'macOS'
+        run: echo "PATH=/bin:/usr/bin:${PATH}" >> "$GITHUB_ENV"
+
+      - name: Verify macOS Bash resolution
+        if: runner.os == 'macOS'
+        run: |
+          test "$(command -v bash)" = "/bin/bash"
+          bash --version
+
+      - name: Run feature-config integration shard
+        run: |
+          /bin/bash ./tests/lib/run_with_timeout.sh \
+            "$TEST_TIMEOUT_INTEGRATION_SECONDS" \
+            "$TEST_TIMEOUT_GRACE_SECONDS" \
+            "tests/integration/test_feature_configs.sh shard ${TEST_SHARD_INDEX}/${TEST_SHARD_TOTAL}" \
+            -- /bin/bash ./tests/integration/test_feature_configs.sh

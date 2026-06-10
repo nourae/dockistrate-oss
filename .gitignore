@@ -1,0 +1,22 @@
+state/
+logs/
+
+# Ignore certificate and key files
+*.crt
+*.key
+*.pem
+
+# Ignore runtime cert stores and ACME/account material entirely
+certs/
+!lib/certs/
+
+# Ignore backups and temp artifacts
+backups/
+!lib/backups/
+captures/
+acme-webroot/
+tmp/
+.DS_Store
+
+# Ignore generated per-site Nginx config.
+config/nginx_conf/conf.d/
