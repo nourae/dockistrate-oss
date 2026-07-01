@@ -9,6 +9,8 @@ if declare -F get_container_network_names >/dev/null 2>&1; then
   echo "[Error] test setup unexpectedly loaded backend network helpers." >&2
   exit 1
 fi
+# shellcheck source=../lib/nginx/common.sh
+source "$ROOT_DIR/lib/nginx/common.sh"
 # shellcheck source=../lib/nginx/remove_unused_nginx_networks.sh
 source "$ROOT_DIR/lib/nginx/remove_unused_nginx_networks.sh"
 

@@ -1,15 +1,5 @@
 # shellcheck shell=bash
 
-function _nginx_container_network_names() {
-  local cname="${1:-}"
-  [ -n "$cname" ] || return 1
-  if declare -F get_container_network_names >/dev/null 2>&1; then
-    get_container_network_names "$cname"
-    return $?
-  fi
-  docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{printf "%s\n" $k}}{{end}}' "$cname" 2>/dev/null || true
-}
-
 function remove_unused_nginx_networks() {
   if ! nginx_container_is_managed; then
     return 0

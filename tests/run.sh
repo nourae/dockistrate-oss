@@ -175,6 +175,7 @@ scripts=(
   "tests/start_capture_tls_recreate_state_handling.sh"
   "tests/remove_backend_escaping.sh"
   "tests/docker_exact_name_matching.sh"
+  "tests/add_nginx_networks_standalone.sh"
   "tests/remove_unused_nginx_networks_exact_matching.sh"
   "tests/docker_mock_rename_semantics.sh"
   "tests/docker_opts_parsing.sh"
