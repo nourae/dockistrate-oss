@@ -50,6 +50,11 @@ function capture_tls_keylog_host_dir() {
 function capture_tls_keylog_file() {
   printf -v "$1" '%s' "$tmp_dir/keys/tlskeys.log"
 }
+function capture_tls_prepare_keylog_for_mount() {
+  local __keylog_name_var="$1" keylog_dir="$2" keylog_file="$3"
+  mkdir -p "$keylog_dir"
+  printf -v "$__keylog_name_var" '%s' "${keylog_file##*/}"
+}
 function ensure_sslkeylog_library() {
   ensure_calls=$((ensure_calls + 1))
   return 1

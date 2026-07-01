@@ -17,6 +17,7 @@ function _save_config_write_rows() {
   csv_join_row "REAL_IP_RECURSIVE" "$REAL_IP_RECURSIVE" || return 1
   csv_join_row "NGINX_DIRECTIVE_STRICT" "$NGINX_DIRECTIVE_STRICT" || return 1
   csv_join_row "NGINX_DOCKER_OPTS" "$NGINX_DOCKER_OPTS" || return 1
+  csv_join_row "VISIBILITY_POLICY" "${VISIBILITY_POLICY:-${DEFAULT_VISIBILITY_POLICY:-full}}" || return 1
   csv_join_row "NGINX_IMAGE" "$NGINX_IMAGE" || return 1
   csv_join_row "CERTBOT_IMAGE" "$CERTBOT_IMAGE" || return 1
   csv_join_row "NGINX_PULL_MODE" "$NGINX_PULL_MODE" || return 1

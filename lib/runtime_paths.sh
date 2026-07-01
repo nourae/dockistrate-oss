@@ -20,83 +20,13 @@ function _runtime_path_to_absolute_lexical() {
 
 function _runtime_path_realpath_portable() {
   local target="${1:-}"
-  local max_links=40
-  local dir=""
-  local base=""
-  local link=""
-  local start_dir="$PWD"
-  local resolved_dir=""
-
   [ -n "$target" ] || return 1
 
-  if declare -F _realpath_portable >/dev/null 2>&1; then
-    _realpath_portable "$target"
-    return $?
+  if ! declare -F _realpath_portable >/dev/null 2>&1; then
+    # shellcheck source=./utils/fs.sh
+    source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/utils/fs.sh"
   fi
-
-  if command -v realpath >/dev/null 2>&1; then
-    realpath "$target" 2>/dev/null && return 0
-  fi
-
-  target="$(_runtime_path_to_absolute_lexical "$target")" || return 1
-
-  while [ $max_links -gt 0 ]; do
-    dir="${target%/*}"
-    base="${target##*/}"
-
-    if [ -z "$dir" ] || [ "$dir" = "$target" ]; then
-      dir="/"
-      base="${target#/}"
-      [ -n "$base" ] || base="/"
-    fi
-
-    if ! cd "$dir" 2>/dev/null; then
-      cd "$start_dir" 2>/dev/null || true
-      return 1
-    fi
-
-    resolved_dir="$(pwd -P 2>/dev/null)" || {
-      cd "$start_dir" 2>/dev/null || true
-      return 1
-    }
-
-    if [ "$base" = "/" ]; then
-      cd "$start_dir" 2>/dev/null || true
-      printf '/'
-      return 0
-    fi
-
-    if [ -L "$base" ]; then
-      if ! command -v readlink >/dev/null 2>&1; then
-        cd "$start_dir" 2>/dev/null || true
-        return 1
-      fi
-      link="$(readlink "$base")" || {
-        cd "$start_dir" 2>/dev/null || true
-        return 1
-      }
-      if [ "${link#/}" = "$link" ]; then
-        target="$resolved_dir/$link"
-      else
-        target="$link"
-      fi
-      cd "$start_dir" 2>/dev/null || true
-      max_links=$((max_links - 1))
-      continue
-    fi
-
-    if [ -e "$base" ] || [ ! -L "$base" ]; then
-      cd "$start_dir" 2>/dev/null || true
-      printf '%s/%s' "$resolved_dir" "$base"
-      return 0
-    fi
-
-    cd "$start_dir" 2>/dev/null || true
-    return 1
-  done
-
-  cd "$start_dir" 2>/dev/null || true
-  return 1
+  _realpath_portable "$target"
 }
 
 function _runtime_path_is_allowed_system_symlink() {

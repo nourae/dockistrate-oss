@@ -132,14 +132,10 @@ function remove_port_mapping() {
     if [ "$remove_tls" = true ] &&
       ! _remove_port_mapping_has_other_https_domain_on_port "$domain" "$custom_port"; then
       local prev_skip_update="${SKIP_UPDATE_NGINX_CONFIG:-}"
-      SKIP_UPDATE_NGINX_CONFIG=true
+      push_skip_update_nginx_config prev_skip_update
       remove_port_tls_protocols "$custom_port" 2>/dev/null || true
       remove_port_tls_ciphers "$custom_port" 2>/dev/null || true
-      if [ "$prev_skip_update" = "true" ]; then
-        SKIP_UPDATE_NGINX_CONFIG="true"
-      else
-        unset SKIP_UPDATE_NGINX_CONFIG
-      fi
+      pop_skip_update_nginx_config "$prev_skip_update"
     fi
 
     echo "[Info] Removed port mapping for domain=$domain on port=$custom_port."

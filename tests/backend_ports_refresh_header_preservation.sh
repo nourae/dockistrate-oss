@@ -70,4 +70,31 @@ if ! grep -Fq 'backend,refresh-header.test,10.0.0.88:18180,custom-net' "$BACKEND
   exit 1
 fi
 
+cat >"$BACKEND_PORTS_FILE" <<EOF
+${STATE_BACKEND_PORTS_HEADER}
+backend,refresh-header.test,127.0.0.1:18180,custom-net,,,,,,,,,,,,,,,,,
+port,refresh-header.test,,,,,18180,18180,http,none,no,off,,off,auto,,,,,,
+EOF
+
+DOCKER_MOCK_INSPECT_NETWORK_NAMES=$'dockistrate-net\ncustom-net'
+DOCKER_MOCK_INSPECT_NETWORK_MAP='dockistrate-net=10.0.0.10,custom-net=10.0.0.20'
+unset DOCKER_MOCK_INSPECT_NETWORK_IP
+export DOCKER_MOCK_INSPECT_NETWORK_NAMES DOCKER_MOCK_INSPECT_NETWORK_MAP
+
+refresh_backend_ips
+
+first_line="$(head -n 1 "$BACKEND_PORTS_FILE" | tr -d '\r')"
+if [ "$first_line" != "$STATE_BACKEND_PORTS_HEADER" ]; then
+  echo "[Error] refresh_backend_ips with multiple networks dropped CSV header." >&2
+  exit 1
+fi
+if ! grep -Fq 'backend,refresh-header.test,10.0.0.20:18180,custom-net' "$BACKEND_PORTS_FILE"; then
+  echo "[Error] refresh_backend_ips did not use the stored network IP when multiple networks were attached." >&2
+  exit 1
+fi
+if grep -Fq '10.0.0.10:18180' "$BACKEND_PORTS_FILE"; then
+  echo "[Error] refresh_backend_ips used the wrong network IP." >&2
+  exit 1
+fi
+
 echo "Backend refresh header preservation checks passed."

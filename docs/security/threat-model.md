@@ -17,6 +17,7 @@ Assumptions grounded in repository state:
 - Nginx is expected to be internet-facing when ports are exposed, while the CLI, checkout, Docker socket, and `state/` filesystem are local administrative surfaces. Evidence: `README.md` Quick Start, `lib/nginx/recreate_nginx_container.sh`.
 - Operator flexibility is intentional: weak TLS choices, broad trusted proxy ranges, raw Nginx directives, and risky Docker runtime flags may be valid admin choices. The model treats those as high-risk configuration surfaces, not automatically as product defects. Evidence: `README.md` Security Model, `docs/guides/advanced-nginx-docker-options.md`.
 - The current `state/` tree should be writable only by trusted operators. If untrusted local users can run the CLI or modify `state/`, several risks become critical.
+- ACL and security-rule IP selectors are IPv4-only in the current runtime model. IPv6 clients must be handled by upstream network policy, proxy topology, or future explicit IPv6 support rather than assuming Dockistrate IP ACL rows cover them.
 - Data sensitivity varies by deployment. The model assumes production deployments may carry credentials, PII, session cookies, API tokens, or regulated data through proxied traffic and packet captures.
 
 Open questions that would materially change risk ranking:

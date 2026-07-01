@@ -119,18 +119,11 @@ function recreate_nginx_container() {
   pull_image_if_autopull "$image" "Nginx"
   local -a capture_tls_args=()
   if [ "$capture_tls_enabled" = "true" ]; then
-    if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
-      runtime_state_paths_guard_if_declared "$keylog_host_dir" "$keylog_file" || return 1
+    if ! declare -F capture_tls_prepare_keylog_for_mount >/dev/null 2>&1; then
+      echo "[Error] TLS key log mount guard unavailable." >&2
+      return 1
     fi
-    mkdir -p "$keylog_host_dir"
-    if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
-      runtime_state_paths_guard_if_declared "$keylog_host_dir" "$keylog_file" || return 1
-    fi
-    chmod "$keylog_dir_mode" "$keylog_host_dir" 2>/dev/null || true
-    if [ -f "$keylog_file" ]; then
-      chmod "$keylog_file_mode" "$keylog_file" 2>/dev/null || true
-    fi
-    keylog_name="$(basename "$keylog_file")"
+    capture_tls_prepare_keylog_for_mount keylog_name "$keylog_host_dir" "$keylog_file" "$keylog_dir_mode" "$keylog_file_mode" || return 1
     if ! ensure_sslkeylog_library "$image"; then
       return 1
     fi
@@ -173,8 +166,9 @@ function recreate_nginx_container() {
     fi
   fi
 
-  local xtrace_state=""
-  if [ -n "$normalized_nginx_docker_opts" ]; then
+  local xtrace_state="" suppress_docker_xtrace=false
+  if [ -n "$normalized_nginx_docker_opts" ] && operator_visibility_is_redacted; then
+    suppress_docker_xtrace=true
     xtrace_disable xtrace_state
   fi
 
@@ -201,12 +195,12 @@ function recreate_nginx_container() {
     _nginx_mark_runtime_rollback_needed
   fi
   if ! "${docker_run_cmd[@]}"; then
-    if [ -n "$normalized_nginx_docker_opts" ]; then
+    if [ "$suppress_docker_xtrace" = true ]; then
       xtrace_restore "$xtrace_state"
     fi
     return 1
   fi
-  if [ -n "$normalized_nginx_docker_opts" ]; then
+  if [ "$suppress_docker_xtrace" = true ]; then
     xtrace_restore "$xtrace_state"
   fi
 

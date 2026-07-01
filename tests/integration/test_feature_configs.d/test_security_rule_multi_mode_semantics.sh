@@ -17,6 +17,12 @@ test_security_rule_multi_mode_semantics() {
   run_dockistrate add-security-rule multi-mode.test 2 header X-C equals c header X-D equals d --mode or --code 452 >/dev/null
   assertEquals "add-security-rule or" 0 $?
 
+  run_dockistrate add-security-rule multi-mode.test 2 method - in GET,POST header X-Mode exists - --mode and --code 453 >/dev/null
+  assertEquals "add-security-rule affected and" 0 $?
+
+  run_dockistrate add-security-rule multi-mode.test 2 header X-Bucket not_in alpha,beta var request_length gt 100 --mode or --code 454 >/dev/null
+  assertEquals "add-security-rule affected or" 0 $?
+
   local rules_file="${CONFIG_DIR}/nginx_conf/conf.d/security_rules.inc"
   local and_var or_var
   and_var="$(extract_security_rule_var 'if ($http_x_a = "a") { set $' '_p1 1; }' "$rules_file")"
@@ -53,4 +59,9 @@ test_security_rule_multi_mode_semantics() {
     fail "OR rule should not use inverted equals predicate"
     return
   fi
+
+  assertFileContainsSubstring '$request_method ~* "^(?:GET|POST)$"' "$rules_file"
+  assertFileContainsSubstring '$http_x_mode != ""' "$rules_file"
+  assertFileContainsSubstring '$http_x_bucket !~* "^(?:alpha|beta)$"' "$rules_file"
+  assertFileContainsSubstring '$request_length ~* "^' "$rules_file"
 }

@@ -32,6 +32,9 @@ function arg_label() {
   hostname) echo "Hostname" ;;
   alias) echo "Alias" ;;
   port_suffix) echo "Certificate port suffix" ;;
+  cert_choice) echo "Certificate type" ;;
+  upload_fullchain) echo "Fullchain path" ;;
+  upload_privkey) echo "Private key path" ;;
   http3) echo "HTTP/3" ;;
   redirect) echo "Redirect" ;;
   headers) echo "Header set" ;;
@@ -51,6 +54,7 @@ function arg_label() {
   target_tag) echo "Target tag" ;;
   require_backup) echo "Require backup" ;;
   setting) echo "Inheritance setting" ;;
+  visibility_policy) echo "Visibility policy" ;;
   inherit_mtls) echo "Inherit mTLS" ;;
   inherit_acl) echo "Inherit ACL" ;;
   inherit_security_rules) echo "Inherit security rules" ;;
@@ -90,12 +94,28 @@ function arg_help() {
     echo "Certificate source for HTTPS listeners. Use selfsigned or letsencrypt to generate one, none for the default self-signed behavior, or an existing cert path."
     return 0
     ;;
+  add-cert:cert_choice | replace-cert:cert_choice)
+    echo "Choose how to create the certificate material."
+    return 0
+    ;;
+  add-cert:upload_fullchain | replace-cert:upload_fullchain)
+    echo "Path to an existing fullchain.pem file when uploading a custom certificate."
+    return 0
+    ;;
+  add-cert:upload_privkey | replace-cert:upload_privkey)
+    echo "Path to an existing privkey.pem file when uploading a custom certificate."
+    return 0
+    ;;
   upgrade-preflight:target_tag)
     echo "Optional local release tag to compare against. Leave blank to check the current on-disk state only."
     return 0
     ;;
   upgrade-preflight:require_backup)
     echo "Use yes to fail when no local backup is present, or no to warn only."
+    return 0
+    ;;
+  set-visibility-policy:visibility_policy)
+    echo "Use full to show operator-entered Docker option and header values, or redacted to hide them in display, audit, and saved interactive history."
     return 0
     ;;
   esac
@@ -182,6 +202,15 @@ function arg_help() {
   ciphers)
     echo "OpenSSL cipher string for this port override."
     ;;
+  cert_choice)
+    echo "Certificate creation mode."
+    ;;
+  upload_fullchain)
+    echo "Existing certificate chain file."
+    ;;
+  upload_privkey)
+    echo "Existing private key file."
+    ;;
   esac
 }
 
@@ -199,7 +228,11 @@ function arg_example() {
   add-header:value | update-header:value \
   | add-backend-header:value | update-backend-header:value) echo "https"; return 0 ;;
   add-backend:cert_path) echo "selfsigned, letsencrypt, selfsigned/live/example.com_443, or none"; return 0 ;;
+  add-cert:cert_choice | replace-cert:cert_choice) echo "selfsigned"; return 0 ;;
+  add-cert:upload_fullchain | replace-cert:upload_fullchain) echo "/path/to/fullchain.pem"; return 0 ;;
+  add-cert:upload_privkey | replace-cert:upload_privkey) echo "/path/to/privkey.pem"; return 0 ;;
   upgrade-preflight:target_tag) echo "v1.0.0"; return 0 ;;
+  set-visibility-policy:visibility_policy) echo "full"; return 0 ;;
   esac
 
   case "$arg_name" in
@@ -226,6 +259,9 @@ function arg_example() {
   id) echo "1" ;;
   protocols) echo "TLSv1.2 TLSv1.3" ;;
   ciphers) echo "ECDHE+AESGCM:ECDHE+CHACHA20" ;;
+  cert_choice) echo "selfsigned" ;;
+  upload_fullchain) echo "/path/to/fullchain.pem" ;;
+  upload_privkey) echo "/path/to/privkey.pem" ;;
   esac
 }
 
@@ -265,18 +301,23 @@ function arg_review_label() {
 
 function arg_is_sensitive() {
   local cmd="${1:-}" arg_name="${2:-}"
-  case "${cmd}:${arg_name}" in
-  add-header:value | update-header:value \
-    | add-backend-header:value | update-backend-header:value)
-    return 0
-    ;;
-  esac
+  local value="${3:-}" has_value=false
 
-  case "$arg_name" in
-  docker_opts)
-    return 0
-    ;;
-  esac
+  [ -n "$cmd" ] || return 1
+  [ -n "$arg_name" ] || return 1
+  [ "$#" -ge 3 ] && has_value=true
+
+  if declare -F operator_visibility_is_redacted >/dev/null 2>&1 &&
+    operator_visibility_is_redacted; then
+    if [ "$has_value" = true ]; then
+      declare -F operator_arg_value_is_redactable >/dev/null 2>&1 || return 1
+      operator_arg_value_is_redactable "$cmd" "$arg_name" "$value"
+      return $?
+    fi
+    declare -F operator_arg_is_redactable >/dev/null 2>&1 || return 1
+    operator_arg_is_redactable "$cmd" "$arg_name"
+    return $?
+  fi
 
   return 1
 }

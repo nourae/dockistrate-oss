@@ -28,6 +28,7 @@ function _validator_for() {
   on_off) echo "is_on_off" ;;
   true_or_false) echo "is_true_false" ;;
   version) echo "is_valid_http_version" ;;
+  visibility_policy) echo "is_valid_visibility_policy" ;;
   *) echo "" ;;
   esac
 }

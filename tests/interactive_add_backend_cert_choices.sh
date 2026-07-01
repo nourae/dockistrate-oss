@@ -36,8 +36,8 @@ if grep -Fq "none|Generate cert" <<<"$choices"; then
 fi
 
 port_choices="$(__arg_choices_cert_path "add-port")"
-if ! grep -Fq "none|none" <<<"$port_choices"; then
-  echo "[Error] add-port cert choices should keep the none fallback." >&2
+if ! grep -Fq "none|Generate self-signed certificate" <<<"$port_choices"; then
+  echo "[Error] add-port cert choices should label the none fallback as self-signed generation." >&2
   echo "$port_choices" >&2
   exit 1
 fi

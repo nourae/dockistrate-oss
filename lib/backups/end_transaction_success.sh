@@ -29,7 +29,7 @@ function end_transaction_success() {
   fi
 
   _transaction_clear_installed_traps
-  if [ -z "$ROLLBACK_DESC" ]; then
+  if [ -z "${ROLLBACK_DESC:-}" ]; then
     unset TRANSACTION_DEPTH TRANSACTION_OWNER_PID TRANSACTION_MODE
     release_transaction_lock || true
     return 0

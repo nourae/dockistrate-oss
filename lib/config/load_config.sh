@@ -22,6 +22,7 @@ function load_config() {
   local saw_certbot_pull_mode=false
   local saw_nginx_directive_strict=false
   local saw_nginx_docker_opts=false
+  local saw_visibility_policy=false
   local line="" line_no=0
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
@@ -59,6 +60,10 @@ function load_config() {
       NGINX_DOCKER_OPTS="$val"
       saw_nginx_docker_opts=true
       ;;
+    VISIBILITY_POLICY)
+      VISIBILITY_POLICY="$val"
+      saw_visibility_policy=true
+      ;;
     NGINX_IMAGE)
       NGINX_IMAGE="$val"
       saw_nginx_image=true
@@ -84,4 +89,5 @@ function load_config() {
   LOAD_CONFIG_SAW_CERTBOT_PULL_MODE="$saw_certbot_pull_mode"
   LOAD_CONFIG_SAW_NGINX_DIRECTIVE_STRICT="$saw_nginx_directive_strict"
   LOAD_CONFIG_SAW_NGINX_DOCKER_OPTS="$saw_nginx_docker_opts"
+  LOAD_CONFIG_SAW_VISIBILITY_POLICY="$saw_visibility_policy"
 }

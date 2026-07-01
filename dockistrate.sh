@@ -29,6 +29,8 @@ SELECTED_CMD=""
 SELECTED_ARGS=()
 CURRENT_CMD=""
 CURRENT_ARGS=()
+DOCKISTRATE_INTERACTIVE_XTRACE_STATE=""
+DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED=false
 
 # Loader for module sourcing
 source "${SCRIPT_DIR}/lib/loader.sh"
@@ -87,11 +89,72 @@ function dockistrate_prepare_runtime() {
 }
 
 function dockistrate_run_selected_command() {
+  if [ "${VERBOSE:-false}" = true ]; then
+    if [ "${#SELECTED_ARGS[@]}" -gt 0 ]; then
+      dockistrate_disable_interactive_xtrace_if_needed "$SELECTED_CMD" "${SELECTED_ARGS[@]}"
+    else
+      dockistrate_disable_interactive_xtrace_if_needed "$SELECTED_CMD"
+    fi
+  fi
+
   if [ "${#SELECTED_ARGS[@]}" -gt 0 ]; then
     run_command "$SELECTED_CMD" "${SELECTED_ARGS[@]}"
   else
     run_command "$SELECTED_CMD"
   fi
+}
+
+function dockistrate_disable_interactive_xtrace_if_needed() {
+  if [ "${VERBOSE:-false}" != true ] ||
+    [ "${DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED:-false}" = true ]; then
+    return 0
+  fi
+
+  xtrace_disable DOCKISTRATE_INTERACTIVE_XTRACE_STATE
+  if dockistrate_redacted_xtrace_needed "$@"; then
+    DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED=true
+  else
+    xtrace_restore "$DOCKISTRATE_INTERACTIVE_XTRACE_STATE"
+    DOCKISTRATE_INTERACTIVE_XTRACE_STATE=""
+  fi
+}
+
+function dockistrate_restore_interactive_xtrace_if_needed() {
+  if [ "${DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED:-false}" = true ]; then
+    xtrace_restore "$DOCKISTRATE_INTERACTIVE_XTRACE_STATE"
+  fi
+  DOCKISTRATE_INTERACTIVE_XTRACE_STATE=""
+  DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED=false
+}
+
+function dockistrate_command_may_enable_redacted_visibility() {
+  local cmd="${1:-}"
+  shift || true
+
+  [ "$cmd" = "set-visibility-policy" ] || return 1
+  if [ "$#" -eq 0 ] || [ "${1:-}" = "redacted" ]; then
+    return 0
+  fi
+  return 1
+}
+
+function dockistrate_redacted_xtrace_needed() {
+  local cmd="${1:-}"
+  shift || true
+
+  [ "${VERBOSE:-false}" = true ] || return 1
+  declare -F _run_command_has_sensitive_args >/dev/null 2>&1 || return 1
+  if dockistrate_command_may_enable_redacted_visibility "$cmd" "$@"; then
+    return 0
+  fi
+  if [ -s "${GLOBAL_SETTINGS_FILE:-}" ] && declare -F load_config >/dev/null 2>&1; then
+    load_config >/dev/null 2>&1 || true
+  fi
+  if declare -F operator_visibility_is_redacted >/dev/null 2>&1 &&
+    operator_visibility_is_redacted; then
+    return 0
+  fi
+  _run_command_has_sensitive_args "$cmd" "$@"
 }
 
 # Lightweight pre-scan to allow certain commands to run without Docker
@@ -171,7 +234,13 @@ fi
 
 if [ "$INTERACTIVE" = true ] && [ "$#" -eq 0 ]; then
   while true; do
-    interactive_picker || break
+    DOCKISTRATE_INTERACTIVE_XTRACE_STATE=""
+    DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED=false
+    dockistrate_disable_interactive_xtrace_if_needed
+    if ! interactive_picker; then
+      dockistrate_restore_interactive_xtrace_if_needed
+      break
+    fi
     if ! dockistrate_run_selected_command; then
       :
     else
@@ -185,6 +254,7 @@ if [ "$INTERACTIVE" = true ] && [ "$#" -eq 0 ]; then
         fi
       fi
     fi
+    dockistrate_restore_interactive_xtrace_if_needed
     if [ "${SELECTED_CMD:-}" != "status" ] && [ "${SELECTED_CMD:-}" != "status-all" ]; then
       echo
       read -rp "Press Enter to continue..." _
@@ -199,7 +269,25 @@ if [[ -z "$CMD" ]]; then
   exit 1
 fi
 shift || true
+_dockistrate_xtrace_state=""
+_dockistrate_suppress_sensitive_xtrace=false
+if [ "$VERBOSE" = true ]; then
+  xtrace_disable _dockistrate_xtrace_state
+  if dockistrate_redacted_xtrace_needed "$CMD" "$@"; then
+    _dockistrate_suppress_sensitive_xtrace=true
+  else
+    xtrace_restore "$_dockistrate_xtrace_state"
+  fi
+fi
 if ! dockistrate_command_skips_runtime_prep "$CMD" "$@"; then
-  dockistrate_prepare_runtime || exit 1
+  if ! dockistrate_prepare_runtime; then
+    if [ "$_dockistrate_suppress_sensitive_xtrace" = true ]; then
+      xtrace_restore "$_dockistrate_xtrace_state"
+    fi
+    exit 1
+  fi
 fi
 run_command "$CMD" "$@"
+if [ "$_dockistrate_suppress_sensitive_xtrace" = true ]; then
+  xtrace_restore "$_dockistrate_xtrace_state"
+fi

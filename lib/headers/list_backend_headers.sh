@@ -23,7 +23,7 @@ function list_backend_headers() {
       continue
     fi
     printed=true
-    echo "${CSV_FIELDS[0]} ${CSV_FIELDS[1]} ${CSV_FIELDS[2]} ${CSV_FIELDS[3]}"
+    echo "${CSV_FIELDS[0]} ${CSV_FIELDS[1]} ${CSV_FIELDS[2]} $(operator_value_for_display header_value "${CSV_FIELDS[3]}")"
   done <"$BACKEND_HEADERS_FILE"
 
   if [ "$printed" = false ]; then

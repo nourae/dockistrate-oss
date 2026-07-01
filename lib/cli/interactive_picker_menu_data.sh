@@ -168,7 +168,7 @@ INTERACTIVE_PICKER_COMMANDS_GLOBAL_ACCESS_DEFAULTS=(
 
 INTERACTIVE_PICKER_COMMANDS_GLOBAL_TLS_RUNTIME=(
   set-http-version set-tls-protocols set-tls-ciphers
-  set-nginx-docker-opts show-nginx-docker-opts set-nginx-image set-certbot-image
+  set-nginx-docker-opts show-nginx-docker-opts set-visibility-policy show-visibility-policy set-nginx-image set-certbot-image
 )
 
 INTERACTIVE_PICKER_COMMANDS_CAPTURE=(

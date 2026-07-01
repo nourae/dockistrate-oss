@@ -41,13 +41,15 @@ function read_yes_no_with_default() {
 # Arguments:
 #   $1 - question/prompt text
 #   $2 - mode (optional): "yes_no" or "strict_yes"; defaults to "yes_no"
+#   $3 - non-interactive policy for yes_no (optional): auto_yes, warn_yes, or require_yes
+#   $4 - explicit confirmation hint for warn_yes (optional); defaults to a generic flag hint
 # Modes:
 #   yes_no: when INTERACTIVE=true, accepts yes/no input (default answer: "no");
-#           when non-interactive, auto-confirms and returns 0.
+#           when non-interactive, follows the selected policy.
 #   strict_yes: when INTERACTIVE=true, requires the exact answer "YES";
 #               when non-interactive, prints an error and returns 1.
 function confirm_prompt() {
-  local question="${1:-}" mode="${2:-yes_no}" ans=""
+  local question="${1:-}" mode="${2:-yes_no}" noninteractive_policy="${3:-auto_yes}" explicit_confirmation_hint="${4:-an explicit confirmation flag}" ans=""
 
   case "$mode" in
   strict_yes)
@@ -70,7 +72,23 @@ function confirm_prompt() {
       read_yes_no_with_default ans "$question" "no" || return 1
       [ "$ans" = "yes" ]
     else
-      return 0
+      case "$noninteractive_policy" in
+      auto_yes)
+        return 0
+        ;;
+      warn_yes)
+        echo "[Warn] Non-interactive confirmation auto-approved for compatibility. Pass ${explicit_confirmation_hint} to make this explicit." >&2
+        return 0
+        ;;
+      require_yes)
+        echo "[Error] Confirmation required. Re-run with -i/--interactive or pass an explicit confirmation flag." >&2
+        return 1
+        ;;
+      *)
+        echo "[Error] Unknown non-interactive confirmation policy: $noninteractive_policy" >&2
+        return 1
+        ;;
+      esac
     fi
     ;;
   *)

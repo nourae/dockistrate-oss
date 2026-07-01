@@ -51,6 +51,10 @@ proxy_set_header X-App-Mode "Preview Enabled";
 ```
 
 Header values cannot include control characters, including newlines.
+They are fully visible by default in operator-facing output and saved
+interactive history. `set-visibility-policy redacted` hides header values from
+display, audit, and saved interactive command history without changing the
+stored header state or generated Nginx configuration.
 
 ## Client IP and Proxy IP
 

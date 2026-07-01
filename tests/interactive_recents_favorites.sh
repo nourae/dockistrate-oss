@@ -9,6 +9,10 @@ source "$ROOT_DIR/lib/utils/common.sh"
 source "$ROOT_DIR/lib/utils/fs.sh"
 # shellcheck source=../lib/utils/csv.sh
 source "$ROOT_DIR/lib/utils/csv.sh"
+# shellcheck source=../lib/utils/validators.sh
+source "$ROOT_DIR/lib/utils/validators.sh"
+# shellcheck source=../lib/utils/operator_visibility.sh
+source "$ROOT_DIR/lib/utils/operator_visibility.sh"
 # shellcheck source=../lib/cli/common.sh
 source "$ROOT_DIR/lib/cli/common.sh"
 # shellcheck source=../lib/cli/arg_metadata.sh
@@ -41,6 +45,8 @@ CHOICE_QUEUE=()
 CHOICE_CURSOR=0
 PREPARE_RUNTIME_CALLS=0
 INTERACTIVE=true
+DEFAULT_VISIBILITY_POLICY="full"
+VISIBILITY_POLICY="full"
 AVAILABILITY_STATUS=0
 AVAILABILITY_CALLS=0
 GUIDANCE_STATUS=1
@@ -66,11 +72,23 @@ function get_arg_spec() {
   start-nginx)
     printf '%s' 'nginx_image,nginx:latest;docker_opts,'
     ;;
+  set-nginx-docker-opts)
+    printf '%s' 'docker_opts,'
+    ;;
   add-port)
     printf '%s' 'domain,;nginx_port,;container_port,;protocol,http;cert_path,none;ws,no;http3,off;alt_svc,auto'
     ;;
   update-backend)
     printf '%s' 'domain,;image,;docker_opts,'
+    ;;
+  add-header | update-header)
+    printf '%s' 'req_resp,request;header,;value,'
+    ;;
+  set-hsts)
+    printf '%s' 'hsts_value,'
+    ;;
+  add-backend-header | update-backend-header)
+    printf '%s' 'domain,;req_resp,request;header,;value,'
     ;;
   *)
     return 1
@@ -165,11 +183,11 @@ if [ "${INTERACTIVE_SAVED_ARGS[0]}" != "comma,value" ] ||
   exit 1
 fi
 
-before_sensitive_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+before_visible_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
 interactive_record_recent_command update-backend example.com nginx:alpine "--env TOKEN=secret"
-after_sensitive_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
-if [ "$after_sensitive_count" -ne "$before_sensitive_count" ] || grep -Fq "TOKEN=secret" "$recent_file"; then
-  echo "[Error] Sensitive docker_opts args should not be written to interactive recents." >&2
+after_visible_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+if [ "$after_visible_count" -ne "$((before_visible_count + 1))" ] || ! grep -Fq "TOKEN=secret" "$recent_file"; then
+  echo "[Error] Positional docker_opts args should be written to interactive recents." >&2
   cat "$recent_file" >&2
   exit 1
 fi
@@ -183,9 +201,35 @@ if [ "$after_flag_count" -ne "$((before_flag_count + 1))" ]; then
   exit 1
 fi
 interactive_record_recent_command start-nginx --docker-opts "--env TOKEN=secret"
-after_sensitive_flag_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
-if [ "$after_sensitive_flag_count" -ne "$after_flag_count" ] || grep -Fq "TOKEN=secret" "$recent_file"; then
-  echo "[Error] Flag-style sensitive docker_opts args should not be written to interactive recents." >&2
+after_visible_flag_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+if [ "$after_visible_flag_count" -ne "$((after_flag_count + 1))" ] || ! grep -Fq -- "--docker-opts" "$recent_file"; then
+  echo "[Error] Flag-style docker_opts args should be written to interactive recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+
+interactive_record_recent_command start-nginx "--docker-opts=--env TOKEN=secret"
+after_visible_equals_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+if [ "$after_visible_equals_count" -ne "$((after_visible_flag_count + 1))" ] || ! grep -Fq -- "--docker-opts=--env TOKEN=secret" "$recent_file"; then
+  echo "[Error] Equals-style docker_opts args should be written to interactive recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+
+before_header_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+interactive_record_recent_command add-header response X-Token "Bearer TOKEN=secret"
+after_header_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+if [ "$after_header_count" -ne "$((before_header_count + 1))" ] || ! grep -Fq "Bearer TOKEN=secret" "$recent_file"; then
+  echo "[Error] Header values should be written to interactive recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+
+before_backend_header_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+interactive_record_recent_command add-backend-header example.com request X-Backend-Token "TOKEN=backend-secret"
+after_backend_header_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+if [ "$after_backend_header_count" -ne "$((before_backend_header_count + 1))" ] || ! grep -Fq "TOKEN=backend-secret" "$recent_file"; then
+  echo "[Error] Backend header values should be written to interactive recents." >&2
   cat "$recent_file" >&2
   exit 1
 fi
@@ -246,6 +290,130 @@ if interactive_favorite_has_entry add-port 8 "$favorite_args"; then
   exit 1
 fi
 assert_row_count "$favorites_file" "$STATE_INTERACTIVE_FAVORITES_HEADER" 0
+
+visible_favorite_args="$(_interactive_command_args_csv response X-Token "Bearer TOKEN=secret")"
+interactive_favorite_command add-header 3 "$visible_favorite_args"
+if ! interactive_favorite_has_entry add-header 3 "$visible_favorite_args" || ! grep -Fq "Bearer TOKEN=secret" "$favorites_file"; then
+  echo "[Error] Favorite entries should preserve full header values." >&2
+  cat "$favorites_file" >&2
+  exit 1
+fi
+interactive_unfavorite_command add-header 3 "$visible_favorite_args"
+assert_row_count "$favorites_file" "$STATE_INTERACTIVE_FAVORITES_HEADER" 0
+
+VISIBILITY_POLICY=redacted
+redacted_recent_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+interactive_record_recent_command update-backend example.com nginx:alpine "--env TOKEN=redacted"
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip positional docker_opts recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command start-nginx --docker-opts "--env TOKEN=redacted"
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip flag-style docker_opts recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command start-nginx --docker-opts "" --env EMPTY_FLAG_TOKEN=redacted
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip flag-style docker_opts recents after an empty value." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command start-nginx "--docker-opts=" --env EMPTY_EQUALS_TOKEN=redacted
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip equals-style docker_opts recents after an empty value." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command set-nginx-docker-opts "" --env EMPTY_FIRST_TOKEN=redacted --cpus 1
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip variadic docker_opts recents after an empty first word." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command add-header response X-Token "Bearer TOKEN=redacted"
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip header-value recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command add-header --req-resp response --header X-Token --value "" Bearer EMPTY_FLAG_HEADER_TOKEN=redacted
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip header-value recents after an empty flag value." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command start-nginx "--docker-opts=--env TOKEN=redacted"
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip equals-style docker_opts recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+backend_clear_count_before="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+interactive_record_recent_command update-backend example.com nginx:alpine "__DOCKER_OPTS_CLEAR__"
+backend_clear_count_after="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
+backend_clear_recent_row="$(sed -n '2p' "$recent_file")"
+if [ "$backend_clear_count_after" -ne "$backend_clear_count_before" ] ||
+  [[ "$backend_clear_recent_row" != *"update-backend"* ]] ||
+  [[ "$backend_clear_recent_row" != *"__DOCKER_OPTS_CLEAR__"* ]]; then
+  echo "[Error] Redacted visibility policy should preserve backend docker opts clear recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+redacted_recent_count="$backend_clear_count_after"
+interactive_record_recent_command add-header --req-resp response --header X-Token "--value=Bearer TOKEN=redacted"
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+  echo "[Error] Redacted visibility policy should skip equals-style header-value recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command start-nginx --docker-opts ""
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ] || ! grep -Fq -- "--docker-opts" "$recent_file"; then
+  echo "[Error] Redacted visibility policy should preserve empty docker opts clear recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command set-hsts off
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ] || ! grep -Fq -- "set-hsts" "$recent_file"; then
+  echo "[Error] Redacted visibility policy should preserve HSTS off recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_record_recent_command set-hsts Off
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ] || ! grep -Fq -- "Off" "$recent_file"; then
+  echo "[Error] Redacted visibility policy should preserve HSTS Off recents." >&2
+  cat "$recent_file" >&2
+  exit 1
+fi
+interactive_load_recent_commands
+saved_idx=0
+while [ "$saved_idx" -lt "${#INTERACTIVE_SAVED_COMMANDS[@]}" ]; do
+  _interactive_saved_parse_args "${INTERACTIVE_SAVED_ARG_COUNTS[$saved_idx]}" "${INTERACTIVE_SAVED_ARGS_CSV[$saved_idx]}"
+  if interactive_command_has_sensitive_args "${INTERACTIVE_SAVED_COMMANDS[$saved_idx]}" "${INTERACTIVE_SAVED_ARGS[@]}"; then
+    echo "[Error] Redacted visibility policy should hide existing sensitive saved command ${INTERACTIVE_SAVED_COMMANDS[$saved_idx]}." >&2
+    exit 1
+  fi
+  saved_idx=$((saved_idx + 1))
+done
+redacted_favorite_args="$(_interactive_command_args_csv response X-Token "Bearer TOKEN=redacted")"
+interactive_favorite_command add-header 3 "$redacted_favorite_args"
+if interactive_favorite_has_entry add-header 3 "$redacted_favorite_args"; then
+  echo "[Error] Redacted visibility policy should skip sensitive favorites." >&2
+  cat "$favorites_file" >&2
+  exit 1
+fi
+redacted_clear_favorite_args="$(_interactive_command_args_csv example.com nginx:alpine "__DOCKER_OPTS_CLEAR__")"
+interactive_favorite_command update-backend 3 "$redacted_clear_favorite_args"
+if ! interactive_favorite_has_entry update-backend 3 "$redacted_clear_favorite_args" ||
+  ! grep -Fq -- "__DOCKER_OPTS_CLEAR__" "$favorites_file"; then
+  echo "[Error] Redacted visibility policy should preserve backend docker opts clear favorites." >&2
+  cat "$favorites_file" >&2
+  exit 1
+fi
+interactive_unfavorite_command update-backend 3 "$redacted_clear_favorite_args"
+VISIBILITY_POLICY=full
 
 PREPARE_RUNTIME_CALLS=0
 AVAILABILITY_STATUS=0

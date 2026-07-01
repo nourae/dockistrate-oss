@@ -360,6 +360,16 @@ function _sr_validate_rule_triplet() {
   if [[ "$cond" != "exists" && "$cond" != "not_exists" ]]; then
     _sr_validate_value "$value" || return 1
     _sr_validate_ip_selector_value "$selector" "$cond" "$value" "$context" || return 1
+    if [[ "$cond" == "in" || "$cond" == "not_in" ]] &&
+      declare -F _sr_exact_list_regex >/dev/null 2>&1 &&
+      ! _sr_exact_list_regex "$value" >/dev/null; then
+      if [ -n "$context" ]; then
+        echo "[Error] ${context}: list conditions require non-empty comma- or pipe-separated values." >&2
+      else
+        echo "[Error] List conditions require non-empty comma- or pipe-separated values." >&2
+      fi
+      return 1
+    fi
     if _sr_is_regex_condition "$cond"; then
       _sr_validate_regex_pattern "$value" "$context" || return 1
     fi

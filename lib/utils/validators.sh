@@ -196,6 +196,8 @@ function is_on_off() { case "${1:-}" in on | off) return 0 ;; *) return 1 ;; esa
 
 function is_true_false() { case "${1:-}" in true | false) return 0 ;; *) return 1 ;; esac }
 
+function is_valid_visibility_policy() { case "${1:-}" in full | redacted) return 0 ;; *) return 1 ;; esac }
+
 # IP address validation (IPv4 only)
 function is_valid_ipv4() {
   local ip="${1:-}"

@@ -100,4 +100,83 @@ function _sr_numeric_regex_ge() {
   fi
 }
 
+
+function _sr_numeric_regex_lt_same() {
+  local digits="$1" len=${#1}
+  if ((len == 0)); then
+    printf ''
+    return
+  fi
+
+  local first=${digits:0:1}
+  if ((len == 1)); then
+    if ((first <= 0)); then
+      printf ''
+    else
+      printf '[0-%d]' "$((first - 1))"
+    fi
+    return
+  fi
+
+  local rest="${digits:1}" parts=() joined="" idx tail rest_len=$((len - 1))
+  if ((first > 0)); then
+    parts+=("[0-$((first - 1))][0-9]{${rest_len}}")
+  fi
+
+  tail="$(_sr_numeric_regex_lt_same "$rest")"
+  if [ -n "$tail" ]; then
+    parts+=("${first}${tail}")
+  fi
+
+  if ((${#parts[@]} == 0)); then
+    printf ''
+    return
+  fi
+
+  joined="${parts[0]}"
+  for ((idx = 1; idx < ${#parts[@]}; idx++)); do
+    joined+="|${parts[$idx]}"
+  done
+  if ((${#parts[@]} > 1)); then
+    printf '(?:%s)' "$joined"
+  else
+    printf '%s' "$joined"
+  fi
+}
+
+
+function _sr_numeric_regex_lt() {
+  local raw="$(_sr_trim_leading_zeros "${1:-0}")"
+  if [ -z "$raw" ]; then raw="0"; fi
+  if [ "$raw" = "0" ]; then
+    printf '(?!)'
+    return
+  fi
+
+  local len=${#raw} parts=() joined="" idx same
+  if ((len > 1)); then
+    parts+=("[0-9]{1,$((len - 1))}")
+  fi
+
+  same="$(_sr_numeric_regex_lt_same "$raw")"
+  if [ -n "$same" ]; then
+    parts+=("${same}")
+  fi
+
+  joined="${parts[0]}"
+  for ((idx = 1; idx < ${#parts[@]}; idx++)); do
+    joined+="|${parts[$idx]}"
+  done
+  if ((${#parts[@]} > 1)); then
+    printf '(?:%s)' "$joined"
+  else
+    printf '%s' "$joined"
+  fi
+}
+
+
+function _sr_numeric_regex_le() {
+  _sr_numeric_regex_lt "$(_sr_numeric_inc "$1")"
+}
+
 # Map condition to Nginx predicates

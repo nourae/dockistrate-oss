@@ -1,5 +1,14 @@
 # shellcheck shell=bash
 
+function _prompt_args_headers_operator_value_for_display() {
+  local kind="${1:-}" value="${2:-}"
+  if declare -F operator_value_for_display >/dev/null 2>&1; then
+    operator_value_for_display "$kind" "$value"
+  else
+    printf '%s' "$value"
+  fi
+}
+
 # Return codes: 0 handled, 1 back/abort, 2 not handled
 function prompt_args_handle_headers() {
   local CMD="$1"
@@ -7,7 +16,7 @@ function prompt_args_handle_headers() {
   set-hsts)
     local cur_hsts
     cur_hsts="$(get_global_header_value "Strict-Transport-Security")"
-    read_with_editing "HSTS value (Off to remove)${cur_hsts:+ [${cur_hsts}]}: " cur_hsts "$cur_hsts"
+    read_with_editing "HSTS value (Off to remove)${cur_hsts:+ [$(_prompt_args_headers_operator_value_for_display header_value "$cur_hsts")]}: " cur_hsts "$cur_hsts"
     if is_back_input "$cur_hsts"; then
       SELECTED_CMD=""
       SELECTED_ARGS=()
@@ -21,7 +30,7 @@ function prompt_args_handle_headers() {
     local cur_csp
     cur_csp="$(get_global_header_value "Content-Security-Policy")"
     if [ -n "$cur_csp" ]; then
-      echo "[Info] Current global CSP: ${cur_csp}"
+      echo "[Info] Current global CSP: $(_prompt_args_headers_operator_value_for_display header_value "$cur_csp")"
     else
       echo "[Info] Current global CSP: <none>"
     fi
@@ -35,13 +44,13 @@ function prompt_args_handle_headers() {
         csv_parse_line "$line" || continue
         [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_HEADERS_COLS" ] || continue
         if [ "${CSV_FIELDS[1]}" = "response" ] && [ "${CSV_FIELDS[2]}" = "Content-Security-Policy" ]; then
-          b_csp="${b_csp} ${CSV_FIELDS[0]}=${CSV_FIELDS[3]}"
+          b_csp="${b_csp} ${CSV_FIELDS[0]}=$(_prompt_args_headers_operator_value_for_display header_value "${CSV_FIELDS[3]}")"
         fi
       done <"$BACKEND_HEADERS_FILE"
       b_csp="$(printf '%s' "$b_csp" | xargs)"
       [ -n "$b_csp" ] && echo "[Info] Backend CSP overrides: ${b_csp}"
     fi
-    read_with_editing "CSP value (Off to remove)${cur_csp:+ [${cur_csp}]}: " cur_csp "$cur_csp"
+    read_with_editing "CSP value (Off to remove)${cur_csp:+ [$(_prompt_args_headers_operator_value_for_display header_value "$cur_csp")]}: " cur_csp "$cur_csp"
     if is_back_input "$cur_csp"; then
       SELECTED_CMD=""
       SELECTED_ARGS=()
@@ -60,7 +69,7 @@ function prompt_args_handle_headers() {
     fi
     cur="$(get_backend_header_value "$domain" "Strict-Transport-Security")"
     [ -n "$cur" ] || cur="$(get_global_header_value "Strict-Transport-Security")"
-    read_with_editing "HSTS for ${domain} (Off to remove)${cur:+ [${cur}]}: " val "$cur"
+    read_with_editing "HSTS for ${domain} (Off to remove)${cur:+ [$(_prompt_args_headers_operator_value_for_display header_value "$cur")]}: " val "$cur"
     if is_back_input "$val"; then
       SELECTED_CMD=""
       SELECTED_ARGS=()
@@ -80,11 +89,11 @@ function prompt_args_handle_headers() {
     cur="$(get_backend_header_value "$domain" "Content-Security-Policy")"
     [ -n "$cur" ] || cur="$(get_global_header_value "Content-Security-Policy")"
     if [ -n "$cur" ]; then
-      echo "[Info] Current CSP for ${domain}: ${cur}"
+      echo "[Info] Current CSP for ${domain}: $(_prompt_args_headers_operator_value_for_display header_value "$cur")"
     else
       echo "[Info] Current CSP for ${domain}: <none>"
     fi
-    read_with_editing "CSP for ${domain} (Off to remove)${cur:+ [${cur}]}: " val "$cur"
+    read_with_editing "CSP for ${domain} (Off to remove)${cur:+ [$(_prompt_args_headers_operator_value_for_display header_value "$cur")]}: " val "$cur"
     if is_back_input "$val"; then
       SELECTED_CMD=""
       SELECTED_ARGS=()

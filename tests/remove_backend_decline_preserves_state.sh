@@ -100,4 +100,35 @@ if ! cmp -s "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.orig"; then
   exit 1
 fi
 
-printf 'remove_backend aborts cleanly when container deletion is declined.\n'
+unset -f confirm_prompt
+# shellcheck source=../lib/utils/prompts.sh
+source "$ROOT_DIR/lib/utils/prompts.sh"
+
+INTERACTIVE=false
+function begin_transaction() { BEGIN_TXN_CALLED="true"; return 1; }
+
+BEGIN_TXN_CALLED="false"
+remove_backend example.com >"$TMP_ROOT/remove_backend_auto_yes.out" 2>&1 || true
+output="$(cat "$TMP_ROOT/remove_backend_auto_yes.out")"
+if [ "$BEGIN_TXN_CALLED" != "true" ]; then
+  echo "[Error] remove_backend should reach transaction start after non-interactive auto-confirm." >&2
+  exit 1
+fi
+if ! grep -Fq "Pass --yes to make this explicit" <<<"$output"; then
+  echo "[Error] remove_backend should warn when non-interactive compatibility auto-confirm is used." >&2
+  exit 1
+fi
+
+BEGIN_TXN_CALLED="false"
+remove_backend --yes example.com >"$TMP_ROOT/remove_backend_explicit_yes.out" 2>&1 || true
+output="$(cat "$TMP_ROOT/remove_backend_explicit_yes.out")"
+if [ "$BEGIN_TXN_CALLED" != "true" ]; then
+  echo "[Error] remove_backend --yes should reach transaction start without prompting." >&2
+  exit 1
+fi
+if grep -Fq "Pass --yes to make this explicit" <<<"$output"; then
+  echo "[Error] remove_backend --yes should not emit the non-interactive compatibility warning." >&2
+  exit 1
+fi
+
+printf 'remove_backend confirmation behavior checks passed.\n'

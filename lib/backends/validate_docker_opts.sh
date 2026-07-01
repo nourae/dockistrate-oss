@@ -224,6 +224,16 @@ function _docker_opts_quote_token() {
   printf "'%s'" "$token"
 }
 
+function _docker_opts_rejected_token_for_display() {
+  if declare -F operator_visibility_is_redacted >/dev/null 2>&1 &&
+    operator_visibility_is_redacted; then
+    printf '%s' "$OPERATOR_VISIBILITY_REDACTED_VALUE"
+    return 0
+  fi
+
+  _docker_opts_quote_token "${1:-}"
+}
+
 function normalize_docker_opts_for_storage() {
   local raw_opts="${1:-}" context="${2:-docker options}" profile="${3:-backend}" reserved_label_policy="${4:-reject}"
   [ -z "$raw_opts" ] && return 0
@@ -295,7 +305,7 @@ function normalize_docker_opts_for_storage() {
         pending_value_option=""
       else
         positional_owner_guidance="$(_docker_opts_positional_owner_guidance "$profile")"
-        echo "[Error] Failed to parse ${context}: positional token $(_docker_opts_quote_token "$token") is not allowed in docker options because it can override ${positional_owner_guidance}." >&2
+        echo "[Error] Failed to parse ${context}: positional token $(_docker_opts_rejected_token_for_display "$token") is not allowed in docker options because it can override ${positional_owner_guidance}." >&2
         return 1
       fi
     fi

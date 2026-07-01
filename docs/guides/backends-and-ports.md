@@ -8,7 +8,7 @@ them through the shared Nginx proxy.
 ```text
 add-backend <domain> <image> <container_port> <http|https|tcp|udp> [options]
 update-backend <domain> [--image img] [--container-port port] [--docker-opts opts] [--network net]
-remove-backend <domain>
+remove-backend [--yes] <domain>
 list-backends
 
 add-port <domain> <nginx_port> <container_port> <http|https|tcp|udp> <cert_path|none> [yes|no ws] [--http3 on|off] [--alt-svc auto|off|value]
@@ -92,5 +92,5 @@ curl -i http://localhost -H 'Host: example.com'
 
 ```bash
 ./dockistrate.sh remove-port example.com 80
-./dockistrate.sh remove-backend example.com
+./dockistrate.sh remove-backend --yes example.com
 ```

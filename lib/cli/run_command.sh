@@ -1,16 +1,338 @@
 # shellcheck shell=bash
 
+function _run_command_audit_message() {
+  local cmd="$1"
+  shift || true
+  local args=("$@")
+  local spec="" idx=0 arg="" arg_name="" consume_next_option_value=false consume_next_option_arg_name="" positional_idx=0
+  local next_arg="" sensitive_value=false option_idx=0 consume_next_option_spec_idx=0
+
+  printf '%s' "$cmd"
+  if declare -F get_arg_spec >/dev/null 2>&1 &&
+    declare -F cli_parse_arg_spec >/dev/null 2>&1; then
+    spec="$(get_arg_spec "$cmd" 2>/dev/null || true)"
+    cli_parse_arg_spec "$spec"
+  else
+    CLI_SPEC_NAMES=()
+  fi
+
+  [ "${#args[@]}" -gt 0 ] 2>/dev/null || return 0
+
+  for idx in "${!args[@]}"; do
+    arg="${args[$idx]}"
+    if [ "$consume_next_option_value" = true ]; then
+      next_arg=""
+      if [ "$idx" -lt "$((${#args[@]} - 1))" ]; then
+        next_arg="${args[$((idx + 1))]}"
+      fi
+      sensitive_value=false
+      if [ -n "$consume_next_option_arg_name" ] &&
+        _run_command_arg_is_sensitive "$cmd" "$consume_next_option_arg_name" "$arg"; then
+        sensitive_value=true
+        printf ' %s' "$OPERATOR_VISIBILITY_REDACTED_VALUE"
+      elif _run_command_should_redact_sensitive_trailing_words "$cmd" "$consume_next_option_arg_name" "$next_arg"; then
+        printf ' %s' "$OPERATOR_VISIBILITY_REDACTED_VALUE"
+        break
+      else
+        printf ' %s' "$arg"
+      fi
+      if [ "$sensitive_value" = true ] &&
+        _run_command_should_stop_after_redacted_value "$cmd" "$consume_next_option_arg_name" "$arg" "$next_arg"; then
+        break
+      fi
+      if [ "$positional_idx" -le "$consume_next_option_spec_idx" ] 2>/dev/null; then
+        positional_idx=$((consume_next_option_spec_idx + 1))
+      fi
+      consume_next_option_value=false
+      consume_next_option_arg_name=""
+      consume_next_option_spec_idx=0
+      continue
+    fi
+    if [[ "$arg" == --*=* ]] && _run_command_arg_name_for_option arg_name "${arg%%=*}"; then
+      next_arg=""
+      if [ "$idx" -lt "$((${#args[@]} - 1))" ]; then
+        next_arg="${args[$((idx + 1))]}"
+      fi
+      if _run_command_arg_is_sensitive "$cmd" "$arg_name" "${arg#*=}"; then
+        printf ' %s=%s' "${arg%%=*}" "$OPERATOR_VISIBILITY_REDACTED_VALUE"
+        if _run_command_should_stop_after_redacted_value "$cmd" "$arg_name" "${arg#*=}" "$next_arg"; then
+          break
+        fi
+      elif _run_command_should_redact_sensitive_trailing_words "$cmd" "$arg_name" "$next_arg"; then
+        printf ' %s=%s' "${arg%%=*}" "$OPERATOR_VISIBILITY_REDACTED_VALUE"
+        break
+      else
+        printf ' %s' "$arg"
+      fi
+      if _run_command_arg_index_for_name option_idx "$arg_name" &&
+        [ "$positional_idx" -le "$option_idx" ] 2>/dev/null; then
+        positional_idx=$((option_idx + 1))
+      fi
+      continue
+    fi
+    if _run_command_arg_name_for_option arg_name "$arg"; then
+      printf ' %s' "$arg"
+      consume_next_option_value=true
+      consume_next_option_arg_name="$arg_name"
+      consume_next_option_spec_idx=0
+      _run_command_arg_index_for_name consume_next_option_spec_idx "$arg_name" || true
+      continue
+    fi
+    arg_name=""
+    if [ "$positional_idx" -lt "${#CLI_SPEC_NAMES[@]}" ] 2>/dev/null; then
+      arg_name="${CLI_SPEC_NAMES[$positional_idx]}"
+    fi
+    if [[ "$arg" == --* ]] && [ -n "$arg_name" ] &&
+      ! _run_command_arg_is_sensitive "$cmd" "$arg_name" "$arg"; then
+      printf ' %s' "$arg"
+      continue
+    fi
+    if [ -n "$arg_name" ] && _run_command_arg_is_sensitive "$cmd" "$arg_name" "$arg"; then
+      printf ' %s' "$OPERATOR_VISIBILITY_REDACTED_VALUE"
+      if _run_command_sensitive_arg_consumes_remainder "$cmd" "$arg_name" ||
+        _run_command_sensitive_arg_redacts_trailing_words "$cmd" "$arg_name"; then
+        break
+      fi
+    elif _run_command_should_redact_sensitive_remainder "$cmd" "$arg_name" "$idx" "${#args[@]}"; then
+      printf ' %s' "$OPERATOR_VISIBILITY_REDACTED_VALUE"
+      break
+    else
+      printf ' %s' "$arg"
+    fi
+    positional_idx=$((positional_idx + 1))
+  done
+}
+
+function _run_command_sensitive_arg_consumes_remainder() {
+  local cmd="${1:-}" arg_name="${2:-}"
+  case "${cmd}:${arg_name}" in
+  set-nginx-docker-opts:docker_opts)
+    return 0
+    ;;
+  esac
+  return 1
+}
+
+function _run_command_sensitive_arg_redacts_trailing_words() {
+  local cmd="${1:-}" arg_name="${2:-}"
+  case "${cmd}:${arg_name}" in
+  add-header:value | update-header:value \
+  | add-backend-header:value | update-backend-header:value \
+  | set-hsts:hsts_value | set-backend-hsts:backend_hsts_value \
+  | set-csp:csp_value | set-backend-csp:backend_csp_value)
+    return 0
+    ;;
+  esac
+  return 1
+}
+
+function _run_command_should_redact_sensitive_remainder() {
+  local cmd="${1:-}" arg_name="${2:-}" idx="${3:-0}" arg_count="${4:-0}"
+  [ -n "$arg_name" ] || return 1
+  _run_command_arg_is_sensitive "$cmd" "$arg_name" || return 1
+  _run_command_sensitive_arg_consumes_remainder "$cmd" "$arg_name" || return 1
+  [ "$idx" -lt "$((arg_count - 1))" ] 2>/dev/null
+}
+
+function _run_command_is_redaction_boundary_option() {
+  local cmd="${1:-}" option="${2:-}"
+  case "${cmd}:${option}" in
+  add-backend:--no-expose)
+    return 0
+    ;;
+  esac
+  return 1
+}
+
+function _run_command_next_arg_is_cli_option() {
+  local cmd="${1:-}" next_arg="${2:-}" option="" arg_name=""
+  [ -n "$next_arg" ] || return 1
+  option="$next_arg"
+  if [[ "$next_arg" == --*=* ]]; then
+    option="${next_arg%%=*}"
+  fi
+  _run_command_is_redaction_boundary_option "$cmd" "$option" && return 0
+  _run_command_arg_name_for_option arg_name "$option"
+}
+
+function _run_command_should_redact_sensitive_trailing_words() {
+  local cmd="${1:-}" arg_name="${2:-}" next_arg="${3:-}"
+  [ -n "$arg_name" ] || return 1
+  [ -n "$next_arg" ] || return 1
+  _run_command_arg_is_sensitive "$cmd" "$arg_name" || return 1
+  if _run_command_sensitive_arg_redacts_trailing_words "$cmd" "$arg_name" ||
+    [ "$arg_name" = "docker_opts" ]; then
+    ! _run_command_next_arg_is_cli_option "$cmd" "$next_arg"
+    return
+  fi
+  return 1
+}
+
+function _run_command_should_stop_after_redacted_value() {
+  local cmd="${1:-}" arg_name="${2:-}" value="${3:-}" next_arg="${4:-}"
+  _run_command_sensitive_arg_consumes_remainder "$cmd" "$arg_name" && return 0
+  _run_command_sensitive_arg_redacts_trailing_words "$cmd" "$arg_name" && return 0
+  if [ "$arg_name" = "docker_opts" ] && [[ "$value" == --* ]] &&
+    [ -n "$next_arg" ] && ! _run_command_next_arg_is_cli_option "$cmd" "$next_arg"; then
+    return 0
+  fi
+  return 1
+}
+
+function _run_command_arg_is_sensitive() {
+  declare -F arg_is_sensitive >/dev/null 2>&1 || return 1
+  arg_is_sensitive "$@"
+}
+
+function _run_command_has_sensitive_args() {
+  local cmd="${1:-}"
+  shift || true
+  local args=("$@")
+  local spec="" idx=0 arg="" arg_name="" positional_idx=0 consume_next_option_value=false consume_next_option_arg_name=""
+  local next_arg="" option_idx=0 consume_next_option_spec_idx=0
+
+  declare -F get_arg_spec >/dev/null 2>&1 || return 1
+  declare -F cli_parse_arg_spec >/dev/null 2>&1 || return 1
+  declare -F arg_is_sensitive >/dev/null 2>&1 || return 1
+
+  spec="$(get_arg_spec "$cmd" 2>/dev/null || true)"
+  cli_parse_arg_spec "$spec"
+
+  [ "${#args[@]}" -gt 0 ] 2>/dev/null || return 1
+
+  for idx in "${!args[@]}"; do
+    arg="${args[$idx]}"
+    if [ "$consume_next_option_value" = true ]; then
+      next_arg=""
+      if [ "$idx" -lt "$((${#args[@]} - 1))" ]; then
+        next_arg="${args[$((idx + 1))]}"
+      fi
+      if [ -n "$consume_next_option_arg_name" ] &&
+        _run_command_arg_is_sensitive "$cmd" "$consume_next_option_arg_name" "$arg"; then
+        return 0
+      fi
+      if _run_command_should_redact_sensitive_trailing_words "$cmd" "$consume_next_option_arg_name" "$next_arg"; then
+        return 0
+      fi
+      if [ "$positional_idx" -le "$consume_next_option_spec_idx" ] 2>/dev/null; then
+        positional_idx=$((consume_next_option_spec_idx + 1))
+      fi
+      consume_next_option_value=false
+      consume_next_option_arg_name=""
+      consume_next_option_spec_idx=0
+      continue
+    fi
+    if [[ "$arg" == --*=* ]] && _run_command_arg_name_for_option arg_name "${arg%%=*}"; then
+      next_arg=""
+      if [ "$idx" -lt "$((${#args[@]} - 1))" ]; then
+        next_arg="${args[$((idx + 1))]}"
+      fi
+      if _run_command_arg_is_sensitive "$cmd" "$arg_name" "${arg#*=}"; then
+        return 0
+      fi
+      if _run_command_should_redact_sensitive_trailing_words "$cmd" "$arg_name" "$next_arg"; then
+        return 0
+      fi
+      if _run_command_arg_index_for_name option_idx "$arg_name" &&
+        [ "$positional_idx" -le "$option_idx" ] 2>/dev/null; then
+        positional_idx=$((option_idx + 1))
+      fi
+      continue
+    fi
+    if _run_command_arg_name_for_option arg_name "$arg"; then
+      consume_next_option_value=true
+      consume_next_option_arg_name="$arg_name"
+      consume_next_option_spec_idx=0
+      _run_command_arg_index_for_name consume_next_option_spec_idx "$arg_name" || true
+      continue
+    fi
+    arg_name=""
+    if [ "$positional_idx" -lt "${#CLI_SPEC_NAMES[@]}" ] 2>/dev/null; then
+      arg_name="${CLI_SPEC_NAMES[$positional_idx]}"
+    fi
+    if [[ "$arg" == --* ]] && [ -n "$arg_name" ] &&
+      ! _run_command_arg_is_sensitive "$cmd" "$arg_name" "$arg"; then
+      continue
+    fi
+    if [ -n "$arg_name" ] && _run_command_arg_is_sensitive "$cmd" "$arg_name" "$arg"; then
+      return 0
+    fi
+    if _run_command_should_redact_sensitive_remainder "$cmd" "$arg_name" "$idx" "${#args[@]}"; then
+      return 0
+    fi
+    positional_idx=$((positional_idx + 1))
+  done
+
+  return 1
+}
+
+function _run_command_arg_index_for_name() {
+  local __arg_idx_var="${1:-}" target_name="${2:-}"
+  local spec_idx=0
+
+  require_valid_var_name "$__arg_idx_var" || return 1
+  [ -n "$target_name" ] || return 1
+  [ "${#CLI_SPEC_NAMES[@]}" -gt 0 ] 2>/dev/null || return 1
+
+  for spec_idx in "${!CLI_SPEC_NAMES[@]}"; do
+    if [ "${CLI_SPEC_NAMES[$spec_idx]}" = "$target_name" ]; then
+      printf -v "$__arg_idx_var" '%s' "$spec_idx"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+function _run_command_arg_name_for_option() {
+  local __arg_name_var="${1:-}" option="${2:-}"
+  local normalized spec_arg_name
+
+  require_valid_var_name "$__arg_name_var" || return 1
+  case "$option" in
+  --*) normalized="${option#--}" ;;
+  *) return 1 ;;
+  esac
+  normalized="${normalized//-/_}"
+
+  [ "${#CLI_SPEC_NAMES[@]}" -gt 0 ] 2>/dev/null || return 1
+
+  for spec_arg_name in "${CLI_SPEC_NAMES[@]}"; do
+    if [ "$spec_arg_name" = "$normalized" ]; then
+      printf -v "$__arg_name_var" '%s' "$spec_arg_name"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+function _run_command_verbose_message() {
+  local cmd="$1"
+  shift || true
+  if declare -F operator_visibility_is_redacted >/dev/null 2>&1 &&
+    operator_visibility_is_redacted; then
+    _run_command_audit_message "$cmd" "$@"
+    return 0
+  fi
+
+  printf '%s' "$cmd"
+  for arg in "$@"; do
+    printf ' %s' "$arg"
+  done
+}
+
 function run_command() {
   local CMD="$1"
   shift || true
 
   if ! declare -F dockistrate_command_skips_runtime_prep >/dev/null 2>&1 ||
     ! dockistrate_command_skips_runtime_prep "$CMD" "$@"; then
-    audit_log "${CMD} $*"
+    audit_log "$(_run_command_audit_message "$CMD" "$@")"
   fi
 
   if [ "${VERBOSE:-false}" = true ]; then
-    printf '[Verbose] run_command %s %s\n' "$CMD" "$*" >&2
+    printf '[Verbose] run_command %s\n' "$(_run_command_verbose_message "$CMD" "$@")" >&2
   fi
 
   case "$CMD" in
@@ -172,6 +494,8 @@ function run_command() {
   set-real-ip-recursive) set_real_ip_recursive "$@" ;;
   set-nginx-docker-opts) set_nginx_docker_opts "$@" ;;
   show-nginx-docker-opts) show_nginx_docker_opts ;;
+  set-visibility-policy) set_visibility_policy "$@" ;;
+  show-visibility-policy) show_visibility_policy ;;
   set-nginx-image) set_nginx_image "$@" ;;
   set-certbot-image) set_certbot_image "$@" ;;
   start-capture) start_capture "$@" ;;

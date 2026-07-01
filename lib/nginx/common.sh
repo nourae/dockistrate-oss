@@ -89,6 +89,43 @@ function _nginx_container_has_expected_mounts() {
   return 0
 }
 
+function _nginx_container_network_names() {
+  local cname="${1:-}"
+  [ -n "$cname" ] || return 1
+  if declare -F get_container_network_names >/dev/null 2>&1; then
+    get_container_network_names "$cname"
+    return $?
+  fi
+  docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{printf "%s\n" $k}}{{end}}' "$cname" 2>/dev/null || true
+}
+
+function _nginx_container_network_ip() {
+  local cname="${1:-}" network="${2:-}" escaped_network=""
+  [ -n "$cname" ] || return 1
+  [ -n "$network" ] || return 1
+  if declare -F get_container_network_ip >/dev/null 2>&1; then
+    get_container_network_ip "$cname" "$network"
+    return $?
+  fi
+
+  escaped_network="${network//\\/\\\\}"
+  escaped_network="${escaped_network//\"/\\\"}"
+  docker inspect -f "{{range \$k,\$v := .NetworkSettings.Networks}}{{if eq \$k \"${escaped_network}\"}}{{\$v.IPAddress}}{{end}}{{end}}" "$cname" 2>/dev/null || true
+}
+
+function _nginx_container_attached_to_network() {
+  local cname="${1:-}" network="${2:-}" ip=""
+  [ -n "$cname" ] || return 1
+  [ -n "$network" ] || return 1
+  if declare -F container_attached_to_network >/dev/null 2>&1; then
+    container_attached_to_network "$cname" "$network"
+    return $?
+  fi
+
+  ip="$(_nginx_container_network_ip "$cname" "$network")"
+  [ -n "$ip" ] && [[ "$ip" != "<no"* ]]
+}
+
 function nginx_container_is_managed() {
   local managed_label="" role_label="" state_dir_label="" expected_state_dir=""
   if ! nginx_container_exists_any; then
@@ -282,10 +319,20 @@ function add_nginx_networks() {
   nets="$(printf '%s' "$nets" | awk 'NF > 0' | sort -u)"
   for net in $nets; do
     [ -z "$net" ] && continue
+    if ! is_valid_network_name "$net"; then
+      echo "[Error] Invalid backend network '${net}'." >&2
+      return 1
+    fi
     if ! ensure_network_exists "$net"; then
       return 1
     fi
-    docker network connect "$net" "$NGINX_CONTAINER_NAME" 2>/dev/null || true
+    if ! _nginx_container_attached_to_network "$NGINX_CONTAINER_NAME" "$net"; then
+      docker network connect "$net" "$NGINX_CONTAINER_NAME" 2>/dev/null || true
+    fi
+    if ! _nginx_container_attached_to_network "$NGINX_CONTAINER_NAME" "$net"; then
+      echo "[Error] Failed to connect Nginx container '${NGINX_CONTAINER_NAME}' to network '${net}'." >&2
+      return 1
+    fi
   done
 }
 

@@ -28,6 +28,35 @@ if ! confirm_prompt "Question?" "yes_no"; then
   exit 1
 fi
 
+warn_output="$(confirm_prompt "Question?" "yes_no" "warn_yes" 2>&1)"
+if ! grep -Fq "Non-interactive confirmation auto-approved" <<<"$warn_output"; then
+  echo "[Error] yes_no warn_yes should print a compatibility warning." >&2
+  echo "$warn_output" >&2
+  exit 1
+fi
+if ! grep -Fq "Pass an explicit confirmation flag to make this explicit" <<<"$warn_output"; then
+  echo "[Error] yes_no warn_yes should use the generic explicit-confirmation hint by default." >&2
+  echo "$warn_output" >&2
+  exit 1
+fi
+if grep -Fq "Pass --yes to make this explicit" <<<"$warn_output"; then
+  echo "[Error] yes_no warn_yes should not hard-code --yes in the shared helper default." >&2
+  echo "$warn_output" >&2
+  exit 1
+fi
+
+custom_warn_output="$(confirm_prompt "Question?" "yes_no" "warn_yes" "--force" 2>&1)"
+if ! grep -Fq "Pass --force to make this explicit" <<<"$custom_warn_output"; then
+  echo "[Error] yes_no warn_yes should honor an explicit confirmation hint." >&2
+  echo "$custom_warn_output" >&2
+  exit 1
+fi
+
+if confirm_prompt "Question?" "yes_no" "require_yes" >/dev/null 2>&1; then
+  echo "[Error] yes_no require_yes should fail in non-interactive mode." >&2
+  exit 1
+fi
+
 if confirm_prompt "Type YES to proceed:" "strict_yes" >/dev/null 2>&1; then
   echo "[Error] strict_yes should fail in non-interactive mode." >&2
   exit 1

@@ -190,7 +190,7 @@ function _status_print_global_settings() {
   echo "Client IP Header: ${CLIENT_IP_HEADER:-off}"
   echo "Proxy IP Header: ${PROXY_IP_HEADER:-off}"
   if [ -n "${NGINX_DOCKER_OPTS:-}" ]; then
-    echo "Nginx Docker Opts: ${NGINX_DOCKER_OPTS}"
+    echo "Nginx Docker Opts: $(operator_value_for_display docker_opts "${NGINX_DOCKER_OPTS}")"
   else
     echo "Nginx Docker Opts: [None]"
   fi
@@ -241,7 +241,7 @@ function _status_print_global_headers() {
       csv_parse_line "$line" || continue
       [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || continue
       if [ "${CSV_FIELDS[0]}" = "request" ]; then
-        echo "  ${CSV_FIELDS[1]}: ${CSV_FIELDS[2]}"
+        echo "  ${CSV_FIELDS[1]}: $(operator_value_for_display header_value "${CSV_FIELDS[2]}")"
         found_request=true
       fi
     done <"$CUSTOM_HEADERS_FILE"
@@ -258,7 +258,7 @@ function _status_print_global_headers() {
       csv_parse_line "$line" || continue
       [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || continue
       if [ "${CSV_FIELDS[0]}" = "response" ]; then
-        echo "  ${CSV_FIELDS[1]}: ${CSV_FIELDS[2]}"
+        echo "  ${CSV_FIELDS[1]}: $(operator_value_for_display header_value "${CSV_FIELDS[2]}")"
         found_response=true
       fi
     done <"$CUSTOM_HEADERS_FILE"
@@ -279,7 +279,7 @@ function _status_print_backend_header_overrides() {
       [ "$line_no" -eq 1 ] && continue
       csv_parse_line "$line" || continue
       [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_HEADERS_COLS" ] || continue
-      printf "%-20s | %-8s | %-20s | %s\n" "${CSV_FIELDS[0]}" "${CSV_FIELDS[1]}" "${CSV_FIELDS[2]}" "${CSV_FIELDS[3]}"
+      printf "%-20s | %-8s | %-20s | %s\n" "${CSV_FIELDS[0]}" "${CSV_FIELDS[1]}" "${CSV_FIELDS[2]}" "$(operator_value_for_display header_value "${CSV_FIELDS[3]}")"
     done <"$BACKEND_HEADERS_FILE"
   else
     echo "[None]"
@@ -419,7 +419,7 @@ function _status_print_backend_docker_opts() {
       ;;
     esac
     found=true
-    printf "%-26s | %s\n" "$domain" "$opts"
+    printf "%-26s | %s\n" "$domain" "$(operator_value_for_display docker_opts "$opts")"
   done <"$BACKEND_DOCKER_OPTS_FILE"
   if [ "$found" = false ]; then
     echo "[None]"

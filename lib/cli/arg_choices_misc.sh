@@ -39,6 +39,15 @@ function __arg_choices_port_mapping_lines_for_domain() {
   done <"$BACKEND_PORTS_FILE" | sort -n
 }
 
+function __arg_choices_common_listen_ports() {
+  echo "80|80"
+  echo "443|443"
+  echo "8080|8080"
+  echo "8443|8443"
+  echo "18180|18180"
+  echo "__MANUAL__|Enter manually..."
+}
+
 function __arg_choices_cert_folder_ports() {
   local folder="${1:-}"
   [ -f "$BACKEND_PORTS_FILE" ] || return 0
@@ -54,6 +63,56 @@ function __arg_choices_cert_folder_ports() {
       printf '%s\n' "$STATE_BP_LISTEN_PORT"
     fi
   done <"$BACKEND_PORTS_FILE"
+}
+
+function __arg_choices_cert_suffixes_for_domain() {
+  local domain="${1:-}" seen="|443|" t="" d="" folder="" suffix="" line="" line_no=0
+  echo "443|443 (default)"
+  if [ -n "$domain" ] && [ -d "$CERTS_DIR" ]; then
+    for t in letsencrypt selfsigned custom; do
+      [ -d "$CERTS_DIR/$t/live" ] || continue
+      for d in "$CERTS_DIR/$t/live"/*; do
+        [ -d "$d" ] || continue
+        folder="$(basename "$d")"
+        if [ "$folder" = "$domain" ]; then
+          suffix="443"
+        elif [[ "$folder" == "${domain}_"* ]]; then
+          suffix="${folder#${domain}_}"
+        else
+          continue
+        fi
+        [ -n "$suffix" ] || continue
+        case "$seen" in
+        *"|${suffix}|"*) ;;
+        *)
+          seen="${seen}${suffix}|"
+          printf '%s|%s\n' "$suffix" "$suffix"
+          ;;
+        esac
+      done
+    done
+  fi
+  if [ -n "$domain" ] && [ -f "$BACKEND_PORTS_FILE" ]; then
+    while IFS= read -r line || [ -n "$line" ]; do
+      line_no=$((line_no + 1))
+      [ "$line_no" -eq 1 ] && continue
+      state_backend_ports_parse_line "$line" || continue
+      [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_PORTS_COLS" ] || continue
+      [ "${STATE_BP_RECORD_TYPE:-}" = "port" ] || continue
+      [ "${STATE_BP_DOMAIN:-}" = "$domain" ] || continue
+      [ "${STATE_BP_PROTOCOL:-}" = "https" ] || continue
+      suffix="${STATE_BP_LISTEN_PORT:-}"
+      [ -n "$suffix" ] || continue
+      case "$seen" in
+      *"|${suffix}|"*) ;;
+      *)
+        seen="${seen}${suffix}|"
+        printf '%s|%s (HTTPS mapping)\n' "$suffix" "$suffix"
+        ;;
+      esac
+    done <"$BACKEND_PORTS_FILE"
+  fi
+  echo "__MANUAL__|Enter manually..."
 }
 
 function __arg_choices_csv_col_values() {
@@ -103,6 +162,25 @@ function __arg_choices_backend_domains_http_https() {
       ;;
     esac
   done <"$BACKEND_PORTS_FILE" | sort -u
+}
+
+function __arg_choices_cert_domains() {
+  local t="" d="" folder="" domain_part=""
+  [ -d "$CERTS_DIR" ] || return 0
+  for t in letsencrypt selfsigned custom; do
+    [ -d "$CERTS_DIR/$t/live" ] || continue
+    for d in "$CERTS_DIR/$t/live"/*; do
+      [ -d "$d" ] || continue
+      folder="$(basename "$d")"
+      if [[ "$folder" == *_* ]]; then
+        domain_part="${folder%%_*}"
+      else
+        domain_part="$folder"
+      fi
+      [ -n "$domain_part" ] || continue
+      printf '%s\n' "$domain_part"
+    done
+  done
 }
 
 function __arg_choices_dedicated_alias_column() {
@@ -189,6 +267,13 @@ function __arg_choices_domain() {
   local cmd="$1" aliases_file=""
   case "$cmd" in
   add-backend)
+    ;;
+  add-cert | replace-cert | remove-cert)
+    {
+      __arg_choices_backend_domains_all
+      __arg_choices_cert_domains
+    } | sort -u
+    echo "__MANUAL__|Enter manually..."
     ;;
   add-dedicated-host)
     __arg_choices_backend_domains_http_https
@@ -376,6 +461,14 @@ function __arg_choices_client_name() {
 function __arg_choices_nginx_port() {
   local cmd="$1"
   case "$cmd" in
+  add-port)
+    __arg_choices_common_listen_ports
+    ;;
+  update-port)
+    if [ -n "${CURRENT_ARGS[0]:-}" ] && [ -f "$BACKEND_PORTS_FILE" ]; then
+      __arg_choices_port_mapping_lines_for_domain "${CURRENT_ARGS[0]}"
+    fi
+    ;;
   remove-port)
     if [ -n "${CURRENT_ARGS[0]:-}" ] && [ -f "$BACKEND_PORTS_FILE" ]; then
       __arg_choices_port_mapping_lines_for_domain "${CURRENT_ARGS[0]}"
@@ -600,6 +693,11 @@ function __arg_choices_on_off() {
   echo -e "on\noff"
 }
 
+function __arg_choices_visibility_policy() {
+  echo "full|Full visibility"
+  echo "redacted|Redacted display/history/audit"
+}
+
 function __arg_choices_expose() {
   echo -e "yes\nno"
 }
@@ -690,6 +788,17 @@ function __arg_choices_req_resp() {
   echo -e "request\nresponse"
 }
 
+function __arg_choices_cert_choice() {
+  echo "selfsigned|Generate self-signed certificate"
+  echo "letsencrypt|Generate Let's Encrypt certificate"
+  echo "upload|Upload existing fullchain.pem and privkey.pem"
+}
+
+function __arg_choices_port_suffix() {
+  local domain="${CURRENT_ARGS[0]:-}"
+  __arg_choices_cert_suffixes_for_domain "$domain"
+}
+
 function __arg_choices_cert_path() {
   local cmd="$1"
   if [ -d "$CERTS_DIR" ]; then
@@ -743,8 +852,11 @@ function __arg_choices_cert_path() {
     fi
   fi
   if [ "$cmd" = "add-backend" ]; then
+    echo "none|Generate self-signed certificate"
     echo "selfsigned|Generate self-signed certificate"
     echo "letsencrypt|Generate Let's Encrypt certificate"
+  elif [ "$cmd" = "add-port" ] || [ "$cmd" = "update-port" ]; then
+    echo "none|Generate self-signed certificate"
   else
     echo "none|none"
   fi

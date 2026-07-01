@@ -2,7 +2,7 @@
 
 function _generate_security_rule_line() {
   local domain="$1" selector="$2" cond="$3" value="$4" code="$5" reason="${6:--}" loc="${7:-auto}" seed="${8:-}"
-  local hv="" esc="" d="" f="" p="" rule_var=""
+  local hv="" esc="" display_value="" fail_predicate="" pass_predicate="" rule_var=""
   local esc_reason="$reason" esc_loc="$loc"
   _sr_next_rule_var rule_var "$seed"
   _sr_selector_to_var "$selector" hv _
@@ -11,10 +11,11 @@ function _generate_security_rule_line() {
   esc_loc="$(_escape_nginx_value "$esc_loc")"
   local sep=$'\x1f' expr
   expr="$(_sr_exprs "$cond" "$esc")" || return 1
-  IFS=$sep read -r d f p <<<"$expr"
+  IFS=$sep read -r display_value fail_predicate pass_predicate <<<"$expr"
   printf 'set $%s_m 0; if ($host = %s) { set $%s_m 1; } ' "$rule_var" "$domain" "$rule_var"
-  printf 'set $%s_p1 0; if (%s %s) { set $%s_p1 1; } ' "$rule_var" "$hv" "$f" "$rule_var"
-  printf 'set $%s_tmp "$%s_m$%s_p1"; if ($%s_tmp = "11") { set $dockistrate_rule_reason "%s"; set $dockistrate_rule_loc "%s"; return %s; }\n' "$rule_var" "$rule_var" "$rule_var" "$rule_var" "$esc_reason" "$esc_loc" "$code"
+  printf 'set $%s_fail 0; if ($%s_m = 1) { set $%s_fail 1; } ' "$rule_var" "$rule_var" "$rule_var"
+  printf 'set $%s_p1 0; if (%s %s) { set $%s_p1 1; } ' "$rule_var" "$hv" "$pass_predicate" "$rule_var"
+  printf 'if ($%s_p1 = 1) { set $%s_fail 0; } if ($%s_fail = 1) { set $dockistrate_rule_reason "%s"; set $dockistrate_rule_loc "%s"; return %s; }\n' "$rule_var" "$rule_var" "$rule_var" "$esc_reason" "$esc_loc" "$code"
 }
 
 function _generate_security_rule_multi_line() {
@@ -47,16 +48,16 @@ function _generate_security_rule_multi_line() {
     local c="${@:$((idx + 2)):1}"
     local v="${@:$((idx + 3)):1}"
     idx=$((idx + 3))
-    local hv="" esc="" d="" f="" p=""
+    local hv="" esc="" display_value="" fail_predicate="" pass_predicate=""
     _sr_selector_to_var "$h" hv _
     esc="$(_escape_nginx_value "$v")"
     local sep=$'\x1f' expr
     expr="$(_sr_exprs "$c" "$esc")" || return 1
-    IFS=$sep read -r d f p <<<"$expr" || return 1
+    IFS=$sep read -r display_value fail_predicate pass_predicate <<<"$expr" || return 1
     if [[ "$type" == "or" ]]; then
-      printf -v or_part '%s if (%s %s) { set $%s_pass 1; }' "$or_part" "$hv" "$p" "$rule_var"
+      printf -v or_part '%s if (%s %s) { set $%s_pass 1; }' "$or_part" "$hv" "$pass_predicate" "$rule_var"
     else
-      printf -v and_part '%s set $%s_p%d 0; if (%s %s) { set $%s_p%d 1; }' "$and_part" "$rule_var" "$i" "$hv" "$p" "$rule_var" "$i"
+      printf -v and_part '%s set $%s_p%d 0; if (%s %s) { set $%s_p%d 1; }' "$and_part" "$rule_var" "$i" "$hv" "$pass_predicate" "$rule_var" "$i"
       printf -v concat '%s$%s_p%d' "$concat" "$rule_var" "$i"
       ones+="1"
     fi

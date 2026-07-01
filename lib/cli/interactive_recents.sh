@@ -69,6 +69,15 @@ function _interactive_saved_parse_args() {
   INTERACTIVE_SAVED_ARGS=("${CSV_FIELDS[@]}")
 }
 
+function _interactive_saved_args_have_sensitive_values() {
+  local cmd="${1:-}"
+  if [ "${#INTERACTIVE_SAVED_ARGS[@]}" -gt 0 ] 2>/dev/null; then
+    interactive_command_has_sensitive_args "$cmd" "${INTERACTIVE_SAVED_ARGS[@]}"
+  else
+    interactive_command_has_sensitive_args "$cmd"
+  fi
+}
+
 function _interactive_arg_name_for_option() {
   local __arg_name_var="${1:-}" option="${2:-}"
   local normalized spec_arg_name
@@ -79,6 +88,7 @@ function _interactive_arg_name_for_option() {
   *) return 1 ;;
   esac
   normalized="${normalized//-/_}"
+  [ "${#CLI_SPEC_NAMES[@]}" -gt 0 ] 2>/dev/null || return 1
 
   for spec_arg_name in "${CLI_SPEC_NAMES[@]}"; do
     if [ "$spec_arg_name" = "$normalized" ]; then
@@ -90,11 +100,65 @@ function _interactive_arg_name_for_option() {
   return 1
 }
 
+function _interactive_sensitive_arg_consumes_remainder() {
+  local cmd="${1:-}" arg_name="${2:-}"
+  case "${cmd}:${arg_name}" in
+  set-nginx-docker-opts:docker_opts)
+    return 0
+    ;;
+  esac
+  return 1
+}
+
+function _interactive_sensitive_arg_redacts_trailing_words() {
+  local cmd="${1:-}" arg_name="${2:-}"
+  case "${cmd}:${arg_name}" in
+  add-header:value | update-header:value \
+  | add-backend-header:value | update-backend-header:value \
+  | set-hsts:hsts_value | set-backend-hsts:backend_hsts_value \
+  | set-csp:csp_value | set-backend-csp:backend_csp_value)
+    return 0
+    ;;
+  esac
+  return 1
+}
+
+function _interactive_next_arg_is_cli_option() {
+  local next_arg="${1:-}" option="" arg_name=""
+  [ -n "$next_arg" ] || return 1
+  option="$next_arg"
+  if [[ "$next_arg" == --*=* ]]; then
+    option="${next_arg%%=*}"
+  fi
+  _interactive_arg_name_for_option arg_name "$option"
+}
+
+function _interactive_should_redact_sensitive_trailing_words() {
+  local cmd="${1:-}" arg_name="${2:-}" next_arg="${3:-}"
+  [ -n "$arg_name" ] || return 1
+  [ -n "$next_arg" ] || return 1
+  arg_is_sensitive "$cmd" "$arg_name" || return 1
+  if _interactive_sensitive_arg_redacts_trailing_words "$cmd" "$arg_name" ||
+    [ "$arg_name" = "docker_opts" ]; then
+    ! _interactive_next_arg_is_cli_option "$next_arg"
+    return
+  fi
+  return 1
+}
+
+function _interactive_should_redact_sensitive_remainder() {
+  local cmd="${1:-}" arg_name="${2:-}" idx="${3:-0}" arg_count="${4:-0}"
+  [ -n "$arg_name" ] || return 1
+  arg_is_sensitive "$cmd" "$arg_name" || return 1
+  _interactive_sensitive_arg_consumes_remainder "$cmd" "$arg_name" || return 1
+  [ "$idx" -lt "$((arg_count - 1))" ] 2>/dev/null
+}
+
 function interactive_command_has_sensitive_args() {
   local cmd="${1:-}"
   shift || true
   local args=("$@")
-  local spec="" idx=0 arg_name="" saw_known_option=false next_arg=""
+  local spec="" idx=0 arg="" option="" option_value="" arg_name="" saw_known_option=false next_arg="" trailing_arg="" has_inline_option_value=false
 
   declare -F arg_is_sensitive >/dev/null 2>&1 || return 1
   declare -F get_arg_spec >/dev/null 2>&1 || return 1
@@ -102,16 +166,35 @@ function interactive_command_has_sensitive_args() {
   spec="$(get_arg_spec "$cmd" 2>/dev/null || true)"
   [ -n "$spec" ] || return 1
   cli_parse_arg_spec "$spec"
+  [ "${#args[@]}" -gt 0 ] || return 1
 
   for idx in "${!args[@]}"; do
-    if _interactive_arg_name_for_option arg_name "${args[$idx]}"; then
+    arg="${args[$idx]}"
+    option="$arg"
+    option_value=""
+    has_inline_option_value=false
+    if [[ "$arg" == --*=* ]]; then
+      option="${arg%%=*}"
+      option_value="${arg#*=}"
+      has_inline_option_value=true
+    fi
+
+    if _interactive_arg_name_for_option arg_name "$option"; then
       saw_known_option=true
-      if arg_is_sensitive "$cmd" "$arg_name"; then
-        next_arg=""
-        if [ "$idx" -lt "$((${#args[@]} - 1))" ]; then
-          next_arg="${args[$((idx + 1))]}"
-        fi
-        [ -n "$next_arg" ] && return 0
+      next_arg=""
+      if [ "$idx" -lt "$((${#args[@]} - 1))" ]; then
+        next_arg="${args[$((idx + 1))]}"
+      fi
+      trailing_arg=""
+      if [ "$idx" -lt "$((${#args[@]} - 2))" ]; then
+        trailing_arg="${args[$((idx + 2))]}"
+      fi
+      if [ "$has_inline_option_value" = true ]; then
+        arg_is_sensitive "$cmd" "$arg_name" "$option_value" && return 0
+        _interactive_should_redact_sensitive_trailing_words "$cmd" "$arg_name" "$next_arg" && return 0
+      else
+        arg_is_sensitive "$cmd" "$arg_name" "$next_arg" && return 0
+        _interactive_should_redact_sensitive_trailing_words "$cmd" "$arg_name" "$trailing_arg" && return 0
       fi
     fi
   done
@@ -120,7 +203,10 @@ function interactive_command_has_sensitive_args() {
   for idx in "${!args[@]}"; do
     [ "$idx" -lt "${#CLI_SPEC_NAMES[@]}" ] || break
     arg_name="${CLI_SPEC_NAMES[$idx]}"
-    if [ -n "${args[$idx]}" ] && arg_is_sensitive "$cmd" "$arg_name"; then
+    if arg_is_sensitive "$cmd" "$arg_name" "${args[$idx]}"; then
+      return 0
+    fi
+    if _interactive_should_redact_sensitive_remainder "$cmd" "$arg_name" "$idx" "${#args[@]}"; then
       return 0
     fi
   done
@@ -185,7 +271,7 @@ function interactive_record_recent_command() {
 }
 
 function interactive_load_recent_commands() {
-  local file line line_no
+  local file line line_no saved_timestamp saved_cmd saved_arg_count saved_args_csv
   file="$(interactive_recent_file)"
   INTERACTIVE_SAVED_TIMESTAMPS=()
   INTERACTIVE_SAVED_COMMANDS=()
@@ -207,15 +293,23 @@ function interactive_load_recent_commands() {
       echo "[Error] Invalid CSV column count in ${file} at line ${line_no}: expected ${STATE_INTERACTIVE_RECENTS_COLS}, got ${CSV_FIELD_COUNT}" >&2
       return 1
     fi
-    INTERACTIVE_SAVED_TIMESTAMPS+=("${CSV_FIELDS[0]}")
-    INTERACTIVE_SAVED_COMMANDS+=("${CSV_FIELDS[1]}")
-    INTERACTIVE_SAVED_ARG_COUNTS+=("${CSV_FIELDS[2]}")
-    INTERACTIVE_SAVED_ARGS_CSV+=("${CSV_FIELDS[3]}")
+    saved_timestamp="${CSV_FIELDS[0]}"
+    saved_cmd="${CSV_FIELDS[1]}"
+    saved_arg_count="${CSV_FIELDS[2]}"
+    saved_args_csv="${CSV_FIELDS[3]}"
+    if _interactive_saved_parse_args "$saved_arg_count" "$saved_args_csv" &&
+      _interactive_saved_args_have_sensitive_values "$saved_cmd"; then
+      continue
+    fi
+    INTERACTIVE_SAVED_TIMESTAMPS+=("$saved_timestamp")
+    INTERACTIVE_SAVED_COMMANDS+=("$saved_cmd")
+    INTERACTIVE_SAVED_ARG_COUNTS+=("$saved_arg_count")
+    INTERACTIVE_SAVED_ARGS_CSV+=("$saved_args_csv")
   done <"$file"
 }
 
 function interactive_load_favorite_commands() {
-  local file line line_no
+  local file line line_no saved_cmd saved_arg_count saved_args_csv
   file="$(interactive_favorites_file)"
   INTERACTIVE_SAVED_TIMESTAMPS=()
   INTERACTIVE_SAVED_COMMANDS=()
@@ -237,10 +331,17 @@ function interactive_load_favorite_commands() {
       echo "[Error] Invalid CSV column count in ${file} at line ${line_no}: expected ${STATE_INTERACTIVE_FAVORITES_COLS}, got ${CSV_FIELD_COUNT}" >&2
       return 1
     fi
+    saved_cmd="${CSV_FIELDS[0]}"
+    saved_arg_count="${CSV_FIELDS[1]}"
+    saved_args_csv="${CSV_FIELDS[2]}"
+    if _interactive_saved_parse_args "$saved_arg_count" "$saved_args_csv" &&
+      _interactive_saved_args_have_sensitive_values "$saved_cmd"; then
+      continue
+    fi
     INTERACTIVE_SAVED_TIMESTAMPS+=("")
-    INTERACTIVE_SAVED_COMMANDS+=("${CSV_FIELDS[0]}")
-    INTERACTIVE_SAVED_ARG_COUNTS+=("${CSV_FIELDS[1]}")
-    INTERACTIVE_SAVED_ARGS_CSV+=("${CSV_FIELDS[2]}")
+    INTERACTIVE_SAVED_COMMANDS+=("$saved_cmd")
+    INTERACTIVE_SAVED_ARG_COUNTS+=("$saved_arg_count")
+    INTERACTIVE_SAVED_ARGS_CSV+=("$saved_args_csv")
   done <"$file"
 }
 
@@ -268,6 +369,10 @@ function interactive_favorite_has_entry() {
 function interactive_favorite_command() {
   local cmd="${1:-}" arg_count="${2:-0}" args_csv="${3:-}" file tmp_file line line_no
   [ -n "$cmd" ] || return 1
+  if _interactive_saved_parse_args "$arg_count" "$args_csv" &&
+    _interactive_saved_args_have_sensitive_values "$cmd"; then
+    return 0
+  fi
   file="$(interactive_favorites_file)"
   mkdir -p "$(dirname "$file")"
   csv_require_header "$file" "$STATE_INTERACTIVE_FAVORITES_HEADER" || return 1
@@ -510,7 +615,11 @@ function interactive_picker_choose_saved_entry() {
     fi
     case "$action_idx" in
     0)
-      interactive_picker_run_saved_command "$cmd" "${args[@]}"
+      if [ "${#args[@]}" -gt 0 ]; then
+        interactive_picker_run_saved_command "$cmd" "${args[@]}"
+      else
+        interactive_picker_run_saved_command "$cmd"
+      fi
       return $?
       ;;
     1)

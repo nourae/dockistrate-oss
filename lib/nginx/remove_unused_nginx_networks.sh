@@ -4,7 +4,7 @@ function remove_unused_nginx_networks() {
   if ! nginx_container_is_managed; then
     return 0
   fi
-  local required_nets="$DEFAULT_NETWORK"
+  local required_nets="$DEFAULT_NETWORK"$'\n'
   if [ -f "$BACKEND_PORTS_FILE" ]; then
     local nets=""
     local line="" line_no=0
@@ -20,14 +20,14 @@ function remove_unused_nginx_networks() {
     nets="$(printf '%s' "$nets" | awk 'NF > 0' | sort -u)"
     for net in $nets; do
       [ -z "$net" ] && continue
-      required_nets+=" $net"
+      required_nets+="${net}"$'\n'
     done
   fi
 
   local current_nets
-  current_nets=$(docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{ $k }} {{end}}' "$NGINX_CONTAINER_NAME" 2>/dev/null | xargs)
+  current_nets="$(_nginx_container_network_names "$NGINX_CONTAINER_NAME")"
   for net in $current_nets; do
-    if [[ ! " $required_nets " =~ " $net " ]]; then
+    if ! printf '%s\n' "$required_nets" | grep -Fx -- "$net" >/dev/null; then
       docker network disconnect "$net" "$NGINX_CONTAINER_NAME" >/dev/null 2>&1 || true
     fi
   done

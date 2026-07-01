@@ -64,6 +64,16 @@ function prompt_args_postprocess() {
       [ -n "$alt_svc_choice" ] && args+=(--alt-svc "$alt_svc_choice")
     fi
   fi
+  if { [[ "$CMD" == "add-cert" ]] || [[ "$CMD" == "replace-cert" ]]; } && [ ${#args[@]} -ge 3 ]; then
+    local cert_domain="${args[0]:-}" cert_port="${args[1]:-443}" cert_choice="${args[2]:-selfsigned}"
+    local upload_fullchain="${args[3]:-}" upload_privkey="${args[4]:-}"
+    [ -n "$cert_port" ] || cert_port="443"
+    [ -n "$cert_choice" ] || cert_choice="selfsigned"
+    args=("$cert_domain" "$cert_port" "$cert_choice")
+    if [ "$cert_choice" = "upload" ]; then
+      args+=("$upload_fullchain" "$upload_privkey")
+    fi
+  fi
   if [[ "$CMD" == "remove-all-path-options" && ${#args[@]} -ge 1 ]]; then
     if [ "${args[0]}" = "__ALL__" ]; then
       args=()

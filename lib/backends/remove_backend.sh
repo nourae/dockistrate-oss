@@ -3,8 +3,12 @@ RB_REMOVE_DOMAIN=""
 
 function _remove_backend_restore_skip_update() {
   local prev_skip_update="${1-}"
-  if [ "$prev_skip_update" = "true" ]; then
-    SKIP_UPDATE_NGINX_CONFIG="true"
+  if declare -F pop_skip_update_nginx_config >/dev/null 2>&1; then
+    pop_skip_update_nginx_config "$prev_skip_update"
+    return 0
+  fi
+  if [ "$prev_skip_update" != "__dockistrate_unset__" ]; then
+    SKIP_UPDATE_NGINX_CONFIG="$prev_skip_update"
   else
     unset SKIP_UPDATE_NGINX_CONFIG
   fi
@@ -76,9 +80,30 @@ function _remove_backend_drop_alias_row() {
 }
 
 function remove_backend() {
-  local domain="${1:-}"
+  local domain="" assume_yes=false arg=""
+  while [ "$#" -gt 0 ]; do
+    arg="${1:-}"
+    case "$arg" in
+    --yes)
+      assume_yes=true
+      shift
+      ;;
+    -*)
+      echo "[Usage] remove-backend [--yes] <domain>"
+      exit 1
+      ;;
+    *)
+      if [ -n "$domain" ]; then
+        echo "[Usage] remove-backend [--yes] <domain>"
+        exit 1
+      fi
+      domain="$arg"
+      shift
+      ;;
+    esac
+  done
   [ -z "$domain" ] && {
-    echo "[Usage] remove-backend <domain>"
+    echo "[Usage] remove-backend [--yes] <domain>"
     exit 1
   }
   resolve_backend_domain domain "$domain" true
@@ -247,7 +272,12 @@ function remove_backend() {
   local container_name="backend-${domain_sane}"
   local remove_container_after_config=false
   if container_exists "$container_name"; then
-    if ! confirm_prompt "Remove container '${container_name}' for domain '${domain}'? (y/n): "; then
+    local noninteractive_policy="auto_yes"
+    if [ "$assume_yes" != true ] && [ "${INTERACTIVE:-false}" != true ]; then
+      noninteractive_policy="warn_yes"
+    fi
+    if [ "$assume_yes" != true ] &&
+      ! confirm_prompt "Remove container '${container_name}' for domain '${domain}'? (y/n): " "yes_no" "$noninteractive_policy" "--yes"; then
       echo "[Info] Aborting."
       return 0
     fi
@@ -257,8 +287,15 @@ function remove_backend() {
     return 1
   fi
 
-  local prev_skip_update="${SKIP_UPDATE_NGINX_CONFIG:-}"
-  SKIP_UPDATE_NGINX_CONFIG=true
+  local prev_skip_update="__dockistrate_unset__"
+  if declare -F push_skip_update_nginx_config >/dev/null 2>&1; then
+    push_skip_update_nginx_config prev_skip_update
+  else
+    if [ "${SKIP_UPDATE_NGINX_CONFIG+x}" = "x" ]; then
+      prev_skip_update="$SKIP_UPDATE_NGINX_CONFIG"
+    fi
+    SKIP_UPDATE_NGINX_CONFIG=true
+  fi
 
   if [ "${#backend_headers_to_remove[@]}" -gt 0 ]; then
     local header_entry header_type header_name

@@ -55,10 +55,10 @@ function get_arg_spec() {
     echo "domain,;network,$DEFAULT_NETWORK"
     ;;
   add-cert)
-    echo "domain,;port_suffix,"
+    echo "domain,;port_suffix,443;cert_choice,selfsigned;upload_fullchain,;upload_privkey,"
     ;;
   replace-cert)
-    echo "domain,;port_suffix,"
+    echo "domain,;port_suffix,443;cert_choice,selfsigned;upload_fullchain,;upload_privkey,"
     ;;
   remove-cert)
     echo "domain,;port_suffix,443"
@@ -389,6 +389,12 @@ function get_arg_spec() {
     echo "docker_opts,"
     ;;
   show-nginx-docker-opts)
+    echo ""
+    ;;
+  set-visibility-policy)
+    echo "visibility_policy,$VISIBILITY_POLICY"
+    ;;
+  show-visibility-policy)
     echo ""
     ;;
   set-nginx-image)

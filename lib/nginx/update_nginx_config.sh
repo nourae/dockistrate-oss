@@ -754,7 +754,10 @@ EOF
       recreated=true
     fi
 
-    add_nginx_networks
+    if ! add_nginx_networks; then
+      echo "[Error] Failed to attach Nginx to required backend networks. Rolling back." >&2
+      _rollback_handler
+    fi
     remove_unused_nginx_networks
     if [ "$recreated" != "true" ]; then
       if ! reload_nginx_if_running; then

@@ -8,6 +8,8 @@ cd "$ROOT_DIR"
 source "$ROOT_DIR/tests/lib/state_sandbox.sh"
 # shellcheck source=../lib/config.sh
 source "$ROOT_DIR/lib/config.sh"
+# shellcheck source=../lib/utils/state_csv.sh
+source "$ROOT_DIR/lib/utils/state_csv.sh"
 # shellcheck source=../lib/cli/upgrade_preflight.sh
 source "$ROOT_DIR/lib/cli/upgrade_preflight.sh"
 
@@ -50,6 +52,23 @@ function run_preflight_status() {
   local status=$?
   set -e
   return "$status"
+}
+
+function append_security_rule_row_with_condition() {
+  local condition="$1" file="$2"
+  local fields=()
+  local i
+
+  fields=(1 preflight-rule.test and "" 1 method - "$condition" GET)
+  for i in 2 3 4 5 6 7 8 9 10; do
+    fields+=("" "" "" "")
+  done
+  fields+=("" "")
+
+  (
+    IFS=,
+    printf '%s\n' "${fields[*]}"
+  ) >>"$file"
 }
 
 function expect_status() {
@@ -159,6 +178,22 @@ expect_status 0
 reset_state
 printf '%s\n' "1" >"$ROOT_DIR/state/config/state_schema_version"
 expect_status 0
+
+reset_state
+printf '%s\n' "1" >"$ROOT_DIR/state/config/state_schema_version"
+printf '%s\n' "$STATE_SECURITY_RULES_HEADER" >"$ROOT_DIR/state/config/security_rules.csv"
+append_security_rule_row_with_condition "in" "$ROOT_DIR/state/config/security_rules.csv"
+expect_status 0
+grep -Fq "Security rules: 1 persisted rule row(s) use operators whose generated behavior was corrected" "$TMP_DIR/preflight.err" ||
+  fail_test "upgrade-preflight should warn about persisted security rules using corrected operators"
+
+reset_state
+printf '%s\n' "1" >"$ROOT_DIR/state/config/state_schema_version"
+: >"$ROOT_DIR/state/config/security_rules.csv"
+cp "$ROOT_DIR/state/config/security_rules.csv" "$TMP_DIR/security_rules.empty.before"
+expect_status 0
+cmp -s "$ROOT_DIR/state/config/security_rules.csv" "$TMP_DIR/security_rules.empty.before" ||
+  fail_test "upgrade-preflight should not initialize or mutate an empty security_rules.csv"
 
 reset_state
 printf '%s\n' "malformed" >"$ROOT_DIR/state/config/state_schema_version"
