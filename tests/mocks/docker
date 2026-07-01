@@ -24,14 +24,18 @@ function mock_read_meta_value() {
 }
 
 function mock_write_container_meta() {
-  local container_name="${1:-}" status="${2:-}" labels="${3:-}" mounts="${4:-}" meta_path=""
+  local container_name="${1:-}" status="${2:-}" labels="${3:-}" mounts="${4:-}" networks="${5:-}" meta_path=""
   [ -n "$container_name" ] || return 0
   ensure_mock_runtime_dir
   meta_path="$(mock_container_meta_path "$container_name")"
+  if [ -z "$networks" ] && [ -f "$meta_path" ]; then
+    networks="$(mock_read_meta_value "$container_name" networks || true)"
+  fi
   {
     printf 'status=%s\n' "$status"
     printf 'labels=%s\n' "$labels"
     printf 'mounts=%s\n' "$mounts"
+    printf 'networks=%s\n' "$networks"
   } >"$meta_path"
 }
 
@@ -43,11 +47,64 @@ function mock_remove_container_meta() {
 }
 
 function mock_update_container_status() {
-  local container_name="${1:-}" status="${2:-}" labels="" mounts=""
+  local container_name="${1:-}" status="${2:-}" labels="" mounts="" networks=""
   [ -n "$container_name" ] || return 0
   labels="$(mock_read_meta_value "$container_name" labels || true)"
   mounts="$(mock_read_meta_value "$container_name" mounts || true)"
-  mock_write_container_meta "$container_name" "$status" "$labels" "$mounts"
+  networks="$(mock_read_meta_value "$container_name" networks || true)"
+  mock_write_container_meta "$container_name" "$status" "$labels" "$mounts" "$networks"
+}
+
+function mock_container_networks() {
+  local container_name="${1:-}" networks=""
+  networks="$(mock_read_meta_value "$container_name" networks || true)"
+  if [ -n "$networks" ]; then
+    printf '%s\n' "$networks" | tr ',' '\n' | awk 'NF'
+    return 0
+  fi
+  return 1
+}
+
+function mock_container_has_network() {
+  local container_name="${1:-}" network="${2:-}" existing=""
+  [ -n "$container_name" ] || return 1
+  [ -n "$network" ] || return 1
+  existing="$(mock_container_networks "$container_name" || true)"
+  printf '%s\n' "$existing" | grep -Fx -- "$network" >/dev/null
+}
+
+function mock_set_container_networks() {
+  local container_name="${1:-}" networks="${2:-}" status="" labels="" mounts=""
+  [ -n "$container_name" ] || return 0
+  status="$(mock_read_meta_value "$container_name" status || true)"
+  labels="$(mock_read_meta_value "$container_name" labels || true)"
+  mounts="$(mock_read_meta_value "$container_name" mounts || true)"
+  mock_write_container_meta "$container_name" "$status" "$labels" "$mounts" "$networks"
+}
+
+function mock_add_container_network() {
+  local container_name="${1:-}" network="${2:-}" networks="" joined=""
+  [ -n "$container_name" ] || return 0
+  [ -n "$network" ] || return 0
+  networks="$(mock_container_networks "$container_name" || true)"
+  if printf '%s\n' "$networks" | grep -Fx -- "$network" >/dev/null; then
+    return 0
+  fi
+  if [ -n "$networks" ]; then
+    joined="$(printf '%s\n%s\n' "$networks" "$network" | awk 'NF' | paste -sd ',' -)"
+  else
+    joined="$network"
+  fi
+  mock_set_container_networks "$container_name" "$joined"
+}
+
+function mock_remove_container_network() {
+  local container_name="${1:-}" network="${2:-}" networks="" joined=""
+  [ -n "$container_name" ] || return 0
+  [ -n "$network" ] || return 0
+  networks="$(mock_container_networks "$container_name" || true)"
+  joined="$(printf '%s\n' "$networks" | grep -Fxv -- "$network" | awk 'NF' | paste -sd ',' -)"
+  mock_set_container_networks "$container_name" "$joined"
 }
 
 function mock_print_names() {
@@ -215,8 +272,23 @@ case "$subcommand" in
     if printf '%s' "$format" | grep -Eq 'NetworkSettings\.Networks.*IPAddress'; then # input-validation-audit: ignore
       net=""
       ip=""
-      net="$(printf '%s\n' "$format" | sed -n 's/.*if eq \\$k \"\\([^\"]*\\)\".*/\\1/p' | head -n 1)"
-      if [ -z "$net" ]; then
+      net="$(printf '%s\n' "$format" | awk '{
+        marker = "if eq $k \""
+        pos = index($0, marker)
+        if (!pos) {
+          marker = "if eq \\$k \""
+          pos = index($0, marker)
+        }
+        if (pos) {
+          rest = substr($0, pos + length(marker))
+          end = index(rest, "\"")
+          if (end) {
+            print substr(rest, 1, end - 1)
+            exit
+          }
+        }
+      }')"
+      if [ -z "$net" ] && [[ "$format" == *".NetworkSettings.Networks."* ]]; then
         net="${format#*.NetworkSettings.Networks.}"
         net="${net%%.IPAddress*}"
         net="${net//[{} ]/}"
@@ -237,7 +309,15 @@ case "$subcommand" in
           fi
         done
       fi
-      [ -n "$ip" ] || ip="${DOCKER_MOCK_INSPECT_NETWORK_IP:-172.30.0.2}"
+      if [ -z "$ip" ]; then
+        if [ -f "$(mock_container_meta_path "$container")" ]; then
+          if [ -z "$net" ] || mock_container_has_network "$container" "$net"; then
+            ip="${DOCKER_MOCK_INSPECT_NETWORK_IP:-172.30.0.2}"
+          fi
+        else
+          ip="${DOCKER_MOCK_INSPECT_NETWORK_IP:-172.30.0.2}"
+        fi
+      fi
       [ -n "$ip" ] && echo "$ip"
       exit 0
     fi
@@ -251,6 +331,8 @@ case "$subcommand" in
     if [[ "$format" == *".NetworkSettings.Networks"* ]]; then
       if [ -n "${DOCKER_MOCK_INSPECT_NETWORK_NAMES:-}" ]; then
         printf '%s\n' "${DOCKER_MOCK_INSPECT_NETWORK_NAMES}"
+      elif mock_container_networks "$container" >/dev/null 2>&1; then
+        mock_container_networks "$container"
       else
         printf '%s\n' "dockistrate-net"
       fi
@@ -277,18 +359,30 @@ case "$subcommand" in
     net_subcommand="${1:-}"
     shift || true
     case "$net_subcommand" in
+      ls)
+        if [ -n "${DOCKER_MOCK_NETWORK_NAMES:-}" ]; then
+          printf '%s\n' "${DOCKER_MOCK_NETWORK_NAMES}"
+        else
+          printf '%s\n' "dockistrate-net"
+        fi
+        exit 0
+        ;;
       connect)
         net_name="${1:-}"
+        container_name="${2:-}"
         if [ -n "${DOCKER_MOCK_NETWORK_CONNECT_FAIL_FOR:-}" ] && [ "$DOCKER_MOCK_NETWORK_CONNECT_FAIL_FOR" = "$net_name" ]; then
           exit 1
         fi
+        mock_add_container_network "$container_name" "$net_name"
         exit 0
         ;;
       disconnect)
         net_name="${1:-}"
+        container_name="${2:-}"
         if [ -n "${DOCKER_MOCK_NETWORK_DISCONNECT_FAIL_FOR:-}" ] && [ "$DOCKER_MOCK_NETWORK_DISCONNECT_FAIL_FOR" = "$net_name" ]; then
           exit 1
         fi
+        mock_remove_container_network "$container_name" "$net_name"
         exit 0
         ;;
       *)
@@ -303,6 +397,7 @@ case "$subcommand" in
     sslkeylog_build_out_dir=""
     domain=""
     container_name=""
+    network_name=""
     labels=""
     mounts=""
     arg=""
@@ -314,6 +409,15 @@ case "$subcommand" in
           if [ $# -gt 0 ]; then
             container_name="$1"
           fi
+          ;;
+        --network|--net)
+          shift
+          if [ $# -gt 0 ]; then
+            network_name="$1"
+          fi
+          ;;
+        --network=*|--net=*)
+          network_name="${arg#*=}"
           ;;
         --label)
           shift
@@ -390,7 +494,8 @@ case "$subcommand" in
     fi
 
     if [ -n "$container_name" ]; then
-      mock_write_container_meta "$container_name" "running" "$labels" "$mounts"
+      [ -n "$network_name" ] || network_name="bridge"
+      mock_write_container_meta "$container_name" "running" "$labels" "$mounts" "$network_name"
     fi
 
     exit 0

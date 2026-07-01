@@ -71,6 +71,68 @@ function state_csv_require_file() {
   csv_require_header "$file" "$header"
 }
 
+function state_csv_append_row() {
+  local file="${1:-}" header="${2:-}" expected_cols="${3:-0}"
+  local tmp_file="" line="" line_no=0
+  shift 3 || true
+
+  if [ "$expected_cols" -gt 0 ] && [ "$#" -ne "$expected_cols" ]; then
+    echo "[Error] Invalid append row width for ${file}: expected ${expected_cols}, got $#" >&2
+    return 1
+  fi
+
+  state_csv_require_file "$file" "$header" || return 1
+  make_temp_for_file tmp_file "$file" || return 1
+  if ! printf '%s\n' "$header" >"$tmp_file"; then
+    rm -f "$tmp_file" 2>/dev/null || true
+    echo "[Error] Failed to write temporary CSV file for ${file}." >&2
+    return 1
+  fi
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    line_no=$((line_no + 1))
+    [ "$line_no" -eq 1 ] && continue
+
+    csv_parse_line "$line" || {
+      rm -f "$tmp_file"
+      echo "[Error] Invalid CSV row in ${file} at line ${line_no}: ${CSV_PARSE_ERROR}" >&2
+      return 1
+    }
+    if [ "$expected_cols" -gt 0 ] && [ "$CSV_FIELD_COUNT" -ne "$expected_cols" ]; then
+      rm -f "$tmp_file"
+      echo "[Error] Invalid CSV column count in ${file} at line ${line_no}: expected ${expected_cols}, got ${CSV_FIELD_COUNT}" >&2
+      return 1
+    fi
+    if ! csv_join_row "${CSV_FIELDS[@]}" >>"$tmp_file"; then
+      rm -f "$tmp_file" 2>/dev/null || true
+      echo "[Error] Failed to write temporary CSV file for ${file}." >&2
+      return 1
+    fi
+  done <"$file"
+
+  if ! csv_join_row "$@" >>"$tmp_file"; then
+    rm -f "$tmp_file" 2>/dev/null || true
+    echo "[Error] Failed to write temporary CSV file for ${file}." >&2
+    return 1
+  fi
+  finalize_temp_file "$file" "$tmp_file"
+}
+
+function state_csv_append_row_line() {
+  local file="${1:-}" header="${2:-}" expected_cols="${3:-0}" row="${4:-}"
+
+  csv_parse_line "$row" || {
+    echo "[Error] Invalid append row for ${file}: ${CSV_PARSE_ERROR}" >&2
+    return 1
+  }
+  if [ "$expected_cols" -gt 0 ] && [ "$CSV_FIELD_COUNT" -ne "$expected_cols" ]; then
+    echo "[Error] Invalid append row width for ${file}: expected ${expected_cols}, got ${CSV_FIELD_COUNT}" >&2
+    return 1
+  fi
+
+  state_csv_append_row "$file" "$header" "$expected_cols" "${CSV_FIELDS[@]}"
+}
+
 function state_csv_ensure_all_state_files() {
   local dedicated_inheritance_file
   dedicated_inheritance_file="$(state_dedicated_host_inheritance_file)"

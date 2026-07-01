@@ -135,6 +135,7 @@ function add_backend() {
   [ -n "$ws" ] || ws="no"
   ensure_valid_or_prompt ws "$ws" "ws" "no" is_yes_no
   [ -n "$network_name" ] || network_name="$DEFAULT_NETWORK"
+  ensure_valid_or_prompt network_name "$network_name" "network" "$DEFAULT_NETWORK" is_valid_network_name
   ensure_valid_or_prompt expose_now "$expose_now" "expose" "$expose_now" is_yes_no
 
   if [ "$expose_now" = "yes" ]; then
@@ -154,13 +155,9 @@ function add_backend() {
       # Create a self-signed cert automatically for convenience
       if declare -F add_cert >/dev/null 2>&1; then
         local prev_skip_update="${SKIP_UPDATE_NGINX_CONFIG:-}"
-        SKIP_UPDATE_NGINX_CONFIG=true
+        push_skip_update_nginx_config prev_skip_update
         CERT_AUTOCONFIG_DISABLED=1 add_cert "$domain" "$listen_port" selfsigned
-        if [ "$prev_skip_update" = "true" ]; then
-          SKIP_UPDATE_NGINX_CONFIG="true"
-        else
-          unset SKIP_UPDATE_NGINX_CONFIG
-        fi
+        pop_skip_update_nginx_config "$prev_skip_update"
         cert_path="selfsigned/live/${domain}_${listen_port}"
       else
         echo "[Error] HTTPS selected but no cert provided and cert helper unavailable." >&2
@@ -169,13 +166,9 @@ function add_backend() {
     elif [ "$cert_path" = "letsencrypt" ]; then
       if declare -F add_cert >/dev/null 2>&1; then
         local prev_skip_update="${SKIP_UPDATE_NGINX_CONFIG:-}"
-        SKIP_UPDATE_NGINX_CONFIG=true
+        push_skip_update_nginx_config prev_skip_update
         CERT_AUTOCONFIG_DISABLED=1 add_cert "$domain" "$listen_port" letsencrypt
-        if [ "$prev_skip_update" = "true" ]; then
-          SKIP_UPDATE_NGINX_CONFIG="true"
-        else
-          unset SKIP_UPDATE_NGINX_CONFIG
-        fi
+        pop_skip_update_nginx_config "$prev_skip_update"
         cert_path="letsencrypt/live/${domain}_${listen_port}"
       else
         echo "[Error] HTTPS selected with Let's Encrypt but cert helper unavailable." >&2
@@ -195,13 +188,9 @@ function add_backend() {
             if [ -z "$cert_path" ] || [ "$cert_path" = "selfsigned" ]; then
               if declare -F add_cert >/dev/null 2>&1; then
                 local prev_skip_update="${SKIP_UPDATE_NGINX_CONFIG:-}"
-                SKIP_UPDATE_NGINX_CONFIG=true
+                push_skip_update_nginx_config prev_skip_update
                 CERT_AUTOCONFIG_DISABLED=1 add_cert "$domain" "$listen_port" selfsigned
-                if [ "$prev_skip_update" = "true" ]; then
-                  SKIP_UPDATE_NGINX_CONFIG="true"
-                else
-                  unset SKIP_UPDATE_NGINX_CONFIG
-                fi
+                pop_skip_update_nginx_config "$prev_skip_update"
                 cert_path="selfsigned/live/${domain}_${listen_port}"
                 break
               else
@@ -212,13 +201,9 @@ function add_backend() {
             if [ "$cert_path" = "letsencrypt" ]; then
               if declare -F add_cert >/dev/null 2>&1; then
                 local prev_skip_update="${SKIP_UPDATE_NGINX_CONFIG:-}"
-                SKIP_UPDATE_NGINX_CONFIG=true
+                push_skip_update_nginx_config prev_skip_update
                 CERT_AUTOCONFIG_DISABLED=1 add_cert "$domain" "$listen_port" letsencrypt
-                if [ "$prev_skip_update" = "true" ]; then
-                  SKIP_UPDATE_NGINX_CONFIG="true"
-                else
-                  unset SKIP_UPDATE_NGINX_CONFIG
-                fi
+                pop_skip_update_nginx_config "$prev_skip_update"
                 cert_path="letsencrypt/live/${domain}_${listen_port}"
                 break
               else
@@ -278,8 +263,9 @@ function add_backend() {
         done <<<"$docker_opts_lines"
       fi
     fi
-    local xtrace_state=""
-    if [ -n "$docker_opts" ]; then
+    local xtrace_state="" suppress_docker_xtrace=false
+    if [ -n "$docker_opts" ] && operator_visibility_is_redacted; then
+      suppress_docker_xtrace=true
       xtrace_disable xtrace_state
     fi
     local -a docker_run_cmd=(docker run -d --name "${container_name}" --network "$network_name")
@@ -290,12 +276,12 @@ function add_backend() {
     docker_run_cmd+=("${image}")
     "${docker_run_cmd[@]}"
     _add_backend_set_runtime_rollback_state "${container_name}"
-    if [ -n "$docker_opts" ]; then
+    if [ "$suppress_docker_xtrace" = true ]; then
       xtrace_restore "$xtrace_state"
     fi
-    container_ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "${container_name}")
+    container_ip="$(get_container_network_ip "${container_name}" "$network_name")"
     if [ -z "$container_ip" ]; then
-      echo "[Error] Failed to get IP for container '${container_name}'." >&2
+      echo "[Error] Failed to get IP for container '${container_name}' on network '${network_name}'." >&2
       _rollback_handler
     fi
   else
@@ -304,7 +290,8 @@ function add_backend() {
   fi
 
   set_backend_docker_opts "backend:${domain}" "$docker_opts"
-  state_backend_ports_row_backend "${domain}" "${container_ip}:${container_port}" "${network_name}" >>"$BACKEND_PORTS_FILE"
+  state_csv_append_row_line "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER" "$STATE_BACKEND_PORTS_COLS" \
+    "$(state_backend_ports_row_backend "${domain}" "${container_ip}:${container_port}" "${network_name}")" || _rollback_handler
 
   if { [ "$protocol" = "tcp" ] || [ "$protocol" = "udp" ]; } && [ "$expose_now" = "yes" ]; then
     if _stream_listen_in_use "$listen_port" "$protocol"; then
@@ -318,15 +305,19 @@ function add_backend() {
   # Add initial port mapping according to selected protocol (unless exposure disabled)
   if [ "$expose_now" = "yes" ]; then
     if [ "$protocol" = "tcp" ]; then
-      state_backend_ports_row_port "${domain}" "${listen_port}" "${container_port}" "tcp" "" "no" "off" "" >>"$BACKEND_PORTS_FILE"
+      state_csv_append_row_line "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER" "$STATE_BACKEND_PORTS_COLS" \
+        "$(state_backend_ports_row_port "${domain}" "${listen_port}" "${container_port}" "tcp" "" "no" "off" "")" || _rollback_handler
     elif [ "$protocol" = "udp" ]; then
-      state_backend_ports_row_port "${domain}" "${listen_port}" "${container_port}" "udp" "" "no" "off" "" >>"$BACKEND_PORTS_FILE"
+      state_csv_append_row_line "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER" "$STATE_BACKEND_PORTS_COLS" \
+        "$(state_backend_ports_row_port "${domain}" "${listen_port}" "${container_port}" "udp" "" "no" "off" "")" || _rollback_handler
     elif [ "$protocol" = "https" ]; then
-      state_backend_ports_row_port "${domain}" "${listen_port}" "${container_port}" "https" "${cert_path}" "no" "off" "" >>"$BACKEND_PORTS_FILE"
+      state_csv_append_row_line "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER" "$STATE_BACKEND_PORTS_COLS" \
+        "$(state_backend_ports_row_port "${domain}" "${listen_port}" "${container_port}" "https" "${cert_path}" "no" "off" "")" || _rollback_handler
     else
       # http
       [ -n "$ws" ] || ws="no"
-      state_backend_ports_row_port "${domain}" "${listen_port}" "${container_port}" "http" "none" "${ws}" "off" "" >>"$BACKEND_PORTS_FILE"
+      state_csv_append_row_line "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER" "$STATE_BACKEND_PORTS_COLS" \
+        "$(state_backend_ports_row_port "${domain}" "${listen_port}" "${container_port}" "http" "none" "${ws}" "off" "")" || _rollback_handler
     fi
   else
     echo "[Info] Backend created without exposure. Use 'add-port' to expose HTTP/HTTPS/TCP/UDP."
@@ -370,15 +361,11 @@ function add_backend() {
 
     if [ "$redirect_ans" = "yes" ]; then
       local prev_skip="${SKIP_UPDATE_NGINX_CONFIG:-}"
-      SKIP_UPDATE_NGINX_CONFIG=true
+      push_skip_update_nginx_config prev_skip
       # Ensure HTTP listener exists to carry the redirect
       add_port_mapping "$domain" "$http_port_default" "$container_port" "http" "none" "no"
       set_port_redirect "$domain" "$http_port_default" "on" "301:${redirect_target_port}"
-      if [ "$prev_skip" = "true" ]; then
-        SKIP_UPDATE_NGINX_CONFIG="true"
-      else
-        unset SKIP_UPDATE_NGINX_CONFIG
-      fi
+      pop_skip_update_nginx_config "$prev_skip"
     fi
   fi
 

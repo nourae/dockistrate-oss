@@ -9,6 +9,8 @@ flags, backend Docker runtime flags, and generated Nginx directives.
 set-nginx-image <image[:tag]>
 set-nginx-docker-opts <opts>
 show-nginx-docker-opts
+set-visibility-policy <full|redacted>
+show-visibility-policy
 set-certbot-image <image[:tag]>
 
 set-nginx-directive <scope> [target...] <directive> <value>
@@ -71,6 +73,25 @@ Backend Docker options are set per backend:
 Dockistrate rejects backend options that conflict with its container ownership,
 network, and cleanup model.
 
+## Operator Value Visibility
+
+Dockistrate defaults to full visibility for trusted operators. Docker options and
+header values appear in status/list output, audit logs, verbose traces,
+interactive review screens, recents, and favorites.
+
+Use redacted mode when those operator-entered values should be hidden from
+display/history/audit copies:
+
+```bash
+./dockistrate.sh set-visibility-policy redacted
+./dockistrate.sh show-visibility-policy
+./dockistrate.sh set-visibility-policy full
+```
+
+Redacted mode hides Docker options and header values in operator-facing output
+and skips affected interactive recents/favorites. It does not rewrite stored
+state, generated Nginx files, or Docker command execution inputs.
+
 ## Nginx Directive Overrides
 
 Use typed directives when possible:
@@ -96,6 +117,7 @@ ciphers.
 
 ```bash
 ./dockistrate.sh show-nginx-docker-opts
+./dockistrate.sh show-visibility-policy
 ./dockistrate.sh show-nginx-directive-strict
 ./dockistrate.sh list-nginx-directives all
 ./dockistrate.sh update-nginx-config

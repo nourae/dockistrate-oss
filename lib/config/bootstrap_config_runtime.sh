@@ -8,6 +8,7 @@ function _config_migrate_loaded_settings() {
   local saw_certbot_pull_mode="${4:-false}"
   local saw_nginx_directive_strict="${5:-false}"
   local saw_nginx_docker_opts="${6:-false}"
+  local saw_visibility_policy="${7:-false}"
 
   local normalized_nginx="${NGINX_IMAGE:-}"
   local normalized_certbot="${CERTBOT_IMAGE:-}"
@@ -30,12 +31,18 @@ function _config_migrate_loaded_settings() {
     updated=true
   fi
 
+  if ! is_valid_visibility_policy "${VISIBILITY_POLICY:-}"; then
+    VISIBILITY_POLICY="$DEFAULT_VISIBILITY_POLICY"
+    updated=true
+  fi
+
   if [ "$saw_nginx_image" = false ] ||
     [ "$saw_certbot_image" = false ] ||
     [ "$saw_nginx_pull_mode" = false ] ||
     [ "$saw_certbot_pull_mode" = false ] ||
     [ "$saw_nginx_directive_strict" = false ] ||
-    [ "$saw_nginx_docker_opts" = false ]; then
+    [ "$saw_nginx_docker_opts" = false ] ||
+    [ "$saw_visibility_policy" = false ]; then
     updated=true
   fi
 
@@ -95,7 +102,8 @@ function _bootstrap_config_runtime_locked() {
     "$LOAD_CONFIG_SAW_NGINX_PULL_MODE" \
     "$LOAD_CONFIG_SAW_CERTBOT_PULL_MODE" \
     "$LOAD_CONFIG_SAW_NGINX_DIRECTIVE_STRICT" \
-    "$LOAD_CONFIG_SAW_NGINX_DOCKER_OPTS" || {
+    "$LOAD_CONFIG_SAW_NGINX_DOCKER_OPTS" \
+    "$LOAD_CONFIG_SAW_VISIBILITY_POLICY" || {
     transaction_return_failure
     return 1
   }

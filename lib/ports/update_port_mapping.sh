@@ -162,7 +162,7 @@ function update_port_mapping() {
   fi
   local nginx_port="" upstream_port="" protocol="" cert_dir="" ws="" http3_opt="" alt_svc_opt=""
 
-  if [ "$INTERACTIVE" = true ]; then
+  if [ "$INTERACTIVE" = true ] && [ "$#" -eq 0 ]; then
     prompt_input_valid nginx_port "Nginx port" "$cur_nginx" is_valid_port
     prompt_input_valid upstream_port "Container port" "$cur_upstream" is_valid_port
     prompt_input_valid protocol "Protocol" "$cur_proto" is_valid_protocol
@@ -321,13 +321,9 @@ function update_port_mapping() {
       if declare -F add_cert >/dev/null 2>&1; then
         echo "[Info] No certificate provided; generating self-signed cert for ${domain}:${nginx_port}."
         local prev_skip_update="${SKIP_UPDATE_NGINX_CONFIG:-}"
-        SKIP_UPDATE_NGINX_CONFIG=true
+        push_skip_update_nginx_config prev_skip_update
         CERT_AUTOCONFIG_DISABLED=1 add_cert "$domain" "$nginx_port" selfsigned
-        if [ "$prev_skip_update" = "true" ]; then
-          SKIP_UPDATE_NGINX_CONFIG="true"
-        else
-          unset SKIP_UPDATE_NGINX_CONFIG
-        fi
+        pop_skip_update_nginx_config "$prev_skip_update"
         cert_dir="selfsigned/live/${domain}_${nginx_port}"
       else
         echo "[Error] Must provide a valid cert path for HTTPS." >&2

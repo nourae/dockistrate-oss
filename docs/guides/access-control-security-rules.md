@@ -30,8 +30,9 @@ set-backend-acl-status <domain> <code>
 set-backend-security-rule-status <domain> <code>
 ```
 
-CIDR ranges are accepted only for `l7` ACL rows. Use exact IP addresses for
-`l3` or `both`; `update-acl` applies the same rule based on the resulting scope.
+ACL and security-rule IP selectors are IPv4-only. CIDR ranges are accepted only
+for `l7` ACL rows. Use exact IPv4 addresses for `l3` or `both`; `update-acl`
+applies the same rule based on the resulting scope.
 
 ## ACL Example
 
@@ -62,6 +63,11 @@ require that the header does not contain it:
 Grouped rules use the same pass-requirement model: `and` returns the configured
 status unless all conditions pass, while `or` returns it unless at least one
 condition passes. Use `--count` to replace grouped rule conditions:
+
+List operators such as `in` and `not_in` split values on comma or pipe
+separators and compare exact full values after trimming each token. Numeric
+operators require a numeric request value; a nonnumeric request value fails the
+rule requirement.
 
 ```bash
 ./dockistrate.sh add-security-rule example.com 2 \

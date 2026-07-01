@@ -14,9 +14,18 @@ function _normalize_audit_log_message() {
 function audit_log() {
   local timestamp
   local normalized_message
+  local audit_file="${AUDIT_LOG_FILE:-}"
   timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
   normalized_message="$(_normalize_audit_log_message "$*")"
-  ensure_log_writable "$AUDIT_LOG_FILE" || {
+  if [ -z "$audit_file" ]; then
+    if [ -n "$normalized_message" ]; then
+      echo "[$timestamp] $normalized_message" >&2
+    else
+      echo "[$timestamp]" >&2
+    fi
+    return 0
+  fi
+  ensure_log_writable "$audit_file" || {
     if [ -n "$normalized_message" ]; then
       echo "[$timestamp] $normalized_message" >&2
     else
@@ -24,20 +33,20 @@ function audit_log() {
     fi
     return 0
   }
-  if [ -f "$AUDIT_LOG_FILE" ] && [ -r "$AUDIT_LOG_FILE" ]; then
+  if [ -f "$audit_file" ] && [ -r "$audit_file" ]; then
     local size
-    size=$(wc -c <"$AUDIT_LOG_FILE" 2>/dev/null || echo 0)
+    size=$(wc -c <"$audit_file" 2>/dev/null || echo 0)
     if [ "$size" -gt 1048576 ] 2>/dev/null; then
-      mv "$AUDIT_LOG_FILE" "${AUDIT_LOG_FILE}.1" 2>/dev/null || true
+      mv "$audit_file" "${audit_file}.1" 2>/dev/null || true
       # Touch a fresh log and set ownership appropriately
-      ensure_log_writable "$AUDIT_LOG_FILE" || return 0
+      ensure_log_writable "$audit_file" || return 0
     fi
   fi
-  if [ -w "$AUDIT_LOG_FILE" ] || touch "$AUDIT_LOG_FILE" &>/dev/null; then
+  if [ -w "$audit_file" ] || touch "$audit_file" &>/dev/null; then
     if [ -n "$normalized_message" ]; then
-      echo "[$timestamp] $normalized_message" >>"$AUDIT_LOG_FILE"
+      echo "[$timestamp] $normalized_message" >>"$audit_file"
     else
-      echo "[$timestamp]" >>"$AUDIT_LOG_FILE"
+      echo "[$timestamp]" >>"$audit_file"
     fi
   else
     # Fall back to stderr if not writable

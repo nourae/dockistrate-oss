@@ -84,6 +84,7 @@ bootstrap_config_runtime || fail_test "bootstrap_config_runtime should repair ru
 
 grep -qx 'NGINX_DIRECTIVE_STRICT,on' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore NGINX_DIRECTIVE_STRICT"
 grep -qx 'NGINX_DOCKER_OPTS,' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore NGINX_DOCKER_OPTS"
+grep -qx 'VISIBILITY_POLICY,full' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore VISIBILITY_POLICY"
 grep -qx 'NGINX_IMAGE,nginx:latest' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not normalize NGINX_IMAGE"
 grep -qx 'CERTBOT_IMAGE,certbot/certbot:latest' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not normalize CERTBOT_IMAGE"
 grep -qx 'NGINX_PULL_MODE,if-missing' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore NGINX_PULL_MODE"

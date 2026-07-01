@@ -12,6 +12,14 @@ function _mtls_end_transaction_if_started() {
 
 function _mtls_restore_skip_update_nginx_config() {
   local had_prev_skip="${1:-false}" prev_skip_update="${2-}"
+  if declare -F pop_skip_update_nginx_config >/dev/null 2>&1; then
+    if [ "$had_prev_skip" = "true" ]; then
+      pop_skip_update_nginx_config "$prev_skip_update"
+    else
+      pop_skip_update_nginx_config "__dockistrate_unset__"
+    fi
+    return 0
+  fi
   if [ "$had_prev_skip" = "true" ]; then
     SKIP_UPDATE_NGINX_CONFIG="$prev_skip_update"
   else

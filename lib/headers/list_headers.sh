@@ -18,7 +18,7 @@ function list_headers() {
     csv_parse_line "$line" || continue
     [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || continue
     printed=true
-    echo "${CSV_FIELDS[0]} ${CSV_FIELDS[1]} ${CSV_FIELDS[2]}"
+    echo "${CSV_FIELDS[0]} ${CSV_FIELDS[1]} $(operator_value_for_display header_value "${CSV_FIELDS[2]}")"
   done <"$CUSTOM_HEADERS_FILE"
 
   if [ "$printed" = false ]; then

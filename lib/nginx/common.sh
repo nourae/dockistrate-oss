@@ -282,10 +282,20 @@ function add_nginx_networks() {
   nets="$(printf '%s' "$nets" | awk 'NF > 0' | sort -u)"
   for net in $nets; do
     [ -z "$net" ] && continue
+    if ! is_valid_network_name "$net"; then
+      echo "[Error] Invalid backend network '${net}'." >&2
+      return 1
+    fi
     if ! ensure_network_exists "$net"; then
       return 1
     fi
-    docker network connect "$net" "$NGINX_CONTAINER_NAME" 2>/dev/null || true
+    if ! container_attached_to_network "$NGINX_CONTAINER_NAME" "$net"; then
+      docker network connect "$net" "$NGINX_CONTAINER_NAME" 2>/dev/null || true
+    fi
+    if ! container_attached_to_network "$NGINX_CONTAINER_NAME" "$net"; then
+      echo "[Error] Failed to connect Nginx container '${NGINX_CONTAINER_NAME}' to network '${net}'." >&2
+      return 1
+    fi
   done
 }
 

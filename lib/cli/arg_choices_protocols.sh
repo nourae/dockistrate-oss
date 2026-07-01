@@ -3,7 +3,13 @@
 function __arg_choices_protocol() {
   local cmd="$1"
   case "$cmd" in
-  add-backend | add-port | update-port)
+  update-port)
+    if [ -n "${CURRENT_ARGS[3]:-}" ]; then
+      echo "__DEFAULT__|Keep current: ${CURRENT_ARGS[3]}"
+    fi
+    echo -e "http|HTTP\nhttps|HTTPS\ntcp|TCP\nudp|UDP"
+    ;;
+  add-backend | add-port)
     # Offer explicit choices to avoid manual input
     echo -e "http|HTTP\nhttps|HTTPS\ntcp|TCP\nudp|UDP"
     ;;

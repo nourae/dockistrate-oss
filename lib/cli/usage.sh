@@ -27,7 +27,7 @@ Basic Commands:
 Backends:
   add-backend <domain> <image> <container_port> <http|https|tcp|udp> [--listen port] [--cert selfsigned|letsencrypt|none|path] [--ws yes|no] [--docker-opts opts] [--network net] [--no-expose|--expose yes|no]
   # To create backend without exposing a port initially: add-backend ... --no-expose
-  remove-backend <domain>
+  remove-backend [--yes] <domain>
   add-host-alias <alias> <domain>
   remove-host-alias <alias>
   list-host-aliases [domain]
@@ -146,7 +146,7 @@ Backend Overrides:
 
 ACL & Security:
   add-acl <domain> <l7|l3|both> <allow|deny> <ip...> [status_code]
-  # CIDR accepted only for l7 scope; l3 and both require exact IPs; l7 deny CIDR only supports status 403
+  # IPv4 only; CIDR accepted only for l7 scope; l3 and both require exact IPs; l7 deny CIDR only supports status 403
   remove-acl <id>
   disable-acl <id>
   enable-acl <id>
@@ -154,7 +154,7 @@ ACL & Security:
   disable-all-acl
   enable-all-acl
   update-acl <id> [--domain d] [--scope l7|l3|both] [--action allow|deny] [--ip x.x.x.x|CIDR] [--code status]
-  # CIDR accepted only for l7 scope; l3 and both require exact IPs; l7 deny CIDR only supports status 403
+  # IPv4 only; CIDR accepted only for l7 scope; l3 and both require exact IPs; l7 deny CIDR only supports status 403
   move-acl-rule <from> <to>
   list-acl
   # New unified IP policy management (replaces ACLs)
@@ -209,6 +209,8 @@ Dynamic Global Settings:
   set-real-ip-recursive <on|off>
   set-nginx-docker-opts <opts>
   show-nginx-docker-opts
+  set-visibility-policy <full|redacted>
+  show-visibility-policy
   set-nginx-image <image[:tag]>
   set-certbot-image <image[:tag]>
 

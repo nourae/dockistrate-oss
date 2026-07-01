@@ -17,7 +17,7 @@ test_security_rule_var_names_stay_stable_after_reorder() {
   local rules_file="${CONFIG_DIR}/nginx_conf/conf.d/security_rules.inc"
   local rules_db="${CONFIG_DIR}/security_rules.csv"
   local base_var_before
-  base_var_before="$(extract_single_security_rule_var 'if ($http_x_base != "keep") { set $' "$rules_file")"
+  base_var_before="$(extract_single_security_rule_var 'if ($http_x_base = "keep") { set $' "$rules_file")"
   if [ -z "$base_var_before" ]; then
     fail "base rule variable should be detected before reorder"
     return
@@ -43,7 +43,7 @@ test_security_rule_var_names_stay_stable_after_reorder() {
   assertEquals "update-nginx-config after rule reorder" 0 $?
 
   local base_var_after
-  base_var_after="$(extract_single_security_rule_var 'if ($http_x_base != "keep") { set $' "$rules_file")"
+  base_var_after="$(extract_single_security_rule_var 'if ($http_x_base = "keep") { set $' "$rules_file")"
   if [ -z "$base_var_after" ]; then
     fail "base rule variable should be detected after reorder"
     return

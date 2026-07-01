@@ -32,8 +32,8 @@ if ! grep -Fq "letsencrypt/live/badcert|" <<<"$choices"; then
   exit 1
 fi
 
-if ! grep -Fq "none|none" <<<"$choices"; then
-  echo "[Error] Expected fallback none option in cert choices." >&2
+if ! grep -Fq "none|Generate self-signed certificate" <<<"$choices"; then
+  echo "[Error] Expected self-signed generation fallback option in cert choices." >&2
   echo "$choices" >&2
   exit 1
 fi

@@ -94,7 +94,7 @@ function start_nginx() {
 
   if [ "$nginx_docker_opts_provided" = true ]; then
     if [ -n "$NGINX_DOCKER_OPTS" ]; then
-      echo "[Info] Saved Nginx docker options: $NGINX_DOCKER_OPTS"
+      echo "[Info] Saved Nginx docker options: $(operator_value_for_display docker_opts "$NGINX_DOCKER_OPTS")"
     else
       echo "[Info] Cleared saved Nginx docker options."
     fi

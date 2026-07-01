@@ -4,7 +4,19 @@ _dockistrate_complete_backend_domain_commands() {
   local command="$1"
 
   case "$command" in
-  add-backend | remove-backend | start-backend | stop-backend | restart-backend | \
+  remove-backend)
+    if [[ $cword -eq 2 ]]; then
+      local domains
+      domains="$(__dockistrate_backend_domains)"
+      COMPREPLY=($(compgen -W "--yes $domains" -- "$cur"))
+      return 0
+    fi
+    if [[ $cword -eq 3 && "${COMP_WORDS[2]}" == "--yes" ]]; then
+      __dockistrate_complete_backend_domains
+      return 0
+    fi
+    ;;
+  add-backend | start-backend | stop-backend | restart-backend | \
     update-backend | replace-backend-network | set-backend-client-ip-header | \
     set-backend-proxy-ip-header | add-backend-header | update-backend-header | \
     set-backend-hsts | set-backend-csp | set-backend-http-version | \

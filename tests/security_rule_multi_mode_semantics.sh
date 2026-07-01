@@ -37,6 +37,14 @@ function assert_not_contains() {
 }
 
 SR_RULE_COUNTER=0
+single_line="$(_generate_security_rule_line example.com header:X-S equals yes 403 "single denied" auto)"
+assert_contains "$single_line" 'set $sr_000000_fail 0; if ($sr_000000_m = 1) { set $sr_000000_fail 1; }' "Single rules must initialize a host-gated fail marker"
+assert_contains "$single_line" 'set $sr_000000_p1 0; if ($http_x_s = "yes") { set $sr_000000_p1 1; }' "Single rules must use the success predicate"
+assert_contains "$single_line" 'if ($sr_000000_p1 = 1) { set $sr_000000_fail 0; }' "Single rules must clear failure when the predicate passes"
+assert_contains "$single_line" 'if ($sr_000000_fail = 1) { set $dockistrate_rule_reason "single denied"; set $dockistrate_rule_loc "auto"; return 403; }' "Single rules must deny when the predicate fails"
+assert_not_contains "$single_line" '$http_x_s != "yes"' "Single rules must not use the failure predicate for equals"
+
+SR_RULE_COUNTER=0
 and_line="$(_generate_security_rule_multi_line and example.com 403 "and denied" auto header:X-A equals a header:X-B not_equals b)"
 assert_contains "$and_line" 'if ($http_x_a = "a") { set $sr_000000_p1 1; }' "AND rules must use the success predicate for equals"
 assert_contains "$and_line" 'if ($http_x_b != "b") { set $sr_000000_p2 1; }' "AND rules must use the success predicate for not_equals"

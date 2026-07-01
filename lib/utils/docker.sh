@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 function container_exists() {
   local cname="${1:-}"
-  docker ps -a --filter "name=^/${cname}$" --format '{{.Names}}' | grep -w "$cname" &>/dev/null
+  docker ps -a --filter "name=^/${cname}$" --format '{{.Names}}' | grep -Fx -- "$cname" &>/dev/null
   return $?
 }
 
@@ -53,7 +53,7 @@ function container_published_ports() {
 
 function ensure_network_exists() {
   local net="${1:-}"
-  if ! docker network ls --format '{{.Name}}' | grep -w "$net" >/dev/null; then
+  if ! docker network ls --format '{{.Name}}' | grep -Fx -- "$net" >/dev/null; then
     docker network create "$net" >/dev/null
   fi
 }

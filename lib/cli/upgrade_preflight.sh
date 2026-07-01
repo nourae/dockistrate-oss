@@ -268,6 +268,55 @@ function upgrade_preflight_compare_schema() {
   return 0
 }
 
+function upgrade_preflight_warn_security_rule_operator_fix() {
+  local rules_file="${SECURITY_RULES_DB:-${SECURITY_RULES_FILE:-}}" header="" line="" line_no=0 affected_rows=0
+  [ -n "$rules_file" ] || return 0
+  [ -f "$rules_file" ] || return 0
+
+  if ! declare -F csv_require_header >/dev/null 2>&1; then
+    # Support direct sourcing of this update helper without requiring lib/utils.sh first.
+    # shellcheck source=../utils/csv.sh
+    source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/utils/csv.sh"
+  fi
+  if [ -z "${STATE_SECURITY_RULES_HEADER:-}" ]; then
+    # shellcheck source=../utils/state_csv.sh
+    source "$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/utils/state_csv.sh"
+  fi
+
+  if ! IFS= read -r header <"$rules_file"; then
+    return 0
+  fi
+  if [ "$header" != "$STATE_SECURITY_RULES_HEADER" ]; then
+    return 0
+  fi
+
+  while IFS= read -r line || [ -n "$line" ]; do
+    line_no=$((line_no + 1))
+    [ "$line_no" -eq 1 ] && continue
+    csv_parse_line "$line" || continue
+    [ "$CSV_FIELD_COUNT" -eq "$STATE_SECURITY_RULES_COLS" ] || continue
+
+    local i base cond row_affected=false
+    for i in 1 2 3 4 5 6 7 8 9 10; do
+      base=$((5 + ((i - 1) * 4)))
+      cond="${CSV_FIELDS[$((base + 2))]-}"
+      case "$cond" in
+      in | not_in | gt | ge | lt | le | exists | not_exists)
+        row_affected=true
+        break
+        ;;
+      esac
+    done
+    if [ "$row_affected" = true ]; then
+      affected_rows=$((affected_rows + 1))
+    fi
+  done <"$rules_file"
+
+  if [ "$affected_rows" -gt 0 ]; then
+    echo "[Warn] Security rules: ${affected_rows} persisted rule row(s) use operators whose generated behavior was corrected to match documented allowed-traffic semantics." >&2
+  fi
+}
+
 function upgrade_preflight_parse_args() {
   UPGRADE_PREFLIGHT_REQUIRE_BACKUP=false
   UPGRADE_PREFLIGHT_TARGET_TAG=""
@@ -330,6 +379,7 @@ function upgrade_preflight() {
   if [ "$backup_status" -ne 0 ]; then
     return "$backup_status"
   fi
+  upgrade_preflight_warn_security_rule_operator_fix
 
   if [ -n "$UPGRADE_PREFLIGHT_TARGET_TAG" ]; then
     if ! upgrade_preflight_git_has_local_tag "$UPGRADE_PREFLIGHT_TARGET_TAG"; then

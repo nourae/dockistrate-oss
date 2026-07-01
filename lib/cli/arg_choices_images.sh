@@ -74,6 +74,16 @@ function __arg_choices_container_port() {
   add-backend)
     img="${CURRENT_ARGS[1]:-}"
     ;;
+  update-port)
+    dom="${CURRENT_ARGS[0]:-}"
+    cur_port="${CURRENT_ARGS[2]:-}"
+    if [ -n "$cur_port" ]; then
+      echo "__DEFAULT__|Keep current: $cur_port"
+    fi
+    if [ -n "$dom" ]; then
+      img="$(get_backend_image "$dom" 2>/dev/null || true)"
+    fi
+    ;;
   update-backend)
     dom="${CURRENT_ARGS[0]:-}"
     img="${CURRENT_ARGS[1]:-}"

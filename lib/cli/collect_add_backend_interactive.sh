@@ -1,5 +1,51 @@
 # shellcheck shell=bash
 
+function _collect_add_backend_choose_from_lines() {
+  local __out_var="${1:-}" prompt="${2:-}" opts="${3:-}" default="${4:-}" manual_prompt="${5:-}"
+  local line="" choice_value="" choice_label="" idx="" val=""
+  local _vals=() _disp=()
+
+  require_valid_var_name "$__out_var" || return 1
+  while IFS= read -r line; do
+    [ -n "$line" ] || continue
+    choice_value=""
+    choice_label=""
+    cli_choice_line_to_value_label "$line" choice_value choice_label
+    _vals+=("$choice_value")
+    _disp+=("$choice_label")
+  done <<<"$opts"
+  _vals+=("__BACK__")
+  _disp+=("Back")
+
+  if ! choose_option idx "$prompt:" "${_disp[@]}"; then
+    return 2
+  fi
+  if [ -z "${idx:-}" ] || ! [ "$idx" -ge 0 ] 2>/dev/null || [ "$idx" -ge ${#_vals[@]} ] 2>/dev/null; then
+    return 2
+  fi
+
+  val="${_vals[$idx]}"
+  case "$val" in
+  __BACK__)
+    return 2
+    ;;
+  __DEFAULT__)
+    val="$default"
+    ;;
+  __MANUAL__)
+    [ -n "$manual_prompt" ] || manual_prompt="$prompt"
+    read_with_editing "${manual_prompt}: " val "$default"
+    if is_back_input "$val"; then
+      return 2
+    fi
+    [ -n "$val" ] || val="$default"
+    ;;
+  esac
+
+  printf -v "$__out_var" '%s' "$val"
+  return 0
+}
+
 # Guided interactive flow for add-backend with backtracking and sensible ordering
 function collect_add_backend_interactive() {
   local domain="" protocol="http" network_name="$DEFAULT_NETWORK" image="" container_port="" listen="" cert_path="" ws="no" expose_now="yes" docker_opts=""
@@ -184,12 +230,20 @@ function collect_add_backend_interactive() {
       https) [ -n "$listen" ] || listen=443 ;;
       tcp | udp) [ -n "$listen" ] || listen="$container_port" ;;
       esac
-      read_with_editing "Listen port [$listen]: " _ans "$listen"
-      if is_back_input "$_ans"; then
+      local listen_opts="__DEFAULT__|Use default: ${listen}"
+      if { [ "$protocol" = "tcp" ] || [ "$protocol" = "udp" ]; } && [ -n "$container_port" ]; then
+        listen_opts+=$'\n'"${container_port}|${container_port} (container port)"
+      fi
+      listen_opts+=$'\n'"$(__arg_choices_common_listen_ports)"
+      _collect_add_backend_choose_from_lines listen "Listen port" "$listen_opts" "$listen" "Listen port"
+      case $? in
+      0) ;;
+      2)
         step=$((step - 1))
         continue
-      fi
-      [ -n "$_ans" ] && listen="$_ans"
+        ;;
+      *) return 1 ;;
+      esac
       if ! is_valid_port "$listen"; then
         echo "[Error] Invalid listen port." >&2
         continue
@@ -266,12 +320,16 @@ function collect_add_backend_interactive() {
         continue
       fi
       [ -n "$redirect_target" ] || redirect_target="$listen"
-      read_with_editing "Redirect target port [$redirect_target]: " _ans "$redirect_target"
-      if is_back_input "$_ans"; then
+      local redirect_opts="__DEFAULT__|Use HTTPS listen port: ${listen}"$'\n'"443|443"$'\n'"8443|8443"$'\n'"__MANUAL__|Enter manually..."
+      _collect_add_backend_choose_from_lines redirect_target "Redirect target port" "$redirect_opts" "$listen" "Redirect target port"
+      case $? in
+      0) ;;
+      2)
         step=$((step - 1))
         continue
-      fi
-      [ -n "$_ans" ] && redirect_target="$_ans"
+        ;;
+      *) return 1 ;;
+      esac
       if ! is_valid_port "$redirect_target"; then
         echo "[Error] Invalid redirect port." >&2
         continue

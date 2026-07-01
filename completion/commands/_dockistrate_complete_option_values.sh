@@ -91,6 +91,12 @@ _dockistrate_complete_option_values() {
       return 0
     fi
     ;;
+  set-visibility-policy)
+    if [[ $cword -eq 2 ]]; then
+      COMPREPLY=($(compgen -W "full redacted" -- "$cur"))
+      return 0
+    fi
+    ;;
   uninstall-all)
     if [[ "$prev" == "--scope" ]]; then
       COMPREPLY=($(compgen -W "backend config all" -- "$cur"))

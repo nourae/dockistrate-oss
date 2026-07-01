@@ -142,146 +142,148 @@ function _sr_selector_to_var() {
   printf -v "${_label}" '%s' "$label"
 }
 
+function _sr_expr_trim_list_token() {
+  printf '%s' "${1:-}" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+}
+
+function _sr_exact_list_regex() {
+  local raw="${1:-}" normalized="" token="" escaped="" joined="" sep=""
+  local -a tokens=()
+
+  normalized="${raw//|/,}"
+  case "$normalized" in
+  "" | ,* | *, | *,,*)
+    return 1
+    ;;
+  esac
+  IFS=',' read -r -a tokens <<<"$normalized"
+  [ "${#tokens[@]}" -gt 0 ] || return 1
+
+  for token in "${tokens[@]}"; do
+    token="$(_sr_expr_trim_list_token "$token")"
+    [ -n "$token" ] || return 1
+    escaped="$(_sr_escape_regex_literal "$token")"
+    joined="${joined}${sep}${escaped}"
+    sep="|"
+  done
+
+  [ -n "$joined" ] || return 1
+  printf '^(?:%s)$' "$joined"
+}
+
 function _sr_exprs() {
-  # Return d\x1f f\x1f p via stdout to avoid nameref/local scope issues on Bash 3
+  # Return display\x1f fail_predicate\x1f pass_predicate via stdout to avoid
+  # nameref/local scope issues on Bash 3.
   local cond="$1" val="$2"
-  local d f p sep=$'\x1f'
+  local display_value="" fail_predicate="" pass_predicate="" sep=$'\x1f'
   case "$cond" in
   secret_header | equals)
-    d="${val}"
-    f="!= \"${val}\""
-    p="= \"${val}\""
+    display_value="${val}"
+    fail_predicate="!= \"${val}\""
+    pass_predicate="= \"${val}\""
     ;;
   not_equals)
-    d=""
-    f="= \"${val}\""
-    p="!= \"${val}\""
+    fail_predicate="= \"${val}\""
+    pass_predicate="!= \"${val}\""
     ;;
   contains)
     local re_contains="$(_sr_escape_regex_literal "${val}")"
-    d="${val}"
-    f="!~* \"${re_contains}\""
-    p="~* \"${re_contains}\""
+    display_value="${val}"
+    fail_predicate="!~* \"${re_contains}\""
+    pass_predicate="~* \"${re_contains}\""
     ;;
   not_contains)
     local re_not_contains="$(_sr_escape_regex_literal "${val}")"
-    d=""
-    f="~* \"${re_not_contains}\""
-    p="!~* \"${re_not_contains}\""
+    fail_predicate="~* \"${re_not_contains}\""
+    pass_predicate="!~* \"${re_not_contains}\""
     ;;
   starts_with)
     local re_starts="$(_sr_escape_regex_literal "${val}")"
-    d="${val}"
-    f="!~* \"^${re_starts}\""
-    p="~* \"^${re_starts}\""
+    display_value="${val}"
+    fail_predicate="!~* \"^${re_starts}\""
+    pass_predicate="~* \"^${re_starts}\""
     ;;
   not_starts_with)
     local re_not_starts="$(_sr_escape_regex_literal "${val}")"
-    d=""
-    f="~* \"^${re_not_starts}\""
-    p="!~* \"^${re_not_starts}\""
+    fail_predicate="~* \"^${re_not_starts}\""
+    pass_predicate="!~* \"^${re_not_starts}\""
     ;;
   ends_with)
     local re_ends="$(_sr_escape_regex_literal "${val}")"
-    d="${val}"
-    f="!~* \"${re_ends}$\""
-    p="~* \"${re_ends}$\""
+    display_value="${val}"
+    fail_predicate="!~* \"${re_ends}$\""
+    pass_predicate="~* \"${re_ends}$\""
     ;;
   not_ends_with)
     local re_not_ends="$(_sr_escape_regex_literal "${val}")"
-    d=""
-    f="~* \"${re_not_ends}$\""
-    p="!~* \"${re_not_ends}$\""
+    fail_predicate="~* \"${re_not_ends}$\""
+    pass_predicate="!~* \"${re_not_ends}$\""
     ;;
   matches)
-    d="${val}"
-    f="!~* \"(${val})\""
-    p="~* \"(${val})\""
+    display_value="${val}"
+    fail_predicate="!~* \"(${val})\""
+    pass_predicate="~* \"(${val})\""
     ;;
   not_matches)
-    d=""
-    f="~* \"(${val})\""
-    p="!~* \"(${val})\""
+    fail_predicate="~* \"(${val})\""
+    pass_predicate="!~* \"(${val})\""
     ;;
   in)
-    local -a _sr_in_parts=()
-    local _sr_in_joined="" _sr_in_piece
-    IFS=',' read -r -a _sr_in_parts <<<"$val"
-    for _sr_in_piece in "${_sr_in_parts[@]}"; do
-      local escaped_piece
-      escaped_piece="$(_sr_escape_regex_literal "${_sr_in_piece}")"
-      if [ -z "${_sr_in_joined}" ]; then
-        _sr_in_joined="${escaped_piece}"
-      else
-        _sr_in_joined+="|${escaped_piece}"
-      fi
-    done
-    d=""
-    f="~* (${_sr_in_joined})"
-    p="!~* (${_sr_in_joined})"
+    local re_in
+    re_in="$(_sr_exact_list_regex "$val")" || return 1
+    display_value="${val}"
+    fail_predicate="!~* \"${re_in}\""
+    pass_predicate="~* \"${re_in}\""
     ;;
   not_in)
-    local -a _sr_not_in_parts=()
-    local _sr_not_in_joined="" _sr_not_in_piece
-    IFS=',' read -r -a _sr_not_in_parts <<<"$val"
-    for _sr_not_in_piece in "${_sr_not_in_parts[@]}"; do
-      local escaped_not_in_piece
-      escaped_not_in_piece="$(_sr_escape_regex_literal "${_sr_not_in_piece}")"
-      if [ -z "${_sr_not_in_joined}" ]; then
-        _sr_not_in_joined="${escaped_not_in_piece}"
-      else
-        _sr_not_in_joined+="|${escaped_not_in_piece}"
-      fi
-    done
-    d="${val}"
-    f="!~* (${_sr_not_in_joined})"
-    p="~* (${_sr_not_in_joined})"
+    local re_not_in
+    re_not_in="$(_sr_exact_list_regex "$val")" || return 1
+    display_value="${val}"
+    fail_predicate="~* \"${re_not_in}\""
+    pass_predicate="!~* \"${re_not_in}\""
     ;;
   gt)
     _sr_is_unsigned_int "$val" || return 1
     local regex_gt="$(_sr_numeric_regex_ge "$(_sr_numeric_inc "$val")")"
-    d="0"
-    f="~* \"^${regex_gt}$\""
-    p="!~* \"^${regex_gt}$\""
+    display_value="0"
+    fail_predicate="!~* \"^${regex_gt}$\""
+    pass_predicate="~* \"^${regex_gt}$\""
     ;;
   ge)
     _sr_is_unsigned_int "$val" || return 1
     local regex_ge="$(_sr_numeric_regex_ge "$val")"
-    d="0"
-    f="~* \"^${regex_ge}$\""
-    p="!~* \"^${regex_ge}$\""
+    display_value="0"
+    fail_predicate="!~* \"^${regex_ge}$\""
+    pass_predicate="~* \"^${regex_ge}$\""
     ;;
   lt)
     _sr_is_unsigned_int "$val" || return 1
-    local regex_ge_lt="$(_sr_numeric_regex_ge "$val")"
-    d="0"
-    f="!~* \"^${regex_ge_lt}$\""
-    p="~* \"^${regex_ge_lt}$\""
+    local regex_lt="$(_sr_numeric_regex_lt "$val")"
+    display_value="0"
+    fail_predicate="!~* \"^${regex_lt}$\""
+    pass_predicate="~* \"^${regex_lt}$\""
     ;;
   le)
     _sr_is_unsigned_int "$val" || return 1
-    local inc="$(_sr_numeric_inc "$val")"
-    local regex_ge_le="$(_sr_numeric_regex_ge "$inc")"
-    d="0"
-    f="!~* \"^${regex_ge_le}$\""
-    p="~* \"^${regex_ge_le}$\""
+    local regex_le="$(_sr_numeric_regex_le "$val")"
+    display_value="0"
+    fail_predicate="!~* \"^${regex_le}$\""
+    pass_predicate="~* \"^${regex_le}$\""
     ;;
   exists)
-    d=""
-    f="!= \"\""
-    p="= \"\""
+    fail_predicate="= \"\""
+    pass_predicate="!= \"\""
     ;;
   not_exists)
-    d=""
-    f="= \"\""
-    p="!= \"\""
+    fail_predicate="!= \"\""
+    pass_predicate="= \"\""
     ;;
   *)
     printf '%s%s%s%s%s' "" "$sep" "" "$sep" ""
     return 1
     ;;
   esac
-  printf '%s%s%s%s%s' "$d" "$sep" "$f" "$sep" "$p"
+  printf '%s%s%s%s%s' "$display_value" "$sep" "$fail_predicate" "$sep" "$pass_predicate"
 }
 
 # Map field types to Nginx variables and user-facing labels

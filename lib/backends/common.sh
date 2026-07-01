@@ -101,6 +101,20 @@ function get_container_network_ip() {
   docker inspect -f "{{range \$k,\$v := .NetworkSettings.Networks}}{{if eq \$k \"${escaped_network}\"}}{{\$v.IPAddress}}{{end}}{{end}}" "$cname" 2>/dev/null || true
 }
 
+function get_container_network_names() {
+  local cname="${1:-}"
+  [ -n "$cname" ] || return 1
+  docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{printf "%s\n" $k}}{{end}}' "$cname" 2>/dev/null || true
+}
+
+function container_attached_to_network() {
+  local cname="${1:-}" network="${2:-}" ip=""
+  [ -n "$cname" ] || return 1
+  [ -n "$network" ] || return 1
+  ip="$(get_container_network_ip "$cname" "$network")"
+  [ -n "$ip" ] && [[ "$ip" != "<no"* ]]
+}
+
 # Return stored Docker options for a backend, if any
 
 function resolve_backend_domain() {
@@ -165,14 +179,14 @@ function refresh_backend_ips() {
     [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_PORTS_COLS" ] || continue
     case "${STATE_BP_RECORD_TYPE}" in
     backend)
-      local domain="${STATE_BP_DOMAIN}" ipport="${STATE_BP_BACKEND_UPSTREAM}" ip="${STATE_BP_BACKEND_UPSTREAM%%:*}" port="${STATE_BP_BACKEND_UPSTREAM##*:}"
+      local domain="${STATE_BP_DOMAIN}" ip="${STATE_BP_BACKEND_UPSTREAM%%:*}" port="${STATE_BP_BACKEND_UPSTREAM##*:}" network="${STATE_BP_NETWORK:-${DEFAULT_NETWORK:-dockistrate-net}}"
       local cname="backend-$(sanitize_domain_name "$domain")"
       if container_exists "$cname"; then
         local cur_ip
-        cur_ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$cname" 2>/dev/null)
+        cur_ip="$(get_container_network_ip "$cname" "$network")"
         if [ -n "$cur_ip" ]; then
           if ! is_valid_ipv4 "$cur_ip"; then
-            echo "[Warn] Skipping invalid backend IP reported for $domain: ${cur_ip}. Keeping $ip." >&2
+            echo "[Warn] Skipping invalid backend IP reported for $domain on $network: ${cur_ip}. Keeping $ip." >&2
             cur_ip=""
           fi
         fi
@@ -245,18 +259,18 @@ function refresh_backend_networks() {
       local cname="backend-$(sanitize_domain_name "$domain")"
       if container_exists "$cname"; then
         local nets first_net chosen_net
-        nets=$(docker inspect -f '{{range $k,$v := .NetworkSettings.Networks}}{{ $k }} {{end}}' "$cname" 2>/dev/null | xargs)
-        first_net="${nets%% *}"
+        nets="$(get_container_network_names "$cname")"
+        first_net="$(printf '%s\n' "$nets" | awk 'NF { print; exit }')"
         if [ -n "$nets" ]; then
           chosen_net="$stored_net"
-          if [[ " $nets " != *" $stored_net "* ]]; then
+          if [ -z "$stored_net" ] || ! printf '%s\n' "$nets" | grep -Fx -- "$stored_net" >/dev/null; then
             chosen_net="$first_net"
           fi
           if [ -n "$chosen_net" ] && [ "$chosen_net" != "$stored_net" ]; then
             STATE_BP_NETWORK="$chosen_net"
             # Update IP to the address on chosen_net if available
             local cip
-            cip=$(docker inspect -f "{{range \$k,\$v := .NetworkSettings.Networks}}{{if eq \$k \"$chosen_net\"}}{{\$v.IPAddress}}{{end}}{{end}}" "$cname" 2>/dev/null)
+            cip="$(get_container_network_ip "$cname" "$chosen_net")"
             if [ -n "$cip" ]; then
               local port="${ipport##*:}"
               STATE_BP_BACKEND_UPSTREAM="${cip}:${port}"

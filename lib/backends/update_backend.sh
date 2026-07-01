@@ -241,6 +241,7 @@ function update_backend() {
   # Validate provided values when present
   if [ -n "$image" ]; then ensure_valid_or_prompt image "$image" "image" "" is_valid_image_ref; fi
   ensure_valid_or_prompt cport "$cport" "container_port" "$cur_port" is_valid_port
+  ensure_valid_or_prompt network "$network" "network" "$cur_net" is_valid_network_name
 
   local port_changed=false
   if [ "$cport" != "$old_port" ]; then
@@ -251,7 +252,9 @@ function update_backend() {
   if ! begin_transaction "update_backend_${domain}" "$CONFIG_DIR"; then
     return 1
   fi
-  ensure_network_exists "$network"
+  if ! ensure_network_exists "$network"; then
+    _rollback_handler
+  fi
 
   local new_ip="$cur_ipport" opts_to_use
   if [ "$docker_opts_provided" = true ]; then
@@ -317,8 +320,9 @@ function update_backend() {
         done <<<"$docker_opts_lines"
       fi
     fi
-    local xtrace_state=""
-    if [ -n "$opts_to_use" ]; then
+    local xtrace_state="" suppress_docker_xtrace=false
+    if [ -n "$opts_to_use" ] && operator_visibility_is_redacted; then
+      suppress_docker_xtrace=true
       xtrace_disable xtrace_state
     fi
     local -a docker_run_cmd=(docker run -d --name "$cname" --network "$network")
@@ -328,7 +332,7 @@ function update_backend() {
     fi
     docker_run_cmd+=("$final_image")
     replacement_container_id="$("${docker_run_cmd[@]}")"
-    if [ -n "$opts_to_use" ]; then
+    if [ "$suppress_docker_xtrace" = true ]; then
       xtrace_restore "$xtrace_state"
     fi
     if [ -z "$replacement_container_id" ]; then
@@ -337,9 +341,9 @@ function update_backend() {
     if [ -n "$rollback_cname" ]; then
       _update_backend_set_runtime_rollback_state "replace" "$cname" "$rollback_cname" "" "" "false" "false" "$replacement_container_id" "$rollback_container_was_stopped"
     fi
-    new_ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$cname")
+    new_ip="$(get_container_network_ip "$cname" "$network")"
     if [ -z "$new_ip" ]; then
-      echo "[Error] Failed to get IP for container '${cname}'." >&2
+      echo "[Error] Failed to get IP for container '${cname}' on network '${network}'." >&2
       _rollback_handler
     fi
     new_ip="${new_ip}:${cport}"
@@ -353,25 +357,22 @@ function update_backend() {
         if [ -z "$cip" ]; then
           if docker network connect "$network" "$cname" >/dev/null 2>&1; then
             UPDATE_BACKEND_RUNTIME_CONNECTED_NEW="true"
-          else
-            cip="$(get_container_network_ip "$cname" "$network")"
-            if [ -z "$cip" ]; then
-              echo "[Error] Failed to connect container '${cname}' to network '${network}'." >&2
-              _rollback_handler
-            fi
           fi
           if [ -z "$cip" ]; then
             cip="$(get_container_network_ip "$cname" "$network")"
           fi
         fi
+        if [ -z "$cip" ] || [[ "$cip" == "<no"* ]]; then
+          echo "[Error] Failed to connect container '${cname}' to network '${network}'." >&2
+          _rollback_handler
+        fi
         if [ "$cur_net" != "$network" ]; then
           if docker network disconnect "$cur_net" "$cname" >/dev/null 2>&1; then
             UPDATE_BACKEND_RUNTIME_DISCONNECTED_OLD="true"
+          elif container_attached_to_network "$cname" "$cur_net"; then
+            echo "[Error] Failed to disconnect container '${cname}' from network '${cur_net}'." >&2
+            _rollback_handler
           fi
-        fi
-        if [ -z "$cip" ] || [[ "$cip" == "<no"* ]]; then
-          echo "[Error] Failed to get IP for container '${cname}' on network '${network}'." >&2
-          _rollback_handler
         fi
         new_ip="${cip}:${cport}"
       else

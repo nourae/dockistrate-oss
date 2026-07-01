@@ -109,13 +109,9 @@ function add_port_mapping() {
       if declare -F add_cert >/dev/null 2>&1; then
         echo "[Info] No certificate provided; generating self-signed cert for ${domain}:${custom_port}."
         local prev_skip_update="${SKIP_UPDATE_NGINX_CONFIG:-}"
-        SKIP_UPDATE_NGINX_CONFIG=true
+        push_skip_update_nginx_config prev_skip_update
         CERT_AUTOCONFIG_DISABLED=1 add_cert "$domain" "$custom_port" selfsigned
-        if [ "$prev_skip_update" = "true" ]; then
-          SKIP_UPDATE_NGINX_CONFIG="true"
-        else
-          unset SKIP_UPDATE_NGINX_CONFIG
-        fi
+        pop_skip_update_nginx_config "$prev_skip_update"
         cert_dir="selfsigned/live/${domain}_${custom_port}"
       else
         echo "[Error] HTTPS selected but no cert provided and certificate helper unavailable." >&2

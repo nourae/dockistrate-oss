@@ -86,9 +86,7 @@ function _tighten_file_permissions() {
     return 0
   fi
 
-  if ((perm_other != 0 || perm_group > 4 || perm_owner > 6)); then
-    chmod "$target_mode" "$file" 2>/dev/null || chmod 600 "$file" 2>/dev/null || true
-  elif ((perm_owner < 6)); then
+  if ((perm_other != 0 || perm_group > 4 || perm_owner > 6 || perm_owner < 6)); then
     chmod "$target_mode" "$file" 2>/dev/null || chmod 600 "$file" 2>/dev/null || true
   fi
 }

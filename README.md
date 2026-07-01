@@ -116,7 +116,7 @@ curl -i http://localhost -H 'Host: example.com'
 Remove the sample backend when done:
 
 ```bash
-./dockistrate.sh remove-backend example.com
+./dockistrate.sh remove-backend --yes example.com
 ./dockistrate.sh remove-nginx
 ```
 
@@ -132,6 +132,13 @@ execution:
 
 Use interactive mode when you want guided prompts. Use CLI mode when scripting
 or running in CI.
+
+Routing and certificate prompts prefer menus for known values. For example,
+`add-backend` lists common listen/redirect ports, and `update-port` first asks
+which existing mapping to change, then reviews the full CLI-equivalent command
+after the new ports, protocol, certificate, WebSocket, HTTP/3, and Alt-Svc
+choices are selected. Manual entry remains available for custom ports, custom
+Alt-Svc values, certificate paths, and upload file paths.
 
 ## Common Workflows
 
@@ -164,7 +171,7 @@ upgrade-preflight        Read-only state/tag compatibility check
 
 add-backend              Start a backend and optionally expose an initial port
 update-backend           Change image, container port, Docker opts, or network
-remove-backend           Remove backend state and its container
+remove-backend           Remove backend state and its container (--yes for scripts)
 list-backends            Show configured backends and exposure summary
 
 add-port                 Add HTTP, HTTPS, TCP, or UDP exposure
@@ -205,6 +212,12 @@ real certificates, logs, captures, or runtime state from production systems.
 The active `state/` root and its runtime subdirectories must be real
 directories; Dockistrate rejects symlinked runtime roots before writing,
 logging, or normalizing permissions.
+Docker option and header values are fully visible by default in operator-facing
+output and saved interactive history. Use
+`./dockistrate.sh set-visibility-policy redacted` when shared terminals or
+support transcripts should hide those values in display, audit, and saved
+interactive command history; stored state and generated runtime configuration
+still retain the real values.
 The current backend and port state header is
 `record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location`.
 

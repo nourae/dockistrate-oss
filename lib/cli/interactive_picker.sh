@@ -10,6 +10,11 @@ function interactive_picker_run_command_prompt() {
     skip_runtime_prep=true
   fi
 
+  if [ "${INTERACTIVE:-}" = true ] &&
+    declare -F dockistrate_disable_interactive_xtrace_if_needed >/dev/null 2>&1; then
+    dockistrate_disable_interactive_xtrace_if_needed "$CMD"
+  fi
+
   if [ "$skip_runtime_prep" != true ] &&
     declare -F dockistrate_prepare_runtime >/dev/null 2>&1; then
     if ! dockistrate_prepare_runtime; then

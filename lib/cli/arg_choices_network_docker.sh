@@ -4,6 +4,15 @@
 CLI_DOCKER_NETWORKS_CACHE_TOKEN=""
 CLI_DOCKER_NETWORKS_CACHE_VALUE=""
 
+function _arg_choices_operator_value_for_display() {
+  local kind="${1:-}" value="${2:-}"
+  if declare -F operator_value_for_display >/dev/null 2>&1; then
+    operator_value_for_display "$kind" "$value"
+  else
+    printf '%s' "$value"
+  fi
+}
+
 function cli_prompt_cache_reset() {
   CLI_PROMPT_CACHE_TOKEN=$(( ${CLI_PROMPT_CACHE_TOKEN:-0} + 1 ))
 }
@@ -33,7 +42,7 @@ function __arg_choices_docker_opts() {
       local cur
       cur="$(get_backend_docker_opts "backend:${dom}")"
       if [ -n "$cur" ]; then
-        echo "__DEFAULT__|Keep current: $cur"
+        echo "__DEFAULT__|Keep current: $(_arg_choices_operator_value_for_display docker_opts "$cur")"
         echo "__CLEAR__|Clear current options"
       else
         echo "__DEFAULT__|Keep current: (none)"
@@ -46,7 +55,7 @@ function __arg_choices_docker_opts() {
   # For nginx docker options, present Keep current + Clear + Manual choices.
   if [ "$cmd" = "start-nginx" ] || [ "$cmd" = "set-nginx-docker-opts" ]; then
     if [ -n "${NGINX_DOCKER_OPTS:-}" ]; then
-      echo "__DEFAULT__|Keep current: $NGINX_DOCKER_OPTS"
+      echo "__DEFAULT__|Keep current: $(_arg_choices_operator_value_for_display docker_opts "$NGINX_DOCKER_OPTS")"
       echo "__CLEAR__|Clear current options"
     else
       echo "__DEFAULT__|Keep current: (none)"

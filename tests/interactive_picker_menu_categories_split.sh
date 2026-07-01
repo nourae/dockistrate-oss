@@ -129,7 +129,7 @@ assert_array_values INTERACTIVE_PICKER_COMMANDS_GLOBAL_ACCESS_DEFAULTS \
 
 assert_array_values INTERACTIVE_PICKER_COMMANDS_GLOBAL_TLS_RUNTIME \
   set-http-version set-tls-protocols set-tls-ciphers \
-  set-nginx-docker-opts show-nginx-docker-opts set-nginx-image set-certbot-image
+  set-nginx-docker-opts show-nginx-docker-opts set-visibility-policy show-visibility-policy set-nginx-image set-certbot-image
 
 duplicates_file="${tmp_dir}/duplicates.txt"
 awk '

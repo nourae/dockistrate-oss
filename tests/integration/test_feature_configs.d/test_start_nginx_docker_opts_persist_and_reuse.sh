@@ -40,6 +40,37 @@ test_start_nginx_docker_opts_persist_and_reuse() {
     "grep -Eq 'subcommand=run -d --name nginx-proxy .*--ulimit nofile=65535:65535 --cpus 1.5' '${docker_log_file}'"
 }
 
+test_start_nginx_redacted_policy_hides_saved_docker_opts_message() {
+  run_dockistrate set-visibility-policy redacted >/dev/null
+  assertEquals "set redacted visibility policy" 0 $?
+
+  local docker_log_file="${STATE_DIR}/docker_start_nginx_redacted_docker_opts.log"
+  rm -f "$docker_log_file"
+
+  local opts='--env NGINX_SECRET=hidden --cpus 1'
+  local output status
+  output="$(
+    DOCKER_MOCK_PS_NAMES='' \
+    DOCKER_MOCK_INSPECT_STATUS=running \
+      DOCKER_MOCK_LOG_FILE="$docker_log_file" \
+      SKIP_DOCKER_CHECKS=false \
+      run_dockistrate start-nginx --docker-opts "$opts" 2>&1
+  )"
+  status=$?
+  assertEquals "start-nginx with redacted docker opts should succeed" 0 "$status"
+  assertStringContains "start-nginx output should report redacted saved opts" \
+    "Saved Nginx docker options: [REDACTED]" "$output"
+  case "$output" in
+  *"NGINX_SECRET=hidden"*)
+    fail "start-nginx redacted output leaked saved docker opts: $output"
+    ;;
+  esac
+  assertTrue "global settings should persist full nginx docker opts from redacted start-nginx" \
+    "grep -Fq 'NGINX_DOCKER_OPTS,--env NGINX_SECRET=hidden --cpus 1' '${CONFIG_DIR}/global_settings.csv'"
+  assertTrue "docker run should still receive full nginx docker opts in redacted mode" \
+    "grep -Eq 'subcommand=run -d --name nginx-proxy .*--env NGINX_SECRET=hidden --cpus 1' '${docker_log_file}'"
+}
+
 test_start_nginx_rejects_saved_reserved_labels() {
   local docker_log_file="${STATE_DIR}/docker_start_nginx_reserved_labels.log"
   rm -f "$docker_log_file"

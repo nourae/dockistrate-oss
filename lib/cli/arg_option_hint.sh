@@ -3,6 +3,15 @@
 #######################################
 # Interactive Picker
 #######################################
+function _arg_option_hint_operator_value_for_display() {
+  local kind="${1:-}" value="${2:-}"
+  if declare -F operator_value_for_display >/dev/null 2>&1; then
+    operator_value_for_display "$kind" "$value"
+  else
+    printf '%s' "$value"
+  fi
+}
+
 function arg_option_hint() {
   case "$1" in
   allow_or_deny | policy)
@@ -199,7 +208,7 @@ function arg_option_hint() {
       # backend value shown via current args if available; fall back to global
       cur="$(get_global_header_value "Strict-Transport-Security")"
     fi
-    [ -n "$cur" ] && echo "Current: ${cur}. Off to remove; e.g., max-age=63072000; includeSubDomains; preload" || echo "Off to remove; e.g., max-age=63072000; includeSubDomains; preload"
+    [ -n "$cur" ] && echo "Current: $(_arg_option_hint_operator_value_for_display header_value "$cur"). Off to remove; e.g., max-age=63072000; includeSubDomains; preload" || echo "Off to remove; e.g., max-age=63072000; includeSubDomains; preload"
     ;;
   csp_value | backend_csp_value)
     local cur=""
@@ -208,7 +217,7 @@ function arg_option_hint() {
     else
       cur="$(get_global_header_value "Content-Security-Policy")"
     fi
-    [ -n "$cur" ] && echo "Current: ${cur}. Off to remove; e.g., default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests" || echo "Off to remove; e.g., default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+    [ -n "$cur" ] && echo "Current: $(_arg_option_hint_operator_value_for_display header_value "$cur"). Off to remove; e.g., default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests" || echo "Off to remove; e.g., default-src 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
     ;;
   esac
 }

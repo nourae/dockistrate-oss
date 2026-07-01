@@ -17,6 +17,8 @@ allowlist=(
   # Shared update helper; callers must remain transaction-wrapped.
   "lib/global_settings/common.sh"
   "lib/security_rules/common.sh"
+  # Shared SKIP_UPDATE_NGINX_CONFIG environment helper; callers perform the state mutation.
+  "lib/utils/common.sh"
 )
 
 function in_allowlist() {

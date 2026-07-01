@@ -18,7 +18,7 @@ _set_command_description "fix-permissions" "Normalize repository permissions, or
 
 _set_command_description "list-backends" "Show configured backends with TLS/override details and port summary"
 _set_command_description "add-backend" "Start a backend container and create the initial port mapping"
-_set_command_description "remove-backend" "Remove a backend and its port mappings"
+_set_command_description "remove-backend" "Remove a backend and its port mappings (--yes for scripts)"
 _set_command_description "add-host-alias" "Add an alternate hostname that maps to an existing backend"
 _set_command_description "remove-host-alias" "Remove a host alias for a backend"
 _set_command_description "list-host-aliases" "List configured host aliases, optionally filtered by domain"
@@ -169,6 +169,8 @@ _set_command_description "set-trusted-proxies" "Define trusted proxy CIDRs for c
 _set_command_description "set-real-ip-recursive" "Toggle recursive real_ip processing"
 _set_command_description "set-nginx-docker-opts" "Set persistent docker run options for the Nginx proxy container"
 _set_command_description "show-nginx-docker-opts" "Show persistent docker run options for the Nginx proxy container"
+_set_command_description "set-visibility-policy" "Choose full or redacted display/history/audit for operator values"
+_set_command_description "show-visibility-policy" "Show the current operator value visibility policy"
 _set_command_description "set-nginx-image" "Persist the Nginx image used for the proxy container"
 _set_command_description "set-certbot-image" "Choose the Certbot image used for ACME issuance"
 

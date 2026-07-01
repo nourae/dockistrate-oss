@@ -28,6 +28,18 @@ if ! confirm_prompt "Question?" "yes_no"; then
   exit 1
 fi
 
+warn_output="$(confirm_prompt "Question?" "yes_no" "warn_yes" 2>&1)"
+if ! grep -Fq "Non-interactive confirmation auto-approved" <<<"$warn_output"; then
+  echo "[Error] yes_no warn_yes should print a compatibility warning." >&2
+  echo "$warn_output" >&2
+  exit 1
+fi
+
+if confirm_prompt "Question?" "yes_no" "require_yes" >/dev/null 2>&1; then
+  echo "[Error] yes_no require_yes should fail in non-interactive mode." >&2
+  exit 1
+fi
+
 if confirm_prompt "Type YES to proceed:" "strict_yes" >/dev/null 2>&1; then
   echo "[Error] strict_yes should fail in non-interactive mode." >&2
   exit 1

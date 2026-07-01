@@ -63,9 +63,22 @@ function cli_choice_line_to_value_label() {
   # With printf -v and set -u, name collisions can leave caller vars unset.
   local line="${1:-}" __parsed_value="" __parsed_label=""
   local __value_var="${2:-}" __label_var="${3:-}"
+  local __before_pipe="" __before_comma=""
 
   __parsed_value="$line"
   __parsed_label="$line"
+
+  if [[ "$line" == *'|'* ]]; then
+    __before_pipe="${line%%|*}"
+    __before_comma="${line%%,*}"
+    if [[ "$line" != *,* || "${#__before_pipe}" -lt "${#__before_comma}" ]]; then
+      __parsed_value="${line%%|*}"
+      __parsed_label="${line#*|}"
+      [ -n "$__value_var" ] && printf -v "$__value_var" '%s' "$__parsed_value"
+      [ -n "$__label_var" ] && printf -v "$__label_var" '%s' "$__parsed_label"
+      return 0
+    fi
+  fi
 
   if csv_parse_line "$line" && [ "$CSV_FIELD_COUNT" -eq 2 ]; then
     __parsed_value="${CSV_FIELDS[0]}"

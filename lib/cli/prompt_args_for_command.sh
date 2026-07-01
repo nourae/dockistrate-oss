@@ -20,6 +20,24 @@ function _prompt_args_clear_selection() {
   SELECTED_CMD=""
 }
 
+function _prompt_args_operator_arg_value_for_display() {
+  local cmd="${1:-}" arg_name="${2:-}" value="${3:-}"
+  if declare -F operator_arg_value_for_display >/dev/null 2>&1; then
+    operator_arg_value_for_display "$cmd" "$arg_name" "$value"
+  else
+    printf '%s' "$value"
+  fi
+}
+
+function _prompt_args_operator_value_for_display() {
+  local kind="${1:-}" value="${2:-}"
+  if declare -F operator_value_for_display >/dev/null 2>&1; then
+    operator_value_for_display "$kind" "$value"
+  else
+    printf '%s' "$value"
+  fi
+}
+
 function _prompt_args_review_selected_or_return() {
   if [ ${#SELECTED_ARGS[@]} -gt 0 ]; then
     _prompt_args_review_or_return "${SELECTED_CMD:-}" "${SELECTED_ARGS[@]}"
@@ -61,6 +79,21 @@ function prompt_args_for_command() {
   fi
   if [ "$INTERACTIVE" = true ] && [ "$CMD" = "add-host-alias" ]; then
     collect_add_host_alias_interactive
+    handler_status=$?
+    if [ "$handler_status" -ne 0 ]; then
+      _prompt_args_clear_selection
+      return "$handler_status"
+    fi
+    _prompt_args_review_selected_or_return
+    handler_status=$?
+    if [ "$handler_status" -ne 0 ]; then
+      _prompt_args_clear_selection
+      return "$handler_status"
+    fi
+    return 0
+  fi
+  if [ "$INTERACTIVE" = true ] && [ "$CMD" = "update-port" ]; then
+    collect_update_port_interactive
     handler_status=$?
     if [ "$handler_status" -ne 0 ]; then
       _prompt_args_clear_selection
@@ -171,10 +204,10 @@ function prompt_args_for_command() {
         if [[ "$CMD" == "update-backend" && "$name" == "docker_opts" ]]; then
           local cur_opts
           cur_opts="$(get_backend_docker_opts "backend:${args[0]}")"
-          [[ -n "$cur_opts" ]] && echo "Current docker options: $cur_opts"
+          [[ -n "$cur_opts" ]] && echo "Current docker options: $(_prompt_args_operator_value_for_display docker_opts "$cur_opts")"
         fi
         if [[ ("$CMD" == "start-nginx" || "$CMD" == "set-nginx-docker-opts") && "$name" == "docker_opts" ]]; then
-          [[ -n "${NGINX_DOCKER_OPTS:-}" ]] && echo "Current Nginx docker options: $NGINX_DOCKER_OPTS"
+          [[ -n "${NGINX_DOCKER_OPTS:-}" ]] && echo "Current Nginx docker options: $(_prompt_args_operator_value_for_display docker_opts "$NGINX_DOCKER_OPTS")"
         fi
 
         # Skip cert prompt when protocol != https for add-backend and add-port
@@ -243,6 +276,15 @@ function prompt_args_for_command() {
           local __proto_http3="${args[3]:-}"
           if [[ -n "$__proto_http3" && "$__proto_http3" != "https" ]]; then
             args+=("$default")
+            arg_prompted+=("skipped")
+            spec_idx=$((spec_idx + 1))
+            continue
+          fi
+        fi
+        if [[ "$name" == "upload_fullchain" || "$name" == "upload_privkey" ]]; then
+          local __cert_choice="${args[2]:-}"
+          if [[ ( "$CMD" == "add-cert" || "$CMD" == "replace-cert" ) && "$__cert_choice" != "upload" ]]; then
+            args+=("")
             arg_prompted+=("skipped")
             spec_idx=$((spec_idx + 1))
             continue
@@ -323,7 +365,9 @@ function prompt_args_for_command() {
               fi
             else
               if [[ -n "$default" ]]; then
-                read_with_editing "$prompt [$default]: " val "$default"
+                local default_display
+                default_display="$(_prompt_args_operator_arg_value_for_display "$CMD" "$name" "$default")"
+                read_with_editing "$prompt [$default_display]: " val "$default"
               else
                 read_with_editing "$prompt: " val
               fi
@@ -339,7 +383,9 @@ function prompt_args_for_command() {
             fi
           else
             if [[ -n "$default" ]]; then
-              read_with_editing "$prompt [$default]: " val "$default"
+              local default_display
+              default_display="$(_prompt_args_operator_arg_value_for_display "$CMD" "$name" "$default")"
+              read_with_editing "$prompt [$default_display]: " val "$default"
             else
               read_with_editing "$prompt: " val
             fi

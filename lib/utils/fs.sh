@@ -71,15 +71,10 @@ function _realpath_portable() {
       continue
     fi
 
-    if [ -e "$base" ] || [ ! -L "$base" ]; then
-      resolved="$resolved_dir/$base"
-      cd "$start_dir" 2>/dev/null || true
-      printf '%s' "$resolved"
-      return 0
-    fi
-
+    resolved="$resolved_dir/$base"
     cd "$start_dir" 2>/dev/null || true
-    return 1
+    printf '%s' "$resolved"
+    return 0
   done
 
   cd "$start_dir" 2>/dev/null || true

@@ -4,7 +4,7 @@ function _sr_escape() {
   local s="${1:-}"
   s="${s//\\/\\\\}"
   s="${s//|/\\|}"
-  echo "$s"
+  printf '%s\n' "$s"
 }
 
 
@@ -12,7 +12,7 @@ function _sr_unescape() {
   local s="${1:-}"
   s="${s//\\|/|}"
   s="${s//\\\\/\\}"
-  echo "$s"
+  printf '%s\n' "$s"
 }
 
 
@@ -46,7 +46,7 @@ function _escape_nginx_value() {
   local v="${1:-}"
   v="${v//\\/\\\\}"
   v="${v//\"/\\\"}"
-  echo "$v"
+  printf '%s\n' "$v"
 }
 
 

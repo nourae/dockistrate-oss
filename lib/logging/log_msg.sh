@@ -6,18 +6,23 @@ if ! declare -F ensure_log_writable >/dev/null 2>&1; then
 fi
 
 function log_msg() {
-  if [ "$ENABLE_LOGGING" = true ]; then
+  if [ "${ENABLE_LOGGING:-false}" = true ]; then
     local timestamp
+    local log_file="${LOG_FILE:-}"
     timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
-    ensure_log_writable "$LOG_FILE" || {
+    if [ -z "$log_file" ]; then
+      echo "[$timestamp] $*"
+      return 0
+    fi
+    ensure_log_writable "$log_file" || {
       echo "[$timestamp] $*"
       return 0
     }
-    if [ -w "$LOG_FILE" ] || touch "$LOG_FILE" &>/dev/null; then
+    if [ -w "$log_file" ] || touch "$log_file" &>/dev/null; then
       if [ "${VERBOSE:-false}" = true ]; then
-        echo "[$timestamp] $*" | tee -a "$LOG_FILE"
+        echo "[$timestamp] $*" | tee -a "$log_file"
       else
-        echo "[$timestamp] $*" | tee -a "$LOG_FILE" >/dev/null
+        echo "[$timestamp] $*" | tee -a "$log_file" >/dev/null
       fi
     else
       # Fall back to stdout/stderr without failing the whole run
