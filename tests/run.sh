@@ -65,7 +65,6 @@ function timeout_seconds_for_script() {
 function should_run_script() {
   local script="${1:-}"
 
-
   case "$TEST_RUN_SUITE" in
   all)
     return 0

@@ -5,8 +5,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 # shellcheck source=../lib/utils.sh
 source "$ROOT_DIR/lib/utils.sh"
-# shellcheck source=../lib/backends/common.sh
-source "$ROOT_DIR/lib/backends/common.sh"
+if declare -F get_container_network_names >/dev/null 2>&1; then
+  echo "[Error] test setup unexpectedly loaded backend network helpers." >&2
+  exit 1
+fi
 # shellcheck source=../lib/nginx/remove_unused_nginx_networks.sh
 source "$ROOT_DIR/lib/nginx/remove_unused_nginx_networks.sh"
 
