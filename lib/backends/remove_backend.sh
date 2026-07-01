@@ -277,7 +277,7 @@ function remove_backend() {
       noninteractive_policy="warn_yes"
     fi
     if [ "$assume_yes" != true ] &&
-      ! confirm_prompt "Remove container '${container_name}' for domain '${domain}'? (y/n): " "yes_no" "$noninteractive_policy"; then
+      ! confirm_prompt "Remove container '${container_name}' for domain '${domain}'? (y/n): " "yes_no" "$noninteractive_policy" "--yes"; then
       echo "[Info] Aborting."
       return 0
     fi
