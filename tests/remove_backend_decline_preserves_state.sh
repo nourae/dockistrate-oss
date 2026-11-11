@@ -40,7 +40,9 @@ NGINX_STREAM_CONF_DIR="$NGINX_CONFIG_DIR/stream_conf"
 PATH_HEADER_DIR="$NGINX_HTTP_CONF_DIR/path_headers"
 CERTS_DIR="$STATE_DIR/certs"
 BACKEND_PORTS_FILE="$CONFIG_DIR/backend_ports.csv"
+BACKEND_IDENTITY_FILE="$CONFIG_DIR/backend_identity.csv"
 
+SKIP_DOCKER_CHECKS=false
 INTERACTIVE=true
 
 mkdir -p \
@@ -54,17 +56,31 @@ backend,example.com,10.0.0.5:8000,dockistrate-net,,,,,,,,,,,,,,,,,
 port,example.com,,,,,80,8000,http,none,no,off,,off,auto,,,,,,
 EOF_PORTS
 
+# Seed a managed Docker fixture through the shared metadata-aware mock so the
+# production saved-identity loader and ownership predicate stay active.
+test_backend_token="$(printf '%032d' 2)"
+test_backend_id="$(DOCKER_MOCK_RUNTIME_DIR="$TMP_ROOT/docker" "$ROOT_DIR/tests/mocks/docker" run -d \
+  --name backend-example.com --network dockistrate-net \
+  --label com.dockistrate.managed=true --label com.dockistrate.role=backend \
+  --label "com.dockistrate.state-dir=$(_backend_identity_state_dir)" \
+  --label com.dockistrate.backend-domain=example.com \
+  --label "com.dockistrate.backend-launch=$test_backend_token" nginx:alpine)"
+_backend_runtime_is_full_container_id "$test_backend_id"
+_backend_identity_store example.com "$test_backend_id" "$test_backend_token"
+
 cp "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.orig"
+cp "$BACKEND_IDENTITY_FILE" "$BACKEND_IDENTITY_FILE.orig"
 
 BEGIN_TXN_CALLED="false"
 UPDATE_NGINX_CALLED="false"
 REMOVE_CONTAINER_CALLED="false"
 
+function docker() { DOCKER_MOCK_RUNTIME_DIR="$TMP_ROOT/docker" "$ROOT_DIR/tests/mocks/docker" "$@"; }
 function confirm_prompt() { return 1; }
 function container_exists() { [ "${1:-}" = "backend-example.com" ]; }
-function begin_transaction() { BEGIN_TXN_CALLED="true"; return 0; }
-function update_nginx_config() { UPDATE_NGINX_CALLED="true"; return 0; }
-function remove_container_and_anonymous_volumes() { REMOVE_CONTAINER_CALLED="true"; return 0; }
+function begin_transaction() { BEGIN_TXN_CALLED="true"; touch "$TMP_ROOT/begin-called"; return 0; }
+function update_nginx_config() { UPDATE_NGINX_CALLED="true"; touch "$TMP_ROOT/update-called"; return 0; }
+function remove_container_and_anonymous_volumes() { REMOVE_CONTAINER_CALLED="true"; touch "$TMP_ROOT/remove-called"; return 0; }
 function log_msg() { :; }
 
 output="$(remove_backend example.com 2>&1)"
@@ -97,6 +113,18 @@ fi
 
 if ! cmp -s "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.orig"; then
   echo "[Error] remove_backend mutated backend_ports.csv even though the operator declined container removal." >&2
+  exit 1
+fi
+
+# Persistent markers also observe calls made inside the captured subshell.
+for marker in begin-called update-called remove-called; do
+  if [ -e "$TMP_ROOT/$marker" ]; then
+    echo "[Error] Declined removal performed an unexpected mutation: $marker" >&2
+    exit 1
+  fi
+done
+if ! cmp -s "$BACKEND_IDENTITY_FILE" "$BACKEND_IDENTITY_FILE.orig"; then
+  echo "[Error] Declined removal changed backend identity state." >&2
   exit 1
 fi
 

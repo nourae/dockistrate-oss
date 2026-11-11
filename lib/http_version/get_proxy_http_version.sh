@@ -4,7 +4,7 @@ function get_proxy_http_version() {
   local domain="${1:-}"
   [ -n "$domain" ] && domain="$(normalize_domain "$domain")"
   local ver
-  ver=$(get_backend_http_version "$domain")
+  ver=$(get_backend_http_version "$domain") || return 1
   if [ "$ver" = "http2" ]; then
     echo "1.1"
   else

@@ -1,0 +1,8 @@
+$ openssl pkcs12 -info -noout -in /opt/dockistrate-demo/state/domains/example.com/mtls/guide-client.p12 -passin pass:disposable-docs-password
+MAC: sha256, Iteration 2048
+MAC length: 32, salt length: 8
+PKCS7 Encrypted data: PBES2, PBKDF2, AES-256-CBC, Iteration 2048, PRF hmacWithSHA256
+Certificate bag
+Certificate bag
+PKCS7 Data
+Shrouded Keybag: PBES2, PBKDF2, AES-256-CBC, Iteration 2048, PRF hmacWithSHA256

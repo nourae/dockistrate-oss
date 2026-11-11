@@ -1,0 +1,5 @@
+
+nginx: the configuration file /etc/nginx/dockistrate/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/dockistrate/nginx.conf test is successful
+
+Press Enter to continue...

@@ -1,9 +1,13 @@
 # shellcheck shell=bash
 
+if ! declare -F normalize_decimal_number >/dev/null 2>&1; then
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../utils" && pwd)/numbers.sh"
+fi
+
 # Some unit tests source this file directly without loading lib/utils/state_csv.sh.
 # Provide local fallbacks to keep strict-mode reads safe in that context.
-: "${STATE_SECURITY_RULES_HEADER:=enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location}"
-: "${STATE_SECURITY_RULES_COLS:=47}"
+: "${STATE_SECURITY_RULES_HEADER:=enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location,action}"
+: "${STATE_SECURITY_RULES_COLS:=48}"
 : "${STATE_SECURITY_IP_RULES_HEADER:=enabled,domain,scope,action,ip_value,status_code}"
 : "${STATE_SECURITY_IP_RULES_COLS:=6}"
 : "${STATE_BACKEND_PORTS_HEADER:=record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location}"
@@ -20,7 +24,7 @@ function _sr_ensure_ip_db() {
 function _sr_load_line() {
   local id="$1"
   local line_no=0
-  if ! [[ "$id" =~ ^[0-9]+$ ]] || [ "$id" -lt 1 ]; then
+  if ! id="$(normalize_positive_decimal "$id" 9223372036854775806)"; then
     return 1
   fi
   _sr_ensure_rules_db || return 1
@@ -31,7 +35,7 @@ function _sr_load_line() {
 function _sr_ip_load_line() {
   local id="$1"
   local line_no=0
-  if ! [[ "$id" =~ ^[0-9]+$ ]] || [ "$id" -lt 1 ]; then
+  if ! id="$(normalize_positive_decimal "$id" 9223372036854775806)"; then
     return 1
   fi
   _sr_ensure_ip_db || return 1
@@ -40,7 +44,22 @@ function _sr_ip_load_line() {
 }
 
 
+function _sr_normalize_action() {
+  case "${1:-require}" in
+  require | block | allow) printf '%s\n' "${1:-require}" ;;
+  *) echo "[Error] Invalid security rule action: ${1:-}" >&2; return 1 ;;
+  esac
+}
+
 function _sr_write_db_line() {
+  _sr_write_db_line_with_action require "$@"
+}
+
+function _sr_write_db_line_with_action() {
+  local action=""
+  action="$(_sr_normalize_action "${1:-}")" || return 1
+  shift
+
   local enabled="${1:-}" domain="${2:-}" mode="${3:-}" code="${4:-}" n="${5:-0}"
   local reason="-" loc="auto"
   local -a fields=() remaining=() cond_fields=()
@@ -69,7 +88,7 @@ function _sr_write_db_line() {
   fi
 
   # Canonical schema:
-  # enabled,domain,mode,status_code,condition_count,(selector_N,name_N,condition_N,value_N)x10,reason,source_location
+  # enabled,domain,mode,status_code,condition_count,(selector_N,name_N,condition_N,value_N)x10,reason,source_location,action
   fields=("$enabled" "$domain" "$mode" "$code" "$n")
   if [ "${#cond_fields[@]}" -gt 0 ]; then
     fields+=("${cond_fields[@]}")
@@ -81,6 +100,12 @@ function _sr_write_db_line() {
     fields=("${fields[@]:0:45}")
   fi
   fields+=("$reason" "$loc")
+  if [ "$STATE_SECURITY_RULES_COLS" -eq 48 ]; then
+    fields+=("$action")
+  elif [ "$STATE_SECURITY_RULES_COLS" -ne 47 ] || [ "$action" != require ]; then
+    echo '[Error] Historical security-rule records support only require.' >&2
+    return 1
+  fi
   while [ "${#fields[@]}" -lt "$STATE_SECURITY_RULES_COLS" ]; do
     fields+=("")
   done
@@ -96,7 +121,7 @@ function _sr_delete_line() {
   local id="$1"
   local tmp_file=""
   local line_no=0
-  if ! [[ "$id" =~ ^[0-9]+$ ]] || [ "$id" -lt 1 ]; then
+  if ! id="$(normalize_positive_decimal "$id" 9223372036854775806)"; then
     return 1
   fi
   _sr_ensure_rules_db || return 1
@@ -113,7 +138,7 @@ function _sr_delete_line() {
 function _sr_ip_delete_line() {
   local id="$1"
   local tmp_file="" line_no=0
-  if ! [[ "$id" =~ ^[0-9]+$ ]] || [ "$id" -lt 1 ]; then
+  if ! id="$(normalize_positive_decimal "$id" 9223372036854775806)"; then
     return 1
   fi
   _sr_ensure_ip_db || return 1
@@ -134,7 +159,7 @@ function _sr_replace_line() {
   local id="$1" new="$2"
   local tmp_file=""
   local line_no=0
-  if ! [[ "$id" =~ ^[0-9]+$ ]] || [ "$id" -lt 1 ]; then
+  if ! id="$(normalize_positive_decimal "$id" 9223372036854775806)"; then
     return 1
   fi
   _sr_ensure_rules_db || return 1
@@ -151,7 +176,7 @@ function _sr_replace_line() {
 function _sr_ip_replace_line() {
   local id="$1" new="$2"
   local tmp_file="" line_no=0
-  if ! [[ "$id" =~ ^[0-9]+$ ]] || [ "$id" -lt 1 ]; then
+  if ! id="$(normalize_positive_decimal "$id" 9223372036854775806)"; then
     return 1
   fi
   _sr_ensure_ip_db || return 1
@@ -171,6 +196,8 @@ function _sr_ip_move_line() {
   local -a rows=() reordered=()
   local from_idx to_idx moving i inserted=0
 
+  from="$(normalize_positive_decimal "$from")" && to="$(normalize_positive_decimal "$to")" || return 1
+
   _sr_ensure_ip_db || return 1
   count="$(csv_data_row_count "$SECURITY_IP_RULES_DB" "$STATE_SECURITY_IP_RULES_HEADER" 2>/dev/null || echo 0)"
   if [ "$count" -lt 1 ]; then
@@ -189,19 +216,23 @@ function _sr_ip_move_line() {
 
   from_idx=$((from - 1))
   to_idx=$((to - 1))
-  moving="${rows[$from_idx]}"
-  unset "rows[$from_idx]"
-  rows=("${rows[@]}")
+  if [ "$from_idx" -eq "$to_idx" ]; then
+    reordered=("${rows[@]}")
+  else
+    moving="${rows[$from_idx]}"
+    unset "rows[$from_idx]"
+    rows=("${rows[@]}")
 
-  for ((i = 0; i < ${#rows[@]}; i++)); do
-    if [ "$i" -eq "$to_idx" ]; then
+    for ((i = 0; i < ${#rows[@]}; i++)); do
+      if [ "$i" -eq "$to_idx" ]; then
+        reordered+=("$moving")
+        inserted=1
+      fi
+      reordered+=("${rows[$i]}")
+    done
+    if [ "$inserted" -eq 0 ]; then
       reordered+=("$moving")
-      inserted=1
     fi
-    reordered+=("${rows[$i]}")
-  done
-  if [ "$inserted" -eq 0 ]; then
-    reordered+=("$moving")
   fi
 
   make_temp_for_file tmp_file "$SECURITY_IP_RULES_DB" || return 1
@@ -258,27 +289,10 @@ function _sr_next_rule_var() {
 
 function _sr_assert_domain_exists() {
   local raw="$1"
-  local d line="" line_no=0 found=0
+  local d
   d="$(normalize_domain "$raw")"
-  if [ ! -f "$BACKEND_PORTS_FILE" ]; then
-    echo "[Error] Unknown domain '$raw' (no backend found)." >&2
-    exit 1
-  fi
-  if ! csv_require_header "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER"; then
-    exit 1
-  fi
-  while IFS= read -r line || [ -n "$line" ]; do
-    line_no=$((line_no + 1))
-    [ "$line_no" -eq 1 ] && continue
-    csv_parse_line "$line" || continue
-    [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_PORTS_COLS" ] || continue
-    if [ "${CSV_FIELDS[0]}" = "backend" ] && [ "$(normalize_domain "${CSV_FIELDS[1]}")" = "$d" ]; then
-      found=1
-      break
-    fi
-  done <"$BACKEND_PORTS_FILE"
-  if [ "$found" -eq 0 ]; then
-    echo "[Error] Unknown domain '$raw' (no backend found)." >&2
+  if ! is_valid_domain "$d" || ! domain_exists "$d"; then
+    echo "[Error] Unknown domain '$raw' (no backend or configured host found)." >&2
     exit 1
   fi
 }

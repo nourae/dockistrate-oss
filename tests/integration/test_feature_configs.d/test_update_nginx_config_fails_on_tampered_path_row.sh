@@ -8,14 +8,14 @@ test_update_nginx_config_fails_on_tampered_path_row() {
   local before_conf
   before_conf="$(cat "$conf_file")"
 
-  printf 'path,tampered-path.test,,,/api#oops,,80,,,,yes,off,,off,auto,prefix,100,,none,-,auto\n' >>"${CONFIG_DIR}/backend_ports.csv"
+  printf 'path_id,listen_port,path_prefix,match,priority,target,rewrite,header_set\nunsafe-path,80,/api#oops,prefix,100,,none,\n' >"${STATE_DIR}/domains/tampered-path.test/runtime/applied/paths.csv"
 
   local output status
   output="$(run_dockistrate update-nginx-config 2>&1)"
   status=$?
 
   assertNotEquals "update-nginx-config should fail for tampered path rows" 0 "$status"
-  assertStringContains "failure should mention unsafe path prefix" "unsafe path prefix '/api#oops'" "$output"
+  assertStringContains "failure should identify the invalid accepted path settings" "paths.csv" "$output"
 
   local after_conf
   after_conf="$(cat "$conf_file")"

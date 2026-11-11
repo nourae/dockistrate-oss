@@ -1,0 +1,17 @@
+Review command
+  Command: Remove Header (remove-header)
+  Description: Remove a global header
+
+Arguments:
+  Header direction: response
+  Header name: X-Global-Guide
+
+CLI equivalent:
+  ./dockistrate.sh remove-header response X-Global-Guide
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

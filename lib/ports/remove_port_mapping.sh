@@ -64,6 +64,7 @@ function remove_port_mapping() {
     exit 1
   fi
   require_valid_port "$custom_port"
+  custom_port="$(normalize_port "$custom_port")" || return 1
 
   resolve_backend_domain domain "$domain" true
   if ! backend_exists "$domain"; then

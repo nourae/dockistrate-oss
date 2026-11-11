@@ -9,7 +9,7 @@ function remove_all_headers() {
   if ! _config_begin_transaction_if_needed started_txn "remove_all_headers"; then
     exit 1
   fi
-  csv_require_header "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER" || return 1
+  state_csv_require_file "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER" || return 1
   printf '%s\n' "$STATE_CUSTOM_HEADERS_HEADER" >"$CUSTOM_HEADERS_FILE"
   echo "[Info] Removed all global headers."
   create_backup "" "RemoveAllHeaders"

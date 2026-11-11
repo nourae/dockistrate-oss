@@ -63,9 +63,10 @@ test_uninstall_all_scope_all_removes_runtime_dirs_keeps_logs_and_backups() {
   mkdir -p "${TMP_DIR}" "${CAPTURE_DIR}" "${acme_dir}"
   touch "${TMP_DIR}/tmp.txt" "${CAPTURE_DIR}/cap.txt" "${acme_dir}/acme.txt"
 
-  local output
+  local output status
   output="$(run_dockistrate_with_interactive_yes uninstall-all --scope all)"
-  assertEquals "uninstall-all all scope should succeed" 0 $?
+  status=$?
+  assertEquals "uninstall-all all scope should succeed: $output" 0 "$status"
   assertStringContains "all scope completion message" "Full runtime uninstall complete" "$output"
 
   assertTrue "config directory should be removed" "[ ! -d '${CONFIG_DIR}' ]"
@@ -128,22 +129,22 @@ EOF
 }
 
 test_uninstall_all_removes_state_derived_backend_containers_only() {
-  local fake_bin rm_log rm_raw_log output status ps_names managed_container runtime_mock_dir
+  local fake_bin rm_log rm_raw_log output status ps_names managed_container managed_id runtime_mock_dir
   fake_bin="$(mktemp -d "${TMPDIR:-/tmp}/dockistrate-uninstall.XXXXXX")"
   rm_log="${fake_bin}/docker-rm.log"
   rm_raw_log="${fake_bin}/docker-rm-raw.log"
   managed_container="backend-managed.test"
   runtime_mock_dir="${STATE_DIR}/tmp/.docker_mock"
 
-  run_dockistrate add-backend managed.test nginx:alpine 8484 http >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend managed.test nginx:alpine 8484 http >/dev/null
   assertEquals "seed add-backend" 0 $?
 
-  mkdir -p "${runtime_mock_dir}"
-  cat >"${runtime_mock_dir}/${managed_container}.meta" <<'EOF_META'
-status=running
-labels=
-mounts=
-EOF_META
+  managed_id="$(awk -F, '$1 == "managed.test" {print $2}' "${CONFIG_DIR}/backend_identity.csv")"
+  assertTrue "managed backend has a full saved immutable identity" "[[ '$managed_id' =~ ^[0-9a-f]{64}$ ]]"
+  DOCKER_MOCK_RUNTIME_DIR="$runtime_mock_dir" PATH="${MOCK_BIN_DIR}:$PATH" \
+    docker run -d --name backend-orphan-1 nginx:alpine >/dev/null
+  assertEquals "seed unrelated backend-named container" 0 $?
+  cp "$runtime_mock_dir/backend-orphan-1.meta" "$fake_bin/orphan.before"
 
   {
     printf '%s\n' '#!/usr/bin/env bash'
@@ -157,7 +158,7 @@ if [ "\${1:-}" = "rm" ]; then
       *) printf '%s\n' "\$arg" >>"${rm_log}" ;;
     esac
   done
-  exit 0
+  exec bash "${ROOT_DIR}/tests/mocks/docker" rm "\$@"
 fi
 exec bash "${ROOT_DIR}/tests/mocks/docker" "\$@"
 EOF
@@ -165,15 +166,19 @@ EOF
   chmod +x "${fake_bin}/docker"
 
   ps_names="${managed_container}"$'\n''backend-orphan-1'
-  output="$(INTEGRATION_RUNTIME_PATH="${fake_bin}:${MOCK_BIN_DIR}:$PATH" DOCKER_MOCK_PS_NAMES="$ps_names" run_dockistrate_with_interactive_yes uninstall-all)"
+  output="$(SKIP_DOCKER_CHECKS=false INTEGRATION_RUNTIME_PATH="${fake_bin}:${MOCK_BIN_DIR}:$PATH" DOCKER_MOCK_PS_NAMES="$ps_names" run_dockistrate_with_interactive_yes uninstall-all)"
   status=$?
 
   assertEquals "uninstall-all should succeed for state-derived backend removal" 0 $status
   assertStringContains "uninstall-all should report managed backend removal" "${managed_container}" "$output"
-  assertTrue "uninstall-all should remove managed backend container" "grep -q '^${managed_container}$' '${rm_log}'"
+  assertTrue "uninstall-all should remove managed backend container" "grep -q '^${managed_id}$' '${rm_log}'"
   assertTrue "uninstall-all should preserve unrelated backend-named container" "! grep -q '^backend-orphan-1$' '${rm_log}'"
+  assertTrue "uninstall-all preserves unrelated container metadata" \
+    "cmp -s '$fake_bin/orphan.before' '$runtime_mock_dir/backend-orphan-1.meta'"
+  assertFalse "uninstall-all removes the exact saved backend identity" \
+    "DOCKER_MOCK_RUNTIME_DIR='$runtime_mock_dir' PATH='${MOCK_BIN_DIR}:$PATH' docker inspect -f '{{.Id}}' '$managed_id' >/dev/null 2>&1"
   assertTrue "state-derived backend rm should include -f -v" \
-    "grep -Eq '^-f -v ${managed_container}$' '${rm_raw_log}'"
+    "grep -Eq '^-f -v ${managed_id}$' '${rm_raw_log}'"
 
   rm -rf "$fake_bin"
 }

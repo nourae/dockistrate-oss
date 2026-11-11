@@ -1,0 +1,6 @@
+IP match scope:
+  1) Client IP (remote_addr)
+> 2) Real IP (realip_remote_addr)
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

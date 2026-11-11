@@ -13,6 +13,8 @@ function set_port_tls_ciphers() {
     return 1
   fi
   require_valid_port "$port" 1 || return 1
+  port="$(normalize_port "$port")" || return 1
+  _validate_tls_cipher_string_for_render "$ciphers" "port TLS ciphers" 0 || return 1
   _validate_tls_ciphers "$ciphers" || return 1
   if ! _require_https_port_mapping "$port"; then
     return 1

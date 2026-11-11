@@ -1,0 +1,15 @@
+Review command
+  Command: Replace Backend Network (replace-backend-network)
+  Description: Move a backend container to a different Docker network
+
+Arguments:
+  Domain: example.com
+  Docker network: dockistrate-net
+
+CLI equivalent:
+  ./dockistrate.sh replace-backend-network example.com dockistrate-net
+  1) Run
+> 2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

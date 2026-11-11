@@ -8,7 +8,7 @@ test_mtls_private_keys_are_permission_restricted() {
   assertEquals "enable-backend-mtls should succeed" 0 $?
 
   local mtls_dir ca_key ca_mode
-  mtls_dir="${CERTS_DIR}/mtls/mtls-perm.test"
+  mtls_dir="${STATE_DIR}/domains/mtls-perm.test/mtls"
   ca_key="${mtls_dir}/ca.key"
   assertTrue "CA key should exist after enabling mTLS" "[ -f '${ca_key}' ]"
 
@@ -44,7 +44,7 @@ test_exported_pkcs12_is_permission_restricted() {
   assertEquals "export-backend-client-p12 should succeed" 0 $?
 
   local p12_file p12_mode
-  p12_file="${CERTS_DIR}/mtls/mtls-p12.test/client1.p12"
+  p12_file="${STATE_DIR}/domains/mtls-p12.test/mtls/client1.p12"
   assertTrue "PKCS#12 file should exist after export" "[ -f '${p12_file}' ]"
 
   p12_mode="$(get_mode "$p12_file")"

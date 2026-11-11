@@ -1,0 +1,8 @@
+Condition 4 operator:
+> 1) Equals — string equals. Example: ip l3 equals 192.168.1.10
+  2) Not Equals — string not equal. Example: ip l3 not_equals 192.168.1.10
+  3) In — value is in list (comma or pipe separated). Example: ip l3 in 192.168.1.10,10.0.0.5
+  4) Not In — value is not in list. Example: ip l3 not_in 192.168.1.10,10.0.0.5
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

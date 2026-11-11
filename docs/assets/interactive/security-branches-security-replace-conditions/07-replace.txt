@@ -1,0 +1,5 @@
+Replace conditions?:
+  1) Keep current
+> 2) Replace
+
+↑↓ move  Enter select  Esc back  Q back  ? help

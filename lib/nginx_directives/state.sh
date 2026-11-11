@@ -121,7 +121,9 @@ function _nginx_directive_path_target_write_allowed() {
   normalized_domain="$(normalize_domain "$domain")"
 
   if dedicated_host_exists "$normalized_domain"; then
-    if ! should_inherit_paths "$normalized_domain"; then
+    local inheritance=""
+    inheritance="$(get_dedicated_host_inheritance "$normalized_domain" paths)" || return 1
+    if [ "$inheritance" != yes ]; then
       echo "[Error] Dedicated host '${normalized_domain}' has inherit_paths=no. Enable path inheritance or target the backend domain." >&2
       return 1
     fi
@@ -206,6 +208,8 @@ function nginx_directives_resolve_scope_target() {
     ;;
   esac
 
+  if [ -n "$listen_port" ]; then listen_port="$(normalize_port "$listen_port")" || return 1; fi
+
   if nginx_directive_scope_requires_domain "$scope" && ! nginx_directive_target_domain_exists "$scope" "$domain"; then
     if nginx_directive_scope_is_stream "$scope"; then
       echo "[Error] Stream directive scopes require a backend domain. '${domain}' is not a configured backend." >&2
@@ -251,7 +255,8 @@ function nginx_directives_state_upsert() {
     return 1
   fi
 
-  directives_dir="$(dirname "$NGINX_DIRECTIVES_FILE")"
+  directives_dir="$(dirname "$NGINX_DIRECTIVES_FILE" && printf '.')" || return 1
+  directives_dir="${directives_dir%$'\n.'}"
   if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
     runtime_state_path_guard_if_declared "$directives_dir" "nginx directives state directory" || return 1
     runtime_state_path_guard_if_declared "$NGINX_DIRECTIVES_FILE" "nginx directives state file" || return 1
@@ -375,7 +380,8 @@ function nginx_directives_state_remove_matching() {
   local scope_filter="${1:-}" domain_filter="${2:-}" port_filter="${3:-}" path_filter="${4:-}" directive_filter="${5:-}"
   local directives_dir=""
 
-  directives_dir="$(dirname "$NGINX_DIRECTIVES_FILE")"
+  directives_dir="$(dirname "$NGINX_DIRECTIVES_FILE" && printf '.')" || return 1
+  directives_dir="${directives_dir%$'\n.'}"
   if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
     runtime_state_path_guard_if_declared "$directives_dir" "nginx directives state directory" || return 1
     runtime_state_path_guard_if_declared "$NGINX_DIRECTIVES_FILE" "nginx directives state file" || return 1
@@ -424,6 +430,24 @@ function nginx_directives_state_remove_for_port() {
   nginx_directives_state_remove_matching "$NGINX_DIRECTIVE_SCOPE_PORT" "$domain" "$listen_port" "" "" >/dev/null
   nginx_directives_state_remove_matching "$NGINX_DIRECTIVE_SCOPE_PATH" "$domain" "$listen_port" "" "" >/dev/null
   nginx_directives_state_remove_matching "$NGINX_DIRECTIVE_SCOPE_STREAM_PORT" "$domain" "$listen_port" "" "" >/dev/null
+}
+
+function nginx_directives_state_remove_for_paths() {
+  local domain="${1:-}" listen_port="${2:-}" path_prefix="${3:-}"
+  local dedicated_hosts="" dedicated_host=""
+
+  if [ -n "$domain" ]; then
+    domain="$(normalize_domain "$domain")" || return 1
+    # Path directive targets resolve through the backend even when a dedicated
+    # host currently has path inheritance disabled. Retire those overrides too.
+    dedicated_hosts="$(list_dedicated_hosts_for_backend "$domain")" || return 1
+  fi
+  nginx_directives_state_remove_matching "$NGINX_DIRECTIVE_SCOPE_PATH" "$domain" "$listen_port" "$path_prefix" "" >/dev/null || return 1
+
+  while IFS= read -r dedicated_host; do
+    [ -n "$dedicated_host" ] || continue
+    nginx_directives_state_remove_matching "$NGINX_DIRECTIVE_SCOPE_PATH" "$dedicated_host" "$listen_port" "$path_prefix" "" >/dev/null || return 1
+  done <<<"$dedicated_hosts"
 }
 
 function nginx_directives_state_retarget_port_scope_rows() {

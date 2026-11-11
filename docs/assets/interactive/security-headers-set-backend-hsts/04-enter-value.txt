@@ -1,0 +1,2 @@
+
+HSTS for example.com (Off to remove) [max-age=300]: max-age=600

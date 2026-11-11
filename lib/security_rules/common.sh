@@ -251,13 +251,15 @@ function _sr_value_list_contains_cidr() {
   local -a tokens=()
   local token
   IFS=',' read -r -a tokens <<<"$normalized"
-  for token in "${tokens[@]}"; do
-    token="$(_sr_trim_whitespace "$token")"
-    [ -z "$token" ] && continue
-    if _sr_is_cidr_token "$token"; then
-      return 0
-    fi
-  done
+  if [ "${#tokens[@]}" -gt 0 ]; then
+    for token in "${tokens[@]}"; do
+      token="$(_sr_trim_whitespace "$token")"
+      [ -z "$token" ] && continue
+      if _sr_is_cidr_token "$token"; then
+        return 0
+      fi
+    done
+  fi
   return 1
 }
 
@@ -512,14 +514,9 @@ function _sr_domain_has_effective_allow_cidr() {
   fi
 
   local target_domain
-  target_domain="$(backend_for_dedicated_host "$domain")"
+  target_domain="$(_acl_inherited_domain "$domain")" || return 2
   [ -n "$target_domain" ] || return 1
-
-  if command -v should_inherit_acl >/dev/null 2>&1; then
-    should_inherit_acl "$domain" || return 1
-  fi
-
-  # Dedicated host inheritance is all-or-nothing for ACL rows.
+  # Alias and dedicated-host inheritance is all-or-nothing for ACL rows.
   if _sr_domain_has_any_acl_rows "$domain"; then
     return 1
   fi
@@ -574,22 +571,16 @@ function _sr_list_acl_domains() {
 
 function _sr_effective_acl_policy() {
   local domain="${1:-}" global_policy="${2:-${ACL_POLICY:-deny}}"
-  local old_policy="${ACL_POLICY:-}" policy
-
-  ACL_POLICY="$global_policy"
-  policy="$(get_backend_acl_policy "$domain")"
-  ACL_POLICY="$old_policy"
+  local ACL_POLICY="$global_policy" policy
+  policy="$(get_backend_acl_policy "$domain")" || return 1
 
   printf '%s' "$policy"
 }
 
 function _sr_effective_acl_status() {
   local domain="${1:-}" global_status="${2:-${ACL_STATUS:-403}}"
-  local old_status="${ACL_STATUS:-}" status
-
-  ACL_STATUS="$global_status"
-  status="$(get_backend_acl_status "$domain")"
-  ACL_STATUS="$old_status"
+  local ACL_STATUS="$global_status" status
+  status="$(get_backend_acl_status "$domain")" || return 1
 
   printf '%s' "$status"
 }
@@ -598,9 +589,13 @@ function _sr_validate_acl_cidr_mode_for_domain() {
   local domain="${1:-}" effective_policy="${2:-}" effective_status="${3:-}"
   domain="$(normalize_domain "$domain")"
 
-  if ! _sr_domain_has_effective_allow_cidr "$domain"; then
-    return 0
-  fi
+  local cidr_status=0
+  _sr_domain_has_effective_allow_cidr "$domain" || cidr_status=$?
+  case "$cidr_status" in
+  0) ;;
+  1) return 0 ;;
+  *) return 1 ;;
+  esac
 
   if [ "$effective_policy" = "deny" ] && [ "$effective_status" != "403" ]; then
     echo "[Error] ACL deny mode with CIDR allow rules requires status 403 (domain: ${domain}, status: ${effective_status})." >&2
@@ -623,22 +618,22 @@ function _sr_has_backend_acl_status_override() {
   state_csv_has_row_by_keys "$BACKEND_ACL_STATUS_FILE" "$STATE_BACKEND_ACL_STATUSES_HEADER" "$STATE_BACKEND_ACL_STATUSES_COLS" 1 "$domain"
 }
 
-function _sr_list_inheriting_dedicated_hosts_for_backend() {
-  local backend_domain="${1:-}" host
+function _sr_list_inheriting_acl_hosts_for_backend() {
+  local backend_domain="${1:-}" host inheritance="" inheriting_hosts=""
   backend_domain="$(normalize_domain "$backend_domain")"
 
-  local dedicated_hosts
-  dedicated_hosts="$(list_dedicated_hosts_for_backend "$backend_domain")"
-  [ -n "$dedicated_hosts" ] || return 0
+  local dedicated_hosts aliases
+  dedicated_hosts="$(list_dedicated_hosts_for_backend "$backend_domain")" || return 1
+  aliases="$(list_domain_aliases "$backend_domain")" || return 1
 
   while IFS= read -r host; do
     [ -z "$host" ] && continue
     host="$(normalize_domain "$host")"
-    if command -v should_inherit_acl >/dev/null 2>&1; then
-      should_inherit_acl "$host" || continue
-    fi
-    printf '%s\n' "$host"
-  done <<<"$dedicated_hosts" | awk 'NF > 0' | sort -u
+    inheritance="$(get_dedicated_host_inheritance "$host" acl)" || return 1
+    [ "$inheritance" = yes ] || continue
+    inheriting_hosts="${inheriting_hosts}${host}"$'\n'
+  done <<<"$dedicated_hosts"
+  printf '%s\n%s' "$aliases" "$inheriting_hosts" | awk 'NF > 0' | sort -u
 }
 
 function _sr_validate_backend_acl_policy_transition() {
@@ -646,19 +641,20 @@ function _sr_validate_backend_acl_policy_transition() {
   backend_domain="$(normalize_domain "$backend_domain")"
 
   local effective_status
-  effective_status="$(_sr_effective_acl_status "$backend_domain" "$global_status")"
+  effective_status="$(_sr_effective_acl_status "$backend_domain" "$global_status")" || return 1
   _sr_validate_acl_cidr_mode_for_domain "$backend_domain" "$new_policy" "$effective_status" || return 1
 
-  local host
+  local host inheriting_hosts=""
+  inheriting_hosts="$(_sr_list_inheriting_acl_hosts_for_backend "$backend_domain")" || return 1
   while IFS= read -r host; do
     [ -z "$host" ] && continue
-    # Dedicated hosts with explicit policy do not inherit backend policy updates.
+    # Hosts with explicit policy do not inherit backend policy updates.
     if _sr_has_backend_acl_policy_override "$host"; then
       continue
     fi
-    effective_status="$(_sr_effective_acl_status "$host" "$global_status")"
+    effective_status="$(_sr_effective_acl_status "$host" "$global_status")" || return 1
     _sr_validate_acl_cidr_mode_for_domain "$host" "$new_policy" "$effective_status" || return 1
-  done <<<"$(_sr_list_inheriting_dedicated_hosts_for_backend "$backend_domain")"
+  done <<<"$inheriting_hosts"
 
   return 0
 }
@@ -668,19 +664,20 @@ function _sr_validate_backend_acl_status_transition() {
   backend_domain="$(normalize_domain "$backend_domain")"
 
   local effective_policy
-  effective_policy="$(_sr_effective_acl_policy "$backend_domain" "$global_policy")"
+  effective_policy="$(_sr_effective_acl_policy "$backend_domain" "$global_policy")" || return 1
   _sr_validate_acl_cidr_mode_for_domain "$backend_domain" "$effective_policy" "$new_status" || return 1
 
-  local host
+  local host inheriting_hosts=""
+  inheriting_hosts="$(_sr_list_inheriting_acl_hosts_for_backend "$backend_domain")" || return 1
   while IFS= read -r host; do
     [ -z "$host" ] && continue
-    # Dedicated hosts with explicit status do not inherit backend status updates.
+    # Hosts with explicit status do not inherit backend status updates.
     if _sr_has_backend_acl_status_override "$host"; then
       continue
     fi
-    effective_policy="$(_sr_effective_acl_policy "$host" "$global_policy")"
+    effective_policy="$(_sr_effective_acl_policy "$host" "$global_policy")" || return 1
     _sr_validate_acl_cidr_mode_for_domain "$host" "$effective_policy" "$new_status" || return 1
-  done <<<"$(_sr_list_inheriting_dedicated_hosts_for_backend "$backend_domain")"
+  done <<<"$inheriting_hosts"
 
   return 0
 }
@@ -694,8 +691,8 @@ function _sr_validate_acl_cidr_mode_all_domains() {
 
   while IFS= read -r domain; do
     [ -z "$domain" ] && continue
-    policy="$(_sr_effective_acl_policy "$domain" "$global_policy")"
-    status="$(_sr_effective_acl_status "$domain" "$global_status")"
+    policy="$(_sr_effective_acl_policy "$domain" "$global_policy")" || return 1
+    status="$(_sr_effective_acl_status "$domain" "$global_status")" || return 1
     _sr_validate_acl_cidr_mode_for_domain "$domain" "$policy" "$status" || return 1
   done <<<"$domains"
 

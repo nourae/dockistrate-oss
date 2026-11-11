@@ -9,7 +9,7 @@ if [ -f "${PORTS_MODULE_DIR}/common.sh" ]; then
 fi
 
 for ports_file in "${PORTS_MODULE_DIR}"/*.sh; do
-  ports_basename="$(basename "${ports_file}")"
+  ports_basename="${ports_file##*/}"
   if [ "${ports_basename}" = "common.sh" ]; then
     continue
   fi

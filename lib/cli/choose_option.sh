@@ -5,6 +5,9 @@
 #   $1 - variable name to store the selected index (0-based)
 #   $2 - prompt to display above the options
 #   Remaining arguments - menu options
+# Optional dynamically scoped CLI_CHOICE_INITIAL_INDEX selects the initial row.
+# CLI_CHOICE_CANCEL_REASON is reset per call: back for Esc/Q, eof for closed input.
+# Both cancellation kinds retain the existing return status 1 and empty result.
 function choose_option() {
   local __resultvar=$1
   require_valid_var_name "$__resultvar" || return 1
@@ -12,6 +15,12 @@ function choose_option() {
   shift 2
   local options=("$@")
   local selected=0 key num_opts=${#options[@]} i
+  CLI_CHOICE_CANCEL_REASON=""
+  local initial="${CLI_CHOICE_INITIAL_INDEX:-0}"
+  if [[ "$initial" =~ ^[0-9]+$ ]] && [ "${#initial}" -lt 10 ]; then
+    initial=$((10#$initial))
+    if [ "$initial" -lt "$num_opts" ]; then selected="$initial"; fi
+  fi
 
   while true; do
     cli_clear_screen
@@ -25,6 +34,7 @@ function choose_option() {
     done
     cli_render_footer "↑↓ move  Enter select  Esc back  Q back  ? help"
     if ! cli_read_keypress key; then
+      CLI_CHOICE_CANCEL_REASON=eof
       printf -v "$__resultvar" '%s' ""
       return 1
     fi
@@ -34,6 +44,7 @@ function choose_option() {
       return
       ;;
     [Qq])
+      CLI_CHOICE_CANCEL_REASON=back
       printf -v "$__resultvar" '%s' ""
       return 1
       ;;
@@ -77,6 +88,7 @@ function choose_option() {
         "[B") selected=$(((selected + 1) % num_opts)) ;;
         esac
       else
+        CLI_CHOICE_CANCEL_REASON=back
         printf -v "$__resultvar" '%s' ""
         return 1
       fi

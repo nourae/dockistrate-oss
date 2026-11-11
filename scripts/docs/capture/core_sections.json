@@ -1,0 +1,303 @@
+{
+  "navigation": {
+    "guide": "docs/guides/interactive-workflows.md",
+    "commands": [],
+    "journeys": [
+      "navigation-search",
+      "navigation-help",
+      "navigation-favorites",
+      "navigation-remove-favorite",
+      "navigation-back-review-cancel",
+      "backend-network",
+      "navigation-missing-backend",
+      "navigation-missing-port",
+      "navigation-missing-certificates",
+      "navigation-missing-headers",
+      "navigation-missing-mtls",
+      "navigation-missing-acl",
+      "navigation-missing-security-rule"
+    ],
+    "home_features": {
+      "home-home": {
+        "journey": "navigation-help",
+        "kind": "menu",
+        "title": "Home"
+      },
+      "home-search": {
+        "journey": "navigation-search",
+        "kind": "menu",
+        "title": "Find List Port Mappings"
+      },
+      "home-recent": {
+        "journey": "navigation-favorites",
+        "kind": "menu",
+        "selected": "Recent commands"
+      },
+      "home-favorites": {
+        "journey": "navigation-favorites",
+        "kind": "menu",
+        "selected": "Add to favorites"
+      },
+      "home-manual-entry": {
+        "journey": "backend-network",
+        "kind": "input",
+        "value": "docs-secondary"
+      },
+      "home-back": {
+        "journey": "navigation-back-review-cancel",
+        "kind": "menu",
+        "title": "Back to backend selection"
+      },
+      "home-review": {
+        "journey": "navigation-back-review-cancel",
+        "kind": "menu",
+        "title": "Edit previous answers"
+      },
+      "home-cancel": {
+        "journey": "navigation-back-review-cancel",
+        "kind": "menu",
+        "title": "Cancel before running"
+      },
+      "home-help": {
+        "journey": "navigation-help",
+        "kind": "help",
+        "title": "Contextual help"
+      }
+    }
+  },
+  "backend-create": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [
+      "add-backend"
+    ],
+    "journeys": [
+      "http-backend",
+      "public-demo-access",
+      "verify-http",
+      "check-http"
+    ]
+  },
+  "backend-update": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [
+      "update-backend",
+      "replace-backend-network"
+    ],
+    "journeys": [
+      "backend-update",
+      "backend-network"
+    ]
+  },
+  "backend-lifecycle": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [
+      "list-backends",
+      "start-backend",
+      "stop-backend",
+      "restart-backend",
+      "remove-backend",
+      "stop-nginx",
+      "remove-nginx",
+      "update-nginx-config"
+    ],
+    "journeys": [
+      "list-backends",
+      "backend-lifecycle-start",
+      "backend-lifecycle-stop",
+      "backend-lifecycle-restart",
+      "backend-remove",
+      "proxy-stop",
+      "proxy-remove",
+      "proxy-regenerate",
+      "proxy-regenerate-check"
+    ]
+  },
+  "proxy-start-settings": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [
+      "start-nginx"
+    ],
+    "journeys": [
+      "proxy-start",
+      "proxy-start-custom",
+      "proxy-custom-verified",
+      "proxy-custom-config",
+      "proxy-custom-response",
+      "proxy-start-clear",
+      "proxy-clear-verified",
+      "proxy-cleared-config",
+      "proxy-cleared-response"
+    ],
+    "empty_input_caption": "Press Enter on an empty line to finish entering Docker options.",
+    "journey_titles": {
+      "proxy-start": "Keep the current image and Docker options",
+      "proxy-start-custom": "Choose an image and a memory limit",
+      "proxy-start-clear": "Clear saved Docker options while retaining the image"
+    }
+  },
+  "backend-bulk": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [
+      "start-all-backends",
+      "stop-all-backends",
+      "restart-all-backends",
+      "remove-all-backends"
+    ],
+    "journeys": [
+      "backend-bulk-start",
+      "backend-bulk-stop",
+      "backend-bulk-restart",
+      "backend-bulk-remove"
+    ]
+  },
+  "ports-http": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [
+      "add-port",
+      "update-port",
+      "remove-port",
+      "list-port-mappings"
+    ],
+    "journeys": [
+      "ports-http",
+      "http-extra-port",
+      "ports-update",
+      "http-moved-port",
+      "ports-remove",
+      "navigation-search",
+      "https-port",
+      "verify-https",
+      "check-https"
+    ]
+  },
+  "ports-stream": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [],
+    "journeys": [
+      "ports-stream-tcp",
+      "tcp-proxy-response",
+      "ports-stream-udp",
+      "udp-proxy-response",
+      "stream-and-websocket-config"
+    ]
+  },
+  "ports-websocket": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [
+      "enable-ws",
+      "disable-ws"
+    ],
+    "journeys": [
+      "ports-websocket-http",
+      "protocol-http",
+      "ports-websocket-enable",
+      "websocket-upgrade-and-frame",
+      "ports-websocket-disable",
+      "websocket-upgrade-disabled"
+    ]
+  },
+  "ports-redirect": {
+    "guide": "docs/guides/backends-and-ports.md",
+    "commands": [
+      "set-port-redirect",
+      "remove-port-redirect"
+    ],
+    "journeys": [
+      "ports-redirect",
+      "http-redirect",
+      "ports-redirect-remove",
+      "http-redirect-removed"
+    ]
+  },
+  "hosts-alias": {
+    "guide": "docs/guides/hosts-and-aliases.md",
+    "commands": [
+      "add-host-alias",
+      "list-host-aliases",
+      "remove-host-alias"
+    ],
+    "journeys": [
+      "hosts-alias",
+      "list-host-aliases",
+      "alias-request",
+      "remove-host-alias"
+    ]
+  },
+  "hosts-dedicated": {
+    "guide": "docs/guides/hosts-and-aliases.md",
+    "commands": [
+      "add-dedicated-host",
+      "list-dedicated-hosts",
+      "show-dedicated-host-inherit",
+      "set-dedicated-host-inherit",
+      "remove-dedicated-host"
+    ],
+    "journeys": [
+      "hosts-dedicated",
+      "list-dedicated-hosts",
+      "show-dedicated-host-inherit",
+      "dedicated-host-request",
+      "hosts-inheritance",
+      "remove-dedicated-host"
+    ]
+  },
+  "domain-apply": {
+    "guide": "docs/guides/domain-configuration.md",
+    "commands": [
+      "validate-domain-config",
+      "apply-domain-config"
+    ],
+    "journeys": [
+      "inspect-draft-file",
+      "verify-draft-inactive",
+      "validate-draft",
+      "preview-draft",
+      "pending-edit-cancel",
+      "apply-draft",
+      "verify-draft-active",
+      "check-draft",
+      "pending-edit-review-apply",
+      "pending-edit-active-response",
+      "pending-edit-final-config"
+    ]
+  },
+  "domain-init": {
+    "guide": "docs/guides/domain-configuration.md",
+    "commands": [
+      "init-domain-config"
+    ],
+    "journeys": [
+      "domain-init"
+    ]
+  },
+  "domain-migrate": {
+    "guide": "docs/guides/domain-configuration.md",
+    "commands": [
+      "migrate-state"
+    ],
+    "journeys": [
+      "domain-migrate-preview",
+      "domain-migrate-apply",
+      "migration-converted-files"
+    ]
+  },
+  "path-routing": {
+    "guide": "docs/guides/path-routing.md",
+    "commands": [
+      "add-path-option",
+      "list-path-options",
+      "update-path-option",
+      "remove-path-option",
+      "remove-all-path-options"
+    ],
+    "journeys": [
+      "path-routing",
+      "list-path-options",
+      "path-prefix-rewrite",
+      "path-update",
+      "updated-prefix-rewrite",
+      "path-remove",
+      "path-remove-all"
+    ]
+  }
+}

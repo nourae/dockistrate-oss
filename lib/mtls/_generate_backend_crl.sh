@@ -2,8 +2,9 @@
 
 function _generate_backend_crl() {
   local mtls_dir="${1:-}"
-  _mtls_prepare_dir_for_mutation mtls_dir "$mtls_dir" || return 1
-  _init_backend_mtls_state "$mtls_dir" || return 1
+  # Revocation records the new R row before publishing the new CRL. Only this
+  # generator may accept that lag; restore, apply, and other operations may not.
+  _init_backend_mtls_state "$mtls_dir" regenerate || return 1
   local openssl_conf=""
   if ! openssl_conf="$(_write_backend_openssl_conf "$mtls_dir")"; then
     return 1

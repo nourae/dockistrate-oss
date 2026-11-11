@@ -1,0 +1,15 @@
+Review command
+  Command: Migrate State (migrate-state)
+  Description: Preview or migrate legacy state into per-domain folders
+
+Arguments:
+  Action: Apply
+  Backend details CSV: /opt/dockistrate-demo-fixtures/migration/backend-details.csv
+
+CLI equivalent:
+  ./dockistrate.sh migrate-state --backend-details /opt/dockistrate-demo-fixtures/migration/backend-details.csv
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,14 @@
+Review command
+  Command: Enable All Security Rules (enable-all-security-rules)
+  Description: Enable all security rules
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh enable-all-security-rules
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

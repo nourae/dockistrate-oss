@@ -1,0 +1,7 @@
+# Original terminal and HTTP bytes are evidence, including CRLF and control codes.
+docs/assets/interactive/evidence/**/*.pty.log -text -diff
+docs/assets/interactive/evidence/**/*.headers -text -diff
+docs/assets/interactive/evidence/**/*.body -text -diff
+docs/assets/interactive/evidence/** linguist-generated=true
+docs/assets/interactive/*-recordings.tar.gz binary linguist-generated=true
+docs/assets/interactive/*-provenance.json linguist-generated=true

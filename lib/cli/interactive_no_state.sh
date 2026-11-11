@@ -82,6 +82,13 @@ function _interactive_state_has_port_mappings() {
 
 function _interactive_state_has_certs() {
   local provider cert_dir certs_dir="${CERTS_DIR:-}"
+  if declare -F __arg_choices_domain_certificates_active >/dev/null 2>&1 &&
+    __arg_choices_domain_certificates_active; then
+    while IFS= read -r cert_dir; do
+      [ -n "$cert_dir" ] && return 0
+    done < <(domain_config_certificate_dirs all)
+    return 1
+  fi
   [ -n "$certs_dir" ] || return 1
   for provider in letsencrypt selfsigned custom; do
     [ -d "${certs_dir}/${provider}/live" ] || continue
@@ -94,7 +101,29 @@ function _interactive_state_has_certs() {
 }
 
 function _interactive_state_has_backend_headers() {
+  if declare -F __arg_choices_headers_use_applied >/dev/null 2>&1 &&
+    __arg_choices_headers_use_applied; then
+    local records=""
+    records="$(__arg_choices_backend_header_records)" || return 1
+    [ -n "$records" ]
+    return
+  fi
   _interactive_state_csv_has_rows "${BACKEND_HEADERS_FILE:-}" "${STATE_BACKEND_HEADERS_HEADER:-}"
+}
+
+function _interactive_command_has_backends() {
+  case "${1:-}" in
+  add-backend-header | update-backend-header | remove-backend-header | remove-all-backend-headers | list-backend-headers | set-backend-hsts | set-backend-csp)
+    if declare -F __arg_choices_headers_use_applied >/dev/null 2>&1 &&
+      __arg_choices_headers_use_applied; then
+      local domains=""
+      domains="$(__arg_choices_header_domains)" || return 1
+      [ -n "$domains" ]
+      return
+    fi
+    ;;
+  esac
+  _interactive_command_cached_check INTERACTIVE_STATE_HAS_BACKENDS_CACHE has_backends
 }
 
 function _interactive_state_has_mtls_backends() {
@@ -139,7 +168,7 @@ function interactive_command_availability() {
   if declare -F cmd_requires_existing_backend >/dev/null 2>&1 &&
     declare -F has_backends >/dev/null 2>&1 &&
     cmd_requires_existing_backend "$cmd" &&
-    ! _interactive_command_cached_check INTERACTIVE_STATE_HAS_BACKENDS_CACHE has_backends; then
+    ! _interactive_command_has_backends "$cmd"; then
     INTERACTIVE_COMMAND_UNAVAILABLE_KIND="no_backends"
     return 1
   fi

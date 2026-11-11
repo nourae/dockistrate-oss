@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "scenario": "operations-cleanup",
+  "source_commit": "862534a6eab1d45e69455ad4331b3c42b60cc9fb",
+  "started_at": "2026-11-07T16:38:39.062097+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42392269431",
+  "github_run_attempt": "1",
+  "scenario_module": "operations",
+  "group": "cleanup",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"2\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"45 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T16:40:54.124233+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "operations-cleanup-clean-all",
+      "journey_family": "operations-cleanup-clean-all",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "clean-all",
+      "image": "docs/assets/interactive/operations-cleanup-clean-all/03-example-com.png",
+      "transcript": "docs/assets/interactive/operations-cleanup-clean-all/03-example-com.txt",
+      "image_sha256": "0e8dd74d49422935d2feae2d7e89e91365a4a4af26f0b95c5044f258f7e0a0c1",
+      "transcript_sha256": "6c5ebbf3edcc441f0802529871882c956e321bc4f2046e2400e87385711a6537",
+      "pty_log": "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-all.pty.log",
+      "pty_byte_offset": 71025,
+      "selected": "example.com"
+    },
+    {
+      "journey": "operations-cleanup-clean-all",
+      "journey_family": "operations-cleanup-clean-all",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "clean-all",
+      "image": "docs/assets/interactive/operations-cleanup-clean-all/04-run.png",
+      "transcript": "docs/assets/interactive/operations-cleanup-clean-all/04-run.txt",
+      "image_sha256": "50aa0ddd5724b2ad31465abef861d95979b7afa3d97671a4f80f735b46320787",
+      "transcript_sha256": "a3de4e5097bc3254f0ca26f29b570082beaa5fe2727ee76516e380c8602b7e9e",
+      "pty_log": "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-all.pty.log",
+      "pty_byte_offset": 71408,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-cleanup-clean-all",
+      "journey_family": "operations-cleanup-clean-all",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "clean-all",
+      "image": "docs/assets/interactive/operations-cleanup-clean-all/05-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-cleanup-clean-all/05-enter-value.txt",
+      "image_sha256": "391272af46264285c820df46332bd58052360b0f65f1a54bde4900ae17902227",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-all.pty.log",
+      "pty_byte_offset": 71462,
+      "value": "YES"
+    },
+    {
+      "journey": "operations-cleanup-clean-all",
+      "journey_family": "operations-cleanup-clean-all",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "clean-all",
+      "image": "docs/assets/interactive/operations-cleanup-clean-all/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-cleanup-clean-all/06-command-result.txt",
+      "image_sha256": "6c4b364067f66ad96fda43fe702d4a266af90929928a620c67d29ac59d2ea8b0",
+      "transcript_sha256": "e865f08944522cc2f1e09dfec438598aa06ae3197974dc4cb72e99c19e907a38",
+      "pty_log": "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-all.pty.log",
+      "pty_byte_offset": 73057,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-cleanup-clean-preserved-route",
+      "journey_family": "operations-cleanup-clean-preserved-route",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the other application still responds",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-cleanup-clean-preserved-route/01-verify-the-other-application-still-responds.png",
+      "transcript": "docs/assets/interactive/operations-cleanup-clean-preserved-route/01-verify-the-other-application-still-responds.txt",
+      "image_sha256": "592d811f7be7e76a471efaaf0ca55d6d01c3527b7316750d88d9f26d00a4718e",
+      "transcript_sha256": "8ecdf6d13997f2ad2a54b039a4517d77a41a318778307051b5ed9b140dd2ba18",
+      "pty_log": "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-preserved-route.pty.log",
+      "pty_byte_offset": 374,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "operations-cleanup-clean-remaining-backends",
+      "journey_family": "operations-cleanup-clean-remaining-backends",
+      "session_index": 1,
+      "step": 1,
+      "title": "Inspect the remaining backend",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-cleanup-clean-remaining-backends/01-inspect-the-remaining-backend.png",
+      "transcript": "docs/assets/interactive/operations-cleanup-clean-remaining-backends/01-inspect-the-remaining-backend.txt",
+      "image_sha256": "6214344f9cdbc718cda5c701110246d6a4dc8355165c1b0f4ced9df1b3584b01",
+      "transcript_sha256": "89f5a4c20e03121ecf4e049450644d42b88651cc906c567552101ba8720fe6dd",
+      "pty_log": "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-remaining-backends.pty.log",
+      "pty_byte_offset": 691,
+      "viewport": "bottom",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "label": "clean-all-interactive-result",
+      "status": "passed",
+      "command": "clean-all",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "preserved-route-after-cleanup",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-cleanup/preserved-route-after-cleanup.headers"
+    },
+    {
+      "label": "clean-preserved-route",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "--resolve",
+        "preserved.example.com:80:127.0.0.1",
+        "http://preserved.example.com/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "clean-remaining-backends",
+      "status": "passed",
+      "argv": [
+        "/opt/dockistrate-demo/dockistrate.sh",
+        "list-backends"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "cleanup-ownership-boundary",
+      "status": "passed",
+      "command": "clean-all",
+      "outcome": "unrelated sentinel preserved"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "operations"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "60d6b9f0097584f6f41b1c195ee8a56b3525966fce164d2b76ddf4a5881be727",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 6
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/operations-cleanup-recordings.tar.gz",
+    "sha256": "f0fdfc0beff49212fa8425dcfeb5f91ec14276fba0dc3681fa11259945efe82f",
+    "size": 16531,
+    "members": {
+      "docs/assets/interactive/evidence/operations-cleanup/001-source-commit.log": {
+        "sha256": "a93670cb9166177643d49cde1f5aef3aeb70d24ccf750cdf524378394929d8da",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/008-fixture-image.log": {
+        "sha256": "e90603f601eca75f8dd7f37e97db35e4f6cb64feb2029ac3d2543073a567a1af",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/010-fixture-backend.log": {
+        "sha256": "fd9b4d044c65f12193193a448ad8ab52d73cca54443211c74d43ac00ffb04d55",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/011-fixture-public-demo.log": {
+        "sha256": "5952d046ed4307dfec6b8f24f978b1d4ffc08918c72732e17f1b175bf8908d06",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/012-fixture-https.log": {
+        "sha256": "8c4b21ab48b44b7a1cfb97ca28a40ce747df4349e01700e2452b33cc3ff2637b",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/014-unmanaged-sentinel.log": {
+        "sha256": "79cd1fcdb9a4faa7d4d35fe014c60da7b3a2ab20a69418726a3793512e30479b",
+        "size": 65
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/015-sentinel-before.log": {
+        "sha256": "e85fc90350b78e87b5d066c6a11ecf2756c726fc88da9457884485c468aee419",
+        "size": 106
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/016-fixture-preserved-backend.log": {
+        "sha256": "2242050e37106b051b0bde18c099baadb176ec8c5f0087410df2b750fc31cb8e",
+        "size": 1319
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/017-fixture-preserved-access.log": {
+        "sha256": "a5fb6fe8e1d743fd7b4fb4bdb003a70a05b10300c42c24df8db24765b9931300",
+        "size": 1460
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/018-preserved-backend-before.log": {
+        "sha256": "6ce481be89f107e5b108b12a2a5bda62fbb55f2007555ff80857e9e4caada8aa",
+        "size": 106
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/019-command-alias.log": {
+        "sha256": "f08162d9040bb46c2a682ad00dc2141f8ece06ae2f19a6eb85e7e7e2850b4fd5",
+        "size": 10
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/020-sentinel-after-clean.log": {
+        "sha256": "e85fc90350b78e87b5d066c6a11ecf2756c726fc88da9457884485c468aee419",
+        "size": 106
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/021-resources-after-domain-clean.log": {
+        "sha256": "1944ef5052c754558a4b9d78c1892110ccc31e693c07151076fc4c351685198e",
+        "size": 66
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/022-preserved-backend-after.log": {
+        "sha256": "6ce481be89f107e5b108b12a2a5bda62fbb55f2007555ff80857e9e4caada8aa",
+        "size": 106
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/023-image-identities.log": {
+        "sha256": "6f531bbc047005412f3d43edd3052d577206f0977af90b8805e71e83020dee01",
+        "size": 2934
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/commands.jsonl": {
+        "sha256": "8ca8c9169a6e66e006a98416ccc51a225dbcae7b0cba542b4f29405f92008456",
+        "size": 9061
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-all.events.jsonl": {
+        "sha256": "6cee205550b2919f6f2552f77bdd455f9deb559cccd05843f0bfe51541591690",
+        "size": 14333
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-all.pty.log": {
+        "sha256": "0b4a62a148cd2b1e11bebd750818e2bc0ba538b6a4feb3340459a799c46efd03",
+        "size": 81175
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-preserved-route.events.jsonl": {
+        "sha256": "dc76352ca617242c378388c4dbb6e8218566e6bb679e74509dcb793242e4e678",
+        "size": 1125
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-preserved-route.pty.log": {
+        "sha256": "441d5dfe80ab995e9a1035d8f4abcbb3688436356adf184e1c66bb866d9d7233",
+        "size": 374
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-remaining-backends.events.jsonl": {
+        "sha256": "608cfce1be62727f591869a8af551ccb00b44c6b840b06ec76dda8353f20cbde",
+        "size": 963
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/operations-cleanup-clean-remaining-backends.pty.log": {
+        "sha256": "8d7acfa780f22f581e51ae449347f2737f69b3733d239aa782d1ad823b52bf82",
+        "size": 691
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/preserved-route-after-cleanup.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/preserved-route-after-cleanup.headers": {
+        "sha256": "94cb9166bb063e0a17c7c826d67e70b1f7dc16df0ba57cd4a158ea9470feae44",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/preserved-route-after-cleanup.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-cleanup/preserved-route-after-cleanup.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  }
+}

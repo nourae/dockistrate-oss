@@ -1,0 +1,14 @@
+Review command
+  Command: Restart All Backends (restart-all-backends)
+  Description: Restart all backend containers
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh restart-all-backends
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,15 @@
+Review command
+  Command: Enable Backend mTLS (enable-backend-mtls)
+  Description: Enable backend mTLS (mutual TLS) and optionally mint a client certificate
+
+Arguments:
+  Domain: example.com
+  Client name: guide-client
+
+CLI equivalent:
+  ./dockistrate.sh enable-backend-mtls example.com guide-client
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

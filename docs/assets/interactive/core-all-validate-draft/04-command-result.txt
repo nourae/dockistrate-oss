@@ -1,0 +1,4 @@
+
+[Info] Domain configuration is valid: example.com
+
+Press Enter to continue...

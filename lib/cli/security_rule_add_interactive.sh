@@ -5,10 +5,11 @@ function prompt_args_handle_add_security_rule_interactive() {
   if [ "$INTERACTIVE" != true ]; then
     return 2
   fi
-  local domain="" count="" mode="" code="" confirm_choice=""
+  local domain="" action="" count="" mode="" code="" confirm_choice=""
   if ! _sr_prompt_domain domain "$CMD"; then
     return 1
   fi
+  if ! _sr_prompt_action action; then return 1; fi
   if ! _sr_prompt_count count "1"; then
     return 1
   fi
@@ -17,7 +18,7 @@ function prompt_args_handle_add_security_rule_interactive() {
       return 1
     fi
   fi
-  if ! _sr_prompt_code_optional code "false"; then
+  if [ "$action" != allow ] && ! _sr_prompt_code_optional code "false"; then
     return 1
   fi
   if ! _sr_collect_condition_quads "$CMD" "$count"; then
@@ -37,22 +38,27 @@ function prompt_args_handle_add_security_rule_interactive() {
     echo "[Error] Internal interactive collection failure: expected ${expected_condition_fields} condition fields, got ${actual_condition_fields}." >&2
     return 1
   fi
-  echo "[Info] Security rule summary"
-  echo "  Domain: $domain"
-  echo "  Conditions: $count"
+  local summary="Security rule summary"
+  summary+=$'\n'"  Domain: $domain"
+  summary+=$'\n'"  Action: $action"
+  summary+=$'\n'"  Conditions: $count"
   if ((count > 1)); then
-    echo "  Mode: $mode"
+    summary+=$'\n'"  Mode: $mode"
   fi
-  if [ -n "$code" ]; then
-    echo "  Code: $code"
+  if [ "$action" = allow ]; then
+    summary+=$'\n''  Rejection: none; later Block/Allow decisions are skipped when conditions match'
+  elif [ -n "$code" ]; then
+    summary+=$'\n'"  Code: $code"
   else
-    echo "  Code: default (${SECURITY_RULE_STATUS:-})"
+    summary+=$'\n'"  Code: default (${SECURITY_RULE_STATUS:-})"
   fi
   local idx
   for idx in "${!SR_COLLECTED_SUMMARIES[@]}"; do
-    echo "  - ${SR_COLLECTED_SUMMARIES[$idx]}"
+    summary+=$'\n'"  - ${SR_COLLECTED_SUMMARIES[$idx]}"
   done
-  if ! _sr_prompt_choice confirm_choice "Create security rule?" $'confirm|Confirm\nback|Back' "false"; then
+  summary+=$'\n\n''Create security rule?'
+  local CLI_PROMPT_LITERAL=true
+  if ! _sr_prompt_choice confirm_choice "$summary" $'confirm|Confirm\nback|Back' "false"; then
     return 1
   fi
   if [ "$confirm_choice" != "confirm" ]; then
@@ -61,6 +67,7 @@ function prompt_args_handle_add_security_rule_interactive() {
     return 1
   fi
   local args=("$domain" "$count" "${SR_COLLECTED_CONDS[@]}")
+  args+=(--action "$action")
   if ((count > 1)); then
     args+=(--mode "$mode")
   fi

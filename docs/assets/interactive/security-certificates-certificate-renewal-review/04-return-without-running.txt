@@ -1,0 +1,8 @@
+Search all commands:
+Filter: renew-certs
+Press S or / to search, C to clear, Enter to select, ? for help
+  1) Certificates :: Renew Certs — Renew expiring Let's Encrypt certificates and refresh
+    config
+> 2) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

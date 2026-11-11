@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 test_update_nginx_config_fails_when_reload_fails() {
-  run_dockistrate add-backend reload-fail.test nginx:alpine 18180 http >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend reload-fail.test nginx:alpine 18180 http >/dev/null
   assertEquals "seed backend" 0 $?
   integration_seed_managed_proxy >/dev/null
   assertEquals "seed managed nginx-proxy for reload failure" 0 $?

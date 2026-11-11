@@ -43,7 +43,9 @@ function list_backends() {
     pip="$(get_backend_proxy_ip_header "$d")"
     [ -n "$cip" ] || cip="off"
     [ -n "$pip" ] || pip="off"
-    mtls_dir="$(get_backend_mtls_dir "$d")"
+    if ! mtls_dir="$(get_backend_mtls_dir "$d")"; then
+      return 1
+    fi
     if [ -n "$mtls_dir" ]; then
       mtls="yes"
     else
@@ -107,17 +109,21 @@ function list_backends() {
     aliases="$(list_domain_aliases "$d" | xargs)"
     [ -n "$aliases" ] || aliases="-"
 
-    local config_img running_img
-    config_img="$(get_backend_image "$d" 2>/dev/null || echo "-")"
-    running_img="$(summarize_container_image "backend-$(sanitize_domain_name "$d")" 2>/dev/null || echo "-")"
+    local config_img="-" running_img="-" verified_state="unverified"
+    if _backend_container_snapshot "$d" 2>/dev/null; then
+      config_img="$BACKEND_CONTAINER_IMAGE"
+      running_img="$(summarize_container_image "$BACKEND_CONTAINER_ID" 2>/dev/null || echo "-")"
+      verified_state="$BACKEND_CONTAINER_STATUS"
+    elif [ "$?" -eq 2 ]; then
+      # Absence of the saved immutable ID is known. Other ownership or daemon
+      # failures remain unverified; a presentation name is never consulted.
+      verified_state="missing"
+    fi
     local net
     net="$(get_backend_network "$d")"
 
     if [ "$include_state" = "true" ]; then
-      local state cname
-      cname="backend-$(sanitize_domain_name "$d")"
-      state="$(container_status "$cname")"
-      [ -n "$state" ] || state="missing"
+      local state="$verified_state"
       printf "%-20s | %-10s | %-20s | %-24s | %-24s | %-15s | %-10s | %-5s | %-15s | %-15s | %-5s | %-9s | %-9s | %s\n" \
         "$d" "$state" "$aliases" "$config_img" "$running_img" "${net:-$DEFAULT_NETWORK}" "$ver" "$mtls" "$cip" "$pip" "$acl" "$aclst" "$secst" "$ports_summary"
     else

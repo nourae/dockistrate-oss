@@ -1,0 +1,15 @@
+Review command
+  Command: Replace Backend Client Cert (replace-backend-client-cert)
+  Description: Regenerate a backend client certificate
+
+Arguments:
+  Domain: example.com
+  Client name: guide-client
+
+CLI equivalent:
+  ./dockistrate.sh replace-backend-client-cert example.com guide-client
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

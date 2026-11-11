@@ -1,0 +1,16 @@
+Review command
+  Command: Remove All Nginx Directives (remove-all-nginx-directives)
+  Description: Remove nginx directive overrides (all or filtered by scope)
+
+Arguments:
+  Directive scope: global
+
+CLI equivalent:
+  ./dockistrate.sh remove-all-nginx-directives global
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

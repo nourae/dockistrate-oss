@@ -1,34 +1,38 @@
 # shellcheck shell=bash
 
+if ! declare -F _finalize_global_settings_file >/dev/null 2>&1; then
+  # shellcheck source=./settings_file.sh
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/settings_file.sh"
+fi
+
 function _save_config_write_rows() {
-  echo "$STATE_GLOBAL_SETTINGS_HEADER" || return 1
-  csv_join_row "ENABLE_AUTO_BACKUPS" "$ENABLE_AUTO_BACKUPS" || return 1
-  csv_join_row "BACKUP_RETENTION" "$BACKUP_RETENTION" || return 1
-  csv_join_row "ENABLE_BACKUP_COMPRESSION" "$ENABLE_BACKUP_COMPRESSION" || return 1
-  csv_join_row "HTTP_VERSION" "$HTTP_VERSION" || return 1
-  csv_join_row "CLIENT_IP_HEADER" "$CLIENT_IP_HEADER" || return 1
-  csv_join_row "PROXY_IP_HEADER" "$PROXY_IP_HEADER" || return 1
-  csv_join_row "TLS_PROTOCOLS" "$TLS_PROTOCOLS" || return 1
-  csv_join_row "TLS_CIPHERS" "$TLS_CIPHERS" || return 1
-  csv_join_row "SECURITY_RULE_STATUS" "$SECURITY_RULE_STATUS" || return 1
-  csv_join_row "ACL_STATUS" "$ACL_STATUS" || return 1
-  csv_join_row "ACL_POLICY" "$ACL_POLICY" || return 1
-  csv_join_row "TRUSTED_PROXY_RANGES" "$TRUSTED_PROXY_RANGES" || return 1
-  csv_join_row "REAL_IP_RECURSIVE" "$REAL_IP_RECURSIVE" || return 1
-  csv_join_row "NGINX_DIRECTIVE_STRICT" "$NGINX_DIRECTIVE_STRICT" || return 1
-  csv_join_row "NGINX_DOCKER_OPTS" "$NGINX_DOCKER_OPTS" || return 1
-  csv_join_row "VISIBILITY_POLICY" "${VISIBILITY_POLICY:-${DEFAULT_VISIBILITY_POLICY:-full}}" || return 1
-  csv_join_row "NGINX_IMAGE" "$NGINX_IMAGE" || return 1
-  csv_join_row "CERTBOT_IMAGE" "$CERTBOT_IMAGE" || return 1
-  csv_join_row "NGINX_PULL_MODE" "$NGINX_PULL_MODE" || return 1
-  csv_join_row "CERTBOT_PULL_MODE" "$CERTBOT_PULL_MODE" || return 1
+  local key="" default_key="" index=0
+  local -a headers=() values=() CSV_FIELDS=()
+  local CSV_FIELD_COUNT=0 CSV_PARSE_ERROR=""
+  csv_parse_line "$STATE_GLOBAL_SETTINGS_HEADER" || return 1
+  headers=("${CSV_FIELDS[@]}")
+  while IFS= read -r key; do
+    default_key="DEFAULT_$key"
+    # An unset optional runtime variable inherits its default; an explicitly
+    # empty value remains empty (for example, a disabled client IP header).
+    values+=("${!key-${!default_key}}")
+  done < <(_global_settings_keys)
+  if [ "${GLOBAL_SETTINGS_EXTENSION_FILE:-}" = "$GLOBAL_SETTINGS_FILE" ]; then
+    for ((index = 0; index < ${#GLOBAL_SETTINGS_EXTENSION_HEADERS[@]}; index++)); do
+      headers+=("${GLOBAL_SETTINGS_EXTENSION_HEADERS[index]}")
+      values+=("${GLOBAL_SETTINGS_EXTENSION_VALUES[index]}")
+    done
+  fi
+  csv_join_row "${headers[@]}" && csv_join_row "${values[@]}"
 }
 
 function _save_config_atomic_write() {
   local tmp_file=""
-  local settings_dir=""
+  local settings_dir="" staging_dir=""
+  local settings_before="" temp_before="" directory_before=""
 
-  settings_dir="$(dirname "$GLOBAL_SETTINGS_FILE")"
+  settings_dir="$(dirname "$GLOBAL_SETTINGS_FILE" && printf '.')" || return 1
+  settings_dir="${settings_dir%$'\n.'}"
   if declare -F runtime_state_path_guard >/dev/null 2>&1; then
     runtime_state_path_guard "$settings_dir" "global settings directory" || return 1
     runtime_state_path_guard "$GLOBAL_SETTINGS_FILE" "global settings file" || return 1
@@ -38,34 +42,35 @@ function _save_config_atomic_write() {
     runtime_state_path_guard "$settings_dir" "global settings directory" || return 1
     runtime_state_path_guard "$GLOBAL_SETTINGS_FILE" "global settings file" || return 1
   fi
-  if declare -F make_temp_for_file >/dev/null 2>&1; then
-    make_temp_for_file tmp_file "$GLOBAL_SETTINGS_FILE" || return 1
-  else
-    tmp_file="${GLOBAL_SETTINGS_FILE}.tmp.$$"
+  settings_before="$(_global_settings_file_snapshot "$GLOBAL_SETTINGS_FILE" || exit 1)" || return 1
+  staging_dir="$(umask 077; mktemp -d "${settings_dir}/.global_settings.stage.XXXXXX" || exit 1)" || return 1
+  # Five octal digits clear inherited directory set-ID bits on GNU chmod too.
+  # Ownership remains inherited, preserving the group for a new settings file.
+  if ! chmod 00700 "$staging_dir" ||
+    ! directory_before="$(_global_settings_staging_directory_metadata "$staging_dir" || exit 1)"; then
+    _global_settings_cleanup_staging "$staging_dir" "" || true
+    return 1
   fi
-
-  if ! _save_config_write_rows >"$tmp_file"; then
-    [ -n "$tmp_file" ] && rm -f "$tmp_file"
+  if ! make_temp_for_file tmp_file "${staging_dir}/settings"; then
+    _global_settings_cleanup_staging "$staging_dir" "" || true
+    return 1
+  fi
+  if ! _ensure_private_file_permissions "$tmp_file" ||
+    ! temp_before="$(_global_settings_file_metadata "$tmp_file" || exit 1)"; then
+    _global_settings_cleanup_staging "$staging_dir" "$tmp_file" || true
     return 1
   fi
 
-  if declare -F finalize_temp_file >/dev/null 2>&1; then
-    if ! finalize_temp_file "$GLOBAL_SETTINGS_FILE" "$tmp_file"; then
-      [ -n "$tmp_file" ] && rm -f "$tmp_file"
-      return 1
-    fi
-  else
-    if declare -F runtime_state_path_guard >/dev/null 2>&1; then
-      runtime_state_path_guard "$GLOBAL_SETTINGS_FILE" "global settings file" || {
-        [ -n "$tmp_file" ] && rm -f "$tmp_file"
-        return 1
-      }
-    fi
-    if ! mv -f "$tmp_file" "$GLOBAL_SETTINGS_FILE"; then
-      [ -n "$tmp_file" ] && rm -f "$tmp_file"
-      return 1
-    fi
+  if ! _save_config_write_rows >"$tmp_file"; then
+    _global_settings_cleanup_staging "$staging_dir" "$tmp_file" || true
+    return 1
   fi
+
+  if ! _finalize_global_settings_file "$GLOBAL_SETTINGS_FILE" "$tmp_file" "$settings_before" "$temp_before" "$directory_before"; then
+    _global_settings_cleanup_staging "$staging_dir" "$tmp_file" || true
+    return 1
+  fi
+  _global_settings_cleanup_staging "$staging_dir" ""
 }
 
 function save_config() {

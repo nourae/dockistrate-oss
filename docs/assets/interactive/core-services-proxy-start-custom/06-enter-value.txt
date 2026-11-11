@@ -1,0 +1,5 @@
+
+Optional Docker run flags. Use --option=value for unrecognized long options (=true or =false for booleans). Dockistrate owns the image, name, and network; proxy options also reserve mounts, ports, and entrypoint.
+Extra Docker run options
+Example: --cpus 1 --memory 256m
+Blank: leave blank to keep the shown current value (finish with empty line): --memory 256m

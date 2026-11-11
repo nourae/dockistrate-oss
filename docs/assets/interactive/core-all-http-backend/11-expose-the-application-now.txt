@@ -1,0 +1,6 @@
+Expose port now:
+> 1) Expose now
+  2) Do not expose
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

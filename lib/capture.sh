@@ -9,7 +9,7 @@ if [ -f "${CAPTURE_MODULE_DIR}/common.sh" ]; then
 fi
 
 for capture_file in "${CAPTURE_MODULE_DIR}"/*.sh; do
-  capture_basename="$(basename "${capture_file}")"
+  capture_basename="${capture_file##*/}"
   if [ "${capture_basename}" = "common.sh" ]; then
     continue
   fi

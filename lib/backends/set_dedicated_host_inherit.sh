@@ -1,4 +1,8 @@
 # shellcheck shell=bash
+if ! declare -F _global_settings_update_nginx_config_for_security_change >/dev/null 2>&1; then
+  # shellcheck source=../global_settings/common.sh
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../global_settings" && pwd)/common.sh"
+fi
 
 function set_dedicated_host_inherit() {
   local hostname="${1:-}"
@@ -80,9 +84,15 @@ function set_dedicated_host_inherit() {
   echo "[Info] Updated inheritance for '$hostname': $setting=$value"
   echo "[Info] Current settings: mTLS=$current_mtls, ACL=$current_acl, security_rules=$current_security_rules, headers=$current_headers, paths=$current_paths"
   log_msg "Updated dedicated host inheritance: $hostname $setting=$value"
-  create_backup "" "SetDedicatedHostInherit_${hostname}_${setting}"
-  update_nginx_config
+  create_backup "" "SetDedicatedHostInherit_${hostname}_${setting}" || { transaction_return_failure; return 1; }
+  case "$setting" in
+  acl | security_rules | headers | all)
+    # Header inheritance also chooses the trusted client IP header used by ACLs.
+    _global_settings_update_nginx_config_for_security_change || { transaction_return_failure; return 1; }
+    ;;
+  *) update_nginx_config || { transaction_return_failure; return 1; } ;;
+  esac
   if [ "$started_txn" = true ]; then
-    end_transaction_success
+    end_transaction_success || { transaction_return_failure; return 1; }
   fi
 }

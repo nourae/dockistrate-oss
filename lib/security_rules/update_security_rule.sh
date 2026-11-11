@@ -9,14 +9,15 @@ function update_security_rule() {
   local id="${1:-}"
   shift || true
   [[ "$id" =~ ^[0-9]+$ ]] || {
-    echo "[Usage] update-security-rule <id> [--domain d] [--mode and|or] [--code status] [--reason text] [--loc text] [--count n (<src> <name|-> <cond> <value|->)x n]"
+    echo "[Usage] update-security-rule <id> [--domain d] [--action require|block|allow] [--mode and|or] [--code status] [--reason text] [--loc text] [--count n (<src> <name|-> <cond> <value|->)x n]"
     exit 1
   }
   [ -f "$SECURITY_RULES_DB" ] || {
     echo "[Error] No security rules" >&2
     exit 1
   }
-  local cur=$(_sr_load_line "$id")
+  local cur=""
+  cur="$(_sr_load_line "$id")" || return 1
   [ -n "$cur" ] || {
     echo "[Error] Not found" >&2
     exit 1
@@ -26,7 +27,7 @@ function update_security_rule() {
     exit 1
   fi
 
-  local e d m c n r l count_override_provided
+  local e d m c n r l action count_override_provided
   e="${CSV_FIELDS[0]}"
   d="${CSV_FIELDS[1]}"
   m="${CSV_FIELDS[2]}"
@@ -34,6 +35,7 @@ function update_security_rule() {
   n="${CSV_FIELDS[4]}"
   r="${CSV_FIELDS[45]:--}"
   l="${CSV_FIELDS[46]:-auto}"
+  action="${CSV_FIELDS[47]:-require}"
   count_override_provided=false
 
   local -a sources names conds values
@@ -44,6 +46,11 @@ function update_security_rule() {
   local i
   while [[ $# -gt 0 ]]; do
     case "$1" in
+    --action)
+      require_option_value "$@" || exit 1
+      action="$2"
+      shift 2
+      ;;
     --domain)
       require_option_value "$@" || exit 1
       d="$2"
@@ -99,11 +106,12 @@ function update_security_rule() {
       done
       ;;
     *)
-      echo "[Usage] update-security-rule <id> [--domain d] [--mode and|or] [--code status] [--reason text] [--loc text] [--count n (<src> <name|-> <cond> <value|->)x n]"
+      echo "[Usage] update-security-rule <id> [--domain d] [--action require|block|allow] [--mode and|or] [--code status] [--reason text] [--loc text] [--count n (<src> <name|-> <cond> <value|->)x n]"
       exit 1
       ;;
     esac
   done
+  action="$(_sr_normalize_action "$action")" || exit 1
   if [ "$count_override_provided" = true ] || [[ -n "${sources[0]-}" ]]; then
     local selector curS curN curC curV
     for ((i = 0; i < n; i++)); do
@@ -138,16 +146,21 @@ function update_security_rule() {
   if ! _config_begin_transaction_if_needed started_txn "update_security_rule_${id}"; then
     exit 1
   fi
+  d="$(normalize_domain "$d")"
+  if ! domain_exists "$d"; then
+    echo "[Error] Domain '$d' was removed before the security rule could be saved." >&2
+    transaction_return_failure || true
+    return 1
+  fi
   local mode_field
   if ((n == 1)); then mode_field="single"; else mode_field="$m"; fi
-  d="$(normalize_domain "$d")"
   local line_values=() line
   for ((i = 0; i < 10; i++)); do
     line_values+=("${sources[i]-}" "${names[i]-}" "${conds[i]-}" "${values[i]-}")
   done
-  line=$(_sr_write_db_line "$e" "$d" "$mode_field" "$c" "$n" "$r" "$l" "${line_values[@]}")
+  line="$(_sr_write_db_line_with_action "$action" "$e" "$d" "$mode_field" "$c" "$n" "$r" "$l" "${line_values[@]}")" || { transaction_return_failure; return 1; }
   _sr_replace_line "$id" "$line"
-  echo "[Info] Updated rule $id"
+  echo "[Info] Updated rule $id (action=$action)"
   create_backup "" "UpdateSecRule_${id}"
   update_nginx_config_for_security_change || { transaction_return_failure; exit 1; }
   _config_end_transaction_if_started "$started_txn"

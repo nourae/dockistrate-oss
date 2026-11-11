@@ -1,0 +1,2 @@
+$ python3 /opt/dockistrate-demo-artifacts/evidence/core-protocols/protocol-client.py tcp
+docs-tcp:ping

@@ -1,0 +1,14 @@
+Review command
+  Command: Restore Backup (restore-backup)
+  Description: Restore a backup directory or archive within configurable intake limits
+
+Arguments:
+  Backup: 20261109_113607_before-demo-change.tar.gz
+
+CLI equivalent:
+  ./dockistrate.sh restore-backup 20261109_113607_before-demo-change.tar.gz
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

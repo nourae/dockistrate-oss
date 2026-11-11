@@ -1,0 +1,6 @@
+Source location (location metadata (default auto)):
+> 1) auto
+  2) Enter manually...
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

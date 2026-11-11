@@ -21,6 +21,12 @@ function cli_read_keypress() {
 
 function cli_print_prompt() {
   local prompt="${1:-}"
+  # Data-bearing summaries already contain real line breaks. Keep operator
+  # values literal while retaining legacy escaped-newline prompts elsewhere.
+  if [ "${CLI_PROMPT_LITERAL:-false}" = true ]; then
+    printf '%s\n' "$prompt"
+    return 0
+  fi
   printf '%s\n' "${prompt//\\n/$'\n'}"
 }
 
@@ -68,19 +74,19 @@ function cli_choice_line_to_value_label() {
   __parsed_value="$line"
   __parsed_label="$line"
 
-  if [[ "$line" == *'|'* ]]; then
-    __before_pipe="${line%%|*}"
-    __before_comma="${line%%,*}"
-    if [[ "$line" != *,* || "${#__before_pipe}" -lt "${#__before_comma}" ]]; then
-      __parsed_value="${line%%|*}"
-      __parsed_label="${line#*|}"
-      [ -n "$__value_var" ] && printf -v "$__value_var" '%s' "$__parsed_value"
-      [ -n "$__label_var" ] && printf -v "$__label_var" '%s' "$__parsed_label"
-      return 0
-    fi
-  fi
+  __before_pipe="${line%%|*}"
+  __before_comma="${line%%,*}"
 
-  if csv_parse_line "$line" && [ "$CSV_FIELD_COUNT" -eq 2 ]; then
+  # Explicitly quoted CSV can contain pipes in the value itself (e.g. paths).
+  # Keep legacy pipe-first rows for image/rule labels that contain commas.
+  if [[ "$line" == \"* ]] && csv_parse_line "$line" && [ "$CSV_FIELD_COUNT" -eq 2 ]; then
+    __parsed_value="${CSV_FIELDS[0]}"
+    __parsed_label="${CSV_FIELDS[1]}"
+  elif [[ "$line" == *'|'* ]] &&
+    { [[ "$line" != *,* ]] || [ "${#__before_pipe}" -lt "${#__before_comma}" ]; }; then
+    __parsed_value="${line%%|*}"
+    __parsed_label="${line#*|}"
+  elif csv_parse_line "$line" && [ "$CSV_FIELD_COUNT" -eq 2 ]; then
     __parsed_value="${CSV_FIELDS[0]}"
     __parsed_label="${CSV_FIELDS[1]}"
   elif [[ "$line" == *'|'* ]]; then

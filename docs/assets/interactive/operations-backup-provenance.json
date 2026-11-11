@@ -1,0 +1,1013 @@
+{
+  "schema_version": 1,
+  "scenario": "operations-backup",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:38.112844+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "operations",
+  "group": "backup",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:39:55.193661+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "operations-backup-set-auto-backups",
+      "journey_family": "operations-backup-set-auto-backups",
+      "session_index": 1,
+      "step": 3,
+      "title": "true",
+      "kind": "menu",
+      "command": "set-auto-backups",
+      "image": "docs/assets/interactive/operations-backup-set-auto-backups/03-true.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-auto-backups/03-true.txt",
+      "image_sha256": "418f24ffd5a9975f81a1f5f7d95c2b89d39fd7a22d0c8665c0d258bb3d58db61",
+      "transcript_sha256": "aa0be496ef886be60412d753ec7f67be343be39fb494a9d0d98f9e6a2aa06781",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-auto-backups.pty.log",
+      "pty_byte_offset": 82605,
+      "selected": "true"
+    },
+    {
+      "journey": "operations-backup-set-auto-backups",
+      "journey_family": "operations-backup-set-auto-backups",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-auto-backups",
+      "image": "docs/assets/interactive/operations-backup-set-auto-backups/04-run.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-auto-backups/04-run.txt",
+      "image_sha256": "8307796656c54ece17a85b56d8da57380552a91885b6f9c647e94dddaa71c59e",
+      "transcript_sha256": "8771b405bcd6b7b89f5b55fdf73b76d6035d12c5af964ce3d7f189f2318aefce",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-auto-backups.pty.log",
+      "pty_byte_offset": 82936,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-backup-set-auto-backups",
+      "journey_family": "operations-backup-set-auto-backups",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-auto-backups",
+      "image": "docs/assets/interactive/operations-backup-set-auto-backups/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-auto-backups/05-command-result.txt",
+      "image_sha256": "63d0d9674630bc406d189a737c3d596c5020f231b7fd7604fe13a208f65ba4a4",
+      "transcript_sha256": "30ffe3eed993dbcca26168e6890e23ec5d4ed75ceee58a41701ef3fd43c950fb",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-auto-backups.pty.log",
+      "pty_byte_offset": 83073,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-set-backup-retention",
+      "journey_family": "operations-backup-set-backup-retention",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-backup-retention",
+      "image": "docs/assets/interactive/operations-backup-set-backup-retention/03-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-backup-retention/03-enter-value.txt",
+      "image_sha256": "066a6f874f7a68a6cb1c2cd95995a7bdbcb9e8dbb454b1101fd00099c84cec7d",
+      "transcript_sha256": "0461e7abf73fceab92a4cb010a7ceed5dd94412209a012d901ca6fd5d95f804a",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-retention.pty.log",
+      "pty_byte_offset": 87966,
+      "value": "7"
+    },
+    {
+      "journey": "operations-backup-set-backup-retention",
+      "journey_family": "operations-backup-set-backup-retention",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backup-retention",
+      "image": "docs/assets/interactive/operations-backup-set-backup-retention/04-run.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-backup-retention/04-run.txt",
+      "image_sha256": "55234c6ebe0931901bf95f501782b1cbe64af853c0b38815ea505eee71c131e8",
+      "transcript_sha256": "a2f203e025e884928fb9faf204f0ba44dc3d8f0f4f00a2d2d99540eda7b5e3f7",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-retention.pty.log",
+      "pty_byte_offset": 88308,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-backup-set-backup-retention",
+      "journey_family": "operations-backup-set-backup-retention",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backup-retention",
+      "image": "docs/assets/interactive/operations-backup-set-backup-retention/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-backup-retention/05-command-result.txt",
+      "image_sha256": "7b8a01b7c57b6718d1398b4e981b85ac6829ce3bf56aca48aa06ffba8b85dc2d",
+      "transcript_sha256": "981c9876d7ae9fded8a3072e38fe701b2ed836c2bf1850a4ef40e775e117357a",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-retention.pty.log",
+      "pty_byte_offset": 88439,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-set-backup-compression",
+      "journey_family": "operations-backup-set-backup-compression",
+      "session_index": 1,
+      "step": 3,
+      "title": "true (current)",
+      "kind": "menu",
+      "command": "set-backup-compression",
+      "image": "docs/assets/interactive/operations-backup-set-backup-compression/03-true-current.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-backup-compression/03-true-current.txt",
+      "image_sha256": "71e5ae31583346b20d16dfcbcf6753a1503ca4e4e8ca7806be7fe70c03da8c38",
+      "transcript_sha256": "8483ecfe1cd8917f6d3986bd96f92661a4bd97c416ebdbcf6597e971bee32c4e",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-compression.pty.log",
+      "pty_byte_offset": 88798,
+      "selected": "true (current)"
+    },
+    {
+      "journey": "operations-backup-set-backup-compression",
+      "journey_family": "operations-backup-set-backup-compression",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backup-compression",
+      "image": "docs/assets/interactive/operations-backup-set-backup-compression/04-run.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-backup-compression/04-run.txt",
+      "image_sha256": "2cbc9b32f22bb5e8da5c5f409e00d4bb4b969b42df4fa39f440265f3d143fa4d",
+      "transcript_sha256": "3e3a6ee246802e901392ac643e7326b565a22eca5064f808eefe1778f31984cd",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-compression.pty.log",
+      "pty_byte_offset": 89152,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-backup-set-backup-compression",
+      "journey_family": "operations-backup-set-backup-compression",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backup-compression",
+      "image": "docs/assets/interactive/operations-backup-set-backup-compression/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-set-backup-compression/05-command-result.txt",
+      "image_sha256": "c8cdce666e94f7f5306b78edeb3b6a9386c2f1889b79849d08f0f85da92a55ab",
+      "transcript_sha256": "2437d7de198114cdda074e982f6244ace005610b849a1dc914423ea0741b7bf0",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-compression.pty.log",
+      "pty_byte_offset": 89295,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-backup-settings-status",
+      "journey_family": "operations-backup-backup-settings-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-backup-backup-settings-status/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-backup-settings-status/03-command-result.txt",
+      "image_sha256": "d77a23443c25b72b8e5a99b3e0e6d6cf45032a20b1296e994476f9560ab1c325",
+      "transcript_sha256": "5570343cf71b12af8ef92b6e054629dd222d7ea5db87ec95184166d0f07b00a3",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-backup-settings-status.pty.log",
+      "pty_byte_offset": 82964,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-backup-settings-status",
+      "journey_family": "operations-backup-backup-settings-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result \u2014 earlier output 1",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-backup-backup-settings-status/04-command-result-earlier-output-1.png",
+      "transcript": "docs/assets/interactive/operations-backup-backup-settings-status/04-command-result-earlier-output-1.txt",
+      "image_sha256": "db557fd98c84353744fa0f6c4024edc318cd205bfd614cdd70f5815861c34055",
+      "transcript_sha256": "5570343cf71b12af8ef92b6e054629dd222d7ea5db87ec95184166d0f07b00a3",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-backup-settings-status.pty.log",
+      "pty_byte_offset": 82964,
+      "viewport": "scrollback",
+      "scrollback_steps": 1
+    },
+    {
+      "journey": "operations-backup-backup-settings-status",
+      "journey_family": "operations-backup-backup-settings-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result \u2014 earlier output 2",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-backup-backup-settings-status/05-command-result-earlier-output-2.png",
+      "transcript": "docs/assets/interactive/operations-backup-backup-settings-status/05-command-result-earlier-output-2.txt",
+      "image_sha256": "8a173b97107b08aa788b7bf2b7f49a539a5178b058c0f68cd3c6e3699949819e",
+      "transcript_sha256": "5570343cf71b12af8ef92b6e054629dd222d7ea5db87ec95184166d0f07b00a3",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-backup-settings-status.pty.log",
+      "pty_byte_offset": 82964,
+      "viewport": "scrollback",
+      "scrollback_steps": 2
+    },
+    {
+      "journey": "operations-backup-backup-settings-status",
+      "journey_family": "operations-backup-backup-settings-status",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result \u2014 earlier output 3",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-backup-backup-settings-status/06-command-result-earlier-output-3.png",
+      "transcript": "docs/assets/interactive/operations-backup-backup-settings-status/06-command-result-earlier-output-3.txt",
+      "image_sha256": "9b12fd6b9e7d01fb2bcbd61312ccac65b00b33f421d2afae337d2e1a4115e93a",
+      "transcript_sha256": "5570343cf71b12af8ef92b6e054629dd222d7ea5db87ec95184166d0f07b00a3",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-backup-settings-status.pty.log",
+      "pty_byte_offset": 82964,
+      "viewport": "top",
+      "scrollback_steps": 3
+    },
+    {
+      "journey": "operations-backup-auto-backups-restored",
+      "journey_family": "operations-backup-auto-backups-restored",
+      "session_index": 1,
+      "step": 3,
+      "title": "false",
+      "kind": "menu",
+      "command": "set-auto-backups",
+      "image": "docs/assets/interactive/operations-backup-auto-backups-restored/03-false.png",
+      "transcript": "docs/assets/interactive/operations-backup-auto-backups-restored/03-false.txt",
+      "image_sha256": "92a71ca7acecd3a2e6ac125612553cf562feacd00d8d88c5c1c5cbf98d0e7d30",
+      "transcript_sha256": "2358fb7e64d61db70dda8b0fa3dbb9794a9eb6e7c882620ae2c6aa4797a7239c",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-auto-backups-restored.pty.log",
+      "pty_byte_offset": 82614,
+      "selected": "false"
+    },
+    {
+      "journey": "operations-backup-auto-backups-restored",
+      "journey_family": "operations-backup-auto-backups-restored",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-auto-backups",
+      "image": "docs/assets/interactive/operations-backup-auto-backups-restored/04-run.png",
+      "transcript": "docs/assets/interactive/operations-backup-auto-backups-restored/04-run.txt",
+      "image_sha256": "1bfdb1445a21f0e9d024e8e927cfcd3b29283d3101f1839ae8b7467c1cbc1cf8",
+      "transcript_sha256": "b809aaf7f3be4ed2b2832d7beb361ffaa968715507a71642334aafe79d27dbe9",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-auto-backups-restored.pty.log",
+      "pty_byte_offset": 82947,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-backup-auto-backups-restored",
+      "journey_family": "operations-backup-auto-backups-restored",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-auto-backups",
+      "image": "docs/assets/interactive/operations-backup-auto-backups-restored/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-auto-backups-restored/05-command-result.txt",
+      "image_sha256": "fe66cb20dfaf7fff3b5e818bab281d54e00da9921c15900f31099146b176d3f8",
+      "transcript_sha256": "3a4967a7d22a3a4b38be992bd065bf8d10f92b8ed15f26631871dd0cc78592c7",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-auto-backups-restored.pty.log",
+      "pty_byte_offset": 83085,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-create-backup",
+      "journey_family": "operations-backup-create-backup",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "create-backup",
+      "image": "docs/assets/interactive/operations-backup-create-backup/03-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-backup-create-backup/03-enter-value.txt",
+      "image_sha256": "c4e4f3d18825273c6acc5903c239b6787f5ea545af9a61a47b3f5ae25f92d716",
+      "transcript_sha256": "fc32e77f1ce9fa5be9081ccff2fc0c9f2d91a1be03cd36c27866e819c3b7d63c",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-create-backup.pty.log",
+      "pty_byte_offset": 67572,
+      "value": "before-demo-change"
+    },
+    {
+      "journey": "operations-backup-create-backup",
+      "journey_family": "operations-backup-create-backup",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "create-backup",
+      "image": "docs/assets/interactive/operations-backup-create-backup/04-run.png",
+      "transcript": "docs/assets/interactive/operations-backup-create-backup/04-run.txt",
+      "image_sha256": "23cc8a9500f2144b72404b5207b89ce8af6ae4df34eb2a672a5f7b6bf203fd28",
+      "transcript_sha256": "b6baea46b6c88d92af18e3322d5d4d00783594b8ba5447b8c174ff14bf97af16",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-create-backup.pty.log",
+      "pty_byte_offset": 67941,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-backup-create-backup",
+      "journey_family": "operations-backup-create-backup",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "create-backup",
+      "image": "docs/assets/interactive/operations-backup-create-backup/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-create-backup/05-command-result.txt",
+      "image_sha256": "64318a0fc39114a81734a378e95728d06e4f707f5383379bc72507f097ba9a82",
+      "transcript_sha256": "eab3468156cce0aabce4c7024fbbe793feec751652213a824f4a268a01e1a97e",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-create-backup.pty.log",
+      "pty_byte_offset": 68127,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-list-backups",
+      "journey_family": "operations-backup-list-backups",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-backups",
+      "image": "docs/assets/interactive/operations-backup-list-backups/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-list-backups/03-command-result.txt",
+      "image_sha256": "d5399e3edf8a4dab33f719fce9fb9f4a6095ebfbc7b23587a083abee30e10632",
+      "transcript_sha256": "53fd3bc27edf0844948d6b9f6e78d216cd5ded5a0a0e6e2c7fdfa73a0c74e673",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-list-backups.pty.log",
+      "pty_byte_offset": 78674,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-restore-backup",
+      "journey_family": "operations-backup-restore-backup",
+      "session_index": 1,
+      "step": 3,
+      "title": "20261109_113607_before-demo-change.tar.gz",
+      "kind": "menu",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/operations-backup-restore-backup/03-20261109-113607-before-demo-change-tar-gz.png",
+      "transcript": "docs/assets/interactive/operations-backup-restore-backup/03-20261109-113607-before-demo-change-tar-gz.txt",
+      "image_sha256": "873a558d8b8fb79b43286b6763001dbcad34cfecc59771ea0a6207683c7e6076",
+      "transcript_sha256": "b854a3d3eee085acbba64fe631ecafa14049cc30d7564e5efc894fe97d65afb4",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-backup.pty.log",
+      "pty_byte_offset": 172100,
+      "selected": "20261109_113607_before-demo-change.tar.gz"
+    },
+    {
+      "journey": "operations-backup-restore-backup",
+      "journey_family": "operations-backup-restore-backup",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/operations-backup-restore-backup/04-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-backup-restore-backup/04-enter-value.txt",
+      "image_sha256": "5edd56919f3df97be3ff6bc3c055057ee304bf7629cb89e3e74007fc3abeb436",
+      "transcript_sha256": "100a0a7a369380b0607eb9c32cd953f419d2c89466ea079a4055dcfde401d1d4",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-backup.pty.log",
+      "pty_byte_offset": 172356,
+      "value": ""
+    },
+    {
+      "journey": "operations-backup-restore-backup",
+      "journey_family": "operations-backup-restore-backup",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/operations-backup-restore-backup/05-run.png",
+      "transcript": "docs/assets/interactive/operations-backup-restore-backup/05-run.txt",
+      "image_sha256": "7fbbc6ce03552f35088143cde44fc6d013b987d5573f4f7245de92ee55aac4c8",
+      "transcript_sha256": "3b609fd71afa7d5a1484c6e03ddbde8b29153b55d48b9c6ed0a6323099ac01cc",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-backup.pty.log",
+      "pty_byte_offset": 172796,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-backup-restore-backup",
+      "journey_family": "operations-backup-restore-backup",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/operations-backup-restore-backup/06-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-backup-restore-backup/06-enter-value.txt",
+      "image_sha256": "0ff7ccd02f4a8de694ff17043d0c72957834cd7d788827b8877d0e294b06a016",
+      "transcript_sha256": "fa8186fa18730ad8163ddffe2e5a3bf5e7b7d91e73b91728420ea8debea11ee4",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-backup.pty.log",
+      "pty_byte_offset": 172902,
+      "value": "y"
+    },
+    {
+      "journey": "operations-backup-restore-backup",
+      "journey_family": "operations-backup-restore-backup",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/operations-backup-restore-backup/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-restore-backup/07-command-result.txt",
+      "image_sha256": "53f44c16c391a703dc01942932acf798f428774b211a1adf9f0a6254fed5dad2",
+      "transcript_sha256": "235e25c7fb588315bce4e700e392de660be4a0af10c0b3cc4971a666fcc836f7",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-backup.pty.log",
+      "pty_byte_offset": 174762,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-restore-config",
+      "journey_family": "operations-backup-restore-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/operations-backup-restore-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/operations-backup-restore-config/03-configuration-test-passed.txt",
+      "image_sha256": "c1de69162d3b45c50935c636b01e2083c3403574a87b454e9990570d761885b1",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-config.pty.log",
+      "pty_byte_offset": 8031,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-fix-default-config",
+      "journey_family": "operations-backup-fix-default-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "fix-default-config",
+      "image": "docs/assets/interactive/operations-backup-fix-default-config/03-run.png",
+      "transcript": "docs/assets/interactive/operations-backup-fix-default-config/03-run.txt",
+      "image_sha256": "2ba2320742563c9dec474ad5661a33c9c027ebec1127d719cf1a11a386e01f5a",
+      "transcript_sha256": "959ff768af20ca3df1d9bef4dbd6f451fdab7941f31dca4326b9e4500330f511",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-default-config.pty.log",
+      "pty_byte_offset": 66007,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-backup-fix-default-config",
+      "journey_family": "operations-backup-fix-default-config",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "fix-default-config",
+      "image": "docs/assets/interactive/operations-backup-fix-default-config/04-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-fix-default-config/04-command-result.txt",
+      "image_sha256": "289845078c4924ff25eb880b4143f892a933f2d186ffff3c8803b8232ebbd65d",
+      "transcript_sha256": "f941fdd8f947741528f4f19e4513b44caf9774e39f8fbf3e35f77d366f577003",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-default-config.pty.log",
+      "pty_byte_offset": 66070,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-fix-permissions",
+      "journey_family": "operations-backup-fix-permissions",
+      "session_index": 1,
+      "step": 3,
+      "title": "Normalize repository permissions (current)",
+      "kind": "menu",
+      "command": "fix-permissions",
+      "image": "docs/assets/interactive/operations-backup-fix-permissions/03-normalize-repository-permissions-current.png",
+      "transcript": "docs/assets/interactive/operations-backup-fix-permissions/03-normalize-repository-permissions-current.txt",
+      "image_sha256": "ac3a9ff257fd91e967e2d558956d83e6b007457e61a371e846614206eee64293",
+      "transcript_sha256": "192c33e0938c71e95dc27b5f7f9c3c786a01dc3e6d92ad11a4690607fb035fba",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-permissions.pty.log",
+      "pty_byte_offset": 65731,
+      "selected": "Normalize repository permissions (current)"
+    },
+    {
+      "journey": "operations-backup-fix-permissions",
+      "journey_family": "operations-backup-fix-permissions",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "fix-permissions",
+      "image": "docs/assets/interactive/operations-backup-fix-permissions/04-run.png",
+      "transcript": "docs/assets/interactive/operations-backup-fix-permissions/04-run.txt",
+      "image_sha256": "e51e4d11423e9bfbaf1a819c8ae081531202d4dfd404663c6cd4e465fc01ecdc",
+      "transcript_sha256": "cddde7a9156c871cf51025a3306a96593f2644d37854eb43d3a539f6d7edc158",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-permissions.pty.log",
+      "pty_byte_offset": 66108,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-backup-fix-permissions",
+      "journey_family": "operations-backup-fix-permissions",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "fix-permissions",
+      "image": "docs/assets/interactive/operations-backup-fix-permissions/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-fix-permissions/05-command-result.txt",
+      "image_sha256": "ec27e3aa0b0066c195298a51eca238e3fda90fb0484ce5e685a6cf5b95c37c60",
+      "transcript_sha256": "9a1d38dc84cf69aaaeb07111ffa7379800d4eafb5d84e047503225731ea621cd",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-permissions.pty.log",
+      "pty_byte_offset": 66208,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-repair-config",
+      "journey_family": "operations-backup-repair-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/operations-backup-repair-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/operations-backup-repair-config/03-configuration-test-passed.txt",
+      "image_sha256": "f0e752cde8d5c641db237c9199d0db2b525117b58d18538b5563f27b6031d05e",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-repair-config.pty.log",
+      "pty_byte_offset": 8027,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-help-update",
+      "journey_family": "operations-backup-help-update",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "help-update",
+      "image": "docs/assets/interactive/operations-backup-help-update/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-help-update/03-command-result.txt",
+      "image_sha256": "e875355f565e451013b7580f6fa88103e944ced267d40073e6cff8b7c13dfe55",
+      "transcript_sha256": "b02ac05db76feb300e831022719e04988f623a8346b782b3114c341f9ab076ab",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-help-update.pty.log",
+      "pty_byte_offset": 63483,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-backup-upgrade-preflight",
+      "journey_family": "operations-backup-upgrade-preflight",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "upgrade-preflight",
+      "image": "docs/assets/interactive/operations-backup-upgrade-preflight/03-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-backup-upgrade-preflight/03-enter-value.txt",
+      "image_sha256": "6d73ce1bdea1af9243de614235c4438b7605159ab421ac9845197b6af3fbbcaf",
+      "transcript_sha256": "6f439782ef4db65b670e27a94c450dcc025ff3bcf068aafb8360b3bc8752fdbf",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-upgrade-preflight.pty.log",
+      "pty_byte_offset": 63996,
+      "value": ""
+    },
+    {
+      "journey": "operations-backup-upgrade-preflight",
+      "journey_family": "operations-backup-upgrade-preflight",
+      "session_index": 1,
+      "step": 4,
+      "title": "Yes",
+      "kind": "menu",
+      "command": "upgrade-preflight",
+      "image": "docs/assets/interactive/operations-backup-upgrade-preflight/04-yes.png",
+      "transcript": "docs/assets/interactive/operations-backup-upgrade-preflight/04-yes.txt",
+      "image_sha256": "f119ef508777b778ba7547e613f41130cf3a87cb70a70de6ecb53b2a5f64c50e",
+      "transcript_sha256": "795810adf1f1989630735b01f1aaf886d85fffcbf56302586550da0f0e008706",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-upgrade-preflight.pty.log",
+      "pty_byte_offset": 64412,
+      "selected": "Yes"
+    },
+    {
+      "journey": "operations-backup-upgrade-preflight",
+      "journey_family": "operations-backup-upgrade-preflight",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "upgrade-preflight",
+      "image": "docs/assets/interactive/operations-backup-upgrade-preflight/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-backup-upgrade-preflight/05-command-result.txt",
+      "image_sha256": "9a00d6ca12f39995d54eeda0991b9d1dfcac49e73da333990ff2b0ca49623dcb",
+      "transcript_sha256": "ef89e7a37a93b54b425b7e78ac4770b7866de09a4860c17b41fd6d7490a80ef8",
+      "pty_log": "docs/assets/interactive/evidence/operations-backup/operations-backup-upgrade-preflight.pty.log",
+      "pty_byte_offset": 64605,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "set-auto-backups-interactive-result",
+      "status": "passed",
+      "command": "set-auto-backups",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-backup-retention-interactive-result",
+      "status": "passed",
+      "command": "set-backup-retention",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-backup-compression-interactive-result",
+      "status": "passed",
+      "command": "set-backup-compression",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "status-interactive-result",
+      "status": "passed",
+      "command": "status",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-auto-backups-interactive-result",
+      "status": "passed",
+      "command": "set-auto-backups",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "create-backup-interactive-result",
+      "status": "passed",
+      "command": "create-backup",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "list-backups-interactive-result",
+      "status": "passed",
+      "command": "list-backups",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "before-restore",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-backup/before-restore.headers"
+    },
+    {
+      "label": "restore-backup-interactive-result",
+      "status": "passed",
+      "command": "restore-backup",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "after-restore",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-backup/after-restore.headers"
+    },
+    {
+      "label": "restore-visible-change",
+      "status": "passed",
+      "command": "restore-backup",
+      "outcome": "later response header removed by restore"
+    },
+    {
+      "label": "fix-default-config-interactive-result",
+      "status": "passed",
+      "command": "fix-default-config",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "fix-permissions-interactive-result",
+      "status": "passed",
+      "command": "fix-permissions",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "repair-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-backup/repair-response.headers"
+    },
+    {
+      "label": "help-update-interactive-result",
+      "status": "passed",
+      "command": "help-update",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "preflight-current-checkout",
+      "status": "passed",
+      "command": "upgrade-preflight",
+      "outcome": "validated current source and saved backup"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "operations"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "c36fb41d26dcee9cc4d3e304469d64d7ea4c9d1b908d31f080e12f5a1b7779b0",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 36
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/operations-backup-recordings.tar.gz",
+    "sha256": "fc17d83f6ca79ecf797be3c89e53d3075ad6241f28975912f72580cb7c4ee45b",
+    "size": 108901,
+    "members": {
+      "docs/assets/interactive/evidence/operations-backup/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/operations-backup/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-backup/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/operations-backup/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/operations-backup/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-backup/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/operations-backup/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/operations-backup/008-fixture-image.log": {
+        "sha256": "d18ce6ff4e9ce235b44d90b8ce628a1241ea71b800f9005528b1e1e24d1c2b33",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/operations-backup/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/operations-backup/010-fixture-backend.log": {
+        "sha256": "c6ccd777c4de8c5f8ffcbd59264707bfd2edb937e77ffdd53d932fd373b75a31",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/operations-backup/011-fixture-public-demo.log": {
+        "sha256": "3437c062fcbb4d8f457b599447da9f5d374b4bd2fcb66bcb78d22d589ecb07db",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/operations-backup/012-fixture-https.log": {
+        "sha256": "cdecfa5063836e7d03f7035016739eb123614c0bf151aad83d5d61ad87cb1751",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/operations-backup/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/operations-backup/014-command-alias.log": {
+        "sha256": "880b0c58665a3c6c2910464595cccae0f936bdbe05d78facc40fb2279622e058",
+        "size": 17
+      },
+      "docs/assets/interactive/evidence/operations-backup/015-command-alias.log": {
+        "sha256": "dd8a850e4c94fc11f56a17a2f5335050567f7c708612e58ce5cbb1b8c68ac3b5",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/operations-backup/016-command-alias.log": {
+        "sha256": "2ce7ef8adce045851647d291136fbb83c284b75fcb05dd0896539cbf17311dbb",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/operations-backup/017-command-alias.log": {
+        "sha256": "1ea622c2c5c31ea9770c8832e15c8ae9351c2fc63dcdd282c753c891fcd03ac1",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-backup/018-command-alias.log": {
+        "sha256": "880b0c58665a3c6c2910464595cccae0f936bdbe05d78facc40fb2279622e058",
+        "size": 17
+      },
+      "docs/assets/interactive/evidence/operations-backup/019-command-alias.log": {
+        "sha256": "7fa6f6b5299f7368d1c7d14b8f08016796ad421b6dafc6afacad8e8cf04a3447",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/operations-backup/020-command-alias.log": {
+        "sha256": "6b35759393a29dfcf4b5b7fce81d4f3815ba3c03aea59ce980fc33e4aec16115",
+        "size": 13
+      },
+      "docs/assets/interactive/evidence/operations-backup/021-fixture-change-header.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/operations-backup/022-command-alias.log": {
+        "sha256": "150b9ecc3046ee7581871d6fbea6466d1f7d0603300c52ef7f13db186846ec4e",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/operations-backup/023-command-alias.log": {
+        "sha256": "5e88305ab4c142e0659318f464f08e75850ac8b3f5a4080360e0e932025bb72c",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/operations-backup/024-command-alias.log": {
+        "sha256": "372d017653d84a641bef2f7fa9c4e3db7b0ca6ee7baaf7a36027250023da30ba",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/operations-backup/025-command-alias.log": {
+        "sha256": "7ae01f807450ede6fd7c8ae184f703f846f500d4fcfef8d7c54dcb1f27b4fae0",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/operations-backup/026-local-version-tag.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-backup/027-command-alias.log": {
+        "sha256": "a88d32a19ed7a866863b2b6a8b81c3653027e0da3f7cd6c28b11f33f1f0f1321",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/operations-backup/028-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/operations-backup/after-restore.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-backup/after-restore.headers": {
+        "sha256": "7b93708d6f0856f08aed842b76d3d6d519158530d4eb1c98937230080cea4f18",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-backup/after-restore.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-backup/after-restore.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-backup/before-restore.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-backup/before-restore.headers": {
+        "sha256": "5b6c57e7c8b40617efc3ae3563d7897ce854dfe87a5546b72c5088a7b9c29e6d",
+        "size": 266
+      },
+      "docs/assets/interactive/evidence/operations-backup/before-restore.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-backup/before-restore.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-backup/commands.jsonl": {
+        "sha256": "753100e54b168ccedec22b0736760cf9f2aaf45e60fbfbc58e4bce33d34ccfb7",
+        "size": 11563
+      },
+      "docs/assets/interactive/evidence/operations-backup/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-auto-backups-restored.events.jsonl": {
+        "sha256": "d56e76b09ca1a150e88d8f8017d0df22edd02a729b21cd63275230ff0c5bdd62",
+        "size": 15119
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-auto-backups-restored.pty.log": {
+        "sha256": "6e11acbff3f79d846ca16575170bd89ea4e2b650df095e3870f35098fced7824",
+        "size": 91199
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-backup-settings-status.events.jsonl": {
+        "sha256": "0c0060835fbbefecc684f75354cd96d6e7061e561750718c568c4ed9e76a065e",
+        "size": 17081
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-backup-settings-status.pty.log": {
+        "sha256": "8a5be91d00402277b673ff808a77a79c1fd8b33fa27222b82058cb5d60e1a6cb",
+        "size": 91080
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-create-backup.events.jsonl": {
+        "sha256": "a7e3f128437e4f6a6301eaf6ca985b421fd45aae4f5baaa63a34baa7e57ccadd",
+        "size": 13662
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-create-backup.pty.log": {
+        "sha256": "5b41d28bcc89e3bc2418546eaa75f074ee09657c0527fa9cec50a0df583a2727",
+        "size": 76241
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-default-config.events.jsonl": {
+        "sha256": "1a475cdbae943089d338ebfeb9a7e95a4bb5738587420e16cf8e3c6c4a499d8b",
+        "size": 14459
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-default-config.pty.log": {
+        "sha256": "6fee855a445f88d2faefc3a0cecb15287873044b54658bf010475dee3ae5cd08",
+        "size": 74188
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-permissions.events.jsonl": {
+        "sha256": "8b9da8e634300d8662e9d23fb486560a2bb9cc4926f092a13a7808aabb433310",
+        "size": 14174
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-fix-permissions.pty.log": {
+        "sha256": "4ac99f30a30903cd9d5071f7b5d2fc0320f98a2e57b6273dcff793491c524631",
+        "size": 74313
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-help-update.events.jsonl": {
+        "sha256": "2e47067547683799b3d2c41fc6b8d551cf4967b10557ba48ad7d495e7e7ccfa1",
+        "size": 12106
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-help-update.pty.log": {
+        "sha256": "208793dbc4898565696b3a3aab9125d0baf44f9d18ee12a486c6e6df5ba4ddc1",
+        "size": 71588
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-list-backups.events.jsonl": {
+        "sha256": "7edfb940f650a482a322686d2c91929dc5369ce268cfbd47eeff76123a316aa0",
+        "size": 12458
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-list-backups.pty.log": {
+        "sha256": "cd846abf91b5b669da978dc0dd42fdbdca3f266a3eb8ac7d20d66ee64baa3005",
+        "size": 86788
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-repair-config.events.jsonl": {
+        "sha256": "9b905b33740f83d8967c50c206d97a3f8d754466d9d7b86b0e235456516517e2",
+        "size": 9210
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-repair-config.pty.log": {
+        "sha256": "5cd536764630fea925d18231e2c68f03c7693ebe7075eb4ebd6a1c4f23153387",
+        "size": 16149
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-backup.events.jsonl": {
+        "sha256": "c09423d10a700a183ad68b291f44aa07aed22ce878d87835e4b31e29ac0ae51a",
+        "size": 27076
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-backup.pty.log": {
+        "sha256": "415f6ed7015c45e7ac5e8698096095e6443a05b7638a06d15a038194f8ff79df",
+        "size": 182871
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-config.events.jsonl": {
+        "sha256": "2b3eb399693460b291698f00dc76b83c1e4127e2835a877af5eb1a7f78e803a5",
+        "size": 9276
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-restore-config.pty.log": {
+        "sha256": "9cffc3ce85c501ddafb8d4ddf5748a79577024dae501469b059a0d065ef94559",
+        "size": 16149
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-set-auto-backups.events.jsonl": {
+        "sha256": "0d45a20c2aa68b3bde7baccf4c1f9f092b8ff60243e0aa4a4731f8e74a5bf92e",
+        "size": 14563
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-set-auto-backups.pty.log": {
+        "sha256": "05f165485e5448494bff130a12637aa4ea8ba07938ab896d9a9cbf8b1baf2f72",
+        "size": 91174
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-compression.events.jsonl": {
+        "sha256": "b201a9a221f9a020a616b04f4e8d6b5740062ea8f4a54fd1fa580a3212af2936",
+        "size": 16797
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-compression.pty.log": {
+        "sha256": "1460803052719614e5c0b4627af3fb4977223d32e529facd113141d0549f8923",
+        "size": 97409
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-retention.events.jsonl": {
+        "sha256": "eccf1408e767d2f3f730afedd57663372ff252dfbcbe1002dc51554d1ccc76ee",
+        "size": 16263
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-set-backup-retention.pty.log": {
+        "sha256": "f81c566be7a13c9603f92288708ac44ebd380ac00089a79328601d4c9841627e",
+        "size": 96553
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-upgrade-preflight.events.jsonl": {
+        "sha256": "262805663b99f799e29f557249fc4ad51fdbf6033749eaa394727ee68d0070e2",
+        "size": 15430
+      },
+      "docs/assets/interactive/evidence/operations-backup/operations-backup-upgrade-preflight.pty.log": {
+        "sha256": "919f57344c293c4166a85d7b24f0e8cf88c0c67f12c6868be73420dfc1b4be90",
+        "size": 72706
+      },
+      "docs/assets/interactive/evidence/operations-backup/repair-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-backup/repair-response.headers": {
+        "sha256": "d0909d221e86c6d669afb2a21bd8d3b83a87ea4d262aef7cfe097f891d197b6c",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-backup/repair-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-backup/repair-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  }
+}

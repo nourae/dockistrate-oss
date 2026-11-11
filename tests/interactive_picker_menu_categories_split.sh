@@ -56,7 +56,7 @@ if declare -p INTERACTIVE_PICKER_COMMANDS_GLOBAL_SETTINGS >/dev/null 2>&1; then
 fi
 
 assert_array_values INTERACTIVE_PICKER_CATEGORIES \
-  "Basic Ops" "Backends" "Hosts & Aliases" \
+  "Basic Ops" "Backends" "Hosts & Aliases" "Domain Configuration" \
   "Routing & Ports" "Advanced Path Routing" \
   "Port TLS & HTTP/3" "Bulk Backend Operations" \
   "Certificates" "Clean & Uninstall" "Backend Headers" "Logging" \
@@ -69,6 +69,9 @@ assert_array_values INTERACTIVE_PICKER_CATEGORIES \
 assert_array_values INTERACTIVE_PICKER_COMMANDS_BACKENDS \
   list-backends add-backend remove-backend \
   start-backend stop-backend restart-backend update-backend replace-backend-network
+
+assert_array_values INTERACTIVE_PICKER_COMMANDS_DOMAIN_CONFIG \
+  init-domain-config validate-domain-config apply-domain-config migrate-state
 
 assert_array_values INTERACTIVE_PICKER_COMMANDS_HOSTS_ALIASES \
   add-host-alias remove-host-alias list-host-aliases \

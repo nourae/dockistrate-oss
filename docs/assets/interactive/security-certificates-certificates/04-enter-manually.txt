@@ -1,0 +1,6 @@
+Certificate port suffix:
+  1) 443 (default) (current)
+> 2) Enter manually...
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

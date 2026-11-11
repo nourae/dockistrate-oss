@@ -1,0 +1,2 @@
+$ /opt/dockistrate-demo/dockistrate.sh list-backend-headers example.com
+[None]

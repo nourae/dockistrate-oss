@@ -23,10 +23,7 @@ function set_header() {
     exit 1
   fi
   mkdir -p "$(dirname "$CUSTOM_HEADERS_FILE")"
-  state_csv_upsert_row_by_keys \
-    "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER" "$STATE_CUSTOM_HEADERS_COLS" 2 \
-    "$type" "$name" \
-    -- "$type" "$name" "$value"
+  _header_mutate_file "$CUSTOM_HEADERS_FILE" global set "" "$type" "$name" "$value" || return 1
   echo "[Info] Set global $type header $name"
   create_backup "" "SetHeader_${name}"
   update_nginx_config

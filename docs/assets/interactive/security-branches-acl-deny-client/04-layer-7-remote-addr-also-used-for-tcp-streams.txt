@@ -1,0 +1,7 @@
+scope (l7|Layer 7 ($remote_addr, also used for TCP streams) l3|Layer 3 ($realip_remote_addr) both|Apply to L7 and L3 (TCP uses client IP)):
+> 1) Layer 7 ($remote_addr, also used for TCP streams)
+  2) Layer 3 ($realip_remote_addr)
+  3) Apply to L7 and L3 (TCP uses client IP)
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

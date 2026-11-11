@@ -1,0 +1,8 @@
+Scope:
+  1) Keep current: both
+> 2) Layer 7 (client IP; CIDR supported)
+  3) Layer 3 (real peer IP; exact IPv4)
+  4) Apply to L7 and L3 (exact IPv4)
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

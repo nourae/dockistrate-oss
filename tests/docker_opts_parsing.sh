@@ -137,26 +137,81 @@ if [ "$normalized_mid_token_quotes" != "$expected_mid_token_quotes" ]; then
   exit 1
 fi
 
+# A quoted empty value is an argument, including at the end of the option list.
+empty_value_opts="--env '' --entrypoint ''"
+normalized_empty_values="$(normalize_docker_opts_for_storage "$empty_value_opts" 'empty argument regression')"
+[ "$normalized_empty_values" = "$empty_value_opts" ] || { echo 'Empty Docker option values changed during normalization' >&2; exit 1; }
+captured_lines=""
+_parse_docker_opts_capture_lines captured_lines "$normalized_empty_values"
+captured_args=()
+while IFS= read -r argument; do captured_args+=("$argument"); done < <(printf '%s' "$captured_lines")
+[ "${#captured_args[@]}" -eq 4 ] && [ "${captured_args[0]}" = --env ] &&
+  [ -z "${captured_args[1]}" ] && [ "${captured_args[2]}" = --entrypoint ] && [ -z "${captured_args[3]}" ] || {
+  echo 'Empty Docker argument boundaries were lost' >&2; exit 1;
+}
+_parse_docker_opts_capture_lines captured_lines ''
+[ -z "$captured_lines" ] || { echo 'Empty options unexpectedly created an argument' >&2; exit 1; }
+if normalize_docker_opts_for_storage "''" 'empty positional argument' >/dev/null 2>&1; then
+  echo 'An empty positional argument was incorrectly discarded' >&2; exit 1
+fi
+if normalize_docker_opts_for_storage $'--env "first\n--privileged"' 'embedded newline' >/dev/null 2>&1; then
+  echo 'A newline inside one argument was interpreted as multiple arguments' >&2; exit 1
+fi
+
 old_backend_opts_file="${BACKEND_DOCKER_OPTS_FILE-__unset__}"
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/dockistrate.XXXXXX")"
 BACKEND_DOCKER_OPTS_FILE="${tmp_dir}/backend_docker_opts.csv"
 trap 'rm -rf "$tmp_dir"; if [ "$old_backend_opts_file" = "__unset__" ]; then unset BACKEND_DOCKER_OPTS_FILE; else BACKEND_DOCKER_OPTS_FILE="$old_backend_opts_file"; fi' EXIT
 
+# CSV source, legacy storage, and export all retain the same argument vector.
+source "$ROOT_DIR/lib/domain_config/model.sh"
+source "$ROOT_DIR/lib/domain_config/record_io.sh"
+source "$ROOT_DIR/lib/domain_config/conversion_export.sh"
+mkdir -p "$tmp_dir/source" "$tmp_dir/exported"
+printf 'position,argument\n1,--env\n2,\n3,--entrypoint\n4,\n' >"$tmp_dir/source/docker_options.csv"
+[ "$(domain_config_docker_options "$tmp_dir/source")" = "$empty_value_opts" ] || exit 1
+_dc_domain=empty.example.com _dc_destination="$tmp_dir/exported"
+printf 'position,argument\n' >"$_dc_destination/docker_options.csv"
+_domain_config_export_docker_row 2 empty.example.com "$empty_value_opts"
+cmp -s "$tmp_dir/source/docker_options.csv" "$_dc_destination/docker_options.csv" || {
+  echo 'Domain CSV export lost an empty Docker argument' >&2; exit 1;
+}
+
+# Check the actual missing-container command boundary with a Docker test double.
+(
+  source "$ROOT_DIR/lib/domain_config/runtime_backends.sh"
+  function _domain_runtime_absent_backend_is_replaceable() { return 0; }
+  function _domain_runtime_ensure_network() { return 0; }
+  function _backend_launch_new_token() { printf token; }
+  function _domain_runtime_record() { return 0; }
+  function _backend_launch_labels() { return 0; }
+  function operator_visibility_is_redacted() { return 1; }
+  function docker() { printf '%s\0' "$@" >"$tmp_dir/runtime-argv"; printf fake-id; }
+  function _backend_identity_inspect() { return 1; }
+  if _domain_runtime_launch_missing_backend empty.example.com nginx:alpine 8080 testnet running "$empty_value_opts"; then exit 1; fi
+  actual_args=()
+  while IFS= read -r -d '' argument; do actual_args+=("$argument"); done <"$tmp_dir/runtime-argv"
+  [ "${#actual_args[@]}" -eq 11 ] && [ "${actual_args[6]}" = --env ] && [ -z "${actual_args[7]}" ] &&
+    [ "${actual_args[8]}" = --entrypoint ] && [ -z "${actual_args[9]}" ] && [ "${actual_args[10]}" = nginx:alpine ] || {
+    echo 'Backend recovery changed Docker argument boundaries' >&2; exit 1;
+  }
+)
+
 cat >"$BACKEND_DOCKER_OPTS_FILE" <<'EOF_OPTS'
-key,docker_options
-backend:example.com,opts
-backend:examplecom.com,opts
+domain,docker_options
+example.com,opts
+examplecom.com,opts
 EOF_OPTS
 set_backend_docker_opts "backend:example.com" ""
 
 remaining_contents="$(cat "$BACKEND_DOCKER_OPTS_FILE")"
 
-if grep -Fxq 'backend:example.com,opts' <<<"$remaining_contents"; then
+if grep -Fxq 'example.com,opts' <<<"$remaining_contents"; then
   printf 'Expected backend:example.com entry to be removed but file still contains:%s\n' "\n$remaining_contents" >&2
   exit 1
 fi
 
-if ! grep -Fxq 'backend:examplecom.com,opts' <<<"$remaining_contents"; then
+if ! grep -Fxq 'examplecom.com,opts' <<<"$remaining_contents"; then
   printf 'Expected backend:examplecom.com entry to remain but file now contains:%s\n' "\n$remaining_contents" >&2
   exit 1
 fi

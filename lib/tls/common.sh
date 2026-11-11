@@ -2,8 +2,16 @@
 
 
 function _validate_tls_ciphers() {
-  local str="$1"
-  openssl ciphers "$str" >/dev/null 2>&1 || {
+  local str="$1" validation_str="$1"
+  case "$str" in
+  -*)
+    # OpenSSL/LibreSSL otherwise parse a leading '-' as a command option. A
+    # strength sort on the initial empty list is a no-op, so this forces the
+    # operator value through the cipher-list parser without changing its rules.
+    validation_str="@STRENGTH:${str}"
+    ;;
+  esac
+  openssl ciphers "$validation_str" >/dev/null 2>&1 || {
     echo "[Error] Invalid cipher string" >&2
     return 1
   }
@@ -96,7 +104,8 @@ function _validate_port_tls_file_for_render() {
   local file="${1:-}" header="${2:-}" kind="${3:-}"
   local line="" line_no=0 port="" value=""
   [ -f "$file" ] || return 0
-  csv_require_header "$file" "$header" || return 1
+  local shared_records=""
+  shared_records="$(state_csv_contents "$file" "$header")" || return 1
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
     [ "$line_no" -eq 1 ] && continue
@@ -126,7 +135,7 @@ function _validate_port_tls_file_for_render() {
       return 1
       ;;
     esac
-  done <"$file"
+  done <<<"$shared_records"
   return 0
 }
 
@@ -142,6 +151,7 @@ function validate_tls_settings_for_render() {
 
 function _require_https_port_mapping() {
   local port="$1"
+  port="$(normalize_port "$port")" || return 1
 
   if [ ! -f "$BACKEND_PORTS_FILE" ]; then
     echo "[Error] No port mappings configured; cannot set TLS overrides for port $port." >&2

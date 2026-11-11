@@ -1,0 +1,12 @@
+Host-facing port handled by the Nginx proxy.
+Listen port
+Example: 443:
+  1) 80
+> 2) 443
+  3) 8080
+  4) 8443
+  5) 18180
+  6) Enter manually...
+  7) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

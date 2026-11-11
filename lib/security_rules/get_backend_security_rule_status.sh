@@ -8,34 +8,37 @@ fi
 function get_backend_security_rule_status() {
   local domain="${1:-}"
   local val="$SECURITY_RULE_STATUS"
+  _require_persisted_settings_validation || return 1
   local has_explicit_status="no"
   [ -n "$domain" ] && domain="$(normalize_domain "$domain")"
-  if [ -n "$domain" ] && [ -f "$BACKEND_SECURITY_RULE_STATUS_FILE" ]; then
+  if [ -n "$domain" ]; then
     local custom=""
-    custom="$(state_csv_get_two_col_value "$BACKEND_SECURITY_RULE_STATUS_FILE" "$STATE_BACKEND_SECURITY_RULE_STATUSES_HEADER" "$domain" "" 2>/dev/null || true)"
+    custom="$(get_validated_backend_setting_override "$BACKEND_SECURITY_RULE_STATUS_FILE" "$STATE_BACKEND_SECURITY_RULE_STATUSES_HEADER" SECURITY_RULE_STATUS "$domain")" || return 1
     if [ -n "$custom" ]; then
       val="$custom"
       has_explicit_status="yes"
     fi
   fi
-  # For dedicated hosts, fall back to target domain's security rule status if:
-  # 1. No explicit config exists for the dedicated host
-  # 2. Inheritance is enabled for security rules
+  # Ordinary aliases inherit absent status settings. Dedicated hosts do so only
+  # when security-rule inheritance is enabled; explicit host settings win.
   if [ "$has_explicit_status" = "no" ]; then
-    local target_domain
-    target_domain="$(backend_for_dedicated_host "$domain")"
-    if [ -n "$target_domain" ]; then
-      # Check if inheritance is enabled (defaults to yes if function not available)
-      local should_inherit="yes"
-      if command -v should_inherit_security_rules >/dev/null 2>&1; then
-        should_inherit_security_rules "$domain" && should_inherit="yes" || should_inherit="no"
+    local target_domain should_inherit="yes"
+    target_domain="$(backend_for_alias "$domain")" || return 1
+    if [ -z "$target_domain" ]; then
+      target_domain="$(backend_for_dedicated_host "$domain")" || return 1
+      if [ -n "$target_domain" ]; then
+        # Missing inheritance state defaults to yes; malformed state is an error.
+        should_inherit="$(get_dedicated_host_inheritance "$domain" "security_rules")" || return 1
       fi
-      if [ "$should_inherit" = "yes" ] && [ -f "$BACKEND_SECURITY_RULE_STATUS_FILE" ]; then
+    fi
+    if [ -n "$target_domain" ]; then
+      if [ "$should_inherit" = "yes" ]; then
         local target_custom=""
-        target_custom="$(state_csv_get_two_col_value "$BACKEND_SECURITY_RULE_STATUS_FILE" "$STATE_BACKEND_SECURITY_RULE_STATUSES_HEADER" "$target_domain" "" 2>/dev/null || true)"
+        target_custom="$(get_validated_backend_setting_override "$BACKEND_SECURITY_RULE_STATUS_FILE" "$STATE_BACKEND_SECURITY_RULE_STATUSES_HEADER" SECURITY_RULE_STATUS "$target_domain")" || return 1
         [ -n "$target_custom" ] && val="$target_custom"
       fi
     fi
   fi
-  echo "$val"
+  validate_persisted_setting SECURITY_RULE_STATUS "$val" || return 1
+  printf '%s\n' "$val"
 }

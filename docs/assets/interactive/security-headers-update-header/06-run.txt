@@ -1,0 +1,16 @@
+Review command
+  Command: Update Header (update-header)
+  Description: Update a global header value
+
+Arguments:
+  Header direction: response
+  Header name: X-Global-Guide
+  Value: reviewed
+
+CLI equivalent:
+  ./dockistrate.sh update-header response X-Global-Guide reviewed
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

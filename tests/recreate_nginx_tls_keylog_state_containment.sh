@@ -2,16 +2,24 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../lib/utils/validators.sh
+source "$ROOT_DIR/lib/utils/validators.sh"
 
 # shellcheck source=../lib/runtime_paths.sh
 source "$ROOT_DIR/lib/runtime_paths.sh"
 # shellcheck source=../lib/capture/common.sh
-source "$ROOT_DIR/lib/capture/common.sh"
+source "${CAPTURE_COMMON_SOURCE:-$ROOT_DIR/lib/capture/common.sh}"
+# shellcheck source=../lib/nginx/ensure_sslkeylog_library.sh
+source "$ROOT_DIR/lib/nginx/ensure_sslkeylog_library.sh"
 # shellcheck source=../lib/nginx/recreate_nginx_container.sh
 source "$ROOT_DIR/lib/nginx/recreate_nginx_container.sh"
+# shellcheck source=lib/empty_proxy_certificate_fixture.sh
+source "$ROOT_DIR/tests/lib/empty_proxy_certificate_fixture.sh"
 
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/dockistrate_recreate_keylog_state.XXXXXX")"
 trap 'rm -rf "$tmp_dir"' EXIT
+# Keep runtime guards and exact Docker paths consistent through temporary aliases.
+tmp_dir="$(cd "$tmp_dir" && pwd -P)"
 
 BASE_DIR="$tmp_dir/base[glob]"
 STATE_DIR="$BASE_DIR/state"
@@ -27,9 +35,21 @@ NGINX_STREAM_CONF_DIR="$NGINX_CONFIG_DIR/stream_conf"
 ACME_WEBROOT_DIR="$STATE_DIR/acme-webroot"
 CERTS_DIR="$STATE_DIR/certs"
 NGINX_CAPTURE_KEYS_DIR="/var/log/nginx/keys"
+SSLKEYLOG_LIB_SOURCE_FILE="$tmp_dir/sslkeylogfile.c"
+printf '%s\n' 'int keylog_fixture;' >"$SSLKEYLOG_LIB_SOURCE_FILE"
+EXPECTED_SOURCE_SHA256="$(_sslkeylog_source_fingerprint)"
 SSLKEYLOG_LIB_BUILD_FILE="$STATE_DIR/tmp/sslkeylogfile.so"
 NGINX_SSLKEYLOG_LIB_PATH="/usr/local/lib/dockistrate/sslkeylogfile.so"
 NGINX_DOCKER_OPTS=""
+DOCKISTRATE_MANAGED_LABEL_KEY="com.dockistrate.managed"
+DOCKISTRATE_ROLE_LABEL_KEY="com.dockistrate.role"
+DOCKISTRATE_STATE_DIR_LABEL_KEY="com.dockistrate.state-dir"
+DOCKISTRATE_ROLE_PROXY="proxy"
+NGINX_CONTAINER_CONF_ROOT="/etc/nginx/dockistrate"
+NGINX_CONTAINER_MAIN_CONF="$NGINX_CONTAINER_CONF_ROOT/nginx.conf"
+RUN_ARGV="$tmp_dir/docker-run.argv"
+ENSURE_STATUS=1
+DOCKER_STATUS=1
 
 pull_calls=0
 conflict_calls=0
@@ -65,6 +85,9 @@ function reset_case() {
   remove_calls=0
   rollback_mark_calls=0
   docker_calls=0
+  ENSURE_STATUS=1
+  DOCKER_STATUS=1
+  rm -f "$RUN_ARGV"
   tamper_after_pull_dir=""
   tamper_after_pull_target=""
 }
@@ -103,7 +126,7 @@ function pull_image_if_autopull() {
 }
 function ensure_sslkeylog_library() {
   ensure_calls=$((ensure_calls + 1))
-  return 1
+  return "$ENSURE_STATUS"
 }
 function _nginx_mark_runtime_rollback_needed() {
   rollback_mark_calls=$((rollback_mark_calls + 1))
@@ -113,8 +136,13 @@ function remove_container_and_anonymous_volumes() {
 }
 function docker() {
   docker_calls=$((docker_calls + 1))
-  return 1
+  printf '%s\0' "$@" >"$RUN_ARGV"
+  return "$DOCKER_STATUS"
 }
+
+function _nginx_expected_state_dir_label() { printf '%s' "$STATE_DIR"; }
+function add_nginx_networks() { return 0; }
+function log_msg() { :; }
 
 function assert_no_container_mutation() {
   local label="$1"
@@ -225,5 +253,41 @@ recreate_nginx_container "$NGINX_IMAGE" >/dev/null 2>&1 || status=$?
 [ "$remove_calls" -eq 0 ] || fail "helper build failure should happen before container removal."
 [ "$rollback_mark_calls" -eq 0 ] || fail "helper build failure should happen before rollback marking."
 [ "$docker_calls" -eq 0 ] || fail "helper build failure should happen before docker run."
+
+# Exercise the real mount helper through its caller. The caller's output
+# variable is keylog_name; a helper local with that name silently loses the
+# basename and sends only the key directory to SSLKEYLOGFILE.
+reset_case
+valid_keylog_dir="$CAPTURE_DIR/tls-keys"
+valid_keylog_name="tlskeys_saved-session.ABC123"
+valid_keylog_file="$valid_keylog_dir/$valid_keylog_name"
+mkdir -p "$valid_keylog_dir"
+printf '%s\n' 'existing session key evidence' >"$valid_keylog_file"
+chmod 600 "$valid_keylog_file"
+write_tls_state "$valid_keylog_file"
+ENSURE_STATUS=0
+DOCKER_STATUS=0
+recreate_nginx_container "$NGINX_IMAGE" >"$tmp_dir/valid-recreate.log" 2>&1 || {
+  cat "$tmp_dir/valid-recreate.log" >&2
+  fail "valid TLS state should recreate the proxy after helper build succeeds."
+}
+[ "$ensure_calls" -eq 1 ] && [ "$docker_calls" -eq 1 ] || fail "valid TLS recreate did not build and launch exactly once."
+printf '%s\0' run -d --name "$NGINX_CONTAINER_NAME" \
+  --label "$DOCKISTRATE_MANAGED_LABEL_KEY=true" \
+  --label "$DOCKISTRATE_ROLE_LABEL_KEY=$DOCKISTRATE_ROLE_PROXY" \
+  --label "$DOCKISTRATE_STATE_DIR_LABEL_KEY=$STATE_DIR" \
+  -v "$NGINX_CONFIG_DIR:$NGINX_CONTAINER_CONF_ROOT:ro" \
+  -v "$tmp_dir/proxy_certs/empty-generation:/etc/letsencrypt:ro" \
+  -v "$valid_keylog_dir:$NGINX_CAPTURE_KEYS_DIR" \
+  -v "$SSLKEYLOG_LIB_BUILD_FILE:$NGINX_SSLKEYLOG_LIB_PATH:ro" \
+  -e "SSLKEYLOGFILE=$NGINX_CAPTURE_KEYS_DIR/$valid_keylog_name" \
+  -e "LIBSSL_SSLKEYLOGFILE=$NGINX_CAPTURE_KEYS_DIR/$valid_keylog_name" \
+  -e "DOCKISTRATE_SSLKEYLOG_SOURCE_SHA256=$EXPECTED_SOURCE_SHA256" \
+  -e "LD_PRELOAD=$NGINX_SSLKEYLOG_LIB_PATH" \
+  -v "$ACME_WEBROOT_DIR:/var/www/certbot:ro" --network "$DEFAULT_NETWORK" \
+  "$NGINX_IMAGE" nginx -g 'daemon off;' -c "$NGINX_CONTAINER_MAIN_CONF" >"$tmp_dir/expected-run.argv"
+cmp -s "$tmp_dir/expected-run.argv" "$RUN_ARGV" || fail "TLS recreate Docker argv must use the exact saved keylog basename and current helper source digest."
+[ "$(cat "$valid_keylog_file")" = 'existing session key evidence' ] || fail "valid TLS recreate changed existing keylog bytes."
+[ "$(mode_of "$valid_keylog_file")" = 600 ] || fail "valid TLS recreate changed restrictive keylog permissions."
 
 echo "recreate-nginx TLS keylog state containment checks passed."

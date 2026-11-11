@@ -1,4 +1,8 @@
 # shellcheck shell=bash
+if ! declare -F _global_settings_update_nginx_config_for_security_change >/dev/null 2>&1; then
+  # shellcheck source=common.sh
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/common.sh"
+fi
 
 # Toggle real_ip_recursive behavior
 function set_real_ip_recursive() {
@@ -12,6 +16,6 @@ function set_real_ip_recursive() {
   REAL_IP_RECURSIVE="$val"
   save_config || { transaction_return_failure; return 1; }
   echo "${GLOBAL_SETTINGS_INFO_PREFIX} REAL_IP_RECURSIVE set to $val and saved in $GLOBAL_SETTINGS_FILE."
-  update_nginx_config || { transaction_return_failure; return 1; }
+  _global_settings_update_nginx_config_for_security_change || { transaction_return_failure; return 1; }
   _config_end_transaction_if_started "$started_txn" || { transaction_return_failure; return 1; }
 }

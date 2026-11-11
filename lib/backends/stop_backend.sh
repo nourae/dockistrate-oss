@@ -12,12 +12,16 @@ function stop_backend() {
   fi
   local cname="backend-$(sanitize_domain_name "$domain")"
 
-  if container_exists "$cname"; then
-    docker stop "$cname"
-    echo "[Info] Stopped container '$cname'."
-    log_msg "Stopped backend container $cname."
-    create_backup "" "StopBackend_${domain}"
-  else
-    echo "[Error] Container '$cname' not found." >&2
+  if declare -F domain_config_runtime_enabled >/dev/null 2>&1 && domain_config_runtime_enabled; then
+    domain_config_backend_set_state "$domain" stopped
+    return $?
   fi
+
+  _backend_container_snapshot "$domain" || return 1
+  if ! docker stop "$BACKEND_CONTAINER_ID"; then
+    return 1
+  fi
+  echo "[Info] Stopped container '$cname'."
+  log_msg "Stopped backend container $cname."
+  create_backup "" "StopBackend_${domain}"
 }

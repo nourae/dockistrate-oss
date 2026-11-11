@@ -1,0 +1,16 @@
+Review command
+  Command: Remove All ACL (remove-all-acl)
+  Description: Remove all ACL rules
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh remove-all-acl
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

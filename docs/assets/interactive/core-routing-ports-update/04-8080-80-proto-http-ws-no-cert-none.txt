@@ -1,0 +1,7 @@
+Port mapping to update:
+  1) 80 -> 80 proto=http ws=no cert=none
+  2) 443 -> 80 proto=https ws=no cert=example.com/selfsigned-443
+> 3) 8080 -> 80 proto=http ws=no cert=none
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -312,8 +312,11 @@ rollback_handler_probe_output="$(bash -c '
   config_reset_defaults
   save_config || exit 1
 
+  begin_transaction "rollback_handler_probe" "$CONFIG_DIR" || exit 1
   eval "$(declare -f csv_join_row | sed '\''1s/csv_join_row/original_csv_join_row/'\'')"
-  _csv_join_row_fail_after=4
+  # Fail the value record after the named-field header has been written.
+  _csv_join_row_fail_after=2
+  _csv_join_row_call_count=0
   csv_join_row() {
     _csv_join_row_call_count=$((_csv_join_row_call_count + 1))
     if [ "${_csv_join_row_call_count}" -eq "${_csv_join_row_fail_after}" ]; then
@@ -322,7 +325,6 @@ rollback_handler_probe_output="$(bash -c '
     original_csv_join_row "$@"
   }
 
-  begin_transaction "rollback_handler_probe" "$CONFIG_DIR" || exit 1
   HTTP_VERSION="http2"
   if save_config || _rollback_handler; then
     echo rollback-handler-continued

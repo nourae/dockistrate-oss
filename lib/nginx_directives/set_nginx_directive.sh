@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 function set_nginx_directive() {
-  local scope_input="${1:-}" scope="" domain="" listen_port="" path_prefix="" directive="" value=""
+  local scope_input="${1:-}" scope="" domain="" listen_port="" path_prefix="" directive="" value="" display_value=""
   local usage_msg="[Usage] set-nginx-directive <global|backend|port|path|stream-global|stream-backend|stream-port> [domain] [listen_port] [path_prefix] <directive> <value>"
 
   if [ -z "$scope_input" ]; then
@@ -79,19 +79,21 @@ function set_nginx_directive() {
   fi
   end_transaction_success
 
+  display_value="$(operator_value_for_display directive_value "$value")"
+
   if [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_GLOBAL" ]; then
-    echo "[Info] Set global nginx directive '${directive}' to '${value}'."
+    echo "[Info] Set global nginx directive '${directive}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_BACKEND" ]; then
-    echo "[Info] Set backend nginx directive '${directive}' for '${domain}' to '${value}'."
+    echo "[Info] Set backend nginx directive '${directive}' for '${domain}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_PORT" ]; then
-    echo "[Info] Set port nginx directive '${directive}' for '${domain}:${listen_port}' to '${value}'."
+    echo "[Info] Set port nginx directive '${directive}' for '${domain}:${listen_port}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_PATH" ]; then
-    echo "[Info] Set path nginx directive '${directive}' for '${domain}:${listen_port}${path_prefix}' to '${value}'."
+    echo "[Info] Set path nginx directive '${directive}' for '${domain}:${listen_port}${path_prefix}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_STREAM_GLOBAL" ]; then
-    echo "[Info] Set stream-global nginx directive '${directive}' to '${value}'."
+    echo "[Info] Set stream-global nginx directive '${directive}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_STREAM_BACKEND" ]; then
-    echo "[Info] Set stream-backend nginx directive '${directive}' for '${domain}' to '${value}'."
+    echo "[Info] Set stream-backend nginx directive '${directive}' for '${domain}' to '${display_value}'."
   else
-    echo "[Info] Set stream-port nginx directive '${directive}' for '${domain}:${listen_port}' to '${value}'."
+    echo "[Info] Set stream-port nginx directive '${directive}' for '${domain}:${listen_port}' to '${display_value}'."
   fi
 }

@@ -72,14 +72,16 @@ function _capture_tls_keylog_path_guard() {
     echo "[Error] Runtime path resolver unavailable for TLS key log validation." >&2
     return 1
   fi
-  keylog_root_cmp="$(_runtime_path_resolve_allow_missing "$keylog_root")" || {
+  keylog_root_cmp="$(_runtime_path_resolve_allow_missing "$keylog_root" && printf '.')" || {
     echo "[Error] Unable to resolve TLS key log directory: ${keylog_root}" >&2
     return 1
   }
-  keylog_path_cmp="$(_runtime_path_resolve_allow_missing "$keylog_path")" || {
+  keylog_root_cmp="${keylog_root_cmp%.}"
+  keylog_path_cmp="$(_runtime_path_resolve_allow_missing "$keylog_path" && printf '.')" || {
     echo "[Error] Unable to resolve TLS key log file: ${keylog_path}" >&2
     return 1
   }
+  keylog_path_cmp="${keylog_path_cmp%.}"
 
   keylog_root_len=${#keylog_root_cmp}
   if [ "${keylog_path_cmp:0:keylog_root_len}" = "$keylog_root_cmp" ] &&
@@ -123,14 +125,16 @@ function _capture_tls_keylog_dir_guard() {
   capture_tls_keylog_host_dir expected_dir || return 1
   runtime_state_path_guard "$keylog_dir" "TLS key log directory" || return 1
   runtime_state_path_guard "$expected_dir" "TLS key log directory" || return 1
-  keylog_dir_cmp="$(_runtime_path_resolve_allow_missing "$keylog_dir")" || {
+  keylog_dir_cmp="$(_runtime_path_resolve_allow_missing "$keylog_dir" && printf '.')" || {
     echo "[Error] Unable to resolve TLS key log directory: ${keylog_dir}" >&2
     return 1
   }
-  expected_dir_cmp="$(_runtime_path_resolve_allow_missing "$expected_dir")" || {
+  keylog_dir_cmp="${keylog_dir_cmp%.}"
+  expected_dir_cmp="$(_runtime_path_resolve_allow_missing "$expected_dir" && printf '.')" || {
     echo "[Error] Unable to resolve TLS key log directory: ${expected_dir}" >&2
     return 1
   }
+  expected_dir_cmp="${expected_dir_cmp%.}"
 
   [ "$keylog_dir_cmp" = "$expected_dir_cmp" ] || {
     echo "[Error] Refusing to use non-canonical TLS key log directory: ${keylog_dir}" >&2
@@ -157,10 +161,11 @@ function _capture_tls_cd_guarded_runtime_dir() {
     return 1
   fi
 
-  dir_abs="$(_runtime_path_to_absolute_lexical "$dir")" || {
+  dir_abs="$(_runtime_path_to_absolute_lexical "$dir" && printf '.')" || {
     echo "[Error] Unable to resolve ${label}: ${dir}" >&2
     return 1
   }
+  dir_abs="${dir_abs%.}"
   runtime_state_path_guard "$dir_abs" "$label" || return 1
   [ -d "$dir_abs" ] || {
     echo "[Error] ${label} does not exist: ${dir}" >&2
@@ -179,12 +184,15 @@ function _capture_tls_cd_guarded_runtime_dir() {
     echo "[Error] Refusing to use symlinked ${label}: ${dir}" >&2
     return 1
   fi
-  actual="$(pwd -P)" || return 1
+  actual="$(pwd -P && printf '.')" || return 1
+  actual="${actual%.}"
+  actual="${actual%$'\n'}"
   runtime_state_path_guard "$actual" "$label" || return 1
-  rechecked="$(_runtime_path_resolve_allow_missing "$dir_abs")" || {
+  rechecked="$(_runtime_path_resolve_allow_missing "$dir_abs" && printf '.')" || {
     echo "[Error] Unable to resolve ${label}: ${dir}" >&2
     return 1
   }
+  rechecked="${rechecked%.}"
   if [ "$actual" != "$rechecked" ]; then
     echo "[Error] Refusing ${label} swap during TLS decrypt mutation: ${dir}" >&2
     return 1
@@ -201,9 +209,9 @@ function _capture_tls_cd_guarded_state_dir() {
 
 function capture_tls_prepare_keylog_for_mount() {
   local __keylog_name_var="${1:-}" keylog_dir="${2:-}" keylog_file="${3:-}"
-  local keylog_dir_mode="${4:-700}" keylog_file_mode="${5:-600}" keylog_name=""
+  local keylog_dir_mode="${4:-700}" keylog_file_mode="${5:-600}" prepared_keylog_name=""
   require_valid_var_name "$__keylog_name_var" || return 1
-  _capture_tls_path_leaf_name keylog_name "$keylog_file" "TLS key log file" || return 1
+  _capture_tls_path_leaf_name prepared_keylog_name "$keylog_file" "TLS key log file" || return 1
   _capture_tls_keylog_path_guard "$keylog_file" || return 1
   _capture_tls_keylog_dir_guard "$keylog_dir" || return 1
   mkdir -p "$keylog_dir" || return 1
@@ -212,11 +220,11 @@ function capture_tls_prepare_keylog_for_mount() {
   (
     _capture_tls_cd_guarded_keylog_dir "$keylog_dir" || exit 1
     chmod "$keylog_dir_mode" . 2>/dev/null || true
-    if [ -f "$keylog_name" ]; then
-      chmod "$keylog_file_mode" "$keylog_name" 2>/dev/null || true
+    if [ -f "$prepared_keylog_name" ]; then
+      chmod "$keylog_file_mode" "$prepared_keylog_name" 2>/dev/null || true
     fi
   ) || return 1
-  printf -v "$__keylog_name_var" '%s' "$keylog_name"
+  printf -v "$__keylog_name_var" '%s' "$prepared_keylog_name"
 }
 
 function capture_tls_decrypt_enabled() {
@@ -261,11 +269,12 @@ function enable_capture_tls_decrypt() {
   capture_tls_keylog_host_dir keylog_dir || return 1
   capture_tls_keylog_permissions keylog_dir_mode keylog_file_mode || return 1
   timestamp="$(date '+%Y%m%d_%H%M%S')"
-  keylog_file="${keylog_dir}/tlskeys_${timestamp}.log"
-  _capture_tls_path_leaf_name keylog_name "$keylog_file" "TLS key log file" || return 1
-  state_dir="$(dirname "$CAPTURE_TLS_STATE_FILE")"
+  CAPTURE_TLS_LAST_CREATED_KEYLOG=""
+  state_dir="$(dirname "$CAPTURE_TLS_STATE_FILE" && printf '.')" || return 1
+  state_dir="${state_dir%.}"
+  state_dir="${state_dir%$'\n'}"
   _capture_tls_path_leaf_name state_name "$CAPTURE_TLS_STATE_FILE" "TLS decrypt state file" || return 1
-  _capture_tls_keylog_path_guard "$keylog_file" || return 1
+  _capture_tls_keylog_dir_guard "$keylog_dir" || return 1
   _capture_tls_state_file_guard || return 1
 
   old_umask="$(umask)"
@@ -275,37 +284,32 @@ function enable_capture_tls_decrypt() {
     umask "$old_umask"
     return 1
   fi
-  _capture_tls_keylog_path_guard "$keylog_file" || {
-    umask "$old_umask"
-    return 1
-  }
-  (
+  # Reserve a new private file atomically. Timestamp-only names can overwrite
+  # another session started during the same second, including failed sessions.
+  keylog_name="$(
     _capture_tls_cd_guarded_keylog_dir "$keylog_dir" || exit 1
-    local tmp_keylog=""
-    tmp_keylog="$(mktemp ".${keylog_name}.tmp.XXXXXX" 2>/dev/null)" || {
-      echo "[Error] Unable to create temp file for TLS key log ${keylog_file}." >&2
+    local new_keylog=""
+    new_keylog="$(mktemp "tlskeys_${timestamp}.XXXXXX" 2>/dev/null)" || {
+      echo "[Error] Unable to create a new TLS key log in ${keylog_dir}." >&2
       exit 1
     }
-    : >"$tmp_keylog" || {
-      rm -f "$tmp_keylog"
-      exit 1
-    }
+    _capture_tls_keylog_path_guard "${keylog_dir}/${new_keylog}" || exit 1
     chmod "$keylog_dir_mode" . 2>/dev/null || true
-    chmod "$keylog_file_mode" "$tmp_keylog" 2>/dev/null || true
-    if [ -d "$keylog_name" ]; then
-      rm -f "$tmp_keylog"
-      echo "[Error] Refusing to replace TLS key log directory with file: ${keylog_file}." >&2
+    # mktemp creates mode 600 under umask 077. Do not chmod the leaf after
+    # validation: a replacement symlink must never redirect a permission write.
+    if [ -L "$new_keylog" ] || [ ! -f "$new_keylog" ]; then
+      echo "[Error] Refusing replaced TLS key log file: ${new_keylog}." >&2
       exit 1
     fi
-    mv -f "$tmp_keylog" "$keylog_name" || {
-      rm -f "$tmp_keylog"
-      echo "[Error] Unable to finalize TLS key log ${keylog_file}." >&2
-      exit 1
-    }
-  ) || {
+    printf '%s' "$new_keylog"
+  )" || {
     umask "$old_umask"
     return 1
   }
+  keylog_file="${keylog_dir}/${keylog_name}"
+  # Consumed by the launch transaction when publication or audit fails.
+  # shellcheck disable=SC2034
+  CAPTURE_TLS_LAST_CREATED_KEYLOG="$keylog_file"
   if ! mkdir -p "$state_dir"; then
     echo "[Error] Unable to create TLS decrypt state directory: ${state_dir}" >&2
     umask "$old_umask"
@@ -354,9 +358,19 @@ EOF
 function disable_capture_tls_decrypt() {
   local context="${1:-}"
   local flat_context=""
+  local state_dir="" state_name=""
   flat_context="$(_capture_context_flat "$context")"
+  state_dir="$(dirname "$CAPTURE_TLS_STATE_FILE" && printf '.')" || return 1
+  state_dir="${state_dir%.}"
+  state_dir="${state_dir%$'\n'}"
+  _capture_tls_path_leaf_name state_name "$CAPTURE_TLS_STATE_FILE" "TLS decrypt state file" || return 1
   _capture_tls_state_file_guard || return 1
-  rm -f "$CAPTURE_TLS_STATE_FILE" 2>/dev/null || true
+  if [ -e "$CAPTURE_TLS_STATE_FILE" ] || [ -L "$CAPTURE_TLS_STATE_FILE" ]; then
+    (
+      _capture_tls_cd_guarded_state_dir "$state_dir" || exit 1
+      rm -f -- "$state_name" 2>/dev/null || true
+    ) || return 1
+  fi
 
   audit_log "tls_decrypt state_change action=disabled context=\"${flat_context}\""
 }

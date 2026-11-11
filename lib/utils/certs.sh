@@ -8,11 +8,19 @@ function cert_ref_to_container_dir() {
     return 0
   fi
 
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    local dc_path="" dc_root="${DOMAINS_DIR:-${STATE_DIR}/domains}"
+    _domain_cert_resolve_ref dc_path "$cert_ref" || return 1
+    printf -v "$__var" '%s' "/etc/letsencrypt/${dc_path#"$dc_root"/}"
+    return 0
+  fi
+
   local certs_root="" normalized_ref=""
-  if ! certs_root="$(_realpath_portable "$CERTS_DIR")"; then
+  if ! certs_root="$(_realpath_portable "$CERTS_DIR" && printf '.')"; then
     echo "[Error] Unable to resolve certificate root directory '${CERTS_DIR}'." >&2
     return 1
   fi
+  certs_root="${certs_root%.}"
   if ! normalize_cert_dir normalized_ref "$cert_ref"; then
     return 1
   fi
@@ -42,6 +50,11 @@ function normalize_cert_dir() {
     return 0
   fi
 
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    _domain_cert_resolve_ref "$__var" "$path_in"
+    return $?
+  fi
+
   if [[ "$__cert_path" == certs/* ]]; then
     __cert_path="${__cert_path#certs/}"
   fi
@@ -50,16 +63,18 @@ function normalize_cert_dir() {
   fi
 
   local __certs_root=""
-  if ! __certs_root="$(_realpath_portable "$CERTS_DIR")"; then
+  if ! __certs_root="$(_realpath_portable "$CERTS_DIR" && printf '.')"; then
     echo "[Error] Unable to resolve certificate root directory '${CERTS_DIR}'." >&2
     return 1
   fi
+  __certs_root="${__certs_root%.}"
 
   local __resolved_cert_path=""
-  if ! __resolved_cert_path="$(_realpath_portable "$__cert_path")"; then
+  if ! __resolved_cert_path="$(_realpath_portable "$__cert_path" && printf '.')"; then
     echo "[Error] Unable to resolve certificate directory '${path_in}'." >&2
     return 1
   fi
+  __resolved_cert_path="${__resolved_cert_path%.}"
 
   case "$__resolved_cert_path" in
   "$__certs_root" | "$__certs_root"/*)
@@ -74,6 +89,9 @@ function normalize_cert_dir() {
 
 function guard_mtls_root_dir() {
   local mtls_root="${CERTS_DIR%/}/mtls"
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    mtls_root="${DOMAINS_DIR:-${STATE_DIR}/domains}"
+  fi
   if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
     runtime_state_path_guard_if_declared "$mtls_root" "mTLS root directory" || return 1
   fi
@@ -85,6 +103,9 @@ function guard_mtls_root_dir() {
 
 function ensure_mtls_root_dir() {
   local mtls_root="${CERTS_DIR%/}/mtls" old_umask=""
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    mtls_root="${DOMAINS_DIR:-${STATE_DIR}/domains}"
+  fi
   guard_mtls_root_dir || return 1
   old_umask="$(umask)"
   umask 077
@@ -106,22 +127,31 @@ function normalize_mtls_dir() {
     printf -v "$__var" '%s' ""
     return 0
   fi
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    _domain_mtls_resolve "$__var" "$path_in"
+    return $?
+  fi
 
   local mtls_root="${CERTS_DIR%/}/mtls"
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    mtls_root="${DOMAINS_DIR:-${STATE_DIR}/domains}"
+  fi
   local mtls_root_real=""
   guard_mtls_root_dir || return 1
-  if ! mtls_root_real="$(_realpath_portable "$mtls_root")"; then
+  if ! mtls_root_real="$(_realpath_portable "$mtls_root" && printf '.')"; then
     echo "[Error] Unable to resolve mTLS root directory '${mtls_root}'." >&2
     return 1
   fi
+  mtls_root_real="${mtls_root_real%.}"
 
   local normalized=""
-  if ! normalized="$(_realpath_portable "$path_in")"; then
-    if ! normalized="$(_normalize_delete_target_path "$path_in")"; then
+  if ! normalized="$(_realpath_portable "$path_in" && printf '.')"; then
+    if ! normalized="$(_normalize_delete_target_path "$path_in" && printf '.')"; then
       echo "[Error] Unable to resolve mTLS directory '${path_in}'." >&2
       return 1
     fi
   fi
+  normalized="${normalized%.}"
 
   case "$normalized" in
   "$mtls_root_real" | "$mtls_root_real"/*)
@@ -144,8 +174,16 @@ function relativize_cert_dir() {
     return 0
   fi
 
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    local dc_owner="" dc_id=""
+    domain_config_cert_ref_split dc_owner dc_id "$path_in" || return 1
+    printf -v "$__var" '%s' "${dc_owner}/${dc_id}"
+    return 0
+  fi
+
   local __certs_root=""
-  if __certs_root="$(_realpath_portable "$CERTS_DIR")"; then
+  if __certs_root="$(_realpath_portable "$CERTS_DIR" && printf '.')"; then
+    __certs_root="${__certs_root%.}"
     if [ "$__relative_path" = "$__certs_root" ]; then
       __relative_path=""
     elif [[ $__relative_path == "$__certs_root"/* ]]; then
@@ -202,6 +240,18 @@ function canonicalize_cert_ref_rel() {
 function letsencrypt_source_domain_from_cert_ref() {
   local __var="$1" cert_ref="${2:-}" source_cert_rel="" leaf=""
   require_valid_var_name "$__var" || return 1
+
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    local dc_owner="" dc_id="" dc_dir=""
+    domain_config_cert_ref_split dc_owner dc_id "$cert_ref" || return 1
+    domain_config_certificate_dir dc_dir "$dc_owner" "$dc_id" || return 1
+    if [ -f "$dc_dir/certificate.csv" ] && [ "$(_domain_runtime_get "$dc_dir/certificate.csv" provider)" = letsencrypt ]; then
+      printf -v "$__var" '%s' "$dc_owner"
+    else
+      printf -v "$__var" '%s' ""
+    fi
+    return 0
+  fi
 
   if ! canonicalize_cert_ref_rel source_cert_rel "$cert_ref"; then
     return 1

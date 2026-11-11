@@ -32,7 +32,10 @@ chmod 640 "$SECONDARY_KEY"
 chmod 600 "$P12_FILE"
 chmod 640 "$PFX_FILE"
 
-./dockistrate.sh fix-permissions >/dev/null
+# Exercise the explicit target without traversing unrelated repository files.
+# The integration executable-preservation case repeats these four TLS checks
+# through the no-argument, repository-root repair path.
+./dockistrate.sh fix-permissions "$CERTS_ROOT" >/dev/null
 
 mode_key="$(get_mode "$KEY_FILE")"
 mode_secondary="$(get_mode "$SECONDARY_KEY")"

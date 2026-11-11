@@ -1,0 +1,17 @@
+Review command
+  Command: Remove Nginx Directive (remove-nginx-directive)
+  Description: Remove one nginx directive override by scope/target
+
+Arguments:
+  Directive scope: global
+  Directive name: client_max_body_size
+
+CLI equivalent:
+  ./dockistrate.sh remove-nginx-directive global client_max_body_size
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

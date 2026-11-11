@@ -1,0 +1,14 @@
+Review command
+  Command: Set Backup Retention (set-backup-retention)
+  Description: Set automatic backup retention in days
+
+Arguments:
+  days: 7
+
+CLI equivalent:
+  ./dockistrate.sh set-backup-retention 7
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

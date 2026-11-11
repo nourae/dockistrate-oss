@@ -79,6 +79,15 @@ function _remove_backend_drop_alias_row() {
   return 0
 }
 
+function _remove_backend_remove_alias_render_state() {
+  local alias="$1"
+  # Preserve another identity's state when cleaning an invalid colliding map.
+  if backend_exists "$alias" || dedicated_host_exists "$alias" || alias_exists "$alias"; then
+    return 0
+  fi
+  remove_domain_keyed_render_state "$alias"
+}
+
 function remove_backend() {
   local domain="" assume_yes=false arg=""
   while [ "$#" -gt 0 ]; do
@@ -124,12 +133,76 @@ function remove_backend() {
   local security_ip_rules_db="${SECURITY_IP_RULES_DB:-}"
   local security_rules_db="${SECURITY_RULES_DB:-}"
   local path_header_dir="${PATH_HEADER_DIR:-}"
-  local -a dedicated_hosts_for_backend=()
+  local domain_sane="" container_name="" remove_container_after_config=false
+
+  domain_sane="$(sanitize_domain_name "$domain")"
+  container_name="backend-${domain_sane}"
+  local backend_container_id="" backend_owner_token="" identity_status=0
+  if [ "${SKIP_DOCKER_CHECKS:-}" != true ]; then
+    _backend_cleanup_snapshot "$domain" || return 1
+    backend_container_id="${BACKEND_CONTAINER_ID:-}"
+    backend_owner_token="${BACKEND_IDENTITY_TOKEN:-}"
+  fi
+  if [ "$identity_status" -eq 0 ] && [ -n "$backend_container_id" ]; then
+    local noninteractive_policy="auto_yes"
+    if [ "$assume_yes" != true ] && [ "${INTERACTIVE:-false}" != true ]; then
+      noninteractive_policy="warn_yes"
+    fi
+    if [ "$assume_yes" != true ] &&
+      ! confirm_prompt "Remove container '${container_name}' for domain '${domain}'? (y/n): " "yes_no" "$noninteractive_policy" "--yes"; then
+      echo "[Info] Aborting."
+      return 0
+    fi
+    remove_container_after_config=true
+  fi
+
+  # Keep all persisted-state reads that determine cleanup behavior under the
+  # shared mutation lock, then promote that lock into the transaction.
+  local prep_lock_started=false
+  if ! _config_begin_runtime_prep_lock_if_needed prep_lock_started; then
+    return 1
+  fi
+  if ! backend_exists "$domain"; then
+    echo "[Error] Backend domain '$domain' was removed before cleanup acquired the mutation lock." >&2
+    _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+    return 1
+  fi
+
+  # Recheck under the mutation lock so a concurrent replacement cannot change
+  # which persisted identity this cleanup removes.
+  if [ "${SKIP_DOCKER_CHECKS:-}" != true ]; then
+    if ! _backend_cleanup_snapshot "$domain"; then
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+      return 1
+    fi
+    backend_container_id="$BACKEND_CONTAINER_ID"
+    backend_owner_token="${BACKEND_IDENTITY_TOKEN:-}"
+    remove_container_after_config=false
+    [ -z "$backend_container_id" ] || remove_container_after_config=true
+  fi
+
+  local -a host_aliases_for_backend=() dedicated_hosts_for_backend=()
+  local host_aliases_output="" host_alias_name=""
   local dedicated_hosts_output="" dedicated_host_name=""
+
+  if declare -F list_domain_aliases >/dev/null 2>&1; then
+    if ! host_aliases_output="$(list_domain_aliases "$domain")"; then
+      echo "[Error] Failed to list host aliases for backend '${domain}'." >&2
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+      return 1
+    fi
+    if [ -n "$host_aliases_output" ]; then
+      while IFS= read -r host_alias_name; do
+        [ -n "$host_alias_name" ] || continue
+        host_aliases_for_backend+=("$host_alias_name")
+      done <<<"$host_aliases_output"
+    fi
+  fi
 
   if declare -F list_dedicated_hosts_for_backend >/dev/null 2>&1; then
     if ! dedicated_hosts_output="$(list_dedicated_hosts_for_backend "$domain")"; then
       echo "[Error] Failed to list dedicated hosts for backend '${domain}'." >&2
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
       return 1
     fi
     if [ -n "$dedicated_hosts_output" ]; then
@@ -155,6 +228,11 @@ function remove_backend() {
       entry_header="${STATE_BP_HEADER_SET:-}"
       [ "$entry_type" = "path" ] || continue
       [ -n "$entry_header" ] || continue
+      if ! is_valid_header_set_name "$entry_header"; then
+        echo "[Error] Invalid persisted path header set at line ${entry_line_no} in ${backend_ports_file}." >&2
+        _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+        return 1
+      fi
       if [ "$entry_domain" = "$domain" ]; then
         local seen="false" existing_header
         if [ "${#domain_path_headers[@]}" -gt 0 ]; then
@@ -217,19 +295,13 @@ function remove_backend() {
     done <"$backend_ports_file"
   fi
 
-  local mtls_dir=""
-  if [ -n "$backend_mtls_file" ] && [ -f "$backend_mtls_file" ]; then
-    mtls_dir="$(state_csv_get_two_col_value "$backend_mtls_file" "$STATE_BACKEND_MTLS_HEADER" "$domain" "" 2>/dev/null || true)"
+  local mtls_dir="" cleanup_domain="" cleanup_index=0
+  local -a cleanup_domains=("$domain") cleanup_mtls_dirs=()
+  if [ "${#host_aliases_for_backend[@]}" -gt 0 ]; then
+    cleanup_domains+=("${host_aliases_for_backend[@]}")
   fi
-  local normalized_mtls_dir=""
-  local mtls_cleanup_required=false
-  if [ -n "$mtls_dir" ] && [ -d "$mtls_dir" ]; then
-    if ! normalize_mtls_dir normalized_mtls_dir "$mtls_dir"; then
-      echo "[Error] Refusing to remove mTLS material outside mTLS certs root (CERTS_DIR/mtls): $mtls_dir" >&2
-      return 1
-    fi
-    mtls_dir="$normalized_mtls_dir"
-    mtls_cleanup_required=true
+  if [ "${#dedicated_hosts_for_backend[@]}" -gt 0 ]; then
+    cleanup_domains+=("${dedicated_hosts_for_backend[@]}")
   fi
 
   local -a backend_headers_to_remove=()
@@ -263,27 +335,29 @@ function remove_backend() {
     done <"$backend_headers_file"
   fi
 
-  local -a rollback_targets=("$CONFIG_DIR")
-  if [ "$mtls_cleanup_required" = true ]; then
-    rollback_targets+=("${CERTS_DIR}/mtls")
-  fi
-  local domain_sane
-  domain_sane="$(sanitize_domain_name "$domain")"
-  local container_name="backend-${domain_sane}"
-  local remove_container_after_config=false
-  if container_exists "$container_name"; then
-    local noninteractive_policy="auto_yes"
-    if [ "$assume_yes" != true ] && [ "${INTERACTIVE:-false}" != true ]; then
-      noninteractive_policy="warn_yes"
+  if [ -n "$backend_mtls_file" ] && [ -f "$backend_mtls_file" ]; then
+    if ! validate_backend_mtls_state_for_cleanup; then
+      echo "[Error] Refusing to remove backend '${domain}' while persisted mTLS owner mappings are invalid." >&2
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+      return 1
     fi
-    if [ "$assume_yes" != true ] &&
-      ! confirm_prompt "Remove container '${container_name}' for domain '${domain}'? (y/n): " "yes_no" "$noninteractive_policy" "--yes"; then
-      echo "[Info] Aborting."
-      return 0
-    fi
-    remove_container_after_config=true
   fi
+
+  local -a rollback_targets=("$CONFIG_DIR" "${CERTS_DIR}/mtls")
+  for cleanup_domain in "${cleanup_domains[@]}"; do
+    if ! _removed_identity_mtls_target mtls_dir "$cleanup_domain"; then
+      echo "[Error] Refusing to remove mTLS material for '${cleanup_domain}' because its ownership is invalid." >&2
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+      return 1
+    fi
+    cleanup_mtls_dirs+=("$mtls_dir")
+    rollback_targets+=("$mtls_dir")
+    if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+      rollback_targets+=("${DOMAINS_DIR:-${STATE_DIR}/domains}/$cleanup_domain/generated")
+    fi
+  done
   if ! begin_transaction "remove_backend_${domain}" "${rollback_targets[@]}"; then
+    _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
     return 1
   fi
 
@@ -409,16 +483,6 @@ function remove_backend() {
       _remove_backend_restore_skip_update "$prev_skip_update"
       return 1
     fi
-    if [ "${#dedicated_hosts_for_backend[@]}" -gt 0 ]; then
-      local dedicated_host_domain
-      for dedicated_host_domain in "${dedicated_hosts_for_backend[@]}"; do
-        [ -n "$dedicated_host_domain" ] || continue
-        if ! _remove_backend_require_quiet_success "remove Nginx directive state for dedicated host '${dedicated_host_domain}'" nginx_directives_state_remove_for_domain "$dedicated_host_domain"; then
-          _remove_backend_restore_skip_update "$prev_skip_update"
-          return 1
-        fi
-      done
-    fi
   fi
 
   if [ "${#domain_path_headers[@]}" -gt 0 ] && [ -n "$path_header_dir" ]; then
@@ -491,11 +555,19 @@ function remove_backend() {
       removed_aliases=true
     fi
   fi
+  if [ "${#host_aliases_for_backend[@]}" -gt 0 ]; then
+    for host_alias_name in "${host_aliases_for_backend[@]}"; do
+      if ! _remove_backend_require_quiet_success "remove render state for host alias '${host_alias_name}'" _remove_backend_remove_alias_render_state "$host_alias_name"; then
+        _remove_backend_restore_skip_update "$prev_skip_update"
+        return 1
+      fi
+    done
+  fi
   if [ "${#dedicated_hosts_for_backend[@]}" -gt 0 ]; then
     local dedicated_host_domain
     for dedicated_host_domain in "${dedicated_hosts_for_backend[@]}"; do
       [ -n "$dedicated_host_domain" ] || continue
-      if dedicated_host_exists "$dedicated_host_domain"; then
+      if backend_exists "$dedicated_host_domain" || alias_exists "$dedicated_host_domain" || dedicated_host_exists "$dedicated_host_domain"; then
         continue
       fi
       if ! _remove_backend_require_quiet_success "remove inheritance state for dedicated host '${dedicated_host_domain}'" remove_dedicated_host_inheritance "$dedicated_host_domain"; then
@@ -551,6 +623,11 @@ function remove_backend() {
     fi
   fi
 
+  if ! _remove_backend_require_quiet_success "remove backend container identity for '${domain}'" _backend_identity_remove "$domain"; then
+    _remove_backend_restore_skip_update "$prev_skip_update"
+    return 1
+  fi
+
   if ! _remove_backend_require_quiet_success "remove backend Docker option state for '${domain}'" set_backend_docker_opts "backend:${domain}" ""; then
     _remove_backend_restore_skip_update "$prev_skip_update"
     return 1
@@ -558,30 +635,40 @@ function remove_backend() {
 
   _remove_backend_restore_skip_update "$prev_skip_update"
 
+  for ((cleanup_index = 0; cleanup_index < ${#cleanup_domains[@]}; cleanup_index++)); do
+    if ! _remove_backend_require_success "remove owned artifacts for '${cleanup_domains[cleanup_index]}'" \
+      _removed_identity_cleanup_artifacts "${cleanup_domains[cleanup_index]}" "${cleanup_mtls_dirs[cleanup_index]}"; then
+      return 1
+    fi
+  done
   if ! update_nginx_config; then
     transaction_return_failure
     return 1
   fi
-  if [ "$mtls_cleanup_required" = true ] && [ -d "$mtls_dir" ]; then
-    if ! _remove_backend_require_success "remove mTLS material for '${domain}'" safe_rm_rf "$mtls_dir" "${CERTS_DIR}/mtls"; then
+  if [ "$remove_container_after_config" = "true" ]; then
+    identity_status=0
+    _backend_identity_inspect "$domain" "$backend_container_id" "$backend_owner_token" || identity_status=$?
+    if [ "$identity_status" -eq 0 ]; then
+      if [ -n "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ]; then
+        _domain_runtime_record remove "$domain" old_id "$backend_container_id" old_token "$backend_owner_token" \
+          name "$container_name" old_state "$BACKEND_CONTAINER_STATUS" || _rollback_handler
+        _domain_runtime_finish_operation
+      else
+        if ! remove_container_and_anonymous_volumes "$backend_container_id"; then
+          echo "[Error] Failed to remove backend container '$container_name'." >&2
+          _rollback_handler
+        fi
+        echo "[Info] Removed backend container '$container_name'."
+        log_msg "Removed container $container_name."
+      fi
+    elif [ "$identity_status" -eq 2 ]; then
+      echo "[Info] Backend container '$container_name' already absent before final removal."
+    else
+      _rollback_handler
       return 1
     fi
-    echo "[Info] Removed mTLS material for $domain at $mtls_dir."
   fi
-  if [ "$remove_container_after_config" = "true" ]; then
-    if container_exists "$container_name"; then
-      if ! remove_container_and_anonymous_volumes "$container_name"; then
-        echo "[Error] Failed to remove backend container '$container_name'." >&2
-        _rollback_handler
-      fi
-      echo "[Info] Removed backend container '$container_name'."
-      log_msg "Removed container $container_name."
-    else
-      echo "[Info] Backend container '$container_name' was already absent before final removal."
-      log_msg "Backend container $container_name already absent before final removal."
-    fi
-  fi
-  end_transaction_success
+  end_transaction_success || _rollback_handler
 
   if [ "$removed_aliases" = true ]; then
     echo "[Info] Removed host aliases associated with '${domain}'."

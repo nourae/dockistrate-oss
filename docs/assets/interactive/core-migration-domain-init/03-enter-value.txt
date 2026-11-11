@@ -1,0 +1,4 @@
+
+Create editable configuration templates for this domain. No container is created until you apply the completed configuration.
+Domain
+Example: example.com: draft.example.com

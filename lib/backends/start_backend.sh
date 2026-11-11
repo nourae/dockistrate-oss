@@ -12,12 +12,16 @@ function start_backend() {
   fi
   local cname="backend-$(sanitize_domain_name "$domain")"
 
-  if container_exists "$cname"; then
-    docker start "$cname"
-    echo "[Info] Started container '$cname'."
-    log_msg "Started backend container $cname."
-    create_backup "" "StartBackend_${domain}"
-  else
-    echo "[Error] Container '$cname' not found." >&2
+  if declare -F domain_config_runtime_enabled >/dev/null 2>&1 && domain_config_runtime_enabled; then
+    domain_config_backend_set_state "$domain" running
+    return $?
   fi
+
+  _backend_container_snapshot "$domain" || return 1
+  if ! docker start "$BACKEND_CONTAINER_ID"; then
+    return 1
+  fi
+  echo "[Info] Started container '$cname'."
+  log_msg "Started backend container $cname."
+  create_backup "" "StartBackend_${domain}"
 }

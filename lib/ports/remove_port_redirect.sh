@@ -20,6 +20,8 @@ function remove_port_redirect() {
     echo "[Usage] remove-port-redirect <domain> <port>"
     exit 1
   fi
+  require_valid_port "$port" 1 || return 1
+  port="$(normalize_port "$port")" || return 1
   resolve_backend_domain domain "$domain" true
   if ! backend_exists "$domain"; then
     echo "[Error] Backend domain '$domain' not found." >&2

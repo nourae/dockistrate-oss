@@ -7,7 +7,7 @@ fi
 
 function move_security_rule() {
   local from="${1:-}" to="${2:-}"
-  [[ "$from" =~ ^[0-9]+$ && "$to" =~ ^[0-9]+$ ]] || {
+  { from="$(normalize_positive_decimal "$from")" && to="$(normalize_positive_decimal "$to")"; } || {
     echo "[Usage] move-security-rule <from> <to>"
     exit 1
   }
@@ -37,21 +37,25 @@ function move_security_rule() {
 
   local from_idx=$((from - 1))
   local to_idx=$((to - 1))
-  local moving="${rows[$from_idx]}"
-  unset "rows[$from_idx]"
-  rows=("${rows[@]}")
-
   local -a reordered=()
-  local i=0 inserted=0
-  for ((i = 0; i < ${#rows[@]}; i++)); do
-    if [ "$i" -eq "$to_idx" ]; then
+  local moving="" i=0 inserted=0
+  if [ "$from_idx" -eq "$to_idx" ]; then
+    reordered=("${rows[@]}")
+  else
+    moving="${rows[$from_idx]}"
+    unset "rows[$from_idx]"
+    rows=("${rows[@]}")
+
+    for ((i = 0; i < ${#rows[@]}; i++)); do
+      if [ "$i" -eq "$to_idx" ]; then
+        reordered+=("$moving")
+        inserted=1
+      fi
+      reordered+=("${rows[$i]}")
+    done
+    if [ "$inserted" -eq 0 ]; then
       reordered+=("$moving")
-      inserted=1
     fi
-    reordered+=("${rows[$i]}")
-  done
-  if [ "$inserted" -eq 0 ]; then
-    reordered+=("$moving")
   fi
 
   local started_txn=false

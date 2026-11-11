@@ -14,7 +14,7 @@ if [ -f "${CERTS_MODULE_DIR}/common.sh" ]; then
 fi
 
 for certs_file in "${CERTS_MODULE_DIR}"/*.sh; do
-  certs_basename="$(basename "${certs_file}")"
+  certs_basename="${certs_file##*/}"
   if [ "${certs_basename}" = "common.sh" ]; then
     continue
   fi

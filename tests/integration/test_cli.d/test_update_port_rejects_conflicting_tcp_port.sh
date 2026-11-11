@@ -10,14 +10,18 @@ test_update_port_rejects_conflicting_tcp_port() {
   run_dockistrate add-backend tcp-second.test nginx:alpine 9202 http >/dev/null
   assertEquals "seed second backend" 0 $?
 
-  run_dockistrate add-port tcp-second.test 9020 9202 http none no >/dev/null
-  assertEquals "seed http mapping on shared port" 0 $?
+  # UDP can share the numeric port with TCP. HTTP cannot share its transport
+  # with the existing raw TCP listener, so it is not a valid starting state.
+  run_dockistrate add-port tcp-second.test 9020 9202 udp none no >/dev/null
+  assertEquals "seed udp mapping on shared numeric port" 0 $?
 
-  local output status
+  local output status before
+  before="$(cat "${CONFIG_DIR}/backend_ports.csv")"
   output="$(run_dockistrate update-port tcp-second.test 9020 --protocol tcp)"
   status=$?
 
   assertTrue "update-port should fail when TCP port already claimed" "[ $status -ne 0 ]"
   assertStringContains "conflicting TCP port error" \
     "TCP port 9020 is already in use by another backend. Choose a different port." "$output"
+  assertEquals "failed conversion preserves the existing mappings" "$before" "$(cat "${CONFIG_DIR}/backend_ports.csv")"
 }

@@ -1,0 +1,7 @@
+Capture scope?
+> 1) All Nginx traffic (clients and backends)
+  2) Specific backend(s)
+  3) Specific client IP(s) (any backend)
+  4) Specific client IP(s) to backend(s)
+
+↑↓ move  Enter select  Esc back  Q back  ? help

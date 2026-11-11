@@ -18,6 +18,7 @@ trap 'rm -rf "$TMP_ROOT"' EXIT
 BASE_DIR="$TMP_ROOT"
 STATE_DIR="$BASE_DIR/state"
 CONFIG_DIR="$STATE_DIR/config"
+GLOBAL_SETTINGS_FILE="$CONFIG_DIR/global_settings.csv"
 LOG_DIR="$STATE_DIR/logs"
 ERROR_LOG_DIR="$LOG_DIR/errors"
 TMP_DIR="$STATE_DIR/tmp"
@@ -30,6 +31,8 @@ CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha256"
 UPDATE_MARKER="$TMP_ROOT/update_called"
 
 mkdir -p "$CONFIG_DIR" "$LOG_DIR" "$ERROR_LOG_DIR" "$TMP_DIR" "$BACKUP_DIR" "$CERTS_DIR/mtls"
+# Runtime rollback reloads the fixture settings before running recovery hooks.
+_save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
 cat >"$BACKEND_PORTS_FILE" <<'EOF_PORTS'
 record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location
 backend,example.com,10.0.0.2:8080,dockistrate-net,,,,,,,,,,,,,,,,,
@@ -39,12 +42,6 @@ function log_msg() { :; }
 function capture_docker_logs() { :; }
 function update_nginx_config() { : >"$UPDATE_MARKER"; }
 function _ensure_tls_permissions() { :; }
-function _generate_backend_ca() {
-  local mtls_dir="${1:-}"
-  mkdir -p "$mtls_dir"
-  printf 'new-ca\n' >"${mtls_dir}/ca.crt"
-  printf 'new-key\n' >"${mtls_dir}/ca.key"
-}
 function _generate_backend_crl() {
   echo "[Error] Forced CRL generation failure" >&2
   return 1
@@ -58,6 +55,11 @@ output="$(
 status=$?
 set -E
 set -e
+
+if ! grep -Fq 'Forced CRL generation failure' <<<"$output"; then
+  echo "[Error] Test did not reach injected CRL generation failure: $output" >&2
+  exit 1
+fi
 
 if [ "$status" -eq 0 ]; then
   echo "[Error] enable_backend_mtls succeeded unexpectedly." >&2

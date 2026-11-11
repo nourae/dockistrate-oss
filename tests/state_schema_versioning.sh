@@ -3,6 +3,8 @@ set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+source "$ROOT_DIR/tests/helpers/global_csv.sh"
+
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/config.sh"
 # shellcheck disable=SC1091
@@ -114,17 +116,23 @@ configure_paths
 
 reset_runtime_state
 bootstrap_config_runtime || fail_test "fresh runtime bootstrap should write state schema marker"
-assert_schema_marker "1"
+assert_schema_marker "5"
 bootstrap_config_runtime || fail_test "state schema bootstrap should be idempotent"
-assert_schema_marker "1"
+assert_schema_marker "5"
 
 reset_runtime_state
 write_pre_schema_settings
 [ ! -e "$(state_schema_version_file)" ] || fail_test "pre-schema fixture should not start with marker"
-bootstrap_config_runtime || fail_test "pre-schema runtime state should be treated as schema 1"
-assert_schema_marker "1"
-grep -qx 'TLS_CIPHERS,HIGH:!aNULL:!MD5' "$GLOBAL_SETTINGS_FILE" ||
-  fail_test "pre-schema bootstrap should preserve existing settings"
+assert_bootstrap_fails_with "legacy_globals" "requires migration"
+[ ! -e "$(state_schema_version_file)" ] || fail_test "legacy global settings were silently migrated"
+
+reset_runtime_state
+write_pre_schema_settings
+printf '%s\n' "$STATE_BACKEND_HEADERS_HEADER" 'orphan.example.com,response,X-Existing,keep' >"$BACKEND_HEADERS_FILE"
+legacy_checksum_before="$(cksum <"$BACKEND_HEADERS_FILE")"
+assert_bootstrap_fails_with "unmarked_legacy_domain" "requires migration"
+[ ! -e "$(state_schema_version_file)" ] || fail_test "legacy domain state was silently marked schema 2"
+[ "$(cksum <"$BACKEND_HEADERS_FILE")" = "$legacy_checksum_before" ] || fail_test "failed legacy bootstrap changed existing rows"
 
 reset_runtime_state
 printf '%s\n' "not-a-number" >"$(state_schema_version_file)"
@@ -132,12 +140,18 @@ assert_bootstrap_fails_with "invalid" "Invalid state schema version"
 
 reset_runtime_state
 printf '%s' "1" >"$(state_schema_version_file)"
-bootstrap_config_runtime || fail_test "schema marker without trailing newline should be accepted"
+[ "$(state_schema_read_marker_readonly)" = 1 ] || fail_test "legacy marker should remain readable for migration"
+assert_bootstrap_fails_with "explicit_legacy" "requires migration"
 assert_schema_marker "1"
 
 reset_runtime_state
+printf '%s' "5" >"$(state_schema_version_file)"
+bootstrap_config_runtime || fail_test "schema marker without trailing newline should be accepted"
+assert_schema_marker "5"
+
+reset_runtime_state
 marker_file="$(state_schema_version_file)"
-printf '%s' "1" >"$marker_file"
+printf '%s' "5" >"$marker_file"
 touch -t 200001010000 "$marker_file" || fail_test "failed to set schema marker timestamp"
 marker_checksum_before="$(cksum <"$marker_file")"
 marker_mtime_before="$(file_mtime_epoch "$marker_file")"
@@ -158,7 +172,22 @@ printf '%s\n' "999999999999999999999" >"$(state_schema_version_file)"
 assert_bootstrap_fails_with "overlong" "value is too large"
 
 reset_runtime_state
-printf '%s\n' "2" >"$(state_schema_version_file)"
-assert_bootstrap_fails_with "newer" "Unsupported state schema version 2"
+printf '%s\n' "6" >"$(state_schema_version_file)"
+assert_bootstrap_fails_with "newer" "Unsupported state schema version 6"
+
+reset_runtime_state
+printf '2\n' >"$(state_schema_version_file)"
+assert_bootstrap_fails_with "schema2" "requires migration"
+assert_schema_marker "2"
+
+reset_runtime_state
+printf '3\n' >"$(state_schema_version_file)"
+assert_bootstrap_fails_with "schema3" "requires migration"
+assert_schema_marker "3"
+
+reset_runtime_state
+printf '4\n' >"$(state_schema_version_file)"
+assert_bootstrap_fails_with "schema4" "requires migration"
+assert_schema_marker "4"
 
 echo "state schema versioning checks passed."

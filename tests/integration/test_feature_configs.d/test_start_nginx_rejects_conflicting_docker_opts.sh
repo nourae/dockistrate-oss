@@ -7,8 +7,8 @@ test_start_nginx_rejects_conflicting_docker_opts() {
 
   assertNotEquals "start-nginx should reject conflicting docker opts" 0 "$status"
   assertStringContains "start-nginx guardrail message" "conflicts with published listen ports" "$output"
-  assertTrue "global settings should not store rejected nginx docker opts" \
-    "! grep -Fq 'NGINX_DOCKER_OPTS,--publish 18180:80' '${CONFIG_DIR}/global_settings.csv'"
+  assertEquals "global settings should not store rejected nginx docker opts" "" \
+    "$(integration_global_csv_get "$CONFIG_DIR/global_settings.csv" NGINX_DOCKER_OPTS)"
 }
 
 test_start_nginx_rejects_reserved_proxy_labels_in_docker_opts() {
@@ -19,6 +19,6 @@ test_start_nginx_rejects_reserved_proxy_labels_in_docker_opts() {
   assertNotEquals "start-nginx should reject reserved proxy ownership labels" 0 "$status"
   assertStringContains "start-nginx should explain reserved proxy labels" \
     "reserved for Dockistrate-managed proxy ownership" "$output"
-  assertTrue "global settings should not store rejected reserved nginx docker opts" \
-    "! grep -Fq 'NGINX_DOCKER_OPTS,--label com.dockistrate.managed=false' '${CONFIG_DIR}/global_settings.csv'"
+  assertEquals "global settings should not store rejected reserved nginx docker opts" "" \
+    "$(integration_global_csv_get "$CONFIG_DIR/global_settings.csv" NGINX_DOCKER_OPTS)"
 }

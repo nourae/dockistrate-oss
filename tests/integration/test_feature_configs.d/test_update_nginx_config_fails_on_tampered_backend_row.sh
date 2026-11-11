@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-test_update_nginx_config_fails_on_tampered_backend_row() {
+test_update_nginx_config_repairs_tampered_backend_cache() {
   run_dockistrate add-backend tampered-backend.test nginx:alpine 18180 http >/dev/null
   assertEquals "seed backend" 0 $?
 
@@ -14,10 +14,10 @@ test_update_nginx_config_fails_on_tampered_backend_row() {
   output="$(run_dockistrate update-nginx-config 2>&1)"
   status=$?
 
-  assertNotEquals "update-nginx-config should fail for tampered backend rows" 0 "$status"
-  assertStringContains "failure should mention invalid backend upstream ip" "backend upstream IP '127.0.0.999' is invalid" "$output"
+  assertEquals "update-nginx-config rebuilds derived backend rows from accepted source" 0 "$status"
+  assertFalse "invalid cached upstream must be removed" "grep -Fq '127.0.0.999' '${CONFIG_DIR}/backend_ports.csv'"
 
   local after_conf
   after_conf="$(cat "$conf_file")"
-  assertEquals "backends.conf should be rolled back after backend row validation failure" "$before_conf" "$after_conf"
+  assertEquals "cache repair preserves the accepted serving configuration" "$before_conf" "$after_conf"
 }

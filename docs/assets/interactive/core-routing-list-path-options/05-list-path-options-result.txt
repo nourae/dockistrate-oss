@@ -1,0 +1,4 @@
+80
+1: example.com 80 /api ws=inherit redirect=inherit headers=- match=prefix priority=10 target=80 rewrite=strip-prefix reason=API demo loc=auto
+
+Press Enter to continue...

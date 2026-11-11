@@ -15,9 +15,11 @@ CERTS_DIR="$TMP_ROOT/certs"
 mtls_dir="$CERTS_DIR/mtls/example.com"
 mkdir -p "$mtls_dir"
 
-printf 'old-crl\n' >"${mtls_dir}/ca.crl"
-printf 'client-cert\n' >"${mtls_dir}/client1.crt"
-printf 'client-key\n' >"${mtls_dir}/client1.key"
+_generate_backend_ca "$mtls_dir" example.com >/dev/null 2>&1
+_init_backend_mtls_state "$mtls_dir" fresh
+_issue_backend_client_cert "$mtls_dir" client1 >/dev/null 2>&1
+_generate_backend_crl "$mtls_dir" >/dev/null 2>&1
+cp "$mtls_dir/ca.crl" "$TMP_ROOT/original.crl"
 
 function openssl() {
   if [ "${1:-}" = "ca" ]; then
@@ -41,7 +43,7 @@ if [ ! -f "${mtls_dir}/client1.crt" ] || [ ! -f "${mtls_dir}/client1.key" ]; the
   exit 1
 fi
 
-if [ "$(cat "${mtls_dir}/ca.crl")" != "old-crl" ]; then
+if ! cmp -s "$mtls_dir/ca.crl" "$TMP_ROOT/original.crl"; then
   echo "[Error] Existing CRL was modified after revoke failure." >&2
   exit 1
 fi

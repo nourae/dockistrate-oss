@@ -35,7 +35,8 @@ function __arg_choices_image() {
       cur_img="$(get_backend_image "$dom" 2>/dev/null || true)"
       if [ -n "$cur_img" ]; then
         echo "__DEFAULT__|Keep current: $cur_img"
-      else
+      elif ! declare -F _backend_identity_can_replace_unmanaged >/dev/null 2>&1 ||
+        ! _backend_identity_can_replace_unmanaged "$dom" 2>/dev/null; then
         echo "__DEFAULT__|Keep current"
       fi
     fi
@@ -117,15 +118,53 @@ function __arg_choices_nginx_image() {
     __arg_choices_image "$cmd"
     return 0
   fi
-  echo "__LATEST_IF_MISSING__|Latest (pull if missing; current policy: ${NGINX_PULL_MODE:-if-missing})"
+  echo "__LATEST_IF_MISSING__|Latest (if-missing mode refreshes :latest on use)"
   echo "__LATEST_ALWAYS__|Latest (always pull newest)"
   echo "__PINNED_CURRENT__|Use current image: ${NGINX_IMAGE} (current)"
   echo "__MANUAL__|Enter manually..."
 }
 
 function __arg_choices_certbot_image() {
-  echo "__LATEST_IF_MISSING__|Latest (pull if missing; current policy: ${CERTBOT_PULL_MODE:-if-missing})"
+  echo "__LATEST_IF_MISSING__|Latest (if-missing mode refreshes :latest on use)"
   echo "__LATEST_ALWAYS__|Latest (always pull newest)"
   echo "__PINNED_CURRENT__|Use current image: ${CERTBOT_IMAGE} (current)"
   echo "__MANUAL__|Enter manually..."
+}
+
+function __arg_choices_pull_mode() {
+  local cmd="${1:-}" selected_image="${CURRENT_ARGS[0]:-}"
+  local default_mode="if-missing" modes="" mode="" label=""
+
+  case "$cmd" in
+  set-nginx-image)
+    default_mode="${NGINX_PULL_MODE:-if-missing}"
+    ;;
+  set-certbot-image)
+    default_mode="${CERTBOT_PULL_MODE:-if-missing}"
+    ;;
+  esac
+
+  case "$selected_image" in
+  __LATEST_IF_MISSING__)
+    default_mode="if-missing"
+    ;;
+  __LATEST_ALWAYS__)
+    default_mode="always"
+    ;;
+  esac
+
+  case "$default_mode" in
+  always) modes="always if-missing never" ;;
+  never) modes="never always if-missing" ;;
+  *) modes="if-missing always never" ;;
+  esac
+
+  for mode in $modes; do
+    case "$mode" in
+    always) label="Always pull latest-tagged images" ;;
+    if-missing) label="Refresh latest-tagged images on use (existing behavior)" ;;
+    never) label="Skip explicit pulls; Docker can fetch missing images" ;;
+    esac
+    echo "${mode}|${label}"
+  done
 }

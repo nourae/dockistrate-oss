@@ -12,7 +12,7 @@ fi
 source "${BACKUPS_MODULE_DIR}/common.sh"
 
 for backups_file in "${BACKUPS_MODULE_DIR}"/*.sh; do
-  backups_basename="$(basename "${backups_file}")"
+  backups_basename="${backups_file##*/}"
   if [ "${backups_basename}" = "common.sh" ]; then
     continue
   fi

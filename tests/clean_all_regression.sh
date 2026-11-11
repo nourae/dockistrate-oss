@@ -91,21 +91,14 @@ mkdir -p "$CONFIG_DIR" "$LOG_DIR" "$ERROR_LOG_DIR" "$TMP_DIR" "$BACKUP_DIR" \
   "$SECURITY_IP_DIR" "$SECURITY_IP_STREAM_DIR" \
   "$CERTS_DIR" "$CERTS_DIR/mtls"
 
-cat >"$GLOBAL_SETTINGS_FILE" <<EOF_SETTINGS
-ENABLE_AUTO_BACKUPS,false
-BACKUP_RETENTION,0
-ENABLE_BACKUP_COMPRESSION,false
-HTTP_VERSION,$HTTP_VERSION
-CLIENT_IP_HEADER,$CLIENT_IP_HEADER
-PROXY_IP_HEADER,$PROXY_IP_HEADER
-TLS_PROTOCOLS,$TLS_PROTOCOLS
-TLS_CIPHERS,$TLS_CIPHERS
-SECURITY_RULE_STATUS,$SECURITY_RULE_STATUS
-ACL_STATUS,$ACL_STATUS
-ACL_POLICY,$ACL_POLICY
-TRUSTED_PROXY_RANGES,$TRUSTED_PROXY_RANGES
-REAL_IP_RECURSIVE,$REAL_IP_RECURSIVE
-EOF_SETTINGS
+# shellcheck source=helpers/global_csv.sh
+source "$ROOT_DIR/tests/helpers/global_csv.sh"
+test_global_csv_seed "$GLOBAL_SETTINGS_FILE" \
+  ENABLE_AUTO_BACKUPS false BACKUP_RETENTION 0 ENABLE_BACKUP_COMPRESSION false \
+  HTTP_VERSION "$HTTP_VERSION" CLIENT_IP_HEADER "$CLIENT_IP_HEADER" PROXY_IP_HEADER "$PROXY_IP_HEADER" \
+  TLS_PROTOCOLS "$TLS_PROTOCOLS" TLS_CIPHERS "$TLS_CIPHERS" SECURITY_RULE_STATUS "$SECURITY_RULE_STATUS" \
+  ACL_STATUS "$ACL_STATUS" ACL_POLICY "$ACL_POLICY" TRUSTED_PROXY_RANGES "$TRUSTED_PROXY_RANGES" \
+  REAL_IP_RECURSIVE "$REAL_IP_RECURSIVE"
 
 cat >"$BACKEND_PORTS_FILE" <<'EOF_PORTS'
 record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location
@@ -136,9 +129,13 @@ mkdir -p "$MTLS_DIR"
 touch "$MTLS_DIR/ca.crt" "$MTLS_DIR/ca.crl"
 cat >"$BACKEND_MTLS_FILE" <<EOF_BACKEND_MTLS
 domain,mtls_directory
-example.com,$MTLS_DIR
 other.com,$CERTS_DIR/mtls/other.com
 EOF_BACKEND_MTLS
+# Disabled authorities intentionally have no active mapping.
+for owner in alias.example.com admin.example.com other.com; do
+  mkdir -p "$CERTS_DIR/mtls/$owner"
+  printf 'owned %s\n' "$owner" >"$CERTS_DIR/mtls/$owner/sentinel"
+done
 
 cat >"$BACKEND_CLIENT_IP_HEADER_FILE" <<'EOF_CLIENT'
 domain,client_ip_header_name
@@ -175,18 +172,25 @@ enabled,domain,scope,action,ip_value,status_code
 1,Example.COM,l7,allow,10.0.0.0/24,200
 0,Example.COM,l7,deny,198.51.100.5,403
 1,other.com,l7,allow,192.168.1.0/24,200
+1,alias.example.com,l7,deny,192.0.2.1,403
 EOF_SEC_IP
 
-printf '%s\n' "enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location" >"$SECURITY_RULES_DB"
+printf '%s\n' "enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location,action" >"$SECURITY_RULES_DB"
 _sr_write_db_line 1 "Example.COM" "single" "429" "1" "header" "X-Test" "contains" "bad" >>"$SECURITY_RULES_DB"
 _sr_write_db_line 1 "other.com" "single" "429" "1" "query" "q" "contains" "safe" >>"$SECURITY_RULES_DB"
+_sr_write_db_line 1 "alias.example.com" "single" "429" "1" "query" "q" "contains" "alias" >>"$SECURITY_RULES_DB"
 
 cat >"$BACKEND_ALIASES_FILE" <<'EOF_ALIASES'
 record_type,hostname,target_domain
 dedicated,admin.example.com,example.com
 dedicated,admin.other.com,other.com
+alias,alias.example.com,example.com
 EOF_ALIASES
 set_dedicated_host_inheritance admin.other.com no no no no no
+for owner in example.com alias.example.com admin.example.com other.com; do
+  printf 'HTTP ACL %s\n' "$owner" >"$SECURITY_IP_DIR/$owner.inc"
+  printf 'stream ACL %s\n' "$owner" >"$SECURITY_IP_STREAM_DIR/$owner.inc"
+done
 
 cat >"$PATH_HEADER_DIR/customset.conf" <<'EOF_CUSTOM'
 # custom header directives
@@ -194,6 +198,39 @@ add_header X-Custom one;
 EOF_CUSTOM
 
 echo '# shared header directives' >"$PATH_HEADER_DIR/sharedset.conf"
+
+cp "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.valid"
+printf '%s\n' 'path,example.com,,,/unsafe,../victim,18180,,,,inherit,off,,,,prefix,100,,none,-,auto' >>"$BACKEND_PORTS_FILE"
+cp "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.invalid-before"
+victim_file="$NGINX_HTTP_CONF_DIR/victim.conf"
+printf 'keep\n' >"$victim_file"
+
+set +e
+invalid_output="$(clean_all example.com 2>&1)"
+invalid_status=$?
+set -e
+if [ "$invalid_status" -eq 0 ]; then
+  echo "[Error] clean_all accepted an invalid persisted path header set." >&2
+  exit 1
+fi
+if ! grep -Fq "Invalid persisted path header set" <<<"$invalid_output"; then
+  echo "[Error] clean_all did not report the invalid persisted path header set." >&2
+  echo "$invalid_output" >&2
+  exit 1
+fi
+if ! cmp -s "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.invalid-before"; then
+  echo "[Error] clean_all mutated state before rejecting the path header set." >&2
+  exit 1
+fi
+if [ ! -f "$victim_file" ]; then
+  echo "[Error] clean_all deleted a file outside PATH_HEADER_DIR." >&2
+  exit 1
+fi
+if [ -d "$(_transaction_lock_dir)" ]; then
+  echo "[Error] clean_all left the runtime-preparation lock after rejecting the path header set." >&2
+  exit 1
+fi
+mv "$BACKEND_PORTS_FILE.valid" "$BACKEND_PORTS_FILE"
 
 clean_all example.com
 
@@ -236,6 +273,15 @@ if [ -d "$MTLS_DIR" ]; then
   echo "[Error] mTLS directory still present" >&2
   exit 1
 fi
+for owner in example.com alias.example.com admin.example.com; do
+  for artifact in "$CERTS_DIR/mtls/$owner" "$SECURITY_IP_DIR/$owner.inc" "$SECURITY_IP_STREAM_DIR/$owner.inc"; do
+    [ ! -e "$artifact" ] || { printf '[Error] Cleanup retained owned artifact: %s\n' "$artifact" >&2; exit 1; }
+  done
+done
+[ -f "$CERTS_DIR/mtls/other.com/sentinel" ] || { echo '[Error] Unrelated authority removed' >&2; exit 1; }
+for artifact in "$SECURITY_IP_DIR/other.com.inc" "$SECURITY_IP_STREAM_DIR/other.com.inc"; do
+  [ -s "$artifact" ] || { printf '[Error] Unrelated ACL include removed: %s\n' "$artifact" >&2; exit 1; }
+done
 
 if grep -q 'example.com' "$BACKEND_CLIENT_IP_HEADER_FILE" 2>/dev/null; then
   echo "[Error] Client IP header override not removed" >&2

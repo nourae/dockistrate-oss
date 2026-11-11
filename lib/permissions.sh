@@ -9,7 +9,7 @@ if [ -f "${PERMISSIONS_MODULE_DIR}/common.sh" ]; then
 fi
 
 for permissions_file in "${PERMISSIONS_MODULE_DIR}"/*.sh; do
-  permissions_basename="$(basename "${permissions_file}")"
+  permissions_basename="${permissions_file##*/}"
   if [ "${permissions_basename}" = "common.sh" ]; then
     continue
   fi

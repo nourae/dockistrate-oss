@@ -4,6 +4,36 @@ _dockistrate_complete_option_values() {
   local command="$1"
 
   case "$command" in
+  start-capture)
+    case "$prev" in
+    --scope)
+      COMPREPLY=($(compgen -W "all backends clients clients-backends" -- "$cur"))
+      return 0
+      ;;
+    --backends)
+      if declare -F __dockistrate_complete_backend_domains >/dev/null 2>&1; then
+        __dockistrate_complete_backend_domains
+      else
+        COMPREPLY=()
+      fi
+      return 0
+      ;;
+    --clients)
+      COMPREPLY=()
+      return 0
+      ;;
+    --folder)
+      COMPREPLY=($(compgen -d -- "$cur"))
+      return 0
+      ;;
+    esac
+    if [[ "$cur" == --* ]]; then
+      COMPREPLY=($(compgen -W "--scope --backends --clients --folder --tls-decrypt" -- "$cur"))
+      return 0
+    fi
+    COMPREPLY=($(compgen -d -- "$cur"))
+    return 0
+    ;;
   start-nginx)
     if [[ "$prev" == "--nginx-image" ]]; then
       COMPREPLY=($(compgen -W "${NGINX_IMAGE:-nginx:latest} nginx:latest" -- "$cur"))
@@ -25,7 +55,11 @@ _dockistrate_complete_option_values() {
     fi
     case "$prev" in
     --cert)
-      COMPREPLY=($(compgen -W "selfsigned letsencrypt none" -- "$cur") $(compgen -d -- "$cur"))
+      local certificate_refs=""
+      if declare -F __dockistrate_domain_certificate_refs >/dev/null 2>&1; then
+        certificate_refs="$(__dockistrate_domain_certificate_refs)" || certificate_refs=""
+      fi
+      COMPREPLY=($(compgen -W "selfsigned letsencrypt none $certificate_refs" -- "$cur") $(compgen -d -- "$cur"))
       return 0
       ;;
     --ws | --expose)
@@ -46,9 +80,19 @@ _dockistrate_complete_option_values() {
       return 0
     fi
     ;;
+  add-port | update-port)
+    if { [ "$command" = add-port ] && [ "$cword" -eq 6 ]; } || [ "${prev:-}" = --cert ]; then
+      local certificate_refs=""
+      if declare -F __dockistrate_domain_certificate_refs >/dev/null 2>&1; then
+        certificate_refs="$(__dockistrate_domain_certificate_refs)" || certificate_refs=""
+      fi
+      COMPREPLY=($(compgen -W "none $certificate_refs" -- "$cur") $(compgen -d -- "$cur"))
+      return 0
+    fi
+    ;;
   add-acl)
     if [[ $cword -eq 3 ]]; then
-      COMPREPLY=($(compgen -W "l7 l3" -- "$cur"))
+      COMPREPLY=($(compgen -W "l7 l3 both" -- "$cur"))
       return 0
     elif [[ $cword -eq 4 ]]; then
       COMPREPLY=($(compgen -W "allow deny" -- "$cur"))
@@ -94,6 +138,12 @@ _dockistrate_complete_option_values() {
   set-visibility-policy)
     if [[ $cword -eq 2 ]]; then
       COMPREPLY=($(compgen -W "full redacted" -- "$cur"))
+      return 0
+    fi
+    ;;
+  set-nginx-image | set-certbot-image)
+    if [[ $cword -eq 3 ]]; then
+      COMPREPLY=($(compgen -W "always if-missing never" -- "$cur"))
       return 0
     fi
     ;;

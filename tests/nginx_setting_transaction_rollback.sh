@@ -31,14 +31,19 @@ GLOBAL_SETTINGS_FILE="$CONFIG_DIR/global_settings.csv"
 LAST_POST_BACKUP_FILE="$BACKUP_DIR/last_post_backup.txt"
 CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha256"
 TRACE_FILE="$TMP_ROOT/trace.log"
+EXPECTED_FAILURE_LOG="$TMP_ROOT/expected-failure.log"
 NGINX_CONTAINER_NAME="nginx-proxy"
 NGINX_IMAGE="nginx:1.28.1"
 NGINX_PULL_MODE="if-missing"
 NGINX_DOCKER_OPTS=""
+ORIGINAL_NGINX_DOCKER_OPTS="--memory 128m"
 DEFAULT_NETWORK="dockistrate-net"
 
 function fail_test() {
   echo "[Error] $*" >&2
+  if [ -s "$EXPECTED_FAILURE_LOG" ]; then
+    cat "$EXPECTED_FAILURE_LOG" >&2
+  fi
   exit 1
 }
 
@@ -121,6 +126,7 @@ function recreate_nginx_container() {
   fi
   _trace_append "recreate_nginx_container"
   _trace_append "recreate_nginx_container:${RECREATE_CALL_COUNT}:${image}:${bindings}"
+  _trace_append "recreate_nginx_container_options:${RECREATE_CALL_COUNT}:${NGINX_DOCKER_OPTS}"
   if declare -F _nginx_mark_runtime_rollback_needed >/dev/null 2>&1; then
     _nginx_mark_runtime_rollback_needed
   fi
@@ -186,6 +192,7 @@ function reset_nginx_setting_state() {
   mkdir -p "$CONFIG_DIR" "$LOG_DIR" "$ERROR_LOG_DIR" "$TMP_DIR" "$BACKUP_DIR" \
     "$NGINX_HTTP_CONF_DIR" "$NGINX_STREAM_CONF_DIR"
   : >"$TRACE_FILE"
+  : >"$EXPECTED_FAILURE_LOG"
 
   ENABLE_AUTO_BACKUPS="true"
   BACKUP_RETENTION="0"
@@ -202,7 +209,7 @@ function reset_nginx_setting_state() {
   REAL_IP_RECURSIVE="on"
   NGINX_IMAGE="nginx:1.28.1"
   NGINX_PULL_MODE="if-missing"
-  NGINX_DOCKER_OPTS=""
+  NGINX_DOCKER_OPTS="$ORIGINAL_NGINX_DOCKER_OPTS"
   save_config
   create_nginx_config
 
@@ -222,7 +229,8 @@ function run_expect_failure() {
   shift
   local status=0
   set +e
-  ("$@" >/dev/null 2>&1)
+  printf '\n[tests] Expected failure: %s\n' "$label" >"$EXPECTED_FAILURE_LOG"
+  ("$@" >>"$EXPECTED_FAILURE_LOG" 2>&1)
   status=$?
   set -e
   if [ "$status" -eq 0 ]; then
@@ -235,7 +243,8 @@ function run_expect_failure_same_shell() {
   shift
   local status=0
   set +e
-  "$@" >/dev/null 2>&1
+  printf '\n[tests] Expected same-shell failure: %s\n' "$label" >"$EXPECTED_FAILURE_LOG"
+  "$@" >>"$EXPECTED_FAILURE_LOG" 2>&1
   status=$?
   set -e
   if [ "$status" -eq 0 ]; then
@@ -259,6 +268,7 @@ run_expect_failure "set_nginx_image recreate failure" set_nginx_image nginx:main
 assert_same_file "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.orig" "set_nginx_image did not restore global_settings.csv after recreate failure"
 assert_equals "2" "$(count_trace "recreate_nginx_container")" "set_nginx_image rollback should recreate nginx a second time"
 assert_trace_contains "recreate_nginx_container:2:nginx:1.28.1:80/tcp"
+assert_trace_contains "recreate_nginx_container_options:2:${ORIGINAL_NGINX_DOCKER_OPTS}"
 assert_nginx_runtime_rollback_cleared "set_nginx_image recreate failure should clear runtime rollback bookkeeping"
 
 # Scenario C: set_nginx_docker_opts restores saved settings when update_nginx_config fails.
@@ -277,6 +287,8 @@ run_expect_failure "set_nginx_docker_opts recreate failure" set_nginx_docker_opt
 assert_same_file "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.orig" "set_nginx_docker_opts did not restore global_settings.csv after recreate failure"
 assert_equals "2" "$(count_trace "recreate_nginx_container")" "set_nginx_docker_opts rollback should recreate nginx a second time"
 assert_trace_contains "recreate_nginx_container:2:nginx:1.28.1:80/tcp"
+assert_trace_contains "recreate_nginx_container_options:1:--cpus 1"
+assert_trace_contains "recreate_nginx_container_options:2:${ORIGINAL_NGINX_DOCKER_OPTS}"
 assert_nginx_runtime_rollback_cleared "set_nginx_docker_opts recreate failure should clear runtime rollback bookkeeping"
 
 # Scenario E: start_nginx restores saved overrides and runtime after recreate failure.
@@ -287,6 +299,8 @@ run_expect_failure "start_nginx recreate failure" start_nginx --nginx-image ngin
 assert_same_file "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.orig" "start_nginx did not restore global_settings.csv after recreate failure"
 assert_equals "2" "$(count_trace "recreate_nginx_container")" "start_nginx rollback should recreate nginx a second time"
 assert_trace_contains "recreate_nginx_container:2:nginx:1.28.1:80/tcp"
+assert_trace_contains "recreate_nginx_container_options:1:--cpus 1"
+assert_trace_contains "recreate_nginx_container_options:2:${ORIGINAL_NGINX_DOCKER_OPTS}"
 assert_nginx_runtime_rollback_cleared "start_nginx recreate failure should clear runtime rollback bookkeeping"
 
 # Scenario F: repeated same-shell failures should not leak nginx runtime rollback bookkeeping.
@@ -296,6 +310,7 @@ STUB_RECREATE_FAIL_ON_CALL="1"
 run_expect_failure_same_shell "set_nginx_image same-shell recreate failure" set_nginx_image nginx:mainline never
 assert_same_file "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.orig" "same-shell set_nginx_image failure should restore global_settings.csv"
 assert_equals "2" "$(count_trace "recreate_nginx_container")" "same-shell set_nginx_image rollback should recreate nginx a second time"
+assert_trace_contains "recreate_nginx_container_options:2:${ORIGINAL_NGINX_DOCKER_OPTS}"
 assert_nginx_runtime_rollback_cleared "same-shell set_nginx_image failure should clear runtime rollback bookkeeping"
 : >"$TRACE_FILE"
 RECREATE_CALL_COUNT=0
@@ -305,6 +320,8 @@ run_expect_failure_same_shell "set_nginx_docker_opts same-shell recreate failure
 assert_same_file "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.orig" "same-shell set_nginx_docker_opts failure should restore global_settings.csv"
 assert_equals "2" "$(count_trace "recreate_nginx_container")" "same-shell set_nginx_docker_opts rollback should still recreate nginx a second time"
 assert_trace_contains "recreate_nginx_container:2:nginx:1.28.1:80/tcp"
+assert_trace_contains "recreate_nginx_container_options:1:--cpus 1"
+assert_trace_contains "recreate_nginx_container_options:2:${ORIGINAL_NGINX_DOCKER_OPTS}"
 assert_nginx_runtime_rollback_cleared "same-shell set_nginx_docker_opts failure should clear runtime rollback bookkeeping"
 
 echo "nginx setting transaction rollback checks passed."

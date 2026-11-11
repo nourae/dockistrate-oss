@@ -1,0 +1,10 @@
+Inheritance setting:
+  1) mtls (current: yes)
+  2) acl (current: yes)
+  3) security_rules (current: yes)
+> 4) headers (current: yes)
+  5) paths (current: yes)
+  6) all (current: yes)
+  7) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

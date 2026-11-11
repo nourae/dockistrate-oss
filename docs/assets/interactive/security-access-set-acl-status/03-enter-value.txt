@@ -1,0 +1,4 @@
+
+HTTP status code used for redirects or denials.
+Status code
+Example: 301 [403]: 403

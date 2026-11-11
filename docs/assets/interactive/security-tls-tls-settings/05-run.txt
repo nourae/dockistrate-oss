@@ -1,0 +1,15 @@
+Review command
+  Command: Set Port TLS Protocols (set-port-tls-protocols)
+  Description: Override TLS protocol versions for an HTTPS port
+
+Arguments:
+  Listen port: 443
+  TLS protocols: TLSv1.3
+
+CLI equivalent:
+  ./dockistrate.sh set-port-tls-protocols 443 TLSv1.3
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

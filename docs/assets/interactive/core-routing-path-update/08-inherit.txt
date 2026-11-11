@@ -1,0 +1,9 @@
+Enable WebSocket proxy headers for HTTP or HTTPS routes.
+WebSocket:
+  1) Keep current: inherit
+> 2) inherit
+  3) yes
+  4) no
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -15,6 +15,14 @@
 #   $11 - http3 (on|off)
 #   $12 - alt_svc (auto|off|custom)
 function _emit_dedicated_host_server_block() {
+  if declare -F domain_config_active >/dev/null 2>&1 && domain_config_active; then
+    _domain_config_emit_http _emit_dedicated_host_server_block_impl "$@"
+  else
+    _emit_dedicated_host_server_block_impl "$@"
+  fi
+}
+
+function _emit_dedicated_host_server_block_impl() {
   local config_file="$1"
   local dedicated_host="$2"
   local target_domain="$3"
@@ -73,14 +81,18 @@ function _emit_dedicated_host_server_block() {
   local container_ip
   container_ip="$(echo "$base_upstream" | cut -d':' -f1)"
   local final_upstream="${container_ip}:${upstream_port}"
+  if declare -F domain_config_backend_stopped >/dev/null 2>&1 && domain_config_backend_stopped "$target_domain"; then
+    final_upstream=dockistrate_unavailable
+  fi
 
   # Use the dedicated host's own configuration for ACL, mTLS, headers, etc.
   # This allows each dedicated host to have independent settings with fallback to target domain
   local dedicated_http_ver
-  dedicated_http_ver="$(get_backend_http_version "$dedicated_host")"
+  dedicated_http_ver="$(get_backend_http_version "$dedicated_host")" || return 1
   # Fall back to target domain's HTTP version if not set for dedicated host
-  [ -z "$dedicated_http_ver" ] && dedicated_http_ver="$(get_backend_http_version "$target_domain")"
-
+  if [ -z "$dedicated_http_ver" ]; then
+    dedicated_http_ver="$(get_backend_http_version "$target_domain")" || return 1
+  fi
   cat >>"$config_file" <<EOF
 
 # Dedicated host mapping for $dedicated_host:$custom_port => $final_upstream (via $target_domain)
@@ -89,16 +101,17 @@ EOF
 
   # IP header lookup already handles dedicated-host inheritance and explicit off semantics.
   local cip pip realip_lines
-  cip="$(get_backend_client_ip_header "$dedicated_host")"
-  pip="$(get_backend_proxy_ip_header "$dedicated_host")"
+  cip="$(get_backend_client_ip_header "$dedicated_host")" || return 1
+  pip="$(get_backend_proxy_ip_header "$dedicated_host")" || return 1
   if ! realip_lines="$(_real_ip_directives "$cip")"; then
     return 1
   fi
 
   local proxy_http_version
-  proxy_http_version="$(get_proxy_http_version "$dedicated_host")"
-  [ -z "$proxy_http_version" ] && proxy_http_version="$(get_proxy_http_version "$target_domain")"
-
+  proxy_http_version="$(get_proxy_http_version "$dedicated_host")" || return 1
+  if [ -z "$proxy_http_version" ]; then
+    proxy_http_version="$(get_proxy_http_version "$target_domain")" || return 1
+  fi
   # Build proxy header lines (shared between HTTP and HTTPS blocks)
   local pip_line=""
   if [ -n "$pip" ]; then
@@ -117,8 +130,9 @@ EOF
 
   local sanitized_host
   sanitized_host="$(sanitize_domain_name "${dedicated_host}")"
-  local header_identity_lines
+  local header_identity_lines security_identity_lines
   header_identity_lines="$(_backend_header_identity_directives "$dedicated_host")"
+  security_identity_lines="$(_sr_identity_directives "$dedicated_host")" || return 1
 
   if [ "$proto" == "https" ]; then
     local container_cert_path
@@ -145,6 +159,7 @@ EOF
 server {
     listen ${custom_port} ssl;
     server_name ${dedicated_host};
+${security_identity_lines}
 ${header_identity_lines}
 ${realip_lines}
     include ${NGINX_CONTAINER_HTTP_CONF_DIR}/security_ip/${sanitized_host}.inc;
@@ -182,6 +197,7 @@ EOF
 server {
     listen ${custom_port};
     server_name ${dedicated_host};
+${security_identity_lines}
 ${header_identity_lines}
 ${realip_lines}
     include ${NGINX_CONTAINER_HTTP_CONF_DIR}/security_ip/${sanitized_host}.inc;

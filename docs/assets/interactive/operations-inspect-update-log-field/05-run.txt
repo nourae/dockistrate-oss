@@ -1,0 +1,15 @@
+Review command
+  Command: Update Log Field (update-log-field)
+  Description: Update or replace an access log field by ID
+
+Arguments:
+  ID: 9
+  Log field: $upstream_response_time
+
+CLI equivalent:
+  ./dockistrate.sh update-log-field 9 '$upstream_response_time'
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,9 @@
+Select one domain or all domains. Manual edits remain pending until explicitly applied.
+Domain configuration
+Example: example.com or --all:
+  1) All domains
+> 2) example.com (invalid draft)
+  3) Enter a domain manually...
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

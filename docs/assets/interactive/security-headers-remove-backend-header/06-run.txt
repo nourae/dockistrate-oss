@@ -1,0 +1,18 @@
+Review command
+  Command: Remove Backend Header (remove-backend-header)
+  Description: Remove a backend header override
+
+Arguments:
+  Domain: example.com
+  Header direction: response
+  Header name: X-Guide
+
+CLI equivalent:
+  ./dockistrate.sh remove-backend-header example.com response X-Guide
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -14,36 +14,41 @@ awk '
     gsub(/>/, "\\&gt;", s)
     return s
   }
-  function format_links(s,   out, start, mid, end, pre, text, url) {
+  function format_inline(s,   out, code, link, first, code_end, mid, end, text, url) {
     out = ""
-    while ((start = index(s, "[")) > 0) {
-      mid = index(substr(s, start + 1), "](")
-      if (mid == 0) break
-      mid = start + mid
-      end = index(substr(s, mid + 2), ")")
-      if (end == 0) break
-      end = mid + 1 + end
-      pre = substr(s, 1, start - 1)
-      text = substr(s, start + 1, mid - start - 1)
-      url = substr(s, mid + 2, end - mid - 2)
-      out = out pre "<a href=\"" url "\">" text "</a>"
-      s = substr(s, end + 1)
-    }
-    return out s
-  }
-  function format_inline(s,   parts, n, i, seg, out) {
-    n = split(s, parts, /`/)
-    out = ""
-    for (i = 1; i <= n; i++) {
-      seg = parts[i]
-      if (i % 2 == 0) {
-        seg = escape_html(seg)
-        out = out "<code>" seg "</code>"
+    while (s != "") {
+      code = index(s, "`")
+      link = index(s, "[")
+      first = code
+      if (first == 0 || (link > 0 && link < first)) first = link
+      if (first == 0) return out escape_html(s)
+      out = out escape_html(substr(s, 1, first - 1))
+      s = substr(s, first)
+      if (substr(s, 1, 1) == "`") {
+        code_end = index(substr(s, 2), "`")
+        if (code_end > 0) {
+          out = out "<code>" escape_html(substr(s, 2, code_end - 1)) "</code>"
+          s = substr(s, code_end + 2)
+          continue
+        }
       } else {
-        seg = escape_html(seg)
-        seg = format_links(seg)
-        out = out seg
+        mid = index(s, "](")
+        if (mid > 0) {
+          end = index(substr(s, mid + 2), ")")
+          if (end > 0) {
+            text = substr(s, 2, mid - 2)
+            url = substr(s, mid + 2, end - 1)
+            # Parse label code spans inside the link, instead of splitting the
+            # entire link at its backticks and losing its destination.
+            out = out "<a href=\"" escape_html(url) "\">" format_inline(text) "</a>"
+            s = substr(s, mid + end + 2)
+            continue
+          }
+        }
       }
+      # Unclosed code spans or links remain literal text.
+      out = out escape_html(substr(s, 1, 1))
+      s = substr(s, 2)
     }
     return out
   }
@@ -114,6 +119,27 @@ awk '
   }
   {
     line = $0
+    fence_line = line
+    sub(/^ ? ? ?/, "", fence_line)
+    if (match(fence_line, /^```+|^~~~+/)) {
+      fence_run = substr(fence_line, RSTART, RLENGTH)
+      fence_rest = substr(fence_line, RLENGTH + 1)
+      if (fence == "") {
+        close_lists()
+        print "<pre><code>"
+        fence = fence_run
+        next
+      }
+      if (substr(fence_run, 1, 1) == substr(fence, 1, 1) && length(fence_run) >= length(fence) && fence_rest ~ /^[[:space:]]*$/) {
+        print "</code></pre>"
+        fence = ""
+        next
+      }
+    }
+    if (fence != "") {
+      print escape_html(line)
+      next
+    }
     if (index(line, "<a ") == 1 && index(line, "</a>") > 0) {
       close_lists()
       print line
@@ -154,6 +180,7 @@ awk '
     print "<p>" format_inline(line) "</p>"
   }
   END {
+    if (fence != "") print "</code></pre>"
     close_lists()
     print "</body>"
     print "</html>"

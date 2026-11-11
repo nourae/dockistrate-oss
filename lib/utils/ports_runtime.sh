@@ -31,9 +31,7 @@ function _lsof_udp_owner_line() {
 
 function is_host_port_listening() {
   local port="${1:-}" protocol="${2:-tcp}"
-  if ! is_valid_port "$port"; then
-    return 1
-  fi
+  port="$(normalize_port "$port")" || return 1
   case "$protocol" in
   tcp | udp) ;;
   *)
@@ -88,9 +86,7 @@ function is_host_port_listening() {
 
 function port_listener_owner_info() {
   local port="${1:-}" protocol="${2:-tcp}"
-  if ! is_valid_port "$port"; then
-    return 1
-  fi
+  port="$(normalize_port "$port")" || return 1
   case "$protocol" in
   tcp | udp) ;;
   *)
@@ -144,9 +140,8 @@ function is_port_mapped_in_state() {
   local protocol="${2:-tcp}"
   local skip_domain="${3:-}"
   local skip_port="${4:-}"
-  if ! is_valid_port "$port"; then
-    return 1
-  fi
+  [ -z "$skip_port" ] || skip_port="$(normalize_port "$skip_port")" || return 1
+  port="$(normalize_port "$port")" || return 1
   case "$protocol" in
   tcp | udp) ;;
   *)
@@ -193,10 +188,12 @@ function suggest_free_port() {
   local protocol="${2:-tcp}"
   local skip_domain="${3:-}"
   local skip_port="${4:-}"
+  [ -z "$skip_port" ] || skip_port="$(normalize_port "$skip_port")" || return 1
   if ! is_valid_port "$requested_port"; then
     return 1
   fi
 
+  requested_port="$(normalize_port "$requested_port")" || return 1
   local start end candidate
   start=$((requested_port + 1))
   end=$((requested_port + 20))
@@ -234,10 +231,9 @@ function assert_host_port_available_or_fail() {
   local protocol="${2:-tcp}"
   local skip_domain="${3:-}"
   local skip_port="${4:-}"
+  [ -z "$skip_port" ] || skip_port="$(normalize_port "$skip_port")" || return 1
   local force_check="${5:-false}"
-  if ! is_valid_port "$port"; then
-    return 1
-  fi
+  port="$(normalize_port "$port")" || return 1
   case "$protocol" in
   tcp | udp) ;;
   *)

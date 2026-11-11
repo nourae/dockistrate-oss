@@ -3,7 +3,13 @@
 function arg_label() {
   case "${1:-}" in
   domain) echo "Domain" ;;
+  security_rule_domain) echo "Security rule domain" ;;
+  domain_config_target) echo "Domain configuration" ;;
+  domain_config_kind) echo "Domain kind" ;;
+  domain_config_action) echo "Review or apply" ;;
+  backend_details) echo "Backend details CSV path (optional)" ;;
   image) echo "Container image" ;;
+  replace_unmanaged_container) echo "Unmanaged container ID to replace" ;;
   container_port) echo "Backend container port" ;;
   nginx_port | listen | port) echo "Listen port" ;;
   protocol) echo "Protocol" ;;
@@ -53,6 +59,7 @@ function arg_label() {
   version) echo "HTTP version" ;;
   target_tag) echo "Target tag" ;;
   require_backup) echo "Require backup" ;;
+  pull_mode) echo "Image pull mode" ;;
   setting) echo "Inheritance setting" ;;
   visibility_policy) echo "Visibility policy" ;;
   inherit_mtls) echo "Inherit mTLS" ;;
@@ -71,6 +78,38 @@ function arg_label() {
 function arg_help() {
   local cmd="${1:-}" arg_name="${2:-}"
   case "${cmd}:${arg_name}" in
+  list-security-rules:security_rule_domain)
+    echo "List all rules or rules owned directly by one hostname. Global rule IDs are preserved; inherited rules are not added to a domain filter."
+    return 0
+    ;;
+  init-domain-config:domain)
+    echo "Create editable configuration templates for this domain. No container is created until you apply the completed configuration."
+    return 0
+    ;;
+  init-domain-config:domain_config_kind)
+    echo "Choose a backend container, an alias, a dedicated hostname, or certificates without a backend."
+    return 0
+    ;;
+  validate-domain-config:domain_config_target | apply-domain-config:domain_config_target)
+    echo "Select one domain or all domains. Manual edits remain pending until explicitly applied."
+    return 0
+    ;;
+  apply-domain-config:domain_config_action)
+    echo "Review validates and previews the selected configuration. Apply activates it and updates the managed services."
+    return 0
+    ;;
+  migrate-state:domain_config_action)
+    echo "Review the conversion from the legacy state layout before applying the migration."
+    return 0
+    ;;
+  migrate-state:backend_details | restore-backup:backend_details)
+    echo "Optional CSV containing backend details that cannot be recovered from existing state and managed containers."
+    return 0
+    ;;
+  update-backend:replace_unmanaged_container)
+    echo "This backend has no saved container identity. Replace its existing container with the selected image by entering its exact full 64-character ID. The old container is removed only after the replacement commits; its volumes are preserved."
+    return 0
+    ;;
   add-path-option:target | update-path-option:target)
     echo "Use a port, host:port, or none to keep the route on the mapped backend."
     return 0
@@ -106,6 +145,10 @@ function arg_help() {
     echo "Path to an existing privkey.pem file when uploading a custom certificate."
     return 0
     ;;
+  restore-backup:backup)
+    echo "Choose a backup name or enter a directory/.tar.gz path. Interactive confirmation comes before copying or expansion. Set RESTORE_MAX_ARCHIVE_BYTES, RESTORE_MAX_EXPANDED_BYTES, and RESTORE_MAX_ENTRIES before starting this session for larger backups."
+    return 0
+    ;;
   upgrade-preflight:target_tag)
     echo "Optional local release tag to compare against. Leave blank to check the current on-disk state only."
     return 0
@@ -115,7 +158,11 @@ function arg_help() {
     return 0
     ;;
   set-visibility-policy:visibility_policy)
-    echo "Use full to show operator-entered Docker option and header values, or redacted to hide them in display, audit, and saved interactive history."
+    echo "Use full to show operator-entered Docker options, header values, and generic Nginx directive values, or redacted to hide them in display, audit, and saved interactive history."
+    return 0
+    ;;
+  set-nginx-image:pull_mode | set-certbot-image:pull_mode)
+    echo "For :latest, always and if-missing refresh on use; never skips explicit pulls. Other tags and digests skip explicit pulls in every mode. Docker may fetch a missing reference when starting a container."
     return 0
     ;;
   esac
@@ -143,7 +190,7 @@ function arg_help() {
     echo "Enable WebSocket proxy headers for HTTP or HTTPS routes."
     ;;
   docker_opts)
-    echo "Optional Docker run flags. Dockistrate still owns image, name, network, mounts, and published ports."
+    echo "Optional Docker run flags. Use --option=value for unrecognized long options (=true or =false for booleans). Dockistrate owns the image, name, and network; proxy options also reserve mounts, ports, and entrypoint."
     ;;
   network)
     echo "Docker network used to connect the backend and proxy."
@@ -216,7 +263,18 @@ function arg_help() {
 
 function arg_example() {
   local cmd="${1:-}" arg_name="${2:-}"
+  if [ "$arg_name" = cert_path ] &&
+    declare -F domain_config_certificate_layout >/dev/null 2>&1 &&
+    domain_config_certificate_layout; then
+    if [ "$cmd" = add-backend ]; then
+      echo "selfsigned, letsencrypt, example.com/selfsigned-443, or none"
+    else
+      echo "example.com/selfsigned-443 or none"
+    fi
+    return 0
+  fi
   case "${cmd}:${arg_name}" in
+  update-backend:replace_unmanaged_container) echo "paste the full container ID you independently verified"; return 0 ;;
   set-port-redirect:on_off) echo "on"; return 0 ;;
   set-port-redirect:code) echo "308"; return 0 ;;
   add-path-option:target | update-path-option:target) echo "none"; return 0 ;;
@@ -237,6 +295,9 @@ function arg_example() {
 
   case "$arg_name" in
   domain) echo "example.com" ;;
+  security_rule_domain) echo "example.com, an alias, or a dedicated hostname" ;;
+  domain_config_target) echo "example.com or --all" ;;
+  backend_details) echo "/path/to/backend-details.csv" ;;
   image) echo "nginx:alpine" ;;
   container_port) echo "8000" ;;
   nginx_port | listen | port) echo "443" ;;
@@ -247,6 +308,7 @@ function arg_example() {
   req_resp) echo "request" ;;
   header) echo "X-Forwarded-Proto" ;;
   on_off) echo "on" ;;
+  pull_mode) echo "if-missing" ;;
   directive_scope) echo "backend" ;;
   directive_name) echo "proxy_read_timeout" ;;
   directive_value) echo "60s" ;;
@@ -268,6 +330,14 @@ function arg_example() {
 function arg_empty_behavior() {
   local cmd="${1:-}" arg_name="${2:-}"
   case "${cmd}:${arg_name}" in
+  migrate-state:backend_details | restore-backup:backend_details)
+    echo "use existing state and managed container details only"
+    return 0
+    ;;
+  update-backend:replace_unmanaged_container)
+    echo "a full container ID is required; choose Back to cancel replacement"
+    return 0
+    ;;
   update-backend:docker_opts | start-nginx:docker_opts | set-nginx-docker-opts:docker_opts)
     echo "leave blank to keep the shown current value"
     return 0

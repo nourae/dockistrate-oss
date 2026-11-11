@@ -1,0 +1,3 @@
+
+Choose a backup name or enter a directory/.tar.gz path. Interactive confirmation comes before copying or expansion. Set RESTORE_MAX_ARCHIVE_BYTES, RESTORE_MAX_EXPANDED_BYTES, and RESTORE_MAX_ENTRIES before starting this session for larger backups.
+backup: /opt/dockistrate-demo-fixtures/manual-restore.tar.gz

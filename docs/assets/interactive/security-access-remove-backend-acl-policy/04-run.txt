@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Backend ACL Policy (remove-backend-acl-policy)
+  Description: Clear backend ACL policy override
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh remove-backend-acl-policy example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,1999 @@
+{
+  "schema_version": 1,
+  "scenario": "security-rules",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:36.068028+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "security",
+  "group": "rules",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:45:21.214857+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/03-example-com.txt",
+      "image_sha256": "9e20d1355a3b2e91c45352bce18ec87ed3390f1ee0582d39033dc7e98852920a",
+      "transcript_sha256": "b3be62dc16c7396ff15db6f2e7ace786dea5d5ca310a65c6774d2de0c9b9ccfc",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 74298,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 4,
+      "title": "Block when conditions match (recommended for new rules)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/04-block-when-conditions-match-recommended-for-new-rules.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/04-block-when-conditions-match-recommended-for-new-rules.txt",
+      "image_sha256": "98f2ada1614cdd0ab5769f4362359ba87f68aa8bb4b762996c9b1a35180f5eb2",
+      "transcript_sha256": "6d949250b46f193ed5824e7c74aed37f2c78fe40639a7cd7a88bb0fe32aeab95",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 74714,
+      "selected": "Block when conditions match (recommended for new rules)"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/05-enter-value.txt",
+      "image_sha256": "21a0ca19f11c8fd32ad895b3ddc452100cff8b357c419de18e88b674c90e1bd7",
+      "transcript_sha256": "28d26631def73036695a4811287c6fe64dd99e1a956d926d55bf2f1462dcce25",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 74757,
+      "value": "2"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 6,
+      "title": "and",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/06-and.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/06-and.txt",
+      "image_sha256": "b03deb1c1c9dbb6aca95b12a4f258c2a1c3bb8586a6d3cfc9f07a848c42d0662",
+      "transcript_sha256": "72d123723ddc586d6471cc2b48c41a01a1b28bcd43e960ad06a4e29866b71b4e",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 74881,
+      "selected": "and"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/07-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/07-enter-value.txt",
+      "image_sha256": "b09927e87dba568ecb90dc57e4c11cd81b21e1214e348bcb85636326d6145fd8",
+      "transcript_sha256": "56d5bbd04bc0376af480505f0da025b5d9b243c9cf5c7b5fad93a8e059bcf6eb",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 74945,
+      "value": "403"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 8,
+      "title": "Header \u2014 request header (name required)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/08-header-request-header-name-required.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/08-header-request-header-name-required.txt",
+      "image_sha256": "4ae64bfbe3c34d956746d975eeda537dcd61da5a063fbfa8f1c2ca4be01bf066",
+      "transcript_sha256": "f78593c0fcf2140424aa5ba1f8755b986f239b890378a40c00ce974cbbf4ef32",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 75578,
+      "selected": "Header \u2014 request header (name required)"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 9,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/09-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/09-enter-value.txt",
+      "image_sha256": "05c4b92d1003b8d511a9d8259078a27db50588d590707b61a61291970344282c",
+      "transcript_sha256": "47a4f914d2e2a135453d923995da67d770419ff0f92e75c3b638daa8aee61d28",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 75610,
+      "value": "User-Agent"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 10,
+      "title": "Contains \u2014 substring present (case-insensitive). Example: header User-Agent contains debug",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/10-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/10-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.txt",
+      "image_sha256": "55efc3640beee8704beab08536adb3239000429639500d20d125f1fcca2fd05a",
+      "transcript_sha256": "13931a9b86826aa5f3b1b7eab8177d40e4e1a9842684355469be09b443eb0cf7",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 79746,
+      "selected": "Contains \u2014 substring present (case-insensitive). Example: header User-Agent contains debug"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 11,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/11-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/11-enter-value.txt",
+      "image_sha256": "6048171b8860c2cef35766d812369b878a9d1b9ebdf0799fa3b88c0c611b45b2",
+      "transcript_sha256": "974ef4f1c435b7a0e9a0858719e6fe0576aa8ee0a80851d2f060557e964cf51e",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 79788,
+      "value": "BadBot"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 12,
+      "title": "Method \u2014 HTTP method (GET/POST/...)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/12-method-http-method-get-post.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/12-method-http-method-get-post.txt",
+      "image_sha256": "6a4ae7354efac7087cc1dd0c80df2a12ef6e4428f0386913eb6a017e73b9aec5",
+      "transcript_sha256": "e8128065269797c7f203193cdcd22ff5181d17e49f631c81b08cb7310ff38e13",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 82342,
+      "selected": "Method \u2014 HTTP method (GET/POST/...)"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 13,
+      "title": "Equals \u2014 string equals. Example: method - equals POST",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/13-equals-string-equals-example-method-equals-post.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/13-equals-string-equals-example-method-equals-post.txt",
+      "image_sha256": "fc35bc3442ff284549abdbfffed9d3de482becc94cc53f0d01d710df815160e9",
+      "transcript_sha256": "b58f12e97828ce6e385645855e8cf5fe275ba829ae9ae11dd83b56aa11b8be30",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 82733,
+      "selected": "Equals \u2014 string equals. Example: method - equals POST"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 14,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/14-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/14-enter-value.txt",
+      "image_sha256": "16f0226762eacd4b0e5966241eda75ecd9b9ce2e878a8740f07cabee623e733e",
+      "transcript_sha256": "bf459101cbc0983e108479872e547448bf76c8ce7d1c43568b675a263ede739c",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 82770,
+      "value": "GET"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 15,
+      "title": "Confirm",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/15-confirm.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/15-confirm.txt",
+      "image_sha256": "d579365cc94a5b599995440923513b695c5da1ebf2c059130f9b40aefceb73a2",
+      "transcript_sha256": "a14f72fb121c9714b8f40895875d8d9b016ca818f26cf71eb18a31fafd9c85f2",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 83105,
+      "selected": "Confirm"
+    },
+    {
+      "journey": "security-rules-security-rules",
+      "journey_family": "security-rules-security-rules",
+      "session_index": 1,
+      "step": 16,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-rules/16-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules/16-command-result.txt",
+      "image_sha256": "f51ca27705b79d20f989cc433eb6b18294cc3229f04e520b64b6c6d0e05d5626",
+      "transcript_sha256": "9973837aea426a486f1ccbd6ddef275c223e012c0da80111114c6275bb74b2db",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log",
+      "pty_byte_offset": 84609,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-security-block-verified",
+      "journey_family": "security-rules-security-block-verified",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the matching request is blocked",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-rules-security-block-verified/01-verify-the-matching-request-is-blocked.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-verified/01-verify-the-matching-request-is-blocked.txt",
+      "image_sha256": "560e9ceb9dff43f3032a22db77b761d07aed1ba32d8d78759ef1578cc50773fd",
+      "transcript_sha256": "a9c15af3f0ecac4336ff6320c0c918c6397071cd20aec3c986dfb87ba60f0c66",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-verified.pty.log",
+      "pty_byte_offset": 262,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-rules-set-security-rule-mode",
+      "journey_family": "security-rules-set-security-rule-mode",
+      "session_index": 1,
+      "step": 3,
+      "title": "AND example.com (n=2, mode=AND) action=block status=403 reason=- loc=auto",
+      "kind": "menu",
+      "command": "set-security-rule-mode",
+      "image": "docs/assets/interactive/security-rules-set-security-rule-mode/03-and-example-com-n-2-mode-and-action-block-status-403-reason-loc-auto.png",
+      "transcript": "docs/assets/interactive/security-rules-set-security-rule-mode/03-and-example-com-n-2-mode-and-action-block-status-403-reason-loc-auto.txt",
+      "image_sha256": "2956f52f2c0b5f47041980ed36ab1128b24f9ddc9673bb2950662396a0602052",
+      "transcript_sha256": "43e168d547699899b7926e1fc0849da99436cad9a3e0eb5e9b94e056b5962844",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-set-security-rule-mode.pty.log",
+      "pty_byte_offset": 84955,
+      "selected": "AND example.com (n=2, mode=AND) action=block status=403 reason=- loc=auto"
+    },
+    {
+      "journey": "security-rules-set-security-rule-mode",
+      "journey_family": "security-rules-set-security-rule-mode",
+      "session_index": 1,
+      "step": 4,
+      "title": "or",
+      "kind": "menu",
+      "command": "set-security-rule-mode",
+      "image": "docs/assets/interactive/security-rules-set-security-rule-mode/04-or.png",
+      "transcript": "docs/assets/interactive/security-rules-set-security-rule-mode/04-or.txt",
+      "image_sha256": "d25b8d541dbea3852076377d74fb6f95414e74218235eeb205d4d06e73605abc",
+      "transcript_sha256": "94fc3e37cf0a80acfb46cb286856f1320fe21276bce873ecdb21f0b509956a0c",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-set-security-rule-mode.pty.log",
+      "pty_byte_offset": 85199,
+      "selected": "or"
+    },
+    {
+      "journey": "security-rules-set-security-rule-mode",
+      "journey_family": "security-rules-set-security-rule-mode",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-security-rule-mode",
+      "image": "docs/assets/interactive/security-rules-set-security-rule-mode/05-run.png",
+      "transcript": "docs/assets/interactive/security-rules-set-security-rule-mode/05-run.txt",
+      "image_sha256": "9982bf4dc8d328218a787b75433d395a476fee4a5ede39441ee6f5ab34fff1a8",
+      "transcript_sha256": "c03d93af8b282ebeb846d5284ec1362ab170bb743c2559f527f2537536425088",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-set-security-rule-mode.pty.log",
+      "pty_byte_offset": 85574,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-set-security-rule-mode",
+      "journey_family": "security-rules-set-security-rule-mode",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-security-rule-mode",
+      "image": "docs/assets/interactive/security-rules-set-security-rule-mode/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-set-security-rule-mode/06-command-result.txt",
+      "image_sha256": "5411cec4beaa448aa91ed1fa6ef6fe30ea5b439920d2301226fc48992ca53e2e",
+      "transcript_sha256": "21e00498555d5000c24419f5c2a1fe20a0f2b5da2b5351537484235810c6897b",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-set-security-rule-mode.pty.log",
+      "pty_byte_offset": 87052,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-security-mode-reset",
+      "journey_family": "security-rules-security-mode-reset",
+      "session_index": 1,
+      "step": 3,
+      "title": "OR example.com (n=2, mode=OR) action=block status=403 reason=- loc=auto",
+      "kind": "menu",
+      "command": "set-security-rule-mode",
+      "image": "docs/assets/interactive/security-rules-security-mode-reset/03-or-example-com-n-2-mode-or-action-block-status-403-reason-loc-auto.png",
+      "transcript": "docs/assets/interactive/security-rules-security-mode-reset/03-or-example-com-n-2-mode-or-action-block-status-403-reason-loc-auto.txt",
+      "image_sha256": "9a1a52c882173e91eb9d77c6e866784874dd983437441f3905d4820fd0f926a6",
+      "transcript_sha256": "72b0de78141aec4f635919087e6daf37cb5a8623d6c161f61c2fb039d2045b04",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-mode-reset.pty.log",
+      "pty_byte_offset": 84969,
+      "selected": "OR example.com (n=2, mode=OR) action=block status=403 reason=- loc=auto"
+    },
+    {
+      "journey": "security-rules-security-mode-reset",
+      "journey_family": "security-rules-security-mode-reset",
+      "session_index": 1,
+      "step": 4,
+      "title": "and (current)",
+      "kind": "menu",
+      "command": "set-security-rule-mode",
+      "image": "docs/assets/interactive/security-rules-security-mode-reset/04-and-current.png",
+      "transcript": "docs/assets/interactive/security-rules-security-mode-reset/04-and-current.txt",
+      "image_sha256": "5c65b58a0d587a753b3f1ab9e8c8b113646e723b223e3789210be9b234fbc80c",
+      "transcript_sha256": "cdbdae45988c4b5f5f73f5fbbba7fd9115a366a3de3e5d4b54a08bd809424d5a",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-mode-reset.pty.log",
+      "pty_byte_offset": 85091,
+      "selected": "and (current)"
+    },
+    {
+      "journey": "security-rules-security-mode-reset",
+      "journey_family": "security-rules-security-mode-reset",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-security-rule-mode",
+      "image": "docs/assets/interactive/security-rules-security-mode-reset/05-run.png",
+      "transcript": "docs/assets/interactive/security-rules-security-mode-reset/05-run.txt",
+      "image_sha256": "51fa09bd1e1c840a7d9d6f0aacf71f4a9afed00f39e68a03e5457e2c89e3c585",
+      "transcript_sha256": "11dbb2a757bfd9cf542a7184fa19ac78f37148294433a9fe00cad86cda657374",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-mode-reset.pty.log",
+      "pty_byte_offset": 85468,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-security-mode-reset",
+      "journey_family": "security-rules-security-mode-reset",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-security-rule-mode",
+      "image": "docs/assets/interactive/security-rules-security-mode-reset/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-security-mode-reset/06-command-result.txt",
+      "image_sha256": "d34951392383ff843f46cee6a4ef533c7c025860a23d954873226ed67981bb5d",
+      "transcript_sha256": "b8d1577c34ed1e198ef217c4912bf85d6adefcf09d5af0b0f501e56ff1bc00c6",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-mode-reset.pty.log",
+      "pty_byte_offset": 86947,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-duplicate-security-rule",
+      "journey_family": "security-rules-duplicate-security-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "duplicate-security-rule",
+      "image": "docs/assets/interactive/security-rules-duplicate-security-rule/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-duplicate-security-rule/03-enter-value.txt",
+      "image_sha256": "abd5bd0f16afa9885f4cc8b0337b4a8ece4b539df6e883c611a492ece6bd0707",
+      "transcript_sha256": "67b7b954a2e9eece7087e4eb55adae5d0551cd7e5cc6a190551d80e0b13de09c",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-duplicate-security-rule.pty.log",
+      "pty_byte_offset": 65070,
+      "value": "1"
+    },
+    {
+      "journey": "security-rules-duplicate-security-rule",
+      "journey_family": "security-rules-duplicate-security-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "duplicate-security-rule",
+      "image": "docs/assets/interactive/security-rules-duplicate-security-rule/04-run.png",
+      "transcript": "docs/assets/interactive/security-rules-duplicate-security-rule/04-run.txt",
+      "image_sha256": "e83ccf26346858297a7c8435f269801b6a70b7c528f87dfdf904afbe7d1356c8",
+      "transcript_sha256": "0ca8eff0a35952e7fe5154f87b169b0d86fd39184aba66e9332989a93c6274d7",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-duplicate-security-rule.pty.log",
+      "pty_byte_offset": 65406,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-duplicate-security-rule",
+      "journey_family": "security-rules-duplicate-security-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "duplicate-security-rule",
+      "image": "docs/assets/interactive/security-rules-duplicate-security-rule/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-duplicate-security-rule/05-command-result.txt",
+      "image_sha256": "4addfb1841127c83a155d81c04bf924a1746c365d080d077a3ab18d91c2b5019",
+      "transcript_sha256": "3efe889370237e9385da906c3040a1d16ea67e109bad451cf32b974a17dd83d1",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-duplicate-security-rule.pty.log",
+      "pty_byte_offset": 66886,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-move-security-rule",
+      "journey_family": "security-rules-move-security-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "move-security-rule",
+      "image": "docs/assets/interactive/security-rules-move-security-rule/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-move-security-rule/03-enter-value.txt",
+      "image_sha256": "2d906fcc60f5f75f61444d6d5ac1dcc9c1cba1729ae3bf5c1da5e31cb9247eff",
+      "transcript_sha256": "7fc61a1f7e5c5efcb7e1a6132b415651a625a9db2a5535314759181e178d5726",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-move-security-rule.pty.log",
+      "pty_byte_offset": 75649,
+      "value": "2"
+    },
+    {
+      "journey": "security-rules-move-security-rule",
+      "journey_family": "security-rules-move-security-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "move-security-rule",
+      "image": "docs/assets/interactive/security-rules-move-security-rule/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-move-security-rule/04-enter-value.txt",
+      "image_sha256": "b40265e5bfeebb24f395d4be2c96812f6a3ca8f520e00637c443b7a4224e2134",
+      "transcript_sha256": "801054aa363dfe03b90d5034a43154963842e53c2de42ecdab54bdfbb727c4dc",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-move-security-rule.pty.log",
+      "pty_byte_offset": 75683,
+      "value": "1"
+    },
+    {
+      "journey": "security-rules-move-security-rule",
+      "journey_family": "security-rules-move-security-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "move-security-rule",
+      "image": "docs/assets/interactive/security-rules-move-security-rule/05-run.png",
+      "transcript": "docs/assets/interactive/security-rules-move-security-rule/05-run.txt",
+      "image_sha256": "4ad034b27445ba51eb7dff7ca10d12c6551ee20076037e86f8832de3ef5547c4",
+      "transcript_sha256": "2b983bd4a41be71e6d5d0f088002e2a3dec2da34e157ea88a161be76c3c9bbed",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-move-security-rule.pty.log",
+      "pty_byte_offset": 76032,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-move-security-rule",
+      "journey_family": "security-rules-move-security-rule",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "move-security-rule",
+      "image": "docs/assets/interactive/security-rules-move-security-rule/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-move-security-rule/06-command-result.txt",
+      "image_sha256": "e0e56f9b388e5cce827af3fd3ddb603fe78d39363405731c1cdd94c20d458192",
+      "transcript_sha256": "e60a800445778e78190a6cb5e8d47aaca14ff81193103a097f2d356d9a39c431",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-move-security-rule.pty.log",
+      "pty_byte_offset": 77506,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-update-security-rule",
+      "journey_family": "security-rules-update-security-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "AND example.com (n=2, mode=AND) action=block status=403 reason=- loc=auto",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-rules-update-security-rule/03-and-example-com-n-2-mode-and-action-block-status-403-reason-loc-auto.png",
+      "transcript": "docs/assets/interactive/security-rules-update-security-rule/03-and-example-com-n-2-mode-and-action-block-status-403-reason-loc-auto.txt",
+      "image_sha256": "47b2e3eda1231e07bfc4bea71465c8273140deb65f8b7d704ead21661c2d9431",
+      "transcript_sha256": "22f36b3d5c4ec8ca54c1520dec58a90afa1ced88319f0d391bf19173bcb69fca",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.pty.log",
+      "pty_byte_offset": 69694,
+      "selected": "AND example.com (n=2, mode=AND) action=block status=403 reason=- loc=auto"
+    },
+    {
+      "journey": "security-rules-update-security-rule",
+      "journey_family": "security-rules-update-security-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-rules-update-security-rule/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-update-security-rule/04-enter-value.txt",
+      "image_sha256": "44aa11d1d3cf861d4ca61ffe4eaef4ca5fe02be8f88726341c70d78a5a2c34c3",
+      "transcript_sha256": "7ff6943cfe086002a14cdb5488cea16f0a659be2017250e02c1868560b81f642",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.pty.log",
+      "pty_byte_offset": 69904,
+      "value": "example.com"
+    },
+    {
+      "journey": "security-rules-update-security-rule",
+      "journey_family": "security-rules-update-security-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "Block when conditions match (recommended for new rules) (current)",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-rules-update-security-rule/05-block-when-conditions-match-recommended-for-new-rules-current.png",
+      "transcript": "docs/assets/interactive/security-rules-update-security-rule/05-block-when-conditions-match-recommended-for-new-rules-current.txt",
+      "image_sha256": "40834d68709d0fd35fe5e8a9131dc9c775bb476c93091e069141767c6f6d98d3",
+      "transcript_sha256": "510ebfcee4a99fc03e0810512f46eb105d96995274d596f50b272639faf456a7",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.pty.log",
+      "pty_byte_offset": 70341,
+      "selected": "Block when conditions match (recommended for new rules) (current)"
+    },
+    {
+      "journey": "security-rules-update-security-rule",
+      "journey_family": "security-rules-update-security-rule",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-rules-update-security-rule/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-update-security-rule/06-enter-value.txt",
+      "image_sha256": "2bd26b81c9d126696b6ba8c9f60c4a974d007642346832749aa4673e64f14afa",
+      "transcript_sha256": "8065934891d33910e8a1d451420f5fcea7b629b9626658d0ddfd0d4c716e3e39",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.pty.log",
+      "pty_byte_offset": 70423,
+      "value": "404"
+    },
+    {
+      "journey": "security-rules-update-security-rule",
+      "journey_family": "security-rules-update-security-rule",
+      "session_index": 1,
+      "step": 7,
+      "title": "Keep current",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-rules-update-security-rule/07-keep-current.png",
+      "transcript": "docs/assets/interactive/security-rules-update-security-rule/07-keep-current.txt",
+      "image_sha256": "ab74b198df4ef20906344dde560abb4b9344e3cc2e4301f4a6e702db57cbc7d2",
+      "transcript_sha256": "f151357752b081a22fcdb86c5f4d7f9c7936fc9d3fbe02fcd4e75fc3ca8b7c86",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.pty.log",
+      "pty_byte_offset": 70555,
+      "selected": "Keep current"
+    },
+    {
+      "journey": "security-rules-update-security-rule",
+      "journey_family": "security-rules-update-security-rule",
+      "session_index": 1,
+      "step": 8,
+      "title": "Run",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-rules-update-security-rule/08-run.png",
+      "transcript": "docs/assets/interactive/security-rules-update-security-rule/08-run.txt",
+      "image_sha256": "90d246bfe1da8b67d5128568658e2dfcd70bcd8583c9f8a364016d7a3547d892",
+      "transcript_sha256": "e15cf8b70b9c61e094258814c6e020b48e77ebe4c110de99da00ea7819a6f686",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.pty.log",
+      "pty_byte_offset": 70999,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-update-security-rule",
+      "journey_family": "security-rules-update-security-rule",
+      "session_index": 1,
+      "step": 9,
+      "title": "Command result",
+      "kind": "result",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-rules-update-security-rule/09-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-update-security-rule/09-command-result.txt",
+      "image_sha256": "e02af819d4f9c4f6e2986df6ee07c4bb472fb53a272680f13c3d321a7cbab82c",
+      "transcript_sha256": "46acb96cbfd5662ddab16a2fc4b9b1070779927f2635902254ae75c87c6b596f",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.pty.log",
+      "pty_byte_offset": 72485,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-disable-security-rule",
+      "journey_family": "security-rules-disable-security-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "AND example.com (n=2, mode=AND) action=block status=404 reason=- loc=auto",
+      "kind": "menu",
+      "command": "disable-security-rule",
+      "image": "docs/assets/interactive/security-rules-disable-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto.png",
+      "transcript": "docs/assets/interactive/security-rules-disable-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto.txt",
+      "image_sha256": "c97cd92739ce96e975e6b6bedd5a14d9306c9e66bffd378ff7999ca7cec627ca",
+      "transcript_sha256": "6ac0f1415645d8a59746fb957edcf734635bd0768fad83f292d731efb31dd634",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-disable-security-rule.pty.log",
+      "pty_byte_offset": 76592,
+      "selected": "AND example.com (n=2, mode=AND) action=block status=404 reason=- loc=auto"
+    },
+    {
+      "journey": "security-rules-disable-security-rule",
+      "journey_family": "security-rules-disable-security-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "disable-security-rule",
+      "image": "docs/assets/interactive/security-rules-disable-security-rule/04-run.png",
+      "transcript": "docs/assets/interactive/security-rules-disable-security-rule/04-run.txt",
+      "image_sha256": "0804aa7be271424d17870eccddb0a29706b84073f809ccf9d587d8472dcc5efd",
+      "transcript_sha256": "89158e5a490f32a19efd973e4663e3a2dd924585718000f583845bc8124370a3",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-disable-security-rule.pty.log",
+      "pty_byte_offset": 76909,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-disable-security-rule",
+      "journey_family": "security-rules-disable-security-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "disable-security-rule",
+      "image": "docs/assets/interactive/security-rules-disable-security-rule/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-disable-security-rule/05-command-result.txt",
+      "image_sha256": "0a3be60d0f90b637664a1491c5bd20719bbf63a33b0a3d22ae5776032c270411",
+      "transcript_sha256": "4e4439c50ffd6fa6542edadc2e04649b9742a068e2a3ff9cfee9f30cec72198b",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-disable-security-rule.pty.log",
+      "pty_byte_offset": 78381,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-enable-security-rule",
+      "journey_family": "security-rules-enable-security-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "AND example.com (n=2, mode=AND) action=block status=404 reason=- loc=auto [disabled]",
+      "kind": "menu",
+      "command": "enable-security-rule",
+      "image": "docs/assets/interactive/security-rules-enable-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto-disabled.png",
+      "transcript": "docs/assets/interactive/security-rules-enable-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto-disabled.txt",
+      "image_sha256": "a39535f63affeb0b33a842dabba4ee782b02147f2aeadbd410e3d27b7eefa8db",
+      "transcript_sha256": "f3b94e644fb68c803899e8ab373eee4dcea340680d7993b76ad3d8a54e404887",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-enable-security-rule.pty.log",
+      "pty_byte_offset": 84501,
+      "selected": "AND example.com (n=2, mode=AND) action=block status=404 reason=- loc=auto [disabled]"
+    },
+    {
+      "journey": "security-rules-enable-security-rule",
+      "journey_family": "security-rules-enable-security-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "enable-security-rule",
+      "image": "docs/assets/interactive/security-rules-enable-security-rule/04-run.png",
+      "transcript": "docs/assets/interactive/security-rules-enable-security-rule/04-run.txt",
+      "image_sha256": "c677e4f50327ccc68df872568717c1a5e4fed3510a8c0bd1d39d0a5f9b1ac0c8",
+      "transcript_sha256": "46f30303378eb96f7e7169456c503842b3cf2d94777a41588fb159132b23fc60",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-enable-security-rule.pty.log",
+      "pty_byte_offset": 84814,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-enable-security-rule",
+      "journey_family": "security-rules-enable-security-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "enable-security-rule",
+      "image": "docs/assets/interactive/security-rules-enable-security-rule/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-enable-security-rule/05-command-result.txt",
+      "image_sha256": "150634d6027cb8c9a0e8ef3896f088abb030c4b27b73202c2d6dbda49f3dbebc",
+      "transcript_sha256": "d1daf67acbe199307b897d3dc38ca1292481ef54e40889ac09151e8a5618fc7d",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-enable-security-rule.pty.log",
+      "pty_byte_offset": 86285,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-remove-security-rule",
+      "journey_family": "security-rules-remove-security-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "AND example.com (n=2, mode=AND) action=block status=404 reason=- loc=auto",
+      "kind": "menu",
+      "command": "remove-security-rule",
+      "image": "docs/assets/interactive/security-rules-remove-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto.png",
+      "transcript": "docs/assets/interactive/security-rules-remove-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto.txt",
+      "image_sha256": "a975ee4a1d137286d061fad57552e811284281e6fbbc79fe66ff328cba00668d",
+      "transcript_sha256": "6ac0f1415645d8a59746fb957edcf734635bd0768fad83f292d731efb31dd634",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-remove-security-rule.pty.log",
+      "pty_byte_offset": 93541,
+      "selected": "AND example.com (n=2, mode=AND) action=block status=404 reason=- loc=auto"
+    },
+    {
+      "journey": "security-rules-remove-security-rule",
+      "journey_family": "security-rules-remove-security-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-security-rule",
+      "image": "docs/assets/interactive/security-rules-remove-security-rule/04-run.png",
+      "transcript": "docs/assets/interactive/security-rules-remove-security-rule/04-run.txt",
+      "image_sha256": "706ff321754bfe8db8e4f7f84f287715c3a16f1e08bcf715ff06ee974b1fb9dc",
+      "transcript_sha256": "92e55522c3ab0c8c66f5d3ccf3b61d9a8bc8d00765c3bf2c3e937f3440f94a35",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-remove-security-rule.pty.log",
+      "pty_byte_offset": 93920,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-remove-security-rule",
+      "journey_family": "security-rules-remove-security-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-security-rule",
+      "image": "docs/assets/interactive/security-rules-remove-security-rule/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-remove-security-rule/05-enter-value.txt",
+      "image_sha256": "d4a90fc2c44c6060e9bfb6bbf1fc696ed5e1bbc48f836918ade74567aca0c474",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-remove-security-rule.pty.log",
+      "pty_byte_offset": 93974,
+      "value": "YES"
+    },
+    {
+      "journey": "security-rules-remove-security-rule",
+      "journey_family": "security-rules-remove-security-rule",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-security-rule",
+      "image": "docs/assets/interactive/security-rules-remove-security-rule/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-remove-security-rule/06-command-result.txt",
+      "image_sha256": "a81b0c081c65dbefb32d5807912988963ebd13400cddb45532c2a3d11808a524",
+      "transcript_sha256": "2b8ae28474c759f05e50dca94d8f9f5eb621c0adb7a4274fca5e44882f86c56e",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-remove-security-rule.pty.log",
+      "pty_byte_offset": 95456,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-disable-all-security-rules",
+      "journey_family": "security-rules-disable-all-security-rules",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "disable-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-disable-all-security-rules/03-run.png",
+      "transcript": "docs/assets/interactive/security-rules-disable-all-security-rules/03-run.txt",
+      "image_sha256": "a1ebc084c1ccedc36c550389a296c8aba82af0bcf9dbe0d7cab328a25521ac72",
+      "transcript_sha256": "088f245e1c27bc9c297a100212dc48a49014ae471c63fd27fb2cb48ea2b59446",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-disable-all-security-rules.pty.log",
+      "pty_byte_offset": 78754,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-disable-all-security-rules",
+      "journey_family": "security-rules-disable-all-security-rules",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "disable-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-disable-all-security-rules/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-disable-all-security-rules/04-command-result.txt",
+      "image_sha256": "22d1c6233d1532cfc7e73446e38dcad373b8a8f431a51261084170b1dbfc2fee",
+      "transcript_sha256": "557fee4be69b53ddeec1e50dd032bd28031abdc995c763aa147d3f9f8634a171",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-disable-all-security-rules.pty.log",
+      "pty_byte_offset": 80239,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-enable-all-security-rules",
+      "journey_family": "security-rules-enable-all-security-rules",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "enable-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-enable-all-security-rules/03-run.png",
+      "transcript": "docs/assets/interactive/security-rules-enable-all-security-rules/03-run.txt",
+      "image_sha256": "11403c1154276ea17473424c5cb4da0261e69a4f09d91fe8e751a50c29ffc5f2",
+      "transcript_sha256": "ea177ca75a085c61003d7a35247a4b168528596045b063e6af9c421d6da91ca3",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-enable-all-security-rules.pty.log",
+      "pty_byte_offset": 86624,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-enable-all-security-rules",
+      "journey_family": "security-rules-enable-all-security-rules",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "enable-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-enable-all-security-rules/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-enable-all-security-rules/04-command-result.txt",
+      "image_sha256": "e57098b7b9c21826cc0b4872504ad079c67c9b883e6d358929782035cd300e43",
+      "transcript_sha256": "6783dd8bb8f2c2fabcead3073e169192d079b67e5ff77633e8f7c62a5bc589e5",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-enable-all-security-rules.pty.log",
+      "pty_byte_offset": 88108,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-list-security-rules",
+      "journey_family": "security-rules-list-security-rules",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "list-security-rules",
+      "image": "docs/assets/interactive/security-rules-list-security-rules/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-rules-list-security-rules/03-example-com.txt",
+      "image_sha256": "726986829768b3e68a771e4351296d586367f89bd6d0d003a1f5ebaceed1d993",
+      "transcript_sha256": "0c45d3b3332c4151b7f74452d10225e034b924002754c80a5a8c5ea126b013fd",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-list-security-rules.pty.log",
+      "pty_byte_offset": 77859,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-rules-list-security-rules",
+      "journey_family": "security-rules-list-security-rules",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-security-rules",
+      "image": "docs/assets/interactive/security-rules-list-security-rules/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-list-security-rules/04-command-result.txt",
+      "image_sha256": "b5e01dc6adcb471b45f0cb044ef5c52f4c2462bf397b8ecdb4f529c2479060ea",
+      "transcript_sha256": "093be73b4a3d6387d9c052e90a4bed39773b607c694edf0b5cbcb1a675d9f9c7",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-list-security-rules.pty.log",
+      "pty_byte_offset": 78177,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-security-bulk-cancel",
+      "journey_family": "security-rules-security-bulk-cancel",
+      "session_index": 1,
+      "step": 3,
+      "title": "Cancel",
+      "kind": "menu",
+      "command": "remove-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-security-bulk-cancel/03-cancel.png",
+      "transcript": "docs/assets/interactive/security-rules-security-bulk-cancel/03-cancel.txt",
+      "image_sha256": "b17c788aef943be5199074a3bd4f5ffa2ab87c6dd97146a1a6a1565fb5ec8238",
+      "transcript_sha256": "ab4a4aefe01a303946ec0069baddbce21e11e08bb1671a5b7a9248c3fec8c6bb",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-bulk-cancel.pty.log",
+      "pty_byte_offset": 98692,
+      "selected": "Cancel"
+    },
+    {
+      "journey": "security-rules-security-bulk-cancel",
+      "journey_family": "security-rules-security-bulk-cancel",
+      "session_index": 1,
+      "step": 4,
+      "title": "Return without running",
+      "kind": "menu",
+      "command": "remove-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-security-bulk-cancel/04-return-without-running.png",
+      "transcript": "docs/assets/interactive/security-rules-security-bulk-cancel/04-return-without-running.txt",
+      "image_sha256": "939c81150a82e09f6042fa9aac893bdbf3eabf1489eaed1c60739e7411f098d7",
+      "transcript_sha256": "3c2486fa5289956b516ad9d871913a7592c9b11d114980137d23ff5850b1947d",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-bulk-cancel.pty.log",
+      "pty_byte_offset": 99304,
+      "selected": "Back"
+    },
+    {
+      "journey": "security-rules-remove-all-security-rules",
+      "journey_family": "security-rules-remove-all-security-rules",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-remove-all-security-rules/03-run.png",
+      "transcript": "docs/assets/interactive/security-rules-remove-all-security-rules/03-run.txt",
+      "image_sha256": "d832160db5b3ac3acdf5e8bd4718f99935910201a80894d958ee6cd6cc1ad03c",
+      "transcript_sha256": "9be89c411a494a0ab65719c25664503c4af84a7ebf85b6297558b07b3f299959",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-remove-all-security-rules.pty.log",
+      "pty_byte_offset": 97910,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-rules-remove-all-security-rules",
+      "journey_family": "security-rules-remove-all-security-rules",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-remove-all-security-rules/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-remove-all-security-rules/04-enter-value.txt",
+      "image_sha256": "d7617ace42bd692bd4d765a441fa5e5be7ebe954033fca7c79677eb541bdfb21",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-remove-all-security-rules.pty.log",
+      "pty_byte_offset": 97964,
+      "value": "YES"
+    },
+    {
+      "journey": "security-rules-remove-all-security-rules",
+      "journey_family": "security-rules-remove-all-security-rules",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-all-security-rules",
+      "image": "docs/assets/interactive/security-rules-remove-all-security-rules/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-remove-all-security-rules/05-command-result.txt",
+      "image_sha256": "b122ecaa58b7b1521ed99f39d7a0d79a476238623855f8ca49fa0eafb4f283e1",
+      "transcript_sha256": "7949cc26bba51fe4a2a2077671304ad9ea0dafa60639cd6f53aa19014fff86ff",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-remove-all-security-rules.pty.log",
+      "pty_byte_offset": 99459,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/03-example-com.txt",
+      "image_sha256": "acbb3f3244034dde5d0d26788d8a462d95b511b2196647db49d4a42f3fee0961",
+      "transcript_sha256": "b3be62dc16c7396ff15db6f2e7ace786dea5d5ca310a65c6774d2de0c9b9ccfc",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 74301,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 4,
+      "title": "Require conditions to match",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/04-require-conditions-to-match.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/04-require-conditions-to-match.txt",
+      "image_sha256": "8e18189fa35a646baa6c9c242e77161181b3dbe1e921c1cdaa051734fefe34e1",
+      "transcript_sha256": "38529aada6dbc57f2d632848ff9e63c188a204b77b53ac729bd9a47edc314d17",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 74939,
+      "selected": "Require conditions to match"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/05-enter-value.txt",
+      "image_sha256": "5e9337c52fa1a3904728ce3eeff35d61cfa9a05b788837be5d2d7d5391ffad28",
+      "transcript_sha256": "3bbeab93dc8f12a1d7be7db340897d970708b325b3adb4589d622c7aa7d9df17",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 74982,
+      "value": "1"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/06-enter-value.txt",
+      "image_sha256": "c47ad4193f54b89518e289da3ae039ac864ccb57b8d4515bb7ff1d8ac99b1b79",
+      "transcript_sha256": "a38b860f194ce6bd8c6faab7cb4696c39ad6078b5b572354efadf4222bb08f42",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 75057,
+      "value": "403"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 7,
+      "title": "Header \u2014 request header (name required)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/07-header-request-header-name-required.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/07-header-request-header-name-required.txt",
+      "image_sha256": "819b327142e00b25fafae0ba43815276674ebaa59c557ce828226b85f0ee1d20",
+      "transcript_sha256": "f78593c0fcf2140424aa5ba1f8755b986f239b890378a40c00ce974cbbf4ef32",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 75690,
+      "selected": "Header \u2014 request header (name required)"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/08-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/08-enter-value.txt",
+      "image_sha256": "4e59694d16d1b2327253549a0a4a982319c4d83881f4c64841ea87bb3a9478e3",
+      "transcript_sha256": "75050763212b3e4cd88ff12dd152167abb483d90970c9179312cb70c3b3593b6",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 75719,
+      "value": "X-Guide"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 9,
+      "title": "Equals \u2014 string equals. Example: header X-Guide equals prod",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/09-equals-string-equals-example-header-x-guide-equals-prod.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/09-equals-string-equals-example-header-x-guide-equals-prod.txt",
+      "image_sha256": "05e4d2193480594582f70c250eb1913055a0f896ccf6134553200f305b68a840",
+      "transcript_sha256": "182a8886b90d1213577e0765e4b8808d8d6fb4444a2a916ef07d431aac34041c",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 77063,
+      "selected": "Equals \u2014 string equals. Example: header X-Guide equals prod"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 10,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/10-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/10-enter-value.txt",
+      "image_sha256": "41900ed5354c4eaebebab43f9d2ec3c10143d8a1f42435431f9dd6dbbfbdff72",
+      "transcript_sha256": "b92dda6edb522657990fb6ba3e8330ce7ae3298e90233d2e26ee04d4c0d607f2",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 77104,
+      "value": "trusted"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 11,
+      "title": "Confirm",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/11-confirm.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/11-confirm.txt",
+      "image_sha256": "9e53f7f49fd36973b354d16b3c1f48fdb034cc5d7a8b2f585b172c8c4759d724",
+      "transcript_sha256": "04bce1fd9d2f2de6395bb42b6c1d3c1497ffb284d97dae64818a8e075c4b356f",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 77413,
+      "selected": "Confirm"
+    },
+    {
+      "journey": "security-rules-security-require",
+      "journey_family": "security-rules-security-require",
+      "session_index": 1,
+      "step": 12,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-require/12-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-security-require/12-command-result.txt",
+      "image_sha256": "85f0156b8791f56c95c93ae940f6f8cb8cded28229928ce9ed7486008fdd31a4",
+      "transcript_sha256": "cfb71ba28538127874890e83e6a566dbc7fe3440e43308fe9e4e95fd60a8c5d0",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log",
+      "pty_byte_offset": 78918,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/03-example-com.txt",
+      "image_sha256": "a865c75b682862a627b18dc2f522e05b39229a182a0d474ea08817c44517af1f",
+      "transcript_sha256": "b3be62dc16c7396ff15db6f2e7ace786dea5d5ca310a65c6774d2de0c9b9ccfc",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 74299,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 4,
+      "title": "Allow past later Block rules",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/04-allow-past-later-block-rules.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/04-allow-past-later-block-rules.txt",
+      "image_sha256": "3ce0b049e83252bae4e3825afc703d44f86cb0192200f4888bb741d41defa462",
+      "transcript_sha256": "5cc038105e9e4acf2847e44caa692fc3c3f66cfae544fbda598e7822c49fb7f6",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 75159,
+      "selected": "Allow past later Block rules"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/05-enter-value.txt",
+      "image_sha256": "d047dd845656a9fae787b012afdce664c5c1ee5f2ea4feaf597bb1fc23ac0a9a",
+      "transcript_sha256": "3bbeab93dc8f12a1d7be7db340897d970708b325b3adb4589d622c7aa7d9df17",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 75202,
+      "value": "1"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 6,
+      "title": "Header \u2014 request header (name required)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/06-header-request-header-name-required.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/06-header-request-header-name-required.txt",
+      "image_sha256": "7eeade431edecef35d6e4e18d876efcd16456b6b120cf55c8c11be73312a9bb5",
+      "transcript_sha256": "f78593c0fcf2140424aa5ba1f8755b986f239b890378a40c00ce974cbbf4ef32",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 75835,
+      "selected": "Header \u2014 request header (name required)"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/07-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/07-enter-value.txt",
+      "image_sha256": "f4219489f5a2b158f68447f4ce8a4bf0c229c0382ab24d973dd16fc5fef79f77",
+      "transcript_sha256": "75050763212b3e4cd88ff12dd152167abb483d90970c9179312cb70c3b3593b6",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 75864,
+      "value": "X-Guide"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 8,
+      "title": "Equals \u2014 string equals. Example: header X-Guide equals prod",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/08-equals-string-equals-example-header-x-guide-equals-prod.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/08-equals-string-equals-example-header-x-guide-equals-prod.txt",
+      "image_sha256": "0afb38574ad1cc55d016e230c71558b1570af119c87c444b4087126471d140b7",
+      "transcript_sha256": "182a8886b90d1213577e0765e4b8808d8d6fb4444a2a916ef07d431aac34041c",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 77208,
+      "selected": "Equals \u2014 string equals. Example: header X-Guide equals prod"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 9,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/09-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/09-enter-value.txt",
+      "image_sha256": "5e51088b10bf4b044ed3295f0b40532e0392a48e18e0eb7aa71848eacc3d7118",
+      "transcript_sha256": "b92dda6edb522657990fb6ba3e8330ce7ae3298e90233d2e26ee04d4c0d607f2",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 77249,
+      "value": "trusted"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 10,
+      "title": "Confirm",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/10-confirm.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/10-confirm.txt",
+      "image_sha256": "3fcd5a09af274cabf5806abf4ef8f4a32bb821601bb4dce1e63d733c6ddbbf81",
+      "transcript_sha256": "1db02780478defcca496313c2b041405b7c04778617f1cb07906b3ed482d2638",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 77625,
+      "selected": "Confirm"
+    },
+    {
+      "journey": "security-rules-security-allow",
+      "journey_family": "security-rules-security-allow",
+      "session_index": 1,
+      "step": 11,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-allow/11-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-security-allow/11-command-result.txt",
+      "image_sha256": "6fde64de16c8b983a503c857e8356889e1a1fae18dc70f555384ca3c53db30d4",
+      "transcript_sha256": "d5bd6d89b071aef5f1212498cbc971080f5e6b4f711cae0d167b30df923ce7d3",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log",
+      "pty_byte_offset": 79128,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/03-example-com.txt",
+      "image_sha256": "f3b1512a793fc1802a1bcf85fefb515c03e166c29ef1bbcaa1de7e7570d1cb7a",
+      "transcript_sha256": "b3be62dc16c7396ff15db6f2e7ace786dea5d5ca310a65c6774d2de0c9b9ccfc",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 73106,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 4,
+      "title": "Block when conditions match (recommended for new rules)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/04-block-when-conditions-match-recommended-for-new-rules.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/04-block-when-conditions-match-recommended-for-new-rules.txt",
+      "image_sha256": "19624ca7a558852839cac961a71afabab0d1b9beb4b6734f0edce2386aacebd1",
+      "transcript_sha256": "6d949250b46f193ed5824e7c74aed37f2c78fe40639a7cd7a88bb0fe32aeab95",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 73522,
+      "selected": "Block when conditions match (recommended for new rules)"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/05-enter-value.txt",
+      "image_sha256": "d696cf68a0187b3da2522d2b9454f7738d369650bfe3165fdcb810a9412a5eb4",
+      "transcript_sha256": "3bbeab93dc8f12a1d7be7db340897d970708b325b3adb4589d622c7aa7d9df17",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 73565,
+      "value": "1"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/06-enter-value.txt",
+      "image_sha256": "ed088143453b74ce7e1767ad4be792947bc9762166eeb4c1e967f7e865a40d84",
+      "transcript_sha256": "a38b860f194ce6bd8c6faab7cb4696c39ad6078b5b572354efadf4222bb08f42",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 73640,
+      "value": "403"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 7,
+      "title": "Header \u2014 request header (name required)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/07-header-request-header-name-required.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/07-header-request-header-name-required.txt",
+      "image_sha256": "cc8ca8e88fc04fc24415a46bf7ce2e65745a8bc8ed470e44c75637d8ad8551bc",
+      "transcript_sha256": "f78593c0fcf2140424aa5ba1f8755b986f239b890378a40c00ce974cbbf4ef32",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 74273,
+      "selected": "Header \u2014 request header (name required)"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/08-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/08-enter-value.txt",
+      "image_sha256": "68aeed6362f8cba38a941ffe3122b06da293353fc1fab6f186329ceea8594ed3",
+      "transcript_sha256": "47a4f914d2e2a135453d923995da67d770419ff0f92e75c3b638daa8aee61d28",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 74305,
+      "value": "User-Agent"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 9,
+      "title": "Contains \u2014 substring present (case-insensitive). Example: header User-Agent contains debug",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/09-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/09-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.txt",
+      "image_sha256": "d6921e8361616e9d009f37598a40aff3fd8b8dd0ebacc209b14442543ecc63d0",
+      "transcript_sha256": "13931a9b86826aa5f3b1b7eab8177d40e4e1a9842684355469be09b443eb0cf7",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 78441,
+      "selected": "Contains \u2014 substring present (case-insensitive). Example: header User-Agent contains debug"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 10,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/10-enter-value.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/10-enter-value.txt",
+      "image_sha256": "c390790a30aaa016565c208b5c00636509d61a2e388c6de6be39c00b87ee9579",
+      "transcript_sha256": "974ef4f1c435b7a0e9a0858719e6fe0576aa8ee0a80851d2f060557e964cf51e",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 78483,
+      "value": "BadBot"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 11,
+      "title": "Confirm",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/11-confirm.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/11-confirm.txt",
+      "image_sha256": "5e8ed603f928abf6a7c3648a66d20639b9d8da7fe51f3874741142ba89fc4ffa",
+      "transcript_sha256": "56b47c70f02b21087d263c7f2fd42c14a978485a9fbff68079f35fda296eab8b",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 78798,
+      "selected": "Confirm"
+    },
+    {
+      "journey": "security-rules-security-block-after-allow",
+      "journey_family": "security-rules-security-block-after-allow",
+      "session_index": 1,
+      "step": 12,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-rules-security-block-after-allow/12-command-result.png",
+      "transcript": "docs/assets/interactive/security-rules-security-block-after-allow/12-command-result.txt",
+      "image_sha256": "2725a2bd57da8314d1d6f0f1dd73d2fa8cb044b48dd6ddc987f78f99dc0a3dc8",
+      "transcript_sha256": "e0bbedb3602a64ad9af4ec40b55dee118e3cfd0d64b39b5acc47222fa050abf7",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log",
+      "pty_byte_offset": 80301,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-rules-security-rules-config",
+      "journey_family": "security-rules-security-rules-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/security-rules-security-rules-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/security-rules-security-rules-config/03-configuration-test-passed.txt",
+      "image_sha256": "fff48d795d603f370f45bdb983289cdbc1ffe445c18c7fff127e371b74abf380",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/security-rules/security-rules-security-rules-config.pty.log",
+      "pty_byte_offset": 8027,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "security-baseline",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-rules/security-baseline.headers"
+    },
+    {
+      "label": "security-block",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-rules/security-block.headers"
+    },
+    {
+      "label": "security-block-verified",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "http://127.0.0.1",
+        "-H",
+        "Host: example.com",
+        "-A",
+        "BadBot"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "security-mode-or",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-rules/security-mode-or.headers"
+    },
+    {
+      "label": "security-updated-status",
+      "status": "passed",
+      "http_status": 404,
+      "headers": "docs/assets/interactive/evidence/security-rules/security-updated-status.headers"
+    },
+    {
+      "label": "security-disabled",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-rules/security-disabled.headers"
+    },
+    {
+      "label": "security-enabled",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-rules/security-enabled.headers"
+    },
+    {
+      "label": "require-missing",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-rules/require-missing.headers"
+    },
+    {
+      "label": "require-present",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-rules/require-present.headers"
+    },
+    {
+      "label": "allow-exception",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-rules/allow-exception.headers"
+    },
+    {
+      "label": "allow-does-not-open-nonmatch",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-rules/allow-does-not-open-nonmatch.headers"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "security"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "7c1dd220033d82379b31717bac1fd0908179eba9929f06ab6253c9c550814f1b",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 88
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/security-rules-recordings.tar.gz",
+    "sha256": "baadf37da41ff33aa05f8fc920d001fd8c6bc4f5d0c7ab652ef9004132be4445",
+    "size": 161124,
+    "members": {
+      "docs/assets/interactive/evidence/security-rules/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/security-rules/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/security-rules/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/security-rules/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/security-rules/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/security-rules/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-rules/008-fixture-image.log": {
+        "sha256": "3dc5deccf80400742a1886c3a02084e48f35fe8b62c26a52bebc157a06124776",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/security-rules/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/security-rules/010-fixture-backend.log": {
+        "sha256": "d3328fb14550ec87e947a679ae3c8e2bdf7302149c70f341c42d9449cbe60809",
+        "size": 2811
+      },
+      "docs/assets/interactive/evidence/security-rules/011-fixture-public-demo.log": {
+        "sha256": "655ba857c5db371c44aa4c0674df5d7493f199cd6472c906a49b6ae171f95c0f",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/security-rules/012-fixture-https.log": {
+        "sha256": "5a6a4d4d31d0da03ddeb74381c12cc0161d4a776519a8c1ce20a6aeee6908ce8",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/security-rules/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/security-rules/014-command-alias.log": {
+        "sha256": "3fcc984da898f7bfcbc7af4e22373f97402205fafe171dbbf58f2d35f143c336",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/security-rules/015-command-alias.log": {
+        "sha256": "11ca90e1ee756c9db8bc20a8a51a7f01ccbcda2faf3d27fcfa2520e42ae12fca",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/security-rules/016-command-alias.log": {
+        "sha256": "11ca90e1ee756c9db8bc20a8a51a7f01ccbcda2faf3d27fcfa2520e42ae12fca",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/security-rules/017-command-alias.log": {
+        "sha256": "a79d13e181b234a6f0cbd70477c17be87e51efcd0f25ff119465e4cae2013406",
+        "size": 24
+      },
+      "docs/assets/interactive/evidence/security-rules/018-command-alias.log": {
+        "sha256": "579752df0c0029c87d633b6ee5fe98e49df83de4e559b4ae0964bb9caf422bc0",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/security-rules/019-command-alias.log": {
+        "sha256": "159c9984c555525db20ea996fd40c3cb53babf49aa256e0c99e63db2942ba8a0",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/security-rules/020-command-alias.log": {
+        "sha256": "8cb033b1fea59f6f14baddd62652a5b4ab827175f25e9940678acb9fd6a6c414",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/security-rules/021-command-alias.log": {
+        "sha256": "b10056132401835c74ee5a6eb3081c4db49aafd7cc8aeea5867cd2e9b5a4adde",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/security-rules/022-command-alias.log": {
+        "sha256": "bd42704540e57c5e34119d8fcf7ff155e7ad05741a0350ba44e4a831044e2b98",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/security-rules/023-command-alias.log": {
+        "sha256": "870b32e34b5def577e9962bb55cab2a1b7cd89361e2f04c0f2236ac1d95ed20e",
+        "size": 27
+      },
+      "docs/assets/interactive/evidence/security-rules/024-command-alias.log": {
+        "sha256": "b86603e0f422a5ab5d7fa502ed348a703bfa4f3f99603dfacd99e105f86cd6fe",
+        "size": 26
+      },
+      "docs/assets/interactive/evidence/security-rules/025-command-alias.log": {
+        "sha256": "b7bdf9b635e1e8820a69994e101684ff4fd3cf57495602adb0d5b36590a13f2a",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/security-rules/026-command-alias.log": {
+        "sha256": "a0f68696cd630161fa70d5db9955e45e97b7e0bd8147d8f513bd947024cf35ab",
+        "size": 26
+      },
+      "docs/assets/interactive/evidence/security-rules/027-command-alias.log": {
+        "sha256": "a0f68696cd630161fa70d5db9955e45e97b7e0bd8147d8f513bd947024cf35ab",
+        "size": 26
+      },
+      "docs/assets/interactive/evidence/security-rules/028-command-alias.log": {
+        "sha256": "3fcc984da898f7bfcbc7af4e22373f97402205fafe171dbbf58f2d35f143c336",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/security-rules/029-remove-require-fixture.log": {
+        "sha256": "b56687e6594d8fd41b4c776382c6bee083e7d6c3c869c67509e6622a0fc14e45",
+        "size": 1438
+      },
+      "docs/assets/interactive/evidence/security-rules/030-command-alias.log": {
+        "sha256": "3fcc984da898f7bfcbc7af4e22373f97402205fafe171dbbf58f2d35f143c336",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/security-rules/031-command-alias.log": {
+        "sha256": "3fcc984da898f7bfcbc7af4e22373f97402205fafe171dbbf58f2d35f143c336",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/security-rules/032-remove-rule-fixtures.log": {
+        "sha256": "68742e7b0e7a0b9ff58dadf4a23439aab2e79bc43529f040c7d1f6a61d75ed27",
+        "size": 1438
+      },
+      "docs/assets/interactive/evidence/security-rules/033-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/security-rules/allow-does-not-open-nonmatch.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-rules/allow-does-not-open-nonmatch.headers": {
+        "sha256": "b57f95f8f836b6686e97767179691584386255205e4ff974d26c5cc0b80f5e3e",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-rules/allow-does-not-open-nonmatch.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/allow-does-not-open-nonmatch.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/allow-exception.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-rules/allow-exception.headers": {
+        "sha256": "3fa4076df46ea6d99d71221fdb7a6f104b3c0109260a9016b810e726bc1e421c",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-rules/allow-exception.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/allow-exception.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/commands.jsonl": {
+        "sha256": "3599ab7a2bcd7b6beb719f5ee67041fc4ea58d646d56b139c5106281fcb4c3cd",
+        "size": 16601
+      },
+      "docs/assets/interactive/evidence/security-rules/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/require-missing.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-rules/require-missing.headers": {
+        "sha256": "8d210113152391d5b80525192d7b6b846925da6ea993485db673e75d27497aa1",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-rules/require-missing.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/require-missing.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/require-present.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-rules/require-present.headers": {
+        "sha256": "e26e25f70f788c5c3d74459312d821f9b977dfadc2d184d8dfe46bb983390ca4",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-rules/require-present.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/require-present.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/security-baseline.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-rules/security-baseline.headers": {
+        "sha256": "150cf76cae9aee25ae3d5bba2d5e90551a224f7adad245867edcbe5752f9dfaf",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-rules/security-baseline.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/security-baseline.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/security-block.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-rules/security-block.headers": {
+        "sha256": "3aa87fbf7ab80827e32c3807438c4a6748040c85d1c6219657d849b01a7e213f",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-rules/security-block.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/security-block.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/security-disabled.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-rules/security-disabled.headers": {
+        "sha256": "6e4024bf52f4b861f8e1a98037c0b236c87a1d33646201430fe9841c7cd31dba",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-rules/security-disabled.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/security-disabled.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/security-enabled.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-rules/security-enabled.headers": {
+        "sha256": "f66eb914740e6742b244c20a22240f873385463acd61b0bf2a4db4967e78e26c",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-rules/security-enabled.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/security-enabled.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/security-mode-or.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-rules/security-mode-or.headers": {
+        "sha256": "89977b7debca9a5fa0086dc11b2647aef30e69a7a507d6c4483619be22e9418d",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-rules/security-mode-or.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/security-mode-or.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-disable-all-security-rules.events.jsonl": {
+        "sha256": "07c2de71b4f5a41b5b225cfb3bed51ab74defcf96fe4faab85644ac16e9cbe40",
+        "size": 18781
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-disable-all-security-rules.pty.log": {
+        "sha256": "f7d40aac6dc33337ff3851babcd89364e9167b7eddd9fc783e67e4a3cd1ccb5a",
+        "size": 88353
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-disable-security-rule.events.jsonl": {
+        "sha256": "b9a48fdf3e7ba7e052e24d5b02862c501eca379307bfcd7a67fab71b5178ec58",
+        "size": 17505
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-disable-security-rule.pty.log": {
+        "sha256": "8fa74679206b98a738b85275292b5c20a19c5b661c406fe9240cf5527f3ce7aa",
+        "size": 86503
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-duplicate-security-rule.events.jsonl": {
+        "sha256": "fd4266ce65974969a23eed41cf54e3de9607245bfac20e22a9f933b8147b0aa8",
+        "size": 18520
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-duplicate-security-rule.pty.log": {
+        "sha256": "4c956789ef9c23e2a53a7e8cf91e7307d290eb0eb236dc5fd7f3b66ccfb0c647",
+        "size": 75004
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-enable-all-security-rules.events.jsonl": {
+        "sha256": "4b7c171961f84c39a476ffb246b4258a81d9f3e36fbfeaa1af542b89f74239fc",
+        "size": 18346
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-enable-all-security-rules.pty.log": {
+        "sha256": "f5d7b194030790a9ca2947680f9a6aee217ad4e8c791a3c7fefb6b38a65c0770",
+        "size": 96222
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-enable-security-rule.events.jsonl": {
+        "sha256": "34a017db90194b54004e7b5a3406eb42eac89a1b22c821ad9afa55c148c81d99",
+        "size": 17116
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-enable-security-rule.pty.log": {
+        "sha256": "4868cafb3b6261fc4c433375b2c5b867ffb4e5f8955c32dd631d5104320c1360",
+        "size": 94399
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-list-security-rules.events.jsonl": {
+        "sha256": "12c31ec8927a54266cc269a4b9354cf1447329f0ee118d743c2c78d5b0ccbc80",
+        "size": 15080
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-list-security-rules.pty.log": {
+        "sha256": "16813465ce269a62670ddd5b23d114e280f1e954019187c92bac60ac15a0a3d5",
+        "size": 86291
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-move-security-rule.events.jsonl": {
+        "sha256": "da3edec3fb5fb25d90b3ad98a53ed01ace361b0b781662ce0c6520497c6a2719",
+        "size": 17638
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-move-security-rule.pty.log": {
+        "sha256": "0766fff6c7da7de33c4706d027846a97027f2d794dd8ce395ad134a7669f86cf",
+        "size": 85624
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-remove-all-security-rules.events.jsonl": {
+        "sha256": "87d6943b0f0f96c84ad22e3e019a099449965a3be607d0e585de8e2c293cca2f",
+        "size": 19446
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-remove-all-security-rules.pty.log": {
+        "sha256": "7170c5b27cd28d131144c37fd0b993dedfb7bc70a14eaed03a4418ca65e8d8aa",
+        "size": 107577
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-remove-security-rule.events.jsonl": {
+        "sha256": "495bf80ded55dcab9ccd4ef6047347eafbd411feb338aab6cb5716aee66bc214",
+        "size": 18145
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-remove-security-rule.pty.log": {
+        "sha256": "f65eaafa7f7e804401bf38c2348f94ae5f7da4aee8db2281089847da57a19e07",
+        "size": 103574
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.events.jsonl": {
+        "sha256": "c0174953f4e7af1de41809777d4180bffce5c590bd179d6663c813447e4c3176",
+        "size": 22200
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-allow.pty.log": {
+        "sha256": "4a9aa40b46da551c01c8264d48810810772f5ac23b044086026ae35adeab65cd",
+        "size": 87242
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.events.jsonl": {
+        "sha256": "59f28dc99d067d2c4f0400f80769ac925d70b99eec0623e25b7b685071ab27f7",
+        "size": 25050
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-block-after-allow.pty.log": {
+        "sha256": "a97aea5d1071620c2f2eecf38db5f0ffa46bd193cc978176cb634dd8d4b52999",
+        "size": 88415
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-block-verified.events.jsonl": {
+        "sha256": "a0f724037738fd98c1bf656b8e2c305071bcef041d6ba3282854c1a152900a29",
+        "size": 1071
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-block-verified.pty.log": {
+        "sha256": "5cbfff1718fd30ac7a2450f45ac94ebfc6c830d92ce47924fe96536f4dc130d6",
+        "size": 262
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-bulk-cancel.events.jsonl": {
+        "sha256": "1a349afe312d16ee2291307a7b8aac8d3032cf085048d50d13def8912fd091c8",
+        "size": 17358
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-bulk-cancel.pty.log": {
+        "sha256": "452b7677e1cad7f5a3b7f9870ee55b379c0dcc7684138451c49e9aacd947cf1a",
+        "size": 107416
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-mode-reset.events.jsonl": {
+        "sha256": "5315648aecee42cfc62c8589d620d039c1ab6d5f5c09467ee1cec16ae36c8d83",
+        "size": 18176
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-mode-reset.pty.log": {
+        "sha256": "dca0a65f408b2e11456ed665dc8059b6ef6e2b550c910e172a7bb9ef09073d4b",
+        "size": 95061
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-require.events.jsonl": {
+        "sha256": "deb3d6320fbc0b0b03e313443592e3a2cbc7cf903ba1ed4550bf5e1d580b0802",
+        "size": 23142
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-require.pty.log": {
+        "sha256": "a1b23a04f9a4eff6a81d9721c587bf4715d0466290b1670801932c395888cb0f",
+        "size": 87036
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-rules-config.events.jsonl": {
+        "sha256": "053eddcfc857afef9f837e0196f6d780e439127ec6c52bfa226b65327e940a8c",
+        "size": 9540
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-rules-config.pty.log": {
+        "sha256": "c0ae99e5151125e6194277a498dc11ad04d2811379a9b1cff28b86ee434e8d2e",
+        "size": 16141
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.events.jsonl": {
+        "sha256": "e736d08c13defceb2a07626575c3bbe671a5dc0cb5c464a557486db427c0af6c",
+        "size": 27271
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-security-rules.pty.log": {
+        "sha256": "a48df4e419b474be0fba039badcfc77da6ef184ab441d7422d04b8ed581d5615",
+        "size": 92714
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-set-security-rule-mode.events.jsonl": {
+        "sha256": "45d06e560fb4d612abb5096d9e856da36165db316d659b7a0c41252085c757b0",
+        "size": 18775
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-set-security-rule-mode.pty.log": {
+        "sha256": "5b24d45e1f2691118c3efbbf79abcab1972d7b4b98681bfc6843d5a8b860c60b",
+        "size": 95174
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.events.jsonl": {
+        "sha256": "c4b08d823a14b5e8fd0459f629f3da6076b7697a653c845cb45711ac00f1c48c",
+        "size": 20650
+      },
+      "docs/assets/interactive/evidence/security-rules/security-rules-update-security-rule.pty.log": {
+        "sha256": "e4c3327ee2473f4f35a18d6b24452178bf7487a5a7e5b792c267c500880b462d",
+        "size": 80603
+      },
+      "docs/assets/interactive/evidence/security-rules/security-updated-status.body": {
+        "sha256": "9f6d0b634cab6787cdebb2a02e08a2e2ff6d8863344e46aa7bf387e607b827c3",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-rules/security-updated-status.headers": {
+        "sha256": "2581a908ce9dceed5027a2195c09e876bda21fe376fee8c4abf799c353eb93ab",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-rules/security-updated-status.status": {
+        "sha256": "f8bf41177a5f5e808a7ccb648b51080b031f15ca8018d91a576263d6cc626eb6",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-rules/security-updated-status.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  }
+}

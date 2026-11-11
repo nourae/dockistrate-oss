@@ -1,5 +1,10 @@
 # shellcheck shell=bash
 
+if ! declare -F __arg_choices_backend_header_records >/dev/null 2>&1; then
+  # shellcheck source=./arg_choices_headers.sh
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/arg_choices_headers.sh"
+fi
+
 function __arg_choices_yes_no() {
   echo "yes|Yes"
   echo "no|No"
@@ -68,7 +73,16 @@ function __arg_choices_cert_folder_ports() {
 function __arg_choices_cert_suffixes_for_domain() {
   local domain="${1:-}" seen="|443|" t="" d="" folder="" suffix="" line="" line_no=0
   echo "443|443 (default)"
-  if [ -n "$domain" ] && [ -d "$CERTS_DIR" ]; then
+  if declare -F __arg_choices_domain_certificates_active >/dev/null 2>&1 &&
+    __arg_choices_domain_certificates_active; then
+    while IFS= read -r suffix; do
+      [ -n "$suffix" ] || continue
+      case "$seen" in
+      *"|${suffix}|"*) ;;
+      *) seen="${seen}${suffix}|"; printf '%s|%s\n' "$suffix" "$suffix" ;;
+      esac
+    done < <(__arg_choices_domain_certificate_suffixes "$domain")
+  elif [ -n "$domain" ] && [ -d "$CERTS_DIR" ]; then
     for t in letsencrypt selfsigned custom; do
       [ -d "$CERTS_DIR/$t/live" ] || continue
       for d in "$CERTS_DIR/$t/live"/*; do
@@ -118,7 +132,9 @@ function __arg_choices_cert_suffixes_for_domain() {
 function __arg_choices_csv_col_values() {
   local file="${1:-}" header="${2:-}" expected_cols="${3:-0}" column_index="${4:-0}"
   [ -f "$file" ] || return 0
-  csv_require_header "$file" "$header" || return 0
+  state_csv_require_file "$file" "$header" || return 0
+  local shared_records=""
+  shared_records="$(state_csv_contents "$file" "$header")" || return 0
   local line="" line_no=0 value=""
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
@@ -128,7 +144,7 @@ function __arg_choices_csv_col_values() {
     value="${CSV_FIELDS[$column_index]-}"
     [ -n "$value" ] || continue
     printf '%s\n' "$value"
-  done <"$file"
+  done <<<"$shared_records"
 }
 
 function __arg_choices_backend_domains_all() {
@@ -164,8 +180,21 @@ function __arg_choices_backend_domains_http_https() {
   done <"$BACKEND_PORTS_FILE" | sort -u
 }
 
+# Ordinary aliases share these server settings with their owning backend.
+function __arg_choices_server_domains() {
+  {
+    __arg_choices_backend_domains_all
+    __arg_choices_dedicated_alias_column 1
+  } | LC_ALL=C sort -u
+}
+
 function __arg_choices_cert_domains() {
   local t="" d="" folder="" domain_part=""
+  if declare -F __arg_choices_domain_certificates_active >/dev/null 2>&1 &&
+    __arg_choices_domain_certificates_active; then
+    __arg_choices_domain_certificate_owners | LC_ALL=C sort -u
+    return
+  fi
   [ -d "$CERTS_DIR" ] || return 0
   for t in letsencrypt selfsigned custom; do
     [ -d "$CERTS_DIR/$t/live" ] || continue
@@ -201,54 +230,10 @@ function __arg_choices_dedicated_alias_column() {
   done <"$aliases_file" | sort -u
 }
 
-function __arg_choices_custom_header_names() {
-  local type="${1:-}"
-  [ -f "$CUSTOM_HEADERS_FILE" ] || return 0
-  csv_require_header "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER" || return 0
-  local line="" line_no=0 row_type="" row_name=""
-  while IFS= read -r line || [ -n "$line" ]; do
-    line_no=$((line_no + 1))
-    [ "$line_no" -eq 1 ] && continue
-    csv_parse_line "$line" || continue
-    [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || continue
-    row_type="${CSV_FIELDS[0]-}"
-    row_name="${CSV_FIELDS[1]-}"
-    [ -n "$row_name" ] || continue
-    if [ -n "$type" ] && [ "$row_type" != "$type" ]; then
-      continue
-    fi
-    printf '%s\n' "$row_name"
-  done <"$CUSTOM_HEADERS_FILE" | sort -u
-}
-
-function __arg_choices_backend_header_names() {
-  local domain="${1:-}" type="${2:-}"
-  [ -f "$BACKEND_HEADERS_FILE" ] || return 0
-  csv_require_header "$BACKEND_HEADERS_FILE" "$STATE_BACKEND_HEADERS_HEADER" || return 0
-  local line="" line_no=0 row_domain="" row_type="" row_name=""
-  while IFS= read -r line || [ -n "$line" ]; do
-    line_no=$((line_no + 1))
-    [ "$line_no" -eq 1 ] && continue
-    csv_parse_line "$line" || continue
-    [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_HEADERS_COLS" ] || continue
-    row_domain="${CSV_FIELDS[0]-}"
-    row_type="${CSV_FIELDS[1]-}"
-    row_name="${CSV_FIELDS[2]-}"
-    [ -n "$row_name" ] || continue
-    if [ -n "$domain" ] && [ "$row_domain" != "$domain" ]; then
-      continue
-    fi
-    if [ -n "$type" ] && [ "$row_type" != "$type" ]; then
-      continue
-    fi
-    printf '%s\n' "$row_name"
-  done <"$BACKEND_HEADERS_FILE" | sort -u
-}
-
 function __arg_choices_path_prefixes_for_domain_port() {
   local domain="${1:-}" port="${2:-}"
   [ -f "$BACKEND_PORTS_FILE" ] || return 0
-  local line="" line_no=0
+  local line="" line_no=0 escaped_path=""
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
     [ "$line_no" -eq 1 ] && continue
@@ -258,7 +243,10 @@ function __arg_choices_path_prefixes_for_domain_port() {
       [ "${STATE_BP_DOMAIN:-}" = "$domain" ] &&
       [ "${STATE_BP_LISTEN_PORT:-}" = "$port" ] &&
       [ -n "${STATE_BP_PATH_PREFIX:-}" ]; then
-      printf '%s\n' "$STATE_BP_PATH_PREFIX"
+      # Force CSV quoting: a literal pipe must not become a legacy choice
+      # separator when the picker decodes the value and its display label.
+      escaped_path="${STATE_BP_PATH_PREFIX//\"/\"\"}"
+      printf '"%s","%s"\n' "$escaped_path" "$escaped_path"
     fi
   done <"$BACKEND_PORTS_FILE" | sort -u
 }
@@ -266,7 +254,10 @@ function __arg_choices_path_prefixes_for_domain_port() {
 function __arg_choices_domain() {
   local cmd="$1" aliases_file=""
   case "$cmd" in
-  add-backend)
+  add-backend | init-domain-config)
+    ;;
+  add-acl | add-security-ip | update-acl | update-security-ip | add-security-rule | update-security-rule | set-backend-acl-policy | set-backend-acl-status | set-backend-security-rule-status)
+    __arg_choices_acl_domains
     ;;
   add-cert | replace-cert | remove-cert)
     {
@@ -285,10 +276,13 @@ function __arg_choices_domain() {
     echo "__ALL__|All domains"
     __arg_choices_backend_domains_all
     ;;
-  enable-backend-mtls)
-    __arg_choices_backend_domains_all
+  enable-backend-mtls | set-backend-http-version | set-backend-client-ip-header | set-backend-proxy-ip-header)
+    __arg_choices_server_domains
     ;;
-  add-backend-client-cert | remove-backend-client-cert | list-backend-client-certs | replace-backend-client-cert | export-backend-client-p12 | disable-backend-mtls | replace-backend-ca | remove-backend-ca)
+  add-backend-header | update-backend-header | remove-all-backend-headers | set-backend-hsts | set-backend-csp)
+    __arg_choices_header_domains
+    ;;
+  add-backend-client-cert | revoke-backend-client-cert | remove-backend-client-cert | list-backend-client-certs | replace-backend-client-cert | export-backend-client-p12 | disable-backend-mtls | replace-backend-ca | remove-backend-ca)
     __arg_choices_csv_col_values "$BACKEND_MTLS_FILE" "$STATE_BACKEND_MTLS_HEADER" "$STATE_BACKEND_MTLS_COLS" 0 | sort -u
     ;;
   remove-backend-client-ip-header)
@@ -298,12 +292,12 @@ function __arg_choices_domain() {
     __arg_choices_csv_col_values "$BACKEND_PROXY_IP_HEADER_FILE" "$STATE_BACKEND_PROXY_IP_HEADERS_HEADER" "$STATE_BACKEND_PROXY_IP_HEADERS_COLS" 0 | sort -u
     ;;
   remove-backend-header)
-    __arg_choices_csv_col_values "$BACKEND_HEADERS_FILE" "$STATE_BACKEND_HEADERS_HEADER" "$STATE_BACKEND_HEADERS_COLS" 0 | sort -u
+    __arg_choices_backend_header_domains
     ;;
   list-backend-headers)
     {
-      __arg_choices_csv_col_values "$BACKEND_HEADERS_FILE" "$STATE_BACKEND_HEADERS_HEADER" "$STATE_BACKEND_HEADERS_COLS" 0
-      __arg_choices_backend_domains_all
+      __arg_choices_backend_header_domains
+      __arg_choices_header_domains
     } | sort -u
     ;;
   remove-backend-http-version)
@@ -442,11 +436,12 @@ function __arg_choices_client_name() {
   case "$cmd" in
   remove-backend-client-cert | replace-backend-client-cert | export-backend-client-p12)
     if [ -n "${CURRENT_ARGS[0]:-}" ]; then
-      local mtls_dir normalized_mtls_dir
-      mtls_dir="$(get_backend_mtls_dir "${CURRENT_ARGS[0]}")"
+      local mtls_dir=""
+      if ! mtls_dir="$(get_backend_mtls_dir "${CURRENT_ARGS[0]}" 2>/dev/null)"; then
+        return 0
+      fi
       if [ -n "$mtls_dir" ]; then
-        normalize_mtls_dir normalized_mtls_dir "$mtls_dir" >/dev/null 2>&1 || return 0
-        for crt in "$normalized_mtls_dir"/*.crt; do
+        for crt in "$mtls_dir"/*.crt; do
           [ -e "$crt" ] || continue
           local base="$(basename "$crt")"
           [ "$base" = "ca.crt" ] && continue
@@ -801,7 +796,10 @@ function __arg_choices_port_suffix() {
 
 function __arg_choices_cert_path() {
   local cmd="$1"
-  if [ -d "$CERTS_DIR" ]; then
+  if declare -F __arg_choices_domain_certificates_active >/dev/null 2>&1 &&
+    __arg_choices_domain_certificates_active; then
+    __arg_choices_domain_certificate_paths | LC_ALL=C sort
+  elif [ -d "$CERTS_DIR" ]; then
     local lines=()
     local t d folder domain_part port_part fullchain expires created cert_type in_use ports ports_str rel_path enddate_line
     for t in letsencrypt selfsigned custom; do
@@ -852,7 +850,6 @@ function __arg_choices_cert_path() {
     fi
   fi
   if [ "$cmd" = "add-backend" ]; then
-    echo "none|Generate self-signed certificate"
     echo "selfsigned|Generate self-signed certificate"
     echo "letsencrypt|Generate Let's Encrypt certificate"
   elif [ "$cmd" = "add-port" ] || [ "$cmd" = "update-port" ]; then

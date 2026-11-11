@@ -30,7 +30,7 @@ function list_security_rules() {
     fi
     rid=$((rid + 1))
 
-    local e d m c n reason loc
+    local e d m c n reason loc action
     e="${CSV_FIELDS[0]}"
     d="${CSV_FIELDS[1]}"
     m="${CSV_FIELDS[2]}"
@@ -38,6 +38,7 @@ function list_security_rules() {
     n="${CSV_FIELDS[4]}"
     reason="${CSV_FIELDS[45]:--}"
     loc="${CSV_FIELDS[46]:-auto}"
+    action="$(_sr_normalize_action "${CSV_FIELDS[47]:-require}")" || return 1
     [[ -n "$filter_domain" && "$d" != "$filter_domain" ]] && continue
 
     printed=1
@@ -48,10 +49,11 @@ function list_security_rules() {
     local disabled=""
     [[ "$e" != "1" ]] && disabled=" [disabled]"
     if ((n == 1)); then
-      printf "%d: %s %s (n=%s) status=%s reason=%s loc=%s%s\n" "$rid" "$head" "$d" "$n" "${c:--}" "$reason" "$loc" "$disabled"
+      printf "%d: %s %s (n=%s) action=%s status=%s reason=%s loc=%s%s\n" "$rid" "$head" "$d" "$n" "$action" "${c:--}" "$reason" "$loc" "$disabled"
     else
-      printf "%d: %s %s (n=%s, mode=%s) status=%s reason=%s loc=%s%s\n" "$rid" "$head" "$d" "$n" "$head" "${c:--}" "$reason" "$loc" "$disabled"
+      printf "%d: %s %s (n=%s, mode=%s) action=%s status=%s reason=%s loc=%s%s\n" "$rid" "$head" "$d" "$n" "$head" "$action" "${c:--}" "$reason" "$loc" "$disabled"
     fi
+    if [ "$action" = allow ]; then printf '  Rejection metadata is retained but unused by Allow.\n'; fi
     local idx base
     for idx in {0..9}; do
       base=$((5 + (idx * 4)))
@@ -67,6 +69,8 @@ function list_security_rules() {
 
   if ((printed == 0)); then
     echo "[Info] No security rules configured."
+  else
+    echo "[Info] Require rules must all pass. Then the first matching Block/Allow rule wins in global ID order; Allow never bypasses Require, ACLs, or mTLS."
   fi
   return 0
 }

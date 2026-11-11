@@ -26,6 +26,13 @@ function cert_created_timestamp() {
       echo "$created"
       return 0
     fi
+    if created=$(stat -c %y "$cert_path" 2>/dev/null); then
+      created="${created%% *}"
+      if [ -n "$created" ]; then
+        echo "$created"
+        return 0
+      fi
+    fi
     ;;
   *)
     if created=$(stat -c %y "$cert_path" 2>/dev/null); then

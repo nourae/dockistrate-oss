@@ -1,0 +1,9 @@
+Protocol:
+> 1) Keep current: http
+  2) HTTP
+  3) HTTPS
+  4) TCP
+  5) UDP
+  6) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

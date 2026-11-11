@@ -8,7 +8,7 @@ test_security_rule_contains_literal_dot() {
   assertEquals "add-security-rule" 0 $?
 
   local rules_file="${CONFIG_DIR}/nginx_conf/conf.d/security_rules.inc"
-  assertFileContainsSubstring '$host = literal-dot.test' "$rules_file"
+  assertFileContainsSubstring '$dockistrate_security_identity = literal-dot.test' "$rules_file"
   assertFileContainsSubstring '~* "a\.b"' "$rules_file"
   if grep -Fq '~* "a.b"' "$rules_file"; then
     fail "Expected dot to be escaped in regex literal, but found unescaped '~* "a.b"' in ${rules_file}"

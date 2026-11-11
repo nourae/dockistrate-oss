@@ -1,0 +1,8 @@
+Use full to show operator-entered Docker options, header values, and generic Nginx directive values, or redacted to hide them in display, audit, and saved interactive history.
+Visibility policy
+Example: full:
+  1) Full visibility (current)
+> 2) Redacted display/history/audit
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

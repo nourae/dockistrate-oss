@@ -1,0 +1,5 @@
+X-Guide
+Value to store.
+Value
+Example: https
+Blank: leave blank only when an empty value is intentional: preview

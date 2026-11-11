@@ -17,6 +17,7 @@ source "$ROOT_DIR/lib/cli/arg_choices_misc.sh"
 TMP_ROOT="$(_realpath_portable "$(mktemp -d "${TMPDIR:-/tmp}/dockistrate_mtls_input_validation.XXXXXX")")"
 trap 'rm -rf "$TMP_ROOT"' EXIT
 OPENSSL_X509_LOG="$TMP_ROOT/openssl-x509.log"
+OPENSSL_P12_PASSWORD_LOG="$TMP_ROOT/openssl-p12-password.log"
 
 BASE_DIR="$TMP_ROOT"
 STATE_DIR="$BASE_DIR/state"
@@ -55,7 +56,7 @@ function _generate_backend_crl() {
 }
 function openssl() {
   local output_file="" input_file=""
-  if [ "${1:-}" = "x509" ]; then
+  if [ "${1:-}" = "x509" ] && [ "${VALIDATE_REAL_AUTHORITY:-false}" != true ]; then
     shift
     while [ "$#" -gt 0 ]; do
       if [ "${1:-}" = "-in" ]; then
@@ -76,6 +77,7 @@ function openssl() {
       shift
     done
     [ -n "$output_file" ] || return 1
+    command cat >"$OPENSSL_P12_PASSWORD_LOG" || return 1
     printf 'p12\n' >"$output_file"
     return 0
   fi
@@ -242,31 +244,72 @@ function _write_backend_openssl_conf() {
 }
 
 set +e
-init_failure_output="$(list_backend_client_certs example.com 2>&1)"
-init_failure_status=$?
+validation_failure_output="$(list_backend_client_certs example.com 2>&1)"
+validation_failure_status=$?
 set -e
 
-if [ "$init_failure_status" -eq 0 ]; then
-  echo "[Error] list_backend_client_certs ignored mTLS state initialization failure." >&2
+if [ "$validation_failure_status" -eq 0 ]; then
+  echo "[Error] list_backend_client_certs ignored mTLS state validation failure." >&2
   exit 1
 fi
-if ! grep -Fq "Failed to initialize mTLS state" <<<"$init_failure_output"; then
-  echo "[Error] list_backend_client_certs did not report mTLS state initialization failure." >&2
-  echo "$init_failure_output" >&2
+if ! grep -Fq "Failed to validate mTLS state" <<<"$validation_failure_output"; then
+  echo "[Error] list_backend_client_certs did not report mTLS state validation failure." >&2
+  echo "$validation_failure_output" >&2
   exit 1
 fi
-if grep -Fq "client1" <<<"$init_failure_output"; then
-  echo "[Error] list_backend_client_certs printed client entries after initialization failure." >&2
-  echo "$init_failure_output" >&2
+if grep -Fq "client1" <<<"$validation_failure_output"; then
+  echo "[Error] list_backend_client_certs printed client entries after validation failure." >&2
+  echo "$validation_failure_output" >&2
   exit 1
 fi
 
+# Password-source checks use a real reusable authority; only the PKCS#12
+# subprocess remains mocked so the test can inspect its exact password input.
+VALIDATE_REAL_AUTHORITY=true
+command openssl req -x509 -newkey rsa:2048 -nodes -days 1 \
+  -keyout "$valid_mtls_dir/ca.key" -out "$valid_mtls_dir/ca.crt" \
+  -subj '/CN=example.com CA' >/dev/null 2>&1
+source "$ROOT_DIR/lib/mtls/_write_backend_openssl_conf.sh"
+_init_backend_mtls_state "$valid_mtls_dir" fresh
+
+password_files_dir="$TMP_ROOT/password-files"
+mkdir -p "$password_files_dir"
+printf '\n%s\n' 'second-line-secret' >"$password_files_dir/leading-empty"
+printf '%s\n%s\n' 'first-line-secret' 'second-line-secret' >"$password_files_dir/multiline"
+CRLF_P12_PASSWORD='crlf-secret !@#$%'
+printf '%s\r\n' "$CRLF_P12_PASSWORD" >"$password_files_dir/crlf"
+LEADING_DASH_P12_PASSWORD='-n2-file-secret !@#'
+printf '%s\n' "$LEADING_DASH_P12_PASSWORD" >"$password_files_dir/-n2"
+
+LEADING_LF_P12_PASSWORD=$'\nsecond-line-secret'
+EMBEDDED_LF_P12_PASSWORD=$'first-line-secret\nsecond-line-secret'
+rm -f "${valid_mtls_dir}/client1.p12" "$OPENSSL_P12_PASSWORD_LOG"
 set +e
 invalid_env_output="$(export_backend_client_p12 example.com client1 --password-env 'BAD-NAME' 2>&1)"
 invalid_env_status=$?
-VALID_P12_PASSWORD='top-secret'
-valid_env_output="$(export_backend_client_p12 example.com client1 --password-env VALID_P12_PASSWORD 2>&1)"
-valid_env_status=$?
+leading_lf_env_output="$(export_backend_client_p12 example.com client1 --password-env LEADING_LF_P12_PASSWORD 2>&1)"
+leading_lf_env_status=$?
+embedded_lf_env_output="$(export_backend_client_p12 example.com client1 --password-env EMBEDDED_LF_P12_PASSWORD 2>&1)"
+embedded_lf_env_status=$?
+leading_empty_file_output="$(export_backend_client_p12 example.com client1 --password-file "$password_files_dir/leading-empty" 2>&1)"
+leading_empty_file_status=$?
+multiline_file_output="$(export_backend_client_p12 example.com client1 --password-file "$password_files_dir/multiline" 2>&1)"
+multiline_file_status=$?
+multiline_stdin_output="$(printf '%s\n%s\n' 'first-line-secret' 'second-line-secret' |
+  export_backend_client_p12 example.com client1 --password-stdin 2>&1)"
+multiline_stdin_status=$?
+blank_second_stdin_output="$(printf '%s\n\n' 'first-line-secret' |
+  export_backend_client_p12 example.com client1 --password-stdin 2>&1)"
+blank_second_stdin_status=$?
+empty_stdin_output="$(printf '' |
+  export_backend_client_p12 example.com client1 --password-stdin 2>&1)"
+empty_stdin_status=$?
+bare_cr_stdin_output="$(printf '%s\r' 'bare-cr-secret' |
+  export_backend_client_p12 example.com client1 --password-stdin 2>&1)"
+bare_cr_stdin_status=$?
+embedded_cr_stdin_output="$(printf 'first\rsecond\n' |
+  export_backend_client_p12 example.com client1 --password-stdin 2>&1)"
+embedded_cr_stdin_status=$?
 set -e
 
 if [ "$invalid_env_status" -eq 0 ]; then
@@ -278,9 +321,72 @@ if ! grep -Fq "Invalid environment variable name" <<<"$invalid_env_output"; then
   echo "$invalid_env_output" >&2
   exit 1
 fi
+if [ "$leading_lf_env_status" -eq 0 ] || [ "$embedded_lf_env_status" -eq 0 ]; then
+  echo "[Error] export_backend_client_p12 accepted a multiline password from an environment variable." >&2
+  exit 1
+fi
+if ! grep -Fq "must be a single line" <<<"$leading_lf_env_output" ||
+  ! grep -Fq "must be a single line" <<<"$embedded_lf_env_output"; then
+  echo "[Error] Multiline environment passwords were not rejected with a validation error." >&2
+  printf '%s\n%s\n' "$leading_lf_env_output" "$embedded_lf_env_output" >&2
+  exit 1
+fi
+if [ "$leading_empty_file_status" -eq 0 ] || [ "$multiline_file_status" -eq 0 ]; then
+  echo "[Error] export_backend_client_p12 accepted a multiline password file." >&2
+  exit 1
+fi
+if ! grep -Fq "must contain exactly one line" <<<"$leading_empty_file_output" ||
+  ! grep -Fq "must contain exactly one line" <<<"$multiline_file_output"; then
+  echo "[Error] Multiline password files were not rejected with a validation error." >&2
+  printf '%s\n%s\n' "$leading_empty_file_output" "$multiline_file_output" >&2
+  exit 1
+fi
+if [ "$multiline_stdin_status" -eq 0 ] || [ "$blank_second_stdin_status" -eq 0 ]; then
+  echo "[Error] export_backend_client_p12 accepted multiline password input from stdin." >&2
+  exit 1
+fi
+if ! grep -Fq "must contain exactly one line" <<<"$multiline_stdin_output" ||
+  ! grep -Fq "must contain exactly one line" <<<"$blank_second_stdin_output"; then
+  echo "[Error] Multiline stdin passwords were not rejected with a validation error." >&2
+  printf '%s\n%s\n' "$multiline_stdin_output" "$blank_second_stdin_output" >&2
+  exit 1
+fi
+if [ "$empty_stdin_status" -eq 0 ]; then
+  echo "[Error] export_backend_client_p12 accepted an empty password from stdin." >&2
+  exit 1
+fi
+if ! grep -Fq "Failed to read password from stdin" <<<"$empty_stdin_output"; then
+  echo "[Error] Empty stdin password was not rejected cleanly." >&2
+  echo "$empty_stdin_output" >&2
+  exit 1
+fi
+if [ "$bare_cr_stdin_status" -eq 0 ] || [ "$embedded_cr_stdin_status" -eq 0 ]; then
+  echo "[Error] export_backend_client_p12 accepted a non-terminating CR from stdin." >&2
+  exit 1
+fi
+if ! grep -Fq "cannot contain CR or LF" <<<"$bare_cr_stdin_output" ||
+  ! grep -Fq "cannot contain CR or LF" <<<"$embedded_cr_stdin_output"; then
+  echo "[Error] Invalid stdin CR characters were not rejected with a validation error." >&2
+  printf '%s\n%s\n' "$bare_cr_stdin_output" "$embedded_cr_stdin_output" >&2
+  exit 1
+fi
+if [ -e "${valid_mtls_dir}/client1.p12" ] || [ -e "$OPENSSL_P12_PASSWORD_LOG" ]; then
+  echo "[Error] Invalid export passwords reached OpenSSL or created a PKCS#12 bundle." >&2
+  exit 1
+fi
+
+VALID_P12_PASSWORD='-Strong password !@#$%^&*()[]{}:;,.?=+_~\path'
+set +e
+valid_env_output="$(export_backend_client_p12 example.com client1 --password-env VALID_P12_PASSWORD 2>&1)"
+valid_env_status=$?
+set -e
 if [ "$valid_env_status" -ne 0 ]; then
   echo "[Error] export_backend_client_p12 rejected a valid env var name." >&2
   echo "$valid_env_output" >&2
+  exit 1
+fi
+if [ "$(cat "$OPENSSL_P12_PASSWORD_LOG")" != "$VALID_P12_PASSWORD" ]; then
+  echo "[Error] Valid environment password characters were not preserved exactly." >&2
   exit 1
 fi
 if [ "$(cat "${valid_mtls_dir}/client1.p12")" != "p12" ]; then
@@ -288,4 +394,67 @@ if [ "$(cat "${valid_mtls_dir}/client1.p12")" != "p12" ]; then
   exit 1
 fi
 
-echo "mTLS input validation rejects traversal domains, tampered paths, and invalid env var names."
+set +e
+crlf_file_output="$(export_backend_client_p12 example.com client1 --password-file "$password_files_dir/crlf" 2>&1)"
+crlf_file_status=$?
+set -e
+if [ "$crlf_file_status" -ne 0 ]; then
+  echo "[Error] export_backend_client_p12 rejected a password file with one final CRLF." >&2
+  echo "$crlf_file_output" >&2
+  exit 1
+fi
+if [ "$(cat "$OPENSSL_P12_PASSWORD_LOG")" != "$CRLF_P12_PASSWORD" ]; then
+  echo "[Error] Password-file CRLF terminator was not removed exactly once." >&2
+  exit 1
+fi
+
+STDIN_CRLF_P12_PASSWORD='stdin-crlf-secret !@#$%'
+set +e
+stdin_crlf_output="$(printf '%s\r\n' "$STDIN_CRLF_P12_PASSWORD" |
+  export_backend_client_p12 example.com client1 --password-stdin 2>&1)"
+stdin_crlf_status=$?
+set -e
+if [ "$stdin_crlf_status" -ne 0 ]; then
+  echo "[Error] export_backend_client_p12 rejected a stdin password with one final CRLF." >&2
+  echo "$stdin_crlf_output" >&2
+  exit 1
+fi
+if [ "$(cat "$OPENSSL_P12_PASSWORD_LOG")" != "$STDIN_CRLF_P12_PASSWORD" ]; then
+  echo "[Error] Stdin CRLF terminator was not removed exactly once." >&2
+  exit 1
+fi
+
+set +e
+leading_dash_file_output="$({
+  cd "$password_files_dir"
+  export_backend_client_p12 example.com client1 --password-file -n2
+} 2>&1)"
+leading_dash_file_status=$?
+set -e
+if [ "$leading_dash_file_status" -ne 0 ]; then
+  echo "[Error] export_backend_client_p12 rejected a relative leading-dash password file." >&2
+  echo "$leading_dash_file_output" >&2
+  exit 1
+fi
+if [ "$(cat "$OPENSSL_P12_PASSWORD_LOG")" != "$LEADING_DASH_P12_PASSWORD" ]; then
+  echo "[Error] Relative leading-dash password file was parsed as an option or changed." >&2
+  exit 1
+fi
+
+STDIN_NO_LF_P12_PASSWORD='stdin-no-final-lf !@#$%'
+set +e
+stdin_no_lf_output="$(printf '%s' "$STDIN_NO_LF_P12_PASSWORD" |
+  export_backend_client_p12 example.com client1 --password-stdin 2>&1)"
+stdin_no_lf_status=$?
+set -e
+if [ "$stdin_no_lf_status" -ne 0 ]; then
+  echo "[Error] export_backend_client_p12 rejected a one-line stdin password without a final LF." >&2
+  echo "$stdin_no_lf_output" >&2
+  exit 1
+fi
+if [ "$(cat "$OPENSSL_P12_PASSWORD_LOG")" != "$STDIN_NO_LF_P12_PASSWORD" ]; then
+  echo "[Error] Stdin password without a final LF was not preserved exactly." >&2
+  exit 1
+fi
+
+echo "mTLS input validation rejects traversal domains, tampered paths, and invalid password sources."

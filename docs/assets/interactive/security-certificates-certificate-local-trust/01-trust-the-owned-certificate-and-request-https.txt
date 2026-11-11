@@ -1,0 +1,9 @@
+$ curl --noproxy \* --fail -sS -D - -o /dev/null --resolve example.com:8443:127.0.0.1 --cacert /opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-8443/fullchain.pem https://example.com:8443/
+HTTP/2 200
+server: nginx/1.31.7
+date: Mon, 09 Nov 2026 11:36:39 GMT
+content-type: text/html
+content-length: 896
+last-modified: Wed, 21 Oct 2026 17:54:44 GMT
+etag: "6ad8fc64-380"
+accept-ranges: bytes

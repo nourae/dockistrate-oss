@@ -1,0 +1,16 @@
+Condition 5 source:
+  1) Header — request header (name required)
+  2) Cookie — request cookie (name required)
+  3) Argument — query parameter (name required)
+  4) Method — HTTP method (GET/POST/...)
+> 5) Path — normalized path
+  6) URI — full request URI (path + args)
+  7) Host — request hostname
+  8) Scheme — request scheme (http/https)
+  9) IP — client IP address
+  10) TLS SNI — server name from TLS handshake
+  11) TLS Protocol — negotiated TLS version
+  12) Variable — Nginx variable (name required)
+  13) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,15 @@
+Review command
+  Command: Set Backend CSP (set-backend-csp)
+  Description: Set or clear a Content-Security-Policy for a backend
+
+Arguments:
+  Domain: example.com
+  backend csp value: default-src 'none'
+
+CLI equivalent:
+  ./dockistrate.sh set-backend-csp example.com 'default-src '\''none'\'''
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

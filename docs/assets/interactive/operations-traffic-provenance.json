@@ -1,0 +1,648 @@
+{
+  "schema_version": 1,
+  "scenario": "operations-traffic",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:34:00.003260+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "operations",
+  "group": "traffic",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1016-aws x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-01-07 17:07:56 +0000 UTC\",\"CreatedSince\":\"10 months ago\",\"Digest\":\"sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61\",\"ID\":\"sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61\",\"Repository\":\"nicolaka/netshoot\",\"SharedSize\":\"N/A\",\"Size\":\"874MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:35:38.396623+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "operations-traffic-traffic-capture",
+      "journey_family": "operations-traffic-traffic-capture",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-traffic-capture/03-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-traffic-traffic-capture/03-enter-value.txt",
+      "image_sha256": "1f3950cbbc36ba920f01e1632090999b0508fe7af6bef3779b208afc3c984b12",
+      "transcript_sha256": "48ec503790cd926476ea17870f49911a5b40398f4938c53f146e08cc76b59faa",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-traffic-capture.pty.log",
+      "pty_byte_offset": 77685,
+      "value": "documentation-example"
+    },
+    {
+      "journey": "operations-traffic-traffic-capture",
+      "journey_family": "operations-traffic-traffic-capture",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-traffic-capture/04-run.png",
+      "transcript": "docs/assets/interactive/operations-traffic-traffic-capture/04-run.txt",
+      "image_sha256": "c6fb692cca65e6b940d2ab465f8e6edb83933d88ba90c131ad7922f88528aa48",
+      "transcript_sha256": "db04daf55f7af189e0bf02585089579cabe198faa569ee6b844f51368410bc40",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-traffic-capture.pty.log",
+      "pty_byte_offset": 78088,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-traffic-traffic-capture",
+      "journey_family": "operations-traffic-traffic-capture",
+      "session_index": 1,
+      "step": 5,
+      "title": "Specific backend(s)",
+      "kind": "menu",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-traffic-capture/05-specific-backend-s.png",
+      "transcript": "docs/assets/interactive/operations-traffic-traffic-capture/05-specific-backend-s.txt",
+      "image_sha256": "6b3665d580f223cf09866819054f2020d8856e4fa5d990e5483e7d13d0c1dbf3",
+      "transcript_sha256": "171044040f1e66a930fbd299fd0d782abd3774de164a05b28f1a346e1f96fc4e",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-traffic-capture.pty.log",
+      "pty_byte_offset": 78566,
+      "selected": "Specific backend(s)"
+    },
+    {
+      "journey": "operations-traffic-traffic-capture",
+      "journey_family": "operations-traffic-traffic-capture",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-traffic-capture/06-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-traffic-traffic-capture/06-enter-value.txt",
+      "image_sha256": "bc56c26cc099559e802511e26ecbb9239a3230e695a29acd0e4a1a0211866289",
+      "transcript_sha256": "ed1f113d6a58034e00d9c68c0c0bf23ea5fe53977d40c519bbec88e78546d96e",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-traffic-capture.pty.log",
+      "pty_byte_offset": 78704,
+      "value": "example.com"
+    },
+    {
+      "journey": "operations-traffic-traffic-capture",
+      "journey_family": "operations-traffic-traffic-capture",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-traffic-capture/07-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-traffic-traffic-capture/07-enter-value.txt",
+      "image_sha256": "06e45a2a478c2a05f460a702f9da060356746e1d271d634a32ccab2a7d00bbe5",
+      "transcript_sha256": "1c5cf293a0aec8966013cec85e075c81c311b7e813b979a82fd2bb71ccec7cc6",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-traffic-capture.pty.log",
+      "pty_byte_offset": 78786,
+      "value": "n"
+    },
+    {
+      "journey": "operations-traffic-traffic-capture",
+      "journey_family": "operations-traffic-traffic-capture",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-traffic-capture/08-command-result.png",
+      "transcript": "docs/assets/interactive/operations-traffic-traffic-capture/08-command-result.txt",
+      "image_sha256": "fb8bb7a47cb43ad3e1cc920676740111f74c0ddcf1fd6d14e05f08253e683d49",
+      "transcript_sha256": "fd8a27931a16203ad5ca80d591d9d2acd46f180c62c964a7103ac8ac3dc82237",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-traffic-capture.pty.log",
+      "pty_byte_offset": 84091,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-traffic-stop-capture",
+      "journey_family": "operations-traffic-stop-capture",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "stop-capture",
+      "image": "docs/assets/interactive/operations-traffic-stop-capture/03-run.png",
+      "transcript": "docs/assets/interactive/operations-traffic-stop-capture/03-run.txt",
+      "image_sha256": "a83ff1c4c3beb4338ef7a2f0fda8f92c7248ebc92b0de6b881492acf65baa870",
+      "transcript_sha256": "6c8671e6a7bf90c48ab28d10aa3734bff5e23765a3cf6c3f2abdd42a82da9be2",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-stop-capture.pty.log",
+      "pty_byte_offset": 74625,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-traffic-stop-capture",
+      "journey_family": "operations-traffic-stop-capture",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "stop-capture",
+      "image": "docs/assets/interactive/operations-traffic-stop-capture/04-command-result.png",
+      "transcript": "docs/assets/interactive/operations-traffic-stop-capture/04-command-result.txt",
+      "image_sha256": "662af6ae4077fa1d2feb48df760a5f7cd23a6e9462a406b5c181f1c03329b771",
+      "transcript_sha256": "cac8b6c2b4edaf0c51bfa7a2655c9cbc633d7a9c7a144b2f5af44b8b2e170758",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-stop-capture.pty.log",
+      "pty_byte_offset": 74707,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-traffic-packet-inspection",
+      "journey_family": "operations-traffic-packet-inspection",
+      "session_index": 1,
+      "step": 1,
+      "title": "Read the captured demo packets",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-traffic-packet-inspection/01-read-the-captured-demo-packets.png",
+      "transcript": "docs/assets/interactive/operations-traffic-packet-inspection/01-read-the-captured-demo-packets.txt",
+      "image_sha256": "426739b3643d142702dfabf165b15b7f32dc1f90a08ced99c9cd676954e71040",
+      "transcript_sha256": "0e34f0e9cc9d51c646dac99efdf7f8fbecd75c7b4df7898362ab4e7ef3c1cbc0",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-packet-inspection.pty.log",
+      "pty_byte_offset": 1285,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "operations-traffic-tls-traffic-capture",
+      "journey_family": "operations-traffic-tls-traffic-capture",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-tls-traffic-capture/03-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-traffic-tls-traffic-capture/03-enter-value.txt",
+      "image_sha256": "886b55fed2518e39a26a20e9129fc23cf308f942683030183628690159fc6b0a",
+      "transcript_sha256": "fcea5c236a7610a6569b26419741f85b9f4fc6ded93c27ec5028e122d2d7d9c4",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-traffic-capture.pty.log",
+      "pty_byte_offset": 77684,
+      "value": "documentation-tls-example"
+    },
+    {
+      "journey": "operations-traffic-tls-traffic-capture",
+      "journey_family": "operations-traffic-tls-traffic-capture",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-tls-traffic-capture/04-run.png",
+      "transcript": "docs/assets/interactive/operations-traffic-tls-traffic-capture/04-run.txt",
+      "image_sha256": "ab14732ab88628b0fab28d681d83ad736fa620f05e7324e3caa31a588bfd6d0d",
+      "transcript_sha256": "0299ecaeee668fe3b835883ddedef52606b40ac397f2ce841ebd3a1dfe258458",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-traffic-capture.pty.log",
+      "pty_byte_offset": 78095,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-traffic-tls-traffic-capture",
+      "journey_family": "operations-traffic-tls-traffic-capture",
+      "session_index": 1,
+      "step": 5,
+      "title": "All Nginx traffic (clients and backends)",
+      "kind": "menu",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-tls-traffic-capture/05-all-nginx-traffic-clients-and-backends.png",
+      "transcript": "docs/assets/interactive/operations-traffic-tls-traffic-capture/05-all-nginx-traffic-clients-and-backends.txt",
+      "image_sha256": "fca8d7e2f7deee3005444ddcda0bdbe9b5a2ddfc0420e3699d5f668da3241345",
+      "transcript_sha256": "3c2997420a509b4d12074d499715924a02f77514a4e6c0ccde914767118acb30",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-traffic-capture.pty.log",
+      "pty_byte_offset": 78334,
+      "selected": "All Nginx traffic (clients and backends)"
+    },
+    {
+      "journey": "operations-traffic-tls-traffic-capture",
+      "journey_family": "operations-traffic-tls-traffic-capture",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-tls-traffic-capture/06-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-traffic-tls-traffic-capture/06-enter-value.txt",
+      "image_sha256": "16d46637bc716007fea4cca22c9a1160f803abbafcd82a9a3c94b0d53437d3fe",
+      "transcript_sha256": "492f73b55793af5dcf14432c9a59d4ac548e81ce25db575acc4f8ea3150b95e2",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-traffic-capture.pty.log",
+      "pty_byte_offset": 78405,
+      "value": "y"
+    },
+    {
+      "journey": "operations-traffic-tls-traffic-capture",
+      "journey_family": "operations-traffic-tls-traffic-capture",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "start-capture",
+      "image": "docs/assets/interactive/operations-traffic-tls-traffic-capture/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-traffic-tls-traffic-capture/07-command-result.txt",
+      "image_sha256": "04015cfa3f075618b49a9e85c02afa80588fd79a7b2fe49cb309c18565b68186",
+      "transcript_sha256": "d2201ca889406b71f63597894d800085510abb7a00cd32613ef17d0af7772317",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-traffic-capture.pty.log",
+      "pty_byte_offset": 79528,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-traffic-stop-tls-capture",
+      "journey_family": "operations-traffic-stop-tls-capture",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "stop-capture",
+      "image": "docs/assets/interactive/operations-traffic-stop-tls-capture/03-run.png",
+      "transcript": "docs/assets/interactive/operations-traffic-stop-tls-capture/03-run.txt",
+      "image_sha256": "642c9efbd6ec7f19cddf12b0e030ee8d792c9d9328a4d37ba208ac625ea7cafb",
+      "transcript_sha256": "6c8671e6a7bf90c48ab28d10aa3734bff5e23765a3cf6c3f2abdd42a82da9be2",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-stop-tls-capture.pty.log",
+      "pty_byte_offset": 74625,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-traffic-stop-tls-capture",
+      "journey_family": "operations-traffic-stop-tls-capture",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "stop-capture",
+      "image": "docs/assets/interactive/operations-traffic-stop-tls-capture/04-command-result.png",
+      "transcript": "docs/assets/interactive/operations-traffic-stop-tls-capture/04-command-result.txt",
+      "image_sha256": "e6db1fc4f3eb39f9922e5e58c584e0a23d8666b3093de4bad6baf82d5d8c3cb9",
+      "transcript_sha256": "24348facec8216a4eb166ad2c1f68bc83521589b035d9582ec33841e985be56e",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-stop-tls-capture.pty.log",
+      "pty_byte_offset": 75139,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-traffic-tls-packet-inspection",
+      "journey_family": "operations-traffic-tls-packet-inspection",
+      "session_index": 1,
+      "step": 1,
+      "title": "Read the decrypted HTTPS request",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-traffic-tls-packet-inspection/01-read-the-decrypted-https-request.png",
+      "transcript": "docs/assets/interactive/operations-traffic-tls-packet-inspection/01-read-the-decrypted-https-request.txt",
+      "image_sha256": "2d7a216bf7f98f24661bb97aa34e6aa8fa39232fea2c9ab8c531a33d7dd3c96e",
+      "transcript_sha256": "aebe6449a77b1eaa2153947c74991b3e0b443ecd95bdd37840a4a3c0d2fc4d7e",
+      "pty_log": "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-packet-inspection.pty.log",
+      "pty_byte_offset": 306,
+      "viewport": "bottom",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "label": "captured-request-0",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-traffic/captured-request-0.headers"
+    },
+    {
+      "label": "captured-request-1",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-traffic/captured-request-1.headers"
+    },
+    {
+      "label": "captured-request-2",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-traffic/captured-request-2.headers"
+    },
+    {
+      "label": "stop-capture-interactive-result",
+      "status": "passed",
+      "command": "stop-capture",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "captured-demo-traffic",
+      "status": "passed",
+      "command": "start-capture",
+      "outcome": "packet records read after generated demo requests"
+    },
+    {
+      "label": "capture-stopped",
+      "status": "passed",
+      "command": "stop-capture",
+      "outcome": "capture stopped and saved packets readable"
+    },
+    {
+      "label": "packet-inspection",
+      "status": "passed",
+      "argv": [
+        "tcpdump",
+        "-nn",
+        "-r",
+        "/opt/dockistrate-demo/state/pcaps/documentation-example/20261109_113450_nginx.pcap",
+        "-c",
+        "6"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "captured-https-request",
+      "status": "passed",
+      "http_status": 404,
+      "headers": "docs/assets/interactive/evidence/operations-traffic/captured-https-request.headers"
+    },
+    {
+      "label": "stop-capture-interactive-result",
+      "status": "passed",
+      "command": "stop-capture",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "tls-packet-inspection",
+      "status": "passed",
+      "argv": [
+        "tshark",
+        "-r",
+        "/tmp/dockistrate-capture-verification-jih4ssj7/capture.pcap",
+        "-o",
+        "tls.keylog_file:/tmp/dockistrate-capture-verification-jih4ssj7/session-keys.log",
+        "-Y",
+        "tcp.port == 443 && http.request",
+        "-T",
+        "fields",
+        "-e",
+        "http.request.method",
+        "-e",
+        "http.host",
+        "-e",
+        "http.request.uri"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "tls-capture-verified",
+      "status": "passed",
+      "command": "start-capture",
+      "outcome": "HTTPS request decoded from port443 using retained session keys; keys excluded from artifacts"
+    },
+    {
+      "label": "https-after-capture",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-traffic/https-after-capture.headers"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "operations"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "06cd60c41770f046d5fe498dbdd07df1323590b9122c0eb727eab3d335d330d6",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 17
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/operations-traffic-recordings.tar.gz",
+    "sha256": "3d4f4a97f60c438a30354bd695c50233d44101a46b10b241b51a4efedca95068",
+    "size": 41094,
+    "members": {
+      "docs/assets/interactive/evidence/operations-traffic/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/operations-traffic/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/operations-traffic/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/operations-traffic/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-traffic/006-kernel-version.log": {
+        "sha256": "858aad262bf1f1e848c00747d19e51058b24cf497f7541adf93cd8d9f6f04187",
+        "size": 38
+      },
+      "docs/assets/interactive/evidence/operations-traffic/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/operations-traffic/008-fixture-image.log": {
+        "sha256": "0feddee9e3efca0225f383531ad4c88123f7eaa725588ff8821251988e53499f",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/operations-traffic/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/operations-traffic/010-fixture-backend.log": {
+        "sha256": "a6f4672f0d4bcbd5542b8934ed44f34b63a8522cbae84f7b64ce8735ab2b4b57",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/operations-traffic/011-fixture-public-demo.log": {
+        "sha256": "bcbafaaa477906eaa078acfd71b4d5a879da6872bf5f6fb96919f9d28edca5a4",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/operations-traffic/012-fixture-https.log": {
+        "sha256": "b24847f5582c5e80a2136a54ddf94856bf35687787b63bd989c92aa21804b03d",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/operations-traffic/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/operations-traffic/014-command-alias.log": {
+        "sha256": "10298268628d174fcc71662637a59855b1901aa8ca168adf9baf81c34fc11f87",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/operations-traffic/015-command-alias.log": {
+        "sha256": "55258bbd65e68d809dd85f71fec066a16e6f805be24926d2d8d42a88d4cf1bbd",
+        "size": 13
+      },
+      "docs/assets/interactive/evidence/operations-traffic/016-captured-packets.log": {
+        "sha256": "a27a39ccecb328ce6c4469feb793f6c8e88ed3441ac8d2e9215c4775108642ea",
+        "size": 2120
+      },
+      "docs/assets/interactive/evidence/operations-traffic/017-command-alias.log": {
+        "sha256": "10298268628d174fcc71662637a59855b1901aa8ca168adf9baf81c34fc11f87",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/operations-traffic/018-command-alias.log": {
+        "sha256": "55258bbd65e68d809dd85f71fec066a16e6f805be24926d2d8d42a88d4cf1bbd",
+        "size": 13
+      },
+      "docs/assets/interactive/evidence/operations-traffic/019-private-verification-copy.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/020-private-verification-copy.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/021-image-identities.log": {
+        "sha256": "4c26ebea02aa5b2487f0ae71f508493cea3cda5b106c30e92694f5a29378552a",
+        "size": 3300
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-https-request.body": {
+        "sha256": "04cb2c1ebba560ef2b9a44451ac84409aae0df6fe609a4d95d54f97c7fd4d6ed",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-https-request.headers": {
+        "sha256": "0757027a707fe09b1d3607112d4f851bbab7b98873bcce4943a282d0617e7439",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-https-request.status": {
+        "sha256": "f8bf41177a5f5e808a7ccb648b51080b031f15ca8018d91a576263d6cc626eb6",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-https-request.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-0.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-0.headers": {
+        "sha256": "658e455a459a14bdfdf067e11e56d374926d260919ab92810089af27df1b1554",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-0.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-0.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-1.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-1.headers": {
+        "sha256": "80f53561cb8f86615fe2c7b7e9598c4640035c03f3b8a0e8fe8378116c4b5c48",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-1.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-1.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-2.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-2.headers": {
+        "sha256": "80f53561cb8f86615fe2c7b7e9598c4640035c03f3b8a0e8fe8378116c4b5c48",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-2.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-traffic/captured-request-2.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/commands.jsonl": {
+        "sha256": "5f7a816f9941bc4a2440a3c9f7ab40409d3e413dc4fa2e9a4eebe51f41f83306",
+        "size": 10174
+      },
+      "docs/assets/interactive/evidence/operations-traffic/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/https-after-capture.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-traffic/https-after-capture.headers": {
+        "sha256": "2e8418ec1023e4a6d22e2613b74e7913f037aa9f4c2b2efad9786e31558c0886",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/operations-traffic/https-after-capture.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-traffic/https-after-capture.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-packet-inspection.events.jsonl": {
+        "sha256": "66889b70dde4f5a16e81f26a0a40695e261deb7e953b9b06e17b4c67dae0d613",
+        "size": 1050
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-packet-inspection.pty.log": {
+        "sha256": "865f50a9e09f0bfd9147cbfb4f647a7e311d75ffc15ae08346b069035aa3d3e1",
+        "size": 1285
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-stop-capture.events.jsonl": {
+        "sha256": "b855089c33f1d2ab83eed8b8a35860a9f5560e1940b067398f2b53823d2f2a28",
+        "size": 12277
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-stop-capture.pty.log": {
+        "sha256": "6a6ba7c9055d663807f2d11527c7eb3721dcc0bc4cc14525c57b42a27be95fe1",
+        "size": 82812
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-stop-tls-capture.events.jsonl": {
+        "sha256": "e7f5c0b641321736af43838fe337765e9b45c67e3265465d603cda88f9b443ca",
+        "size": 13093
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-stop-tls-capture.pty.log": {
+        "sha256": "d4c39e663c1a8edb32344a1f023c22a2faa7a6b214ec2e580c0bc8a330b82277",
+        "size": 83248
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-packet-inspection.events.jsonl": {
+        "sha256": "90c3c0cd5fb56cd4a19ec56fd25aea1df14bf7b199475e24a7a6809b6e69828b",
+        "size": 1429
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-packet-inspection.pty.log": {
+        "sha256": "ddf4169353c7b2bc6788fcfb39d1a79d1377d6b998adfe21ff08d60196ecf90b",
+        "size": 306
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-traffic-capture.events.jsonl": {
+        "sha256": "2345b8373b59aec61272a5121298d1532a212aa152734055118221c26bf8de3b",
+        "size": 17131
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-tls-traffic-capture.pty.log": {
+        "sha256": "3d742856711af4dfe9eb645e7925043d328860d9d7a29ac48f0fa4281a7d2c5a",
+        "size": 87603
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-traffic-capture.events.jsonl": {
+        "sha256": "890677e44af557781bb2c8a83062750a1ae9376082f78005de828d19dfa47039",
+        "size": 18059
+      },
+      "docs/assets/interactive/evidence/operations-traffic/operations-traffic-traffic-capture.pty.log": {
+        "sha256": "46f21d741859a2e5bd347d57f18c08df3b39f6709f0d332ecf76300a449d28f4",
+        "size": 92166
+      }
+    }
+  }
+}

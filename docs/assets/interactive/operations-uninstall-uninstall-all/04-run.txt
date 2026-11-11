@@ -1,0 +1,16 @@
+Review command
+  Command: Uninstall All (uninstall-all)
+  Description: Uninstall by scope: backend state (default), full config, or full runtime
+
+Arguments:
+  Uninstall scope: all
+
+CLI equivalent:
+  ./dockistrate.sh uninstall-all --scope all
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

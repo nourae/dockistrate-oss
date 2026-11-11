@@ -1,0 +1,46 @@
+Choose a backup name or enter a directory/.tar.gz path. Interactive confirmation comes before copying or expansion. Set RESTORE_MAX_ARCHIVE_BYTES, RESTORE_MAX_EXPANDED_BYTES, and RESTORE_MAX_ENTRIES before starting this session for larger backups.
+backup:
+  1) 20261109_113341_pre_command_set-auto-backups_qfQLKK.tar.gz
+  2) 20261109_113341_pre_command_set-auto-backups_qfQLKK.tar.gz.sha256
+  3) 20261109_113342_post_command_set-auto-backups_c8mwt7.tar.gz
+  4) 20261109_113342_post_command_set-auto-backups_c8mwt7.tar.gz.sha256
+  5) 20261109_113343_pre_command_add-backend_0PVhm5.tar.gz
+  6) 20261109_113343_pre_command_add-backend_0PVhm5.tar.gz.sha256
+  7) 20261109_113402_post_command_add-backend_2hTL9m.tar.gz
+  8) 20261109_113402_post_command_add-backend_2hTL9m.tar.gz.sha256
+  9) 20261109_113407_pre_command_set-backend-acl-policy_i47utp.tar.gz
+  10) 20261109_113407_pre_command_set-backend-acl-policy_i47utp.tar.gz.sha256
+  11) 20261109_113416_post_command_set-backend-acl-policy_3LxEC3.tar.gz
+  12) 20261109_113416_post_command_set-backend-acl-policy_3LxEC3.tar.gz.sha256
+  13) 20261109_113434_post_command_add-port_ul60hv.tar.gz
+  14) 20261109_113434_post_command_add-port_ul60hv.tar.gz.sha256
+  15) 20261109_113448_pre_command_set-auto-backups_5XnFNx.tar.gz
+  16) 20261109_113448_pre_command_set-auto-backups_5XnFNx.tar.gz.sha256
+  17) 20261109_113450_post_command_set-auto-backups_EhuvrN.tar.gz
+  18) 20261109_113450_post_command_set-auto-backups_EhuvrN.tar.gz.sha256
+  19) 20261109_113505_pre_command_set-backup-retention_zEbUou.tar.gz
+  20) 20261109_113505_pre_command_set-backup-retention_zEbUou.tar.gz.sha256
+  21) 20261109_113507_post_command_set-backup-retention_wR0Aho.tar.gz
+  22) 20261109_113507_post_command_set-backup-retention_wR0Aho.tar.gz.sha256
+  23) 20261109_113521_pre_command_set-backup-compression_SVunSe.tar.gz
+  24) 20261109_113521_pre_command_set-backup-compression_SVunSe.tar.gz.sha256
+  25) 20261109_113523_post_command_set-backup-compression_2y94a7.tar.gz
+  26) 20261109_113523_post_command_set-backup-compression_2y94a7.tar.gz.sha256
+  27) 20261109_113552_pre_command_set-auto-backups_ionfxn.tar.gz
+  28) 20261109_113552_pre_command_set-auto-backups_ionfxn.tar.gz.sha256
+  29) 20261109_113554_post_command_set-auto-backups_1cIODg.tar.gz
+  30) 20261109_113554_post_command_set-auto-backups_1cIODg.tar.gz.sha256
+> 31) 20261109_113607_before-demo-change.tar.gz
+  32) 20261109_113607_before-demo-change.tar.gz.sha256
+  33) 20261109_113628_pre_command_add-backend-header_z8kWb5.tar.gz
+  34) 20261109_113628_pre_command_add-backend-header_z8kWb5.tar.gz.sha256
+  35) 20261109_113640_post_command_add-backend-header_M3hTwy.tar.gz
+  36) 20261109_113640_post_command_add-backend-header_M3hTwy.tar.gz.sha256
+  37) last_full_backup.sha256
+  38) last_full_backup.txt
+  39) last_post_backup.txt
+  40) last_rollback_state.sha256
+  41) last_rollback_targets.sha256
+  42) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

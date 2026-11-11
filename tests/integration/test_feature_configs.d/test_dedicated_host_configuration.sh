@@ -1,6 +1,24 @@
 #!/usr/bin/env bash
 
 # Test dedicated host configuration
+function _assert_dedicated_host_missing_crl_fails_closed() {
+  local requested_host="${1:-}" owner_domain="${2:-}" context="${3:-dedicated host}"
+  local backends_conf="${CONFIG_DIR}/nginx_conf/conf.d/backends.conf"
+  local mtls_dir="${STATE_DIR}/domains/${owner_domain}/mtls" before_config output status
+
+  before_config="$(cat "$backends_conf")"
+  rm -f "$mtls_dir/ca.crl" "$mtls_dir/ca.key"
+
+  output="$(run_dockistrate update-nginx-config 2>&1)"
+  status=$?
+
+  assertNotEquals "${context} render should fail when its required CRL cannot be regenerated" 0 "$status"
+  assertStringContains "${context} render should report the required CRL failure" \
+    "Failed to generate required mTLS CRL for '${requested_host}'" "$output"
+  assertEquals "${context} render failure should preserve backends.conf" \
+    "$before_config" "$(cat "$backends_conf")"
+}
+
 test_dedicated_host_generates_independent_server_block() {
   local output
   output=$(run_dockistrate add-backend dh.test nginx:alpine 18180 http)
@@ -92,7 +110,7 @@ test_remove_dedicated_host() {
   fi
 }
 
-test_remove_dedicated_host_colliding_with_backend_domain_removes_alias() {
+test_derived_dedicated_collision_is_repaired_without_changing_backend() {
   local output aliases_file http_file
   output=$(run_dockistrate add-backend collision-primary.test nginx:alpine 18180 http)
   assertEquals "add primary backend" 0 $?
@@ -106,8 +124,8 @@ test_remove_dedicated_host_colliding_with_backend_domain_removes_alias() {
   aliases_file="${CONFIG_DIR}/backend_aliases.csv"
   printf '%s\n' 'dedicated,collision-primary.test,collision-owner.test' >>"$aliases_file"
 
-  output=$(run_dockistrate remove-dedicated-host collision-primary.test)
-  assertEquals "remove colliding dedicated host" 0 $?
+  output=$(run_dockistrate update-nginx-config)
+  assertEquals "repair colliding derived dedicated host row" 0 $?
 
   if grep -Fq 'dedicated,collision-primary.test,collision-owner.test' "$aliases_file"; then
     fail "Expected colliding dedicated host alias row to be removed"
@@ -164,6 +182,50 @@ test_dedicated_host_inherits_mtls_from_target() {
   # Dedicated host should inherit mTLS from target
   assertStringContains "inherited mTLS ssl_verify_client" "ssl_verify_client" "$dh_block"
   assertStringContains "inherited mTLS ssl_client_certificate" "ssl_client_certificate" "$dh_block"
+}
+
+test_dedicated_host_missing_inherited_or_explicit_crl_preserves_config() {
+  local output status backends_conf before_config
+
+  output=$(run_dockistrate add-backend inherited-crl.test nginx:alpine 9443 https)
+  assertEquals "add inherited-CRL backend" 0 $?
+  output=$(run_dockistrate enable-backend-mtls inherited-crl.test client1)
+  assertEquals "enable inherited-CRL mTLS on target" 0 $?
+  output=$(run_dockistrate add-dedicated-host admin.inherited-crl.test inherited-crl.test)
+  assertEquals "add inherited-CRL dedicated host" 0 $?
+
+  backends_conf="${CONFIG_DIR}/nginx_conf/conf.d/backends.conf"
+  before_config="$(cat "$backends_conf")"
+  rm -f "$STATE_DIR/domains/inherited-crl.test/mtls/ca.crl" "$STATE_DIR/domains/inherited-crl.test/mtls/ca.key"
+  output="$(
+    cd "$ROOT_DIR" || exit 1
+    source "$ROOT_DIR/lib/config.sh"
+    source "$ROOT_DIR/lib/utils.sh"
+    source "$ROOT_DIR/lib/domain_config.sh"
+    source "$ROOT_DIR/lib/mtls.sh"
+    source "$ROOT_DIR/lib/nginx.sh"
+    _backend_mtls_directives admin.inherited-crl.test 2>&1
+  )"
+  status=$?
+  assertNotEquals "inherited dedicated-host mTLS should fail when its required CRL cannot be regenerated" 0 "$status"
+  assertStringContains "inherited dedicated-host mTLS should report the required CRL failure" \
+    "Failed to generate required mTLS CRL for 'admin.inherited-crl.test'" "$output"
+  assertEquals "inherited dedicated-host mTLS failure should not emit partial directives" \
+    0 "$(printf '%s\n' "$output" | grep -Fc 'ssl_verify_client' || true)"
+  assertEquals "inherited dedicated-host mTLS helper failure should leave backends.conf unchanged" \
+    "$before_config" "$(cat "$backends_conf")"
+
+  integration_reset_workdir
+
+  output=$(run_dockistrate add-backend explicit-crl.test nginx:alpine 9443 https)
+  assertEquals "add explicit-CRL backend" 0 $?
+  output=$(run_dockistrate add-dedicated-host admin.explicit-crl.test explicit-crl.test)
+  assertEquals "add explicit-CRL dedicated host" 0 $?
+  output=$(run_dockistrate enable-backend-mtls admin.explicit-crl.test adminClient)
+  assertEquals "enable explicit dedicated-host mTLS" 0 $?
+
+  _assert_dedicated_host_missing_crl_fails_closed \
+    admin.explicit-crl.test admin.explicit-crl.test "explicit dedicated-host mTLS"
 }
 
 test_dedicated_host_inherits_acl_from_target() {
@@ -264,20 +326,12 @@ test_dedicated_host_explicit_default_security_rule_status_overrides_inheritance(
   output=$(run_dockistrate set-backend-security-rule-status admin.explicitsrstatus.test 403)
   assertEquals "set-backend-security-rule-status on dedicated host" 0 $?
 
-  output=$(run_dockistrate add-security-rule explicitsrstatus.test 1 header X-Block equals blocked)
+  output=$(run_dockistrate add-security-rule admin.explicitsrstatus.test 1 header X-Block equals blocked)
   assertEquals "add-security-rule on target" 0 $?
-
-  local rules_db="${CONFIG_DIR}/security_rules.csv"
-  local rules_tmp="${rules_db}.tmp"
-  awk -F, 'BEGIN { OFS="," } NR == 1 { print; next } { $2 = "admin.explicitsrstatus.test"; print }' "$rules_db" >"$rules_tmp"
-  mv "$rules_tmp" "$rules_db"
-
-  output=$(run_dockistrate set-backend-security-rule-status admin.explicitsrstatus.test 403)
-  assertEquals "rebuild dedicated host security rule status" 0 $?
 
   local rules_file="${CONFIG_DIR}/nginx_conf/conf.d/security_rules.inc"
   local dedicated_rule
-  dedicated_rule=$(grep -F '$host = admin.explicitsrstatus.test' "$rules_file")
+  dedicated_rule=$(grep -F '$dockistrate_security_identity = admin.explicitsrstatus.test' "$rules_file")
 
   assertStringContains "dedicated host security rule should use explicit 403" 'return 403;' "$dedicated_rule"
   assertFalse "dedicated host security rule should not inherit target 452 status" "printf '%s\n' \"$dedicated_rule\" | grep -Fq 'return 452;'"
@@ -343,12 +397,14 @@ test_dedicated_host_explicit_header_overrides_inherited_header() {
   output=$(run_dockistrate add-dedicated-host admin.explicitdhhdr.test explicitdhhdr.test)
   assertEquals "add-dedicated-host" 0 $?
 
-  output=$(run_dockistrate add-backend-header admin.explicitdhhdr.test request X-Trace Dedicated-Trace-Value)
+  output=$(run_dockistrate add-backend-header admin.explicitdhhdr.test request x-tRaCe Dedicated-Trace-Value)
   assertEquals "add-backend-header on dedicated host" 0 $?
 
   local maps_conf="${CONFIG_DIR}/nginx_conf/conf.d/backend_header_maps.conf"
   assertFileContainsSubstring 'explicitdhhdr.test "Trace-Value";' "$maps_conf"
   assertFileContainsSubstring 'admin.explicitdhhdr.test "Dedicated-Trace-Value";' "$maps_conf"
+  assertEquals 'Explicit case variant shares one map with its inherited name' 1 "$(grep -Fc 'map $dockistrate_backend_header_key $backend_req_x_trace {' "$maps_conf")"
+  assertEquals 'Dedicated override has exactly one effective value' 1 "$(grep -c '^    admin\.explicitdhhdr\.test ' "$maps_conf")"
 
   local backends_conf="${CONFIG_DIR}/nginx_conf/conf.d/backends.conf"
   local dh_block

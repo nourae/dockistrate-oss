@@ -37,7 +37,10 @@ function find() {
 function safe_rm_rf() {
   local target="${1:-}"
   shift || true
-  _restore_trace_append "safe_rm_rf"
+  case "$target" in
+  "${TMP_DIR%/}"/restore_*) _restore_trace_append "safe_rm_rf_restore_workspace" ;;
+  *) _restore_trace_append "safe_rm_rf" ;;
+  esac
   case "${STUB_SAFE_RM_RF_FAIL_MATCH:-}" in
   "")
     ;;

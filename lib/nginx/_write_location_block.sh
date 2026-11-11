@@ -68,8 +68,16 @@ function _write_location_block() {
   if [ "$effective_ws" = "yes" ]; then
     httpv="1.1"
   else
-    httpv="${http_version:-$(get_proxy_http_version "$domain")}"
+    httpv="$http_version"
+    if [ -z "$httpv" ]; then
+      httpv="$(get_proxy_http_version "$domain")" || return 1
+    fi
   fi
+
+  case "$httpv" in
+  1.0 | 1.1) ;;
+  *) echo "[Error] Invalid proxy HTTP version at render boundary." >&2; return 1 ;;
+  esac
 
   {
     printf '    location %s {\n' "$location_token"

@@ -28,10 +28,7 @@ function set_backend_header() {
     exit 1
   fi
   mkdir -p "$(dirname "$BACKEND_HEADERS_FILE")"
-  state_csv_upsert_row_by_keys \
-    "$BACKEND_HEADERS_FILE" "$STATE_BACKEND_HEADERS_HEADER" "$STATE_BACKEND_HEADERS_COLS" 3 \
-    "$domain" "$type" "$name" \
-    -- "$domain" "$type" "$name" "$value"
+  _header_mutate_file "$BACKEND_HEADERS_FILE" backend set "$domain" "$type" "$name" "$value" || return 1
   echo "[Info] Set $type header $name for $domain"
   create_backup "" "SetBackendHeader_${domain}_${name}"
   update_nginx_config

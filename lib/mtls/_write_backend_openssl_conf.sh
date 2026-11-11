@@ -8,6 +8,9 @@ function _write_backend_openssl_conf() {
   (
     _mtls_cd_guarded_dir "$mtls_dir" || exit 1
     local tmp_conf="" old_umask=""
+    if [ -L newcerts ] || { [ -e newcerts ] && [ ! -d newcerts ]; }; then
+      _mtls_state_error 'newcerts must be a non-symlink directory.'; exit 1
+    fi
     mkdir -p "newcerts" || exit 1
     old_umask="$(umask)"
     umask 077

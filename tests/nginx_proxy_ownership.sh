@@ -84,4 +84,20 @@ if ! nginx_container_conflict_exists; then
   exit 1
 fi
 
+TEST_ROOT="$(mktemp -d)"
+trap 'rm -rf -- "$TEST_ROOT"' EXIT
+STATE_DIR="${TEST_ROOT}/state"$'\n'
+mkdir -p -- "$STATE_DIR" "${TEST_ROOT}/state"
+reset_proxy_mock
+if ! nginx_container_is_managed; then
+  echo "[Error] A state-dir label ending in a newline must retain its exact path identity." >&2
+  exit 1
+fi
+
+export DOCKER_MOCK_PROXY_STATE_DIR="${TEST_ROOT}/state"
+if nginx_container_is_managed; then
+  echo "[Error] A plain sibling state-dir label must not match the newline-ending state directory." >&2
+  exit 1
+fi
+
 echo "nginx proxy ownership checks passed."

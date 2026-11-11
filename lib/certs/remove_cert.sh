@@ -29,6 +29,10 @@ function remove_cert() {
   require_valid_domain "$domain"
   require_valid_port "$port_suffix"
   domain="$(normalize_domain "$domain")"
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    domain_config_remove_certificate "$domain" "$port_suffix"
+    return $?
+  fi
 
   local -a dependent_ports=()
   local ports_seen="|"

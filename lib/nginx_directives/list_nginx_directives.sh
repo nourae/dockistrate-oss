@@ -3,7 +3,7 @@
 function list_nginx_directives() {
   local scope="" domain="" listen_port="" path_prefix="" selector=""
   local usage_msg="[Usage] list-nginx-directives [all|global|backend <domain>|port <domain> <listen_port>|path <domain> <listen_port> <path_prefix>|stream-global|stream-backend <domain>|stream-port <domain> <listen_port>]"
-  local line="" line_no=0 shown=0
+  local line="" line_no=0 shown=0 display_value=""
 
   if [ "$#" -gt 0 ]; then
     selector="$(printf '%s' "${1:-}" | tr '[:upper:]' '[:lower:]')"
@@ -86,8 +86,9 @@ function list_nginx_directives() {
       continue
     fi
 
+    display_value="$(operator_value_for_display directive_value "${CSV_FIELDS[6]}")"
     printf "%-14s | %-28s | %-10s | %-20s | %-7s | %-28s | %s\n" \
-      "${CSV_FIELDS[0]}" "${CSV_FIELDS[1]:--}" "${CSV_FIELDS[2]:--}" "${CSV_FIELDS[3]:--}" "${CSV_FIELDS[4]}" "${CSV_FIELDS[5]}" "${CSV_FIELDS[6]}"
+      "${CSV_FIELDS[0]}" "${CSV_FIELDS[1]:--}" "${CSV_FIELDS[2]:--}" "${CSV_FIELDS[3]:--}" "${CSV_FIELDS[4]}" "${CSV_FIELDS[5]}" "$display_value"
     shown=$((shown + 1))
   done <"$NGINX_DIRECTIVES_FILE"
 

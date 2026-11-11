@@ -7,7 +7,7 @@ fi
 
 function remove_log_field() {
   local id="${1:-}"
-  if ! [[ "$id" =~ ^[0-9]+$ ]]; then
+  if ! id="$(normalize_decimal_number "$id")"; then
     echo "[Usage] remove-log-field <id>"
     exit 1
   fi
@@ -32,7 +32,11 @@ function remove_log_field() {
     new_fields+=("${ACCESS_LOG_FIELDS[$i]}")
   done
 
-  _access_log_write_fields "${new_fields[@]}" || exit 1
+  if [ "${#new_fields[@]}" -gt 0 ]; then
+    _access_log_write_fields "${new_fields[@]}" || exit 1
+  else
+    _access_log_write_fields || exit 1
+  fi
   echo "[Info] Removed log field $id"
   create_backup "" "RemoveLogField_${id}"
   create_nginx_config

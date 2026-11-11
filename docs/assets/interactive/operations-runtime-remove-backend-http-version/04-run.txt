@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Backend HTTP Version (remove-backend-http-version)
+  Description: Clear HTTP version override for a backend
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh remove-backend-http-version example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

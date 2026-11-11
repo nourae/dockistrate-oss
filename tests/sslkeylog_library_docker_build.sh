@@ -2,6 +2,8 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../lib/utils/validators.sh
+source "$ROOT_DIR/lib/utils/validators.sh"
 # shellcheck source=../lib/nginx/ensure_sslkeylog_library.sh
 source "$ROOT_DIR/lib/nginx/ensure_sslkeylog_library.sh"
 
@@ -55,6 +57,9 @@ fi
 [ -n "$out_dir" ] || exit 1
 mkdir -p "$out_dir"
 printf '%s\n' "mock shared object" >"${out_dir}/sslkeylogfile.so"
+if [ -n "${DOCKER_STUB_MUTATE_SOURCE:-}" ]; then
+  printf '%s\n' 'int changed_during_build;' >>"$DOCKER_STUB_MUTATE_SOURCE"
+fi
 exit 0
 EOF
 chmod +x "$mock_bin/docker"
@@ -98,6 +103,11 @@ if ! grep -Fxq "nginx:test|sha256:test-image-one" "$SSLKEYLOG_LIB_BUILD_META_FIL
   cat "$SSLKEYLOG_LIB_BUILD_META_FILE" >&2
   exit 1
 fi
+source_fingerprint="$(_sslkeylog_source_fingerprint)"
+if ! grep -Fxq "source=${source_fingerprint}" "$SSLKEYLOG_LIB_BUILD_META_FILE"; then
+  echo "[Error] helper build metadata should record the exact source SHA-256." >&2
+  exit 1
+fi
 
 touch -t 209901010000 "$SSLKEYLOG_LIB_BUILD_FILE"
 : >"$docker_log"
@@ -123,10 +133,66 @@ if ! grep -Fxq "nginx:test|sha256:test-image-two" "$SSLKEYLOG_LIB_BUILD_META_FIL
   exit 1
 fi
 
+# File timestamps cannot identify the loaded implementation: checkout, restores,
+# and copied artifacts can retain or backdate them independently of the content.
+touch -t 200101010000 "$SSLKEYLOG_LIB_SOURCE_FILE"
+: >"$docker_log"
+PATH="$mock_bin:$PATH" DOCKER_STUB_LOG="$docker_log" DOCKER_STUB_IMAGE_ID="sha256:test-image-two" \
+  ensure_sslkeylog_library "nginx:test"
+if grep -q '^run ' "$docker_log"; then
+  echo "[Error] unchanged source content should remain cached after an mtime-only change." >&2
+  exit 1
+fi
+printf '%s\n' 'int updated_source;' >"$SSLKEYLOG_LIB_SOURCE_FILE"
+touch -t 200101010000 "$SSLKEYLOG_LIB_SOURCE_FILE"
+: >"$docker_log"
+PATH="$mock_bin:$PATH" DOCKER_STUB_LOG="$docker_log" DOCKER_STUB_IMAGE_ID="sha256:test-image-two" \
+  ensure_sslkeylog_library "nginx:test"
+if ! grep -q '^run ' "$docker_log"; then
+  echo "[Error] changed source content with a preserved old mtime must force a rebuild." >&2
+  exit 1
+fi
+source_fingerprint="$(_sslkeylog_source_fingerprint)"
+if ! grep -Fxq "source=${source_fingerprint}" "$SSLKEYLOG_LIB_BUILD_META_FILE"; then
+  echo "[Error] rebuilt helper metadata must identify the updated source content." >&2
+  exit 1
+fi
+
+printf '%s\n' 'nginx:test|sha256:test-image-two' >"$SSLKEYLOG_LIB_BUILD_META_FILE"
+: >"$docker_log"
+PATH="$mock_bin:$PATH" DOCKER_STUB_LOG="$docker_log" DOCKER_STUB_IMAGE_ID="sha256:test-image-two" \
+  ensure_sslkeylog_library "nginx:test"
+if ! grep -q '^run ' "$docker_log"; then
+  echo "[Error] cached helpers without source identity must be rebuilt." >&2
+  exit 1
+fi
+
+printf '%s\n' 'int source_before_build;' >"$SSLKEYLOG_LIB_SOURCE_FILE"
+if PATH="$mock_bin:$PATH" DOCKER_STUB_LOG="$docker_log" DOCKER_STUB_IMAGE_ID="sha256:test-image-two" \
+  DOCKER_STUB_MUTATE_SOURCE="$SSLKEYLOG_LIB_SOURCE_FILE" ensure_sslkeylog_library "nginx:test" >"$tmp_dir/mutation.out" 2>&1; then
+  echo "[Error] a build using concurrently changed source must fail." >&2
+  exit 1
+fi
+if [ -e "$SSLKEYLOG_LIB_BUILD_META_FILE" ]; then
+  echo "[Error] failed source-race builds must not leave trusted cache metadata." >&2
+  exit 1
+fi
+: >"$docker_log"
+PATH="$mock_bin:$PATH" DOCKER_STUB_LOG="$docker_log" DOCKER_STUB_IMAGE_ID="sha256:test-image-two" \
+  ensure_sslkeylog_library "nginx:test"
+if ! grep -q '^run ' "$docker_log"; then
+  echo "[Error] retrying after a source-race failure must rebuild the helper." >&2
+  exit 1
+fi
+
 rm -f "$SSLKEYLOG_LIB_BUILD_FILE"
 if PATH="$mock_bin:$PATH" DOCKER_STUB_LOG="$docker_log" DOCKER_STUB_IMAGE_ID="sha256:test-image-two" \
   DOCKER_STUB_FAIL=true ensure_sslkeylog_library "nginx:test" 2>/dev/null; then
   echo "[Error] helper build should fail when Docker build command fails." >&2
+  exit 1
+fi
+if [ -e "$SSLKEYLOG_LIB_BUILD_META_FILE" ]; then
+  echo "[Error] failed Docker builds must invalidate prior trusted cache metadata." >&2
   exit 1
 fi
 

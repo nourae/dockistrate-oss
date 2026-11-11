@@ -1,0 +1,5 @@
+
+1: example.com 80 -> 80 proto=http ws=no cert=none redirect=off http3=- alt-svc=-
+2: example.com 443 -> 80 proto=https ws=no cert=example.com/selfsigned-443 redirect=off http3=off alt-svc=auto
+
+Press Enter to continue...

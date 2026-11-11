@@ -1,0 +1,16 @@
+Review command
+  Command: Add Cert (add-cert)
+  Description: Generate or upload a certificate for a domain and optional port suffix
+
+Arguments:
+  Domain: example.com
+  Certificate port suffix: 8443
+  Certificate type: selfsigned
+
+CLI equivalent:
+  ./dockistrate.sh add-cert example.com 8443 selfsigned
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

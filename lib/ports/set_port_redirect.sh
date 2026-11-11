@@ -25,22 +25,26 @@ function set_port_redirect() {
     echo "[Usage] set-port-redirect <domain> <port> <on|off> [301|302|308[:target_port]]"
     exit 1
   fi
+  require_valid_port "$port" 1 || return 1
+  port="$(normalize_port "$port")" || return 1
   resolve_backend_domain domain "$domain" true
   if ! backend_exists "$domain"; then
     echo "[Error] Backend domain '$domain' not found." >&2
     exit 1
   fi
-  if ! is_yes_no "${on_off/yes/on}"; then
-    if [[ "$on_off" != "on" && "$on_off" != "off" ]]; then
-      echo "[Error] Redirect flag must be on|off" >&2
-      exit 1
-    fi
+  case "$on_off" in
+  yes) on_off="on" ;;
+  no) on_off="off" ;;
+  esac
+  if ! is_on_off "$on_off"; then
+    echo "[Error] Redirect flag must be on|off" >&2
+    exit 1
   fi
-  [[ "$on_off" = yes ]] && on_off="on"
   if [ "$on_off" = "on" ]; then
     if [[ "$code" == *:* ]]; then
       target_port="${code#*:}"
       code="${code%%:*}"
+      if [ -n "$target_port" ]; then target_port="$(normalize_port "$target_port")" || { echo "[Error] Invalid redirect target port" >&2; return 1; }; fi
       [ -z "$code" ] && code="301"
       if [ -n "$target_port" ] && ! is_valid_port "$target_port"; then
         echo "[Error] Invalid redirect target port: $target_port" >&2

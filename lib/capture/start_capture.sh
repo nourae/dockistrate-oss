@@ -11,29 +11,29 @@ function _capture_collapse_absolute_path() {
     ;;
   esac
 
-  local trimmed="${path_in#/}" old_ifs="$IFS"
-  IFS='/'
-  local -a parts=()
-  read -r -a parts <<<"$trimmed"
-  IFS="$old_ifs"
-
+  # Split on path separators, not lines: a newline can be part of a filename.
+  local remaining="${path_in#/}"
   local -a stack=()
   local segment=""
-  if [ ${#parts[@]} -gt 0 ]; then
-    for segment in "${parts[@]}"; do
-      case "$segment" in
-      "" | .) ;;
-      ..)
-        if [ ${#stack[@]} -gt 0 ]; then
-          unset "stack[${#stack[@]}-1]"
-        fi
-        ;;
-      *)
-        stack+=("$segment")
-        ;;
-      esac
-    done
-  fi
+  while [ -n "$remaining" ]; do
+    segment="${remaining%%/*}"
+    if [ "$remaining" = "$segment" ]; then
+      remaining=""
+    else
+      remaining="${remaining#*/}"
+    fi
+    case "$segment" in
+    "" | .) ;;
+    ..)
+      if [ ${#stack[@]} -gt 0 ]; then
+        unset "stack[${#stack[@]}-1]"
+      fi
+      ;;
+    *)
+      stack+=("$segment")
+      ;;
+    esac
+  done
 
   local collapsed="/"
   if [ ${#stack[@]} -gt 0 ]; then
@@ -55,11 +55,20 @@ function _capture_resolve_existing_path() {
 
   local resolved=""
   if [ -d "$path_in" ]; then
-    resolved="$(cd "$path_in" 2>/dev/null && pwd -P)" || return 1
+    resolved="$(cd -- "$path_in" >/dev/null 2>&1 && pwd -P && printf '.')" || return 1
+    resolved="${resolved%.}"
+    resolved="${resolved%$'\n'}"
   else
-    local resolved_dir=""
-    resolved_dir="$(cd "$(dirname "$path_in")" 2>/dev/null && pwd -P)" || return 1
-    resolved="${resolved_dir%/}/$(basename "$path_in")"
+    local resolved_dir="" parent_path="${path_in%/*}" leaf_name="${path_in##*/}"
+    if [ "$parent_path" = "$path_in" ]; then
+      parent_path="."
+    elif [ -z "$parent_path" ]; then
+      parent_path="/"
+    fi
+    resolved_dir="$(cd -- "$parent_path" >/dev/null 2>&1 && pwd -P && printf '.')" || return 1
+    resolved_dir="${resolved_dir%.}"
+    resolved_dir="${resolved_dir%$'\n'}"
+    resolved="${resolved_dir%/}/${leaf_name}"
   fi
 
   _capture_collapse_absolute_path resolved "$resolved" || return 1
@@ -77,10 +86,12 @@ function _capture_resolve_output_path() {
   fi
 
   local search_path="$absolute_path"
+  while [ "$search_path" != "/" ] && [ "${search_path%/}" != "$search_path" ]; do
+    search_path="${search_path%/}"
+  done
   local missing_suffix=""
   while [ ! -e "$search_path" ]; do
-    local leaf_name=""
-    leaf_name="$(basename "$search_path")"
+    local leaf_name="${search_path##*/}"
     if [ -z "$leaf_name" ] || [ "$leaf_name" = "/" ] || [ "$leaf_name" = "." ]; then
       break
     fi
@@ -91,8 +102,11 @@ function _capture_resolve_output_path() {
       missing_suffix="$leaf_name"
     fi
 
-    local parent_path=""
-    parent_path="$(dirname "$search_path")"
+    local parent_path="${search_path%/*}"
+    [ -n "$parent_path" ] || parent_path="/"
+    while [ "$parent_path" != "/" ] && [ "${parent_path%/}" != "$parent_path" ]; do
+      parent_path="${parent_path%/}"
+    done
     if [ "$parent_path" = "$search_path" ]; then
       break
     fi
@@ -112,24 +126,41 @@ function _capture_resolve_output_path() {
 }
 
 function start_capture() {
+  # The regular module loader supplies these helpers. Keep direct callers that
+  # source this command file working without adding load-time side effects.
+  if ! declare -F _capture_build_filter >/dev/null 2>&1; then
+    # shellcheck source=lib/capture/filter_helpers.sh
+    source "$(dirname "${BASH_SOURCE[0]}")/filter_helpers.sh" || return 1
+  fi
   local out_dir="$CAPTURE_DIR" scope="" backend_input="" client_input="" tls_decrypt="false"
+  local scope_given=false backends_given=false clients_given=false folder_given=false options_done=false
+  local option="" value=""
 
   while [ $# -gt 0 ]; do
+    if [ "$options_done" = true ]; then
+      if [ "$folder_given" = true ]; then
+        echo "[Error] Unexpected start-capture argument: '$1'. Specify one output folder." >&2
+        return 1
+      fi
+      out_dir="$1"
+      folder_given=true
+      shift
+      continue
+    fi
     case "$1" in
-    --scope)
-      scope="${2:-$scope}"
-      shift 2
-      ;;
-    --backends)
-      backend_input="${2:-}"
-      shift 2
-      ;;
-    --clients)
-      client_input="${2:-}"
-      shift 2
-      ;;
-    --folder)
-      out_dir="${2:-$out_dir}"
+    --scope | --backends | --clients | --folder)
+      option="$1"
+      if [ $# -lt 2 ] || [[ "$2" == -* ]]; then
+        echo "[Error] ${option} requires a value." >&2
+        return 1
+      fi
+      value="$2"
+      case "$option" in
+      --scope) scope="$value"; scope_given=true ;;
+      --backends) backend_input="$value"; backends_given=true ;;
+      --clients) client_input="$value"; clients_given=true ;;
+      --folder) out_dir="$value"; folder_given=true ;;
+      esac
       shift 2
       ;;
     --tls-decrypt)
@@ -137,20 +168,55 @@ function start_capture() {
       shift
       ;;
     --)
+      options_done=true
       shift
-      break
       ;;
     -*)
-      shift
+      echo "[Error] Unknown start-capture option: '$1'." >&2
+      return 1
       ;;
     *)
-      if [ "$out_dir" = "$CAPTURE_DIR" ]; then
-        out_dir="$1"
+      if [ "$folder_given" = true ]; then
+        echo "[Error] Unexpected start-capture argument: '$1'. Specify one output folder." >&2
+        return 1
       fi
+      out_dir="$1"
+      folder_given=true
       shift
       ;;
     esac
   done
+
+  if [ -z "$out_dir" ]; then
+    echo "[Error] The capture output folder must not be empty." >&2
+    return 1
+  fi
+  if [ "$backends_given" = true ]; then
+    _capture_split_targets "$backend_input"
+    if [ ${#CAPTURE_TOKENS[@]} -eq 0 ]; then
+      echo "[Error] --backends requires at least one backend domain; omit it to select all configured backends." >&2
+      return 1
+    fi
+  fi
+  if [ "$clients_given" = true ]; then
+    _capture_split_targets "$client_input"
+    if [ ${#CAPTURE_TOKENS[@]} -eq 0 ]; then
+      echo "[Error] --clients requires at least one client IPv4 address." >&2
+      return 1
+    fi
+  fi
+  if [ "$scope_given" = true ]; then
+    _capture_normalize_scope "$scope" || return 1
+    scope="$CAPTURE_SCOPE"
+  elif [ "$clients_given" = true ] && [ "$backends_given" = true ]; then
+    scope="clients-backends"
+  elif [ "$clients_given" = true ]; then
+    scope="clients"
+  elif [ "$backends_given" = true ]; then
+    scope="backends"
+  else
+    scope="all"
+  fi
 
   local capture_image="${CAPTURE_IMAGE:-}"
   if ! is_valid_image_ref "$capture_image"; then
@@ -158,7 +224,58 @@ function start_capture() {
     return 1
   fi
 
-  local requested_out_dir="$out_dir"
+  if [ "$INTERACTIVE" = true ]; then
+    local scope_idx=""
+    if ! choose_option scope_idx "Capture scope?" \
+      "All Nginx traffic (clients and backends)" \
+      "Specific backend(s)" \
+      "Specific client IP(s) (any backend)" \
+      "Specific client IP(s) to backend(s)"; then
+      return 1
+    fi
+    case "$scope_idx" in
+    0) scope="all" ;;
+    1) scope="backends" ;;
+    2) scope="clients" ;;
+    3) scope="clients-backends" ;;
+    *)
+      echo "[Error] Invalid capture scope selection." >&2
+      return 1
+      ;;
+    esac
+    if [ "$scope" = backends ] || [ "$scope" = clients-backends ]; then
+      _capture_read_backend_rows || return 1
+      echo "[Info] Available backends: ${CAPTURE_AVAILABLE_BACKENDS[*]}"
+      _capture_read_selection "Enter backend domains (comma/space-separated, blank=all configured backends): " backend_input || return 1
+    fi
+    if [ "$scope" = clients ] || [ "$scope" = clients-backends ]; then
+      _capture_read_selection "Enter client IPv4 addresses (comma/space-separated; required): " client_input || return 1
+    fi
+  fi
+
+  # Resolve every requested restriction before creating capture directories,
+  # changing TLS decrypt state, or replacing an existing capture container.
+  _capture_build_filter "$scope" "$backend_input" "$client_input" || return 1
+  local -a filter_args=() backend_targets=() uniq_client_ips=()
+  if [ ${#CAPTURE_FILTER_ARGS[@]} -gt 0 ]; then
+    filter_args=("${CAPTURE_FILTER_ARGS[@]}")
+  fi
+  if [ ${#CAPTURE_BACKEND_TARGETS[@]} -gt 0 ]; then
+    backend_targets=("${CAPTURE_BACKEND_TARGETS[@]}")
+  fi
+  if [ ${#CAPTURE_CLIENT_HOSTS[@]} -gt 0 ]; then
+    uniq_client_ips=("${CAPTURE_CLIENT_HOSTS[@]}")
+  fi
+
+  if [ "$INTERACTIVE" = true ] && ! _capture_is_true "$tls_decrypt"; then
+    local decrypt_choice=""
+    _capture_read_selection "Enable TLS decrypt capture (stores TLS session keys)? [y/N]: " decrypt_choice || return 1
+    decrypt_choice="$(printf '%s' "${decrypt_choice:-n}" | tr '[:upper:]' '[:lower:]')"
+    if [[ "$decrypt_choice" =~ ^(y|yes)$ ]]; then
+      tls_decrypt="true"
+    fi
+  fi
+
   if [[ "$out_dir" != /* ]]; then
     local rel="$out_dir"
     rel="${rel#./}"
@@ -192,430 +309,33 @@ function start_capture() {
     esac
   fi
 
-  local old_umask capture_root="" resolved_out_dir=""
-  old_umask="$(umask)"
-  umask 077
-  mkdir -p "$CAPTURE_DIR"
-  umask "$old_umask"
-  chmod 700 "$CAPTURE_DIR" 2>/dev/null || true
-
-  if ! _capture_resolve_existing_path capture_root "$CAPTURE_DIR"; then
-    echo "[Error] Unable to resolve capture root '${CAPTURE_DIR}'." >&2
-    return 1
+  # Validate without touching output while an older capture may still write it.
+  local capture_helper_dir=""
+  capture_helper_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)" || return 1
+  if ! declare -F _capture_with_runtime_lock >/dev/null 2>&1; then
+    # shellcheck source=lib/capture/lifecycle.sh
+    source "$capture_helper_dir/lifecycle.sh" || return 1
   fi
-
-  if ! _capture_resolve_output_path resolved_out_dir "$out_dir"; then
-    echo "[Error] Unable to resolve capture output directory '${requested_out_dir}'." >&2
-    return 1
+  if ! declare -F _capture_output_preflight >/dev/null 2>&1; then
+    # shellcheck source=lib/capture/output_paths.sh
+    source "$capture_helper_dir/output_paths.sh" || return 1
   fi
-
-  case "$resolved_out_dir" in
-  "$capture_root" | "$capture_root"/*)
-    out_dir="$resolved_out_dir"
-    ;;
-  *)
-    echo "[Error] Capture output directory '${requested_out_dir}' must reside within '${CAPTURE_DIR}'." >&2
-    return 1
-    ;;
-  esac
-
-  old_umask="$(umask)"
-  umask 077
-  mkdir -p "$out_dir"
-  umask "$old_umask"
-  chmod 700 "$out_dir" 2>/dev/null || true
-  if ! require_managed_nginx_container "start-capture"; then
-    return 1
+  if ! declare -F _capture_tls_launch_begin >/dev/null 2>&1; then
+    # shellcheck source=lib/capture/tls_launch.sh
+    source "$capture_helper_dir/tls_launch.sh" || return 1
   fi
+  _capture_output_preflight "$CAPTURE_DIR" "$out_dir" || return 1
+  require_managed_nginx_container "start-capture" || return 1
   if ! container_running "$NGINX_CONTAINER_NAME"; then
     echo "[Error] Nginx container is not running." >&2
     return 1
   fi
-
-  if [ "$INTERACTIVE" = true ] && ! _capture_is_true "$tls_decrypt"; then
-    local decrypt_choice=""
-    read_with_editing "Enable TLS decrypt capture (stores TLS session keys)? [y/N]: " decrypt_choice
-    decrypt_choice="$(printf '%s' "${decrypt_choice:-n}" | tr '[:upper:]' '[:lower:]')"
-    if [[ "$decrypt_choice" =~ ^(y|yes)$ ]]; then
-      tls_decrypt="true"
-    fi
-  fi
-
-  # Default scope if not provided
-  if [ -z "$scope" ]; then
-    if [ -n "$client_input" ] && [ -n "$backend_input" ]; then
-      scope="clients-backends"
-    elif [ -n "$client_input" ]; then
-      scope="clients"
-    elif [ -n "$backend_input" ]; then
-      scope="backends"
-    else
-      scope="all"
-    fi
-  fi
-
-  if [ "$INTERACTIVE" = true ]; then
-    local scope_idx
-    if ! choose_option scope_idx "Capture scope?" \
-      "All Nginx traffic (clients and backends)" \
-      "Specific backend(s)" \
-      "Specific client IP(s) (any backend)" \
-      "Specific client IP(s) to backend(s)"; then
-      return 1
-    fi
-    case "$scope_idx" in
-    1) scope="backends" ;;
-    2) scope="clients" ;;
-    3) scope="clients-backends" ;;
-    *) scope="all" ;;
-    esac
-
-    if [ "$scope" = "backends" ] || [ "$scope" = "clients-backends" ]; then
-      local available_backends=""
-      if [ -f "$BACKEND_PORTS_FILE" ]; then
-        local available_backends_lines=""
-        local state_line="" state_line_no=0
-        while IFS= read -r state_line || [ -n "$state_line" ]; do
-          state_line_no=$((state_line_no + 1))
-          [ "$state_line_no" -eq 1 ] && continue
-          state_backend_ports_parse_line "$state_line" || continue
-          [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_PORTS_COLS" ] || continue
-          [ "${STATE_BP_RECORD_TYPE:-}" = "backend" ] || continue
-          [ -n "${STATE_BP_DOMAIN:-}" ] || continue
-          available_backends_lines+="${STATE_BP_DOMAIN}"$'\n'
-        done <"$BACKEND_PORTS_FILE"
-        available_backends="$(printf '%s' "$available_backends_lines" | awk 'NF > 0' | sort -u | xargs)"
-      fi
-      if [ -z "$available_backends" ]; then
-        echo "[Warn] No configured backends; falling back to client-only or full capture." >&2
-        if [ "$scope" = "clients-backends" ]; then
-          scope="clients"
-        else
-          scope="all"
-        fi
-      else
-        echo "[Info] Available backends: $available_backends"
-        read_with_editing "Enter backend domains (comma/space-separated, blank=all): " backend_input
-      fi
-    fi
-
-    if [ "$scope" = "clients" ] || [ "$scope" = "clients-backends" ]; then
-      read_with_editing "Enter client IPs (comma/space-separated, blank=all clients): " client_input
-      if [ -z "$client_input" ] && [ "$scope" = "clients" ]; then
-        scope="all"
-      fi
-    fi
-  fi
-
-  scope="$(printf '%s' "$scope" | tr '[:upper:]' '[:lower:]')"
-  case "$scope" in
-  backends | backend) scope="backends" ;;
-  clients | client) scope="clients" ;;
-  clients-backends | clients_backends | clientsandbackends | clients-and-backends | client-backend | client_backends)
-    scope="clients-backends"
-    ;;
-  *) scope="all" ;;
-  esac
-
-  # Normalize target lists
-  backend_input="${backend_input//,/ }"
-  client_input="${client_input//,/ }"
-
-  local -a backend_targets=()
-  local -a client_hosts=()
-  if [ "$scope" = "backends" ] || [ "$scope" = "clients-backends" ]; then
-    local backend
-    for backend in $backend_input; do
-      backend="$(normalize_domain "$backend")"
-      [ -n "$backend" ] || continue
-      local seen=false item
-      if [ ${#backend_targets[@]} -gt 0 ]; then
-        for item in "${backend_targets[@]}"; do
-          if [ "$item" = "$backend" ]; then
-            seen=true
-            break
-          fi
-        done
-      fi
-      [ "$seen" = true ] && continue
-      backend_targets+=("$backend")
-    done
-  fi
-
-  if [ "$scope" = "clients" ] || [ "$scope" = "clients-backends" ]; then
-    local ip
-    for ip in $client_input; do
-      [ -n "$ip" ] || continue
-      if ! is_valid_ipv4 "$ip"; then
-        echo "[Error] Invalid client IP filter token: '$ip'. Use IPv4 addresses only." >&2
-        return 1
-      fi
-      local seen=false item
-      if [ ${#client_hosts[@]} -gt 0 ]; then
-        for item in "${client_hosts[@]}"; do
-          if [ "$item" = "$ip" ]; then
-            seen=true
-            break
-          fi
-        done
-      fi
-      [ "$seen" = true ] && continue
-      client_hosts+=("$ip")
-    done
-  fi
-
-  if [ "$scope" = "backends" ] || [ "$scope" = "clients-backends" ]; then
-    if [ ${#backend_targets[@]} -eq 0 ] && [ -f "$BACKEND_PORTS_FILE" ]; then
-      local state_line="" state_line_no=0
-      while IFS= read -r state_line || [ -n "$state_line" ]; do
-        state_line_no=$((state_line_no + 1))
-        [ "$state_line_no" -eq 1 ] && continue
-        state_backend_ports_parse_line "$state_line" || continue
-        [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_PORTS_COLS" ] || continue
-        local type dom
-        type="${STATE_BP_RECORD_TYPE:-}"
-        dom="${STATE_BP_DOMAIN:-}"
-        if [ "$type" = "backend" ]; then
-          local normalized exists item
-          normalized="$(normalize_domain "$dom")"
-          [ -n "$normalized" ] || continue
-          exists=false
-          if [ ${#backend_targets[@]} -gt 0 ]; then
-            for item in "${backend_targets[@]}"; do
-              if [ "$item" = "$normalized" ]; then
-                exists=true
-                break
-              fi
-            done
-          fi
-          [ "$exists" = true ] && continue
-          backend_targets+=("$normalized")
-        fi
-      done <"$BACKEND_PORTS_FILE"
-    fi
-  fi
-
-  # Adjust scope if inputs are missing
-  if [ "$scope" = "clients-backends" ] && [ ${#backend_targets[@]} -eq 0 ]; then
-    if [ ${#client_hosts[@]} -gt 0 ]; then
-      echo "[Warn] No backends selected; falling back to client-only capture." >&2
-      scope="clients"
-    else
-      scope="all"
-    fi
-  fi
-  if [ "$scope" = "backends" ] && [ ${#backend_targets[@]} -eq 0 ]; then
-    scope="all"
-  fi
-  if [ "$scope" = "clients" ] && [ ${#client_hosts[@]} -eq 0 ]; then
-    scope="all"
-  fi
-
-  local -a backend_ports=()
-  local -a backend_ips=()
-  if [ "$scope" = "backends" ] || [ "$scope" = "clients-backends" ]; then
-    if [ -f "$BACKEND_PORTS_FILE" ] && [ ${#backend_targets[@]} -gt 0 ]; then
-      local state_line="" state_line_no=0
-      while IFS= read -r state_line || [ -n "$state_line" ]; do
-        state_line_no=$((state_line_no + 1))
-        [ "$state_line_no" -eq 1 ] && continue
-        state_backend_ports_parse_line "$state_line" || continue
-        [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_PORTS_COLS" ] || continue
-        local type dom backend_upstream listen_port upstream_port
-        type="${STATE_BP_RECORD_TYPE:-}"
-        dom="${STATE_BP_DOMAIN:-}"
-        backend_upstream="${STATE_BP_BACKEND_UPSTREAM:-}"
-        listen_port="${STATE_BP_LISTEN_PORT:-}"
-        upstream_port="${STATE_BP_UPSTREAM_PORT:-}"
-        local d_lower
-        d_lower="$(normalize_domain "$dom")"
-        local match=false t
-        for t in "${backend_targets[@]}"; do
-          if [ "$t" = "$d_lower" ]; then
-            match=true
-            break
-          fi
-        done
-        [ "$match" = true ] || continue
-
-        if [ "$type" = "backend" ]; then
-          if [[ "$backend_upstream" == *:* ]]; then
-            local backend_port="${backend_upstream##*:}"
-            if [[ "$backend_port" =~ ^[0-9]+$ ]]; then
-              backend_ports+=("$backend_port")
-            fi
-          fi
-          if container_running "backend-$(sanitize_domain_name "$d_lower")"; then
-            local ip
-            ip=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "backend-$(sanitize_domain_name "$d_lower")" 2>/dev/null || true)
-            [ -n "$ip" ] && backend_ips+=("$ip")
-          fi
-        elif [ "$type" = "port" ]; then
-          if [[ "$listen_port" =~ ^[0-9]+$ ]]; then
-            backend_ports+=("$listen_port")
-          fi
-          if [[ "$upstream_port" =~ ^[0-9]+$ ]]; then
-            backend_ports+=("$upstream_port")
-          fi
-        fi
-      done <"$BACKEND_PORTS_FILE"
-    fi
-  fi
-
-  # Deduplicate ports, backend IPs, and client IPs
-  local -a uniq_ports=()
-  local -a uniq_backend_ips=()
-  local -a uniq_client_ips=()
-  local entry p ip
-  if [ ${#backend_ports[@]} -gt 0 ]; then
-    for p in "${backend_ports[@]}"; do
-      local exists=false
-      if [ ${#uniq_ports[@]} -gt 0 ]; then
-        for entry in "${uniq_ports[@]}"; do
-          if [ "$entry" = "$p" ]; then
-            exists=true
-            break
-          fi
-        done
-      fi
-      [ "$exists" = true ] || uniq_ports+=("$p")
-    done
-  fi
-  if [ ${#backend_ips[@]} -gt 0 ]; then
-    for ip in "${backend_ips[@]}"; do
-      local exists_ip=false
-      if [ ${#uniq_backend_ips[@]} -gt 0 ]; then
-        for entry in "${uniq_backend_ips[@]}"; do
-          if [ "$entry" = "$ip" ]; then
-            exists_ip=true
-            break
-          fi
-        done
-      fi
-      [ "$exists_ip" = true ] || uniq_backend_ips+=("$ip")
-    done
-  fi
-  if [ ${#client_hosts[@]} -gt 0 ]; then
-    for ip in "${client_hosts[@]}"; do
-      local exists_ch=false
-      if [ ${#uniq_client_ips[@]} -gt 0 ]; then
-        for entry in "${uniq_client_ips[@]}"; do
-          if [ "$entry" = "$ip" ]; then
-            exists_ch=true
-            break
-          fi
-        done
-      fi
-      [ "$exists_ch" = true ] || uniq_client_ips+=("$ip")
-    done
-  fi
-
-  local -a backend_filter=()
-  local -a client_filter=()
-  local -a filter_args=()
-  if [ ${#uniq_ports[@]} -gt 0 ]; then
-    backend_filter+=("(" "port" "${uniq_ports[0]}")
-    local i
-    for ((i = 1; i < ${#uniq_ports[@]}; i++)); do
-      backend_filter+=("or" "port" "${uniq_ports[$i]}")
-    done
-    backend_filter+=(")")
-  fi
-  if [ ${#uniq_backend_ips[@]} -gt 0 ]; then
-    if [ ${#backend_filter[@]} -gt 0 ]; then
-      backend_filter+=("or")
-    fi
-    backend_filter+=("(" "host" "${uniq_backend_ips[0]}")
-    local i
-    for ((i = 1; i < ${#uniq_backend_ips[@]}; i++)); do
-      backend_filter+=("or" "host" "${uniq_backend_ips[$i]}")
-    done
-    backend_filter+=(")")
-  fi
-
-  if [ ${#uniq_client_ips[@]} -gt 0 ]; then
-    client_filter+=("(" "host" "${uniq_client_ips[0]}")
-    local i
-    for ((i = 1; i < ${#uniq_client_ips[@]}; i++)); do
-      client_filter+=("or" "host" "${uniq_client_ips[$i]}")
-    done
-    client_filter+=(")")
-  fi
-
-  if [ "$scope" = "clients-backends" ]; then
-    if [ ${#backend_filter[@]} -gt 0 ] && [ ${#client_filter[@]} -gt 0 ]; then
-      filter_args+=("(")
-      filter_args+=("${client_filter[@]}")
-      filter_args+=("and")
-      filter_args+=("${backend_filter[@]}")
-      filter_args+=(")")
-    elif [ ${#client_filter[@]} -gt 0 ]; then
-      filter_args=("${client_filter[@]}")
-      scope="clients"
-    elif [ ${#backend_filter[@]} -gt 0 ]; then
-      filter_args=("${backend_filter[@]}")
-      scope="backends"
-    else
-      scope="all"
-    fi
-  elif [ "$scope" = "clients" ]; then
-    if [ ${#client_filter[@]} -gt 0 ]; then
-      filter_args=("${client_filter[@]}")
-    else
-      scope="all"
-    fi
-  elif [ "$scope" = "backends" ]; then
-    if [ ${#backend_filter[@]} -gt 0 ]; then
-      filter_args=("${backend_filter[@]}")
-    else
-      scope="all"
-    fi
-  fi
-
+  local decrypt_context=""
   if _capture_is_true "$tls_decrypt"; then
-    local decrypt_context=""
-    local keylog_file=""
     decrypt_context="command=start-capture scope=${scope:-auto} backends=${backend_input:-all} clients=${client_input:-all}"
-    acknowledge_tls_decrypt_capture "$decrypt_context"
-    if ! enable_capture_tls_decrypt "$decrypt_context"; then
-      echo "[Error] Failed to enable TLS decrypt capture mode." >&2
-      return 1
-    fi
-    if [ "${SKIP_DOCKER_CHECKS:-}" != "true" ]; then
-      local recreate_status=0
-      recreate_nginx_container "$NGINX_IMAGE" || recreate_status=$?
-      if [ "$recreate_status" -ne 0 ]; then
-        if [ "$recreate_status" -eq 2 ]; then
-          echo "[Error] Failed to finish Nginx TLS decrypt setup after container launch; TLS decrypt state preserved because Nginx may already be running with key logging enabled." >&2
-          return 1
-        fi
-        disable_capture_tls_decrypt "command=start-capture action=rollback"
-        echo "[Error] Failed to recreate Nginx with TLS decrypt key logging enabled." >&2
-        return 1
-      fi
-    fi
-    echo "[Warn] TLS decrypt capture enabled for this session. Session keys are sensitive and stored with restricted permissions."
-    if capture_tls_keylog_file keylog_file 2>/dev/null; then
-      echo "[Info] TLS key log file: ${keylog_file}"
-    fi
+    acknowledge_tls_decrypt_capture "$decrypt_context" || return 1
+    _capture_tls_launch_preflight || return 1
   fi
-
-  local full_dir
-  full_dir=$(cd "$out_dir" && pwd)
-  local timestamp
-  timestamp="$(date '+%Y%m%d_%H%M%S')"
-  local pcap_file="${timestamp}_nginx.pcap"
-  remove_container_and_anonymous_volumes nginx-capture >/dev/null 2>&1 || true
-  local -a docker_cmd=(
-    docker run -d --name nginx-capture --net=container:"$NGINX_CONTAINER_NAME"
-    -v "$full_dir":/pcaps
-    "$capture_image"
-    tcpdump -U -i any -s0 -w "/pcaps/${pcap_file}"
-  )
-  if [ ${#filter_args[@]} -gt 0 ]; then
-    docker_cmd+=("${filter_args[@]}")
-  fi
-  "${docker_cmd[@]}"
 
   local info_parts=()
   if [ "$scope" = "backends" ]; then
@@ -632,5 +352,64 @@ function start_capture() {
   if _capture_is_true "$tls_decrypt"; then
     info_parts+=("tls-decrypt: enabled")
   fi
-  echo "[Info] Packet capture started (scope: ${scope}; ${info_parts[*]}). Output: ${full_dir}/${pcap_file}"
+  if [ "${#filter_args[@]}" -gt 0 ]; then
+    _capture_with_runtime_lock _capture_start_runtime "$out_dir" "$tls_decrypt" \
+      "$decrypt_context" "$capture_image" "scope: ${scope}; ${info_parts[*]}" "${filter_args[@]}"
+  else
+    _capture_with_runtime_lock _capture_start_runtime "$out_dir" "$tls_decrypt" \
+      "$decrypt_context" "$capture_image" "scope: ${scope}; ${info_parts[*]}"
+  fi
+}
+
+function _capture_start_runtime() {
+  local out_dir="$1" tls_decrypt="$2" decrypt_context="$3" capture_image="$4" capture_info="$5"
+  shift 5
+  local removed=false full_dir="" output_identity="" timestamp="" pcap_file="" keylog_file=""
+  # Recheck under the lock: preflight may have raced another finished command.
+  _capture_output_preflight "$CAPTURE_DIR" "$out_dir" || return 1
+  require_managed_nginx_container "start-capture" || return 1
+  if ! container_running "$NGINX_CONTAINER_NAME"; then
+    echo "[Error] Nginx container is not running." >&2
+    return 1
+  fi
+  if _capture_is_true "$tls_decrypt"; then
+    _capture_tls_launch_preflight || return 1
+  fi
+  # The old container must no longer be able to rename mount children before
+  # any output mkdir/chmod, including the descriptor-based preparation below.
+  _capture_remove_existing removed || return 1
+  if [ "$removed" = true ]; then
+    echo "[Info] Previous packet capture removed; existing capture files retained."
+  fi
+  _capture_output_prepare full_dir output_identity "$CAPTURE_DIR" "$out_dir" || return 1
+  timestamp="$(date '+%Y%m%d_%H%M%S')" || return 1
+  pcap_file="${timestamp}_nginx.pcap"
+  CAPTURE_TLS_LAUNCH_ACTIVE=false
+  if _capture_is_true "$tls_decrypt"; then
+    _capture_tls_launch_begin "$decrypt_context" || return 1
+    echo "[Warn] TLS decrypt capture enabled for this session. Session keys are sensitive and stored with restricted permissions."
+    if capture_tls_keylog_file keylog_file 2>/dev/null; then
+      echo "[Info] TLS key log file: ${keylog_file}"
+    fi
+  fi
+  if ! _capture_output_verify "$CAPTURE_DIR" "$out_dir" "$output_identity"; then
+    _capture_tls_launch_abort || true
+    return 1
+  fi
+  local -a docker_cmd=(docker run -d --name nginx-capture)
+  if [ "${CAPTURE_TLS_LAUNCH_ACTIVE:-false}" = true ]; then
+    docker_cmd+=(--cidfile "$CAPTURE_TLS_LAUNCH_WORKSPACE/capture.cid")
+  fi
+  docker_cmd+=(--net=container:"$NGINX_CONTAINER_NAME" -v "$full_dir":/pcaps
+    "$capture_image" tcpdump -U -i any -s0 -w "/pcaps/${pcap_file}")
+  if [ "$#" -gt 0 ]; then docker_cmd+=("$@"); fi
+  local capture_status=0
+  "${docker_cmd[@]}" || capture_status=$?
+  if [ "$capture_status" -ne 0 ]; then
+    echo "[Error] Failed to start the packet capture container." >&2
+    _capture_tls_launch_abort || true
+    return "$capture_status"
+  fi
+  _capture_tls_launch_finish || return 1
+  echo "[Info] Packet capture started (${capture_info}). Output: ${full_dir}/${pcap_file}"
 }

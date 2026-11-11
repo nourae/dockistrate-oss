@@ -1,0 +1,6 @@
+Condition mode:
+  1) and
+> 2) or
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

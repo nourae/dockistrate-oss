@@ -1,0 +1,15 @@
+Review command
+  Command: Set Certbot Image (set-certbot-image)
+  Description: Choose the Certbot image used for ACME issuance
+
+Arguments:
+  certbot image: certbot/certbot:v5.8.0@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20
+  Image pull mode: never
+
+CLI equivalent:
+  ./dockistrate.sh set-certbot-image certbot/certbot:v5.8.0@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20 never
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

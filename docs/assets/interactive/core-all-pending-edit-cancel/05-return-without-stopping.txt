@@ -1,0 +1,15 @@
+Start / stop services:
+Filter: [none]
+Press S or / to search, C to clear, Enter to select, ? for help
+  1) Start Nginx — Start or recreate the Nginx proxy container (refreshes backend IPs)
+  2) Stop Nginx — Stop the Nginx proxy container without removing it
+  3) Remove Nginx — Remove the Nginx proxy container
+  4) Start Backend — Start a backend container
+  5) Stop Backend — Stop a backend container
+  6) Restart Backend — Restart a backend container
+  7) Start All Backends — Start all backend containers
+  8) Stop All Backends — Stop all backend containers
+  9) Restart All Backends — Restart all backend containers
+> 10) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

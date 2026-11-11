@@ -1,0 +1,14 @@
+Review command
+  Command: Stop Capture (stop-capture)
+  Description: Stop an active packet capture
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh stop-capture
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

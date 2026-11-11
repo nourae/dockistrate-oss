@@ -1,0 +1,7 @@
+Path priority (location priority (integer)):
+  1) 100 (default) (current)
+  2) 50
+> 3) 10
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

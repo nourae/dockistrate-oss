@@ -1,0 +1,8 @@
+Search all commands:
+Filter: list-port-mappings
+Press S or / to search, C to clear, Enter to select, ? for help
+> 1) Routing & Ports :: List Port Mappings — List configured port mappings with
+    WebSocket and redirect flags
+  2) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

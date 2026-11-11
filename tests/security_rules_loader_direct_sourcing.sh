@@ -40,7 +40,7 @@ ROOT_DIR="$ROOT_DIR" bash -c '
   # shellcheck source=../lib/security_rules.sh
   source "$ROOT_DIR/lib/security_rules.sh"
 
-  for name in __dockistrate_security_rules_loaded __dockistrate_security_rules_common_loaded add_security_rule list_security_rules build_security_rules_inc _sr_write_db_line; do
+  for name in __dockistrate_security_rules_loaded __dockistrate_security_rules_common_loaded add_security_rule list_security_rules build_security_rules_inc _sr_write_db_line _sr_write_db_line_with_action _sr_normalize_action; do
     if ! declare -F "$name" >/dev/null 2>&1; then
       echo "$name should be available after directly sourcing lib/security_rules.sh" >&2
       exit 1

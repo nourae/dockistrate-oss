@@ -1,0 +1,2 @@
+
+Type YES to run this destructive command: YES

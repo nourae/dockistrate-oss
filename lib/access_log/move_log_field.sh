@@ -7,7 +7,7 @@ fi
 
 function move_log_field() {
   local from="${1:-}" to="${2:-}"
-  if ! [[ "$from" =~ ^[0-9]+$ && "$to" =~ ^[0-9]+$ ]]; then
+  if ! from="$(normalize_decimal_number "$from")" || ! to="$(normalize_decimal_number "$to")"; then
     echo "[Usage] move-log-field <from> <to>"
     exit 1
   fi

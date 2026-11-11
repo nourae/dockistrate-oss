@@ -25,8 +25,8 @@ export PATH
 CURRENT_ARGS=("example.test")
 
 cat >"$BACKEND_DOCKER_OPTS_FILE" <<'EOF_OPTS'
-key,docker_options
-backend:example.test,--label app=demo
+domain,docker_options
+example.test,--label app=demo
 EOF_OPTS
 
 choices_with_opts="$(__arg_choices_docker_opts "update-backend")"
@@ -35,7 +35,7 @@ if ! grep -Fq "__CLEAR__|Clear current options" <<<"$choices_with_opts"; then
   exit 1
 fi
 
-printf '%s\n' "key,docker_options" >"$BACKEND_DOCKER_OPTS_FILE"
+printf '%s\n' "domain,docker_options" >"$BACKEND_DOCKER_OPTS_FILE"
 choices_without_opts="$(__arg_choices_docker_opts "update-backend")"
 if grep -Fq "__CLEAR__|Clear current options" <<<"$choices_without_opts"; then
   echo "[Error] Clear choice should not be shown when backend has no stored docker opts." >&2

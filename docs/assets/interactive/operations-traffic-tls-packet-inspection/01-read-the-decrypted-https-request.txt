@@ -1,0 +1,2 @@
+$ tshark -r /tmp/dockistrate-capture-verification-jih4ssj7/capture.pcap -o tls.keylog_file:/tmp/dockistrate-capture-verification-jih4ssj7/session-keys.log -Y tcp.port\ ==\ 443\ \&\&\ http.request -T fields -e http.request.method -e http.host -e http.request.uri
+GET     example.com     /docs-tls-capture

@@ -1,0 +1,7 @@
+Review validates and previews the selected configuration. Apply activates it and updates the managed services.
+Review or apply:
+> 1) Review changes without applying them (current)
+  2) Apply changes
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

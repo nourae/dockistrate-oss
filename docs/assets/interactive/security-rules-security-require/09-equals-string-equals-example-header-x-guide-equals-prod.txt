@@ -1,0 +1,18 @@
+Condition 1 operator:
+> 1) Equals — string equals. Example: header X-Guide equals prod
+  2) Not Equals — string not equal. Example: header X-Guide not_equals prod
+  3) Contains — substring present (case-insensitive). Example: header X-Guide contains debug
+  4) Not Contains — substring not present. Example: header X-Guide not_contains debug
+  5) Starts With — string starts with. Example: header X-Guide starts_with prefix
+  6) Not Starts With — string does not start with. Example: header X-Guide not_starts_with prefix
+  7) Ends With — string ends with. Example: header X-Guide ends_with suffix
+  8) Not Ends With — string does not end with. Example: header X-Guide not_ends_with suffix
+  9) Matches — regex matches (case-insensitive). Example: header X-Guide matches ^[A-Za-z0-9]+$
+  10) Not Matches — regex does not match. Example: header X-Guide not_matches ^[A-Za-z0-9]+$
+  11) In — value is in list (comma or pipe separated). Example: header X-Guide in a,b,c
+  12) Not In — value is not in list. Example: header X-Guide not_in a,b,c
+  13) Exists — value present / header exists. Example: header X-Guide exists -
+  14) Not Exists — value missing / header not present. Example: header X-Guide not_exists -
+  15) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

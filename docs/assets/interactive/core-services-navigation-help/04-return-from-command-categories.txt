@@ -1,0 +1,31 @@
+=== Dockistrate Command Browser ===
+Select a category:
+  1) Search all commands
+  2) Basic Ops
+  3) Backends
+  4) Hosts & Aliases
+  5) Domain Configuration
+  6) Routing & Ports
+  7) Advanced Path Routing
+  8) Port TLS & HTTP/3
+  9) Bulk Backend Operations
+  10) Certificates
+  11) Clean & Uninstall
+  12) Backend Headers
+  13) Logging
+  14) Backend Protocol & IP Overrides
+  15) Backend mTLS & Client Certs
+  16) Backend Access Overrides
+  17) Access Control & Rules
+  18) Diagnostics
+  19) Updates
+  20) Backups & Restore
+  21) Global Nginx Directives
+  22) Global Headers & IP
+  23) Global Access Defaults
+  24) Global TLS & Runtime
+  25) Traffic Capture
+> 26) Back to home
+  27) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

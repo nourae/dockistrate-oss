@@ -55,6 +55,10 @@ function assert_transaction_state_cleared() {
     echo "[Error] ${label} left TRANSACTION_LOCK_HELD set." >&2
     exit 1
   fi
+  if [ -n "${CONFIG_RUNTIME_PREP_LOCK_HELD:-}" ] || [ -n "${CONFIG_RUNTIME_PREP_LOCK_OWNER_PID:-}" ]; then
+    echo "[Error] ${label} left runtime-preparation lock markers set." >&2
+    exit 1
+  fi
   if [ -e "$(_transaction_lock_dir)" ] || [ -L "$(_transaction_lock_dir)" ]; then
     echo "[Error] ${label} left the transaction lock on disk." >&2
     exit 1
@@ -140,6 +144,31 @@ reset_test_env mtls_wrapper
     exit 1
   fi
   end_transaction_success
+)
+
+reset_test_env promoted_lock_failure
+(
+  promoted_lock_started=false
+  if ! _config_begin_runtime_prep_lock_if_needed promoted_lock_started; then
+    echo "[Error] Failed to acquire runtime-preparation lock for startup-failure coverage." >&2
+    exit 1
+  fi
+  if [ "$promoted_lock_started" != "true" ]; then
+    echo "[Error] Runtime-preparation lock coverage did not acquire a new lock." >&2
+    exit 1
+  fi
+
+  function _rollback_targets_signature() { return 1; }
+  set +e
+  begin_transaction "promoted_lock_failure" "$CONFIG_DIR" >"$TMP_ROOT/promoted-lock-failure.out" 2>&1
+  status=$?
+  set -e
+  output="$(cat "$TMP_ROOT/promoted-lock-failure.out")"
+  if [ "$status" -eq 0 ]; then
+    echo "[Error] Promoted transaction unexpectedly survived rollback-signature failure." >&2
+    exit 1
+  fi
+  assert_transaction_state_cleared "promoted runtime-preparation lock failure"
 )
 
 printf 'Transaction startup cleanup checks passed.\n'

@@ -13,6 +13,7 @@ function set_port_tls_protocols() {
     return 1
   fi
   require_valid_port "$port" 1 || return 1
+  port="$(normalize_port "$port")" || return 1
   _validate_tls_protocol_string_for_render "$protocols" "TLS protocols for port $port" 0 || return 1
   if ! _require_https_port_mapping "$port"; then
     return 1

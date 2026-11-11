@@ -1,0 +1,11 @@
+$ curl --noproxy \* -sS -D - -o /dev/null -H Host:\ example.com http://127.0.0.1/
+HTTP/1.1 200 OK
+Server: nginx/1.31.7
+Date: Sat, 07 Nov 2026 17:34:49 GMT
+Content-Type: text/html
+Content-Length: 896
+Connection: keep-alive
+Last-Modified: Wed, 21 Oct 2026 17:54:44 GMT
+ETag: "6ad8fc64-380"
+Accept-Ranges: bytes
+X-Restore-Manual: changed

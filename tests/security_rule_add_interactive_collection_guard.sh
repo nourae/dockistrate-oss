@@ -25,6 +25,8 @@ function _sr_prompt_count() {
   printf -v "$__var" '%s' "2"
 }
 
+function _sr_prompt_action() { printf -v "$1" '%s' block; }
+
 function _sr_prompt_mode() {
   local __var="${1:-}"
   printf -v "$__var" '%s' "and"
@@ -52,8 +54,15 @@ function _sr_collect_condition_quads() {
 }
 
 function _sr_prompt_choice() {
-  local __var="${1:-}" prompt="${2:-}"
-  if [ "$prompt" = "Create security rule?" ]; then
+  local __var="${1:-}" prompt="${2:-}" expected=""
+  if [[ "$prompt" == *$'\n\nCreate security rule?' ]]; then
+    for expected in 'Domain: e2e-http.example.com' 'Action: block' 'Conditions: 2' \
+      'Mode: and' 'Code: default (403)' 'header:User-Agent contains BadBot' 'path starts_with /admin'; do
+      if [[ "$prompt" != *"$expected"* ]]; then
+        echo "[Error] confirmation prompt omitted summary field: $expected" >&2
+        return 1
+      fi
+    done
     CONFIRM_CALLED=true
     printf -v "$__var" '%s' "confirm"
   else
@@ -73,6 +82,7 @@ function run_success_case() {
     "e2e-http.example.com" "2"
     "header" "User-Agent" "contains" "BadBot"
     "path" "-" "starts_with" "/admin"
+    "--action" "block"
     "--mode" "and"
   )
   if [ "${#PROMPT_ARGS_COLLECTED[@]}" -ne "${#expected[@]}" ]; then

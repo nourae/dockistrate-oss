@@ -1,5 +1,18 @@
 #!/usr/bin/env bash
 
+__dockistrate_csv_first_column_values() {
+  local csv_file="${1:-}"
+
+  [ -f "$csv_file" ] || return 0
+  awk -F',' '
+    NR > 1 && $1 != "" {
+      value = $1
+      sub(/\r$/, "", value)
+      print value
+    }
+  ' "$csv_file" | LC_ALL=C sort -u
+}
+
 _dockistrate_complete_backend_file_commands() {
   local command="$1"
 
@@ -7,7 +20,7 @@ _dockistrate_complete_backend_file_commands() {
   remove-backend-client-ip-header)
     if [[ $cword -eq 2 ]] && [ -f "$BACKEND_CLIENT_IP_HEADER_FILE" ]; then
       local domains
-      domains=$(awk '{print $1}' "$BACKEND_CLIENT_IP_HEADER_FILE")
+      domains="$(__dockistrate_csv_first_column_values "$BACKEND_CLIENT_IP_HEADER_FILE")"
       COMPREPLY=($(compgen -W "$domains" -- "$cur"))
       return 0
     fi
@@ -15,7 +28,7 @@ _dockistrate_complete_backend_file_commands() {
   remove-backend-proxy-ip-header)
     if [[ $cword -eq 2 ]] && [ -f "$BACKEND_PROXY_IP_HEADER_FILE" ]; then
       local domains
-      domains=$(awk '{print $1}' "$BACKEND_PROXY_IP_HEADER_FILE")
+      domains="$(__dockistrate_csv_first_column_values "$BACKEND_PROXY_IP_HEADER_FILE")"
       COMPREPLY=($(compgen -W "$domains" -- "$cur"))
       return 0
     fi
@@ -23,7 +36,7 @@ _dockistrate_complete_backend_file_commands() {
   remove-backend-http-version)
     if [[ $cword -eq 2 ]] && [ -f "$BACKEND_HTTP_FILE" ]; then
       local domains
-      domains=$(awk '{print $1}' "$BACKEND_HTTP_FILE")
+      domains="$(__dockistrate_csv_first_column_values "$BACKEND_HTTP_FILE")"
       COMPREPLY=($(compgen -W "$domains" -- "$cur"))
       return 0
     fi
@@ -31,7 +44,7 @@ _dockistrate_complete_backend_file_commands() {
   remove-backend-acl-policy)
     if [[ $cword -eq 2 ]] && [ -f "$BACKEND_ACL_POLICY_FILE" ]; then
       local domains
-      domains=$(awk '{print $1}' "$BACKEND_ACL_POLICY_FILE")
+      domains="$(__dockistrate_csv_first_column_values "$BACKEND_ACL_POLICY_FILE")"
       COMPREPLY=($(compgen -W "$domains" -- "$cur"))
       return 0
     fi
@@ -39,7 +52,7 @@ _dockistrate_complete_backend_file_commands() {
   remove-backend-acl-status)
     if [[ $cword -eq 2 ]] && [ -f "$BACKEND_ACL_STATUS_FILE" ]; then
       local domains
-      domains=$(awk '{print $1}' "$BACKEND_ACL_STATUS_FILE")
+      domains="$(__dockistrate_csv_first_column_values "$BACKEND_ACL_STATUS_FILE")"
       COMPREPLY=($(compgen -W "$domains" -- "$cur"))
       return 0
     fi
@@ -47,7 +60,7 @@ _dockistrate_complete_backend_file_commands() {
   remove-backend-security-rule-status)
     if [[ $cword -eq 2 ]] && [ -f "$BACKEND_SECURITY_RULE_STATUS_FILE" ]; then
       local domains
-      domains=$(awk '{print $1}' "$BACKEND_SECURITY_RULE_STATUS_FILE")
+      domains="$(__dockistrate_csv_first_column_values "$BACKEND_SECURITY_RULE_STATUS_FILE")"
       COMPREPLY=($(compgen -W "$domains" -- "$cur"))
       return 0
     fi

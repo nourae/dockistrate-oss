@@ -1,0 +1,7 @@
+Use yes to fail when no local backup is present, or no to warn only.
+Require backup (yes|no):
+> 1) Yes
+  2) No (current)
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

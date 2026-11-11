@@ -1,0 +1,14 @@
+Review command
+  Command: Set Visibility Policy (set-visibility-policy)
+  Description: Choose full or redacted display/history/audit for operator values
+
+Arguments:
+  Visibility policy: redacted
+
+CLI equivalent:
+  ./dockistrate.sh set-visibility-policy redacted
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

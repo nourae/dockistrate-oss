@@ -1,0 +1,8 @@
+Host-facing port handled by the Nginx proxy.
+Listen port
+Example: 443:
+> 1) 80 -> 80 proto=http ws=no cert=none
+  2) 443 -> 80 proto=https ws=no cert=example.com/selfsigned-443
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

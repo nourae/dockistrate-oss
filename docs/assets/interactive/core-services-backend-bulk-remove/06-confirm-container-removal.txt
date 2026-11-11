@@ -1,0 +1,3 @@
+y
+[Info] Removed config entries for 'example.com' from /opt/dockistrate-demo/state/config/backend_ports.csv.
+Remove container 'backend-second.example.com' for domain 'second.example.com'? (y/n): y

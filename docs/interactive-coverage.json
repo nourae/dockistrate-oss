@@ -1,0 +1,2797 @@
+{
+  "categories": [
+    "Basic Ops",
+    "Backends",
+    "Hosts & Aliases",
+    "Domain Configuration",
+    "Routing & Ports",
+    "Advanced Path Routing",
+    "Port TLS & HTTP/3",
+    "Bulk Backend Operations",
+    "Certificates",
+    "Clean & Uninstall",
+    "Backend Headers",
+    "Logging",
+    "Backend Protocol & IP Overrides",
+    "Backend mTLS & Client Certs",
+    "Backend Access Overrides",
+    "Access Control & Rules",
+    "Diagnostics",
+    "Updates",
+    "Backups & Restore",
+    "Global Nginx Directives",
+    "Global Headers & IP",
+    "Global Access Defaults",
+    "Global TLS & Runtime",
+    "Traffic Capture"
+  ],
+  "commands": [
+    {
+      "command": "start-nginx",
+      "category": "Basic Ops",
+      "guide": "docs/guides/backends-and-ports.md#cmd-start-nginx",
+      "screenshots": [
+        "docs/assets/interactive/core-services-proxy-start/03-keep-current-nginx-1-31-7-sha256-6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343.png",
+        "docs/assets/interactive/core-services-proxy-start/04-keep-current-none.png",
+        "docs/assets/interactive/core-services-proxy-start/05-review-and-run-start-nginx.png",
+        "docs/assets/interactive/core-services-proxy-start/06-start-nginx-result.png",
+        "docs/assets/interactive/core-services-proxy-start-custom/03-enter-manually.png",
+        "docs/assets/interactive/core-services-proxy-start-custom/04-enter-value.png",
+        "docs/assets/interactive/core-services-proxy-start-custom/05-enter-manually.png",
+        "docs/assets/interactive/core-services-proxy-start-custom/06-enter-value.png",
+        "docs/assets/interactive/core-services-proxy-start-custom/07-enter-value.png",
+        "docs/assets/interactive/core-services-proxy-start-custom/08-review-and-run-start-nginx.png",
+        "docs/assets/interactive/core-services-proxy-start-custom/09-start-nginx-result.png",
+        "docs/assets/interactive/core-services-proxy-start-clear/03-keep-current-docs-nginx-review.png",
+        "docs/assets/interactive/core-services-proxy-start-clear/04-clear-current-options.png",
+        "docs/assets/interactive/core-services-proxy-start-clear/05-review-and-run-start-nginx.png",
+        "docs/assets/interactive/core-services-proxy-start-clear/06-start-nginx-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "stop-nginx",
+      "category": "Basic Ops",
+      "guide": "docs/guides/backends-and-ports.md#cmd-stop-nginx",
+      "screenshots": [
+        "docs/assets/interactive/core-services-proxy-stop/03-review-and-run-stop-nginx.png",
+        "docs/assets/interactive/core-services-proxy-stop/04-stop-nginx-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-nginx",
+      "category": "Basic Ops",
+      "guide": "docs/guides/backends-and-ports.md#cmd-remove-nginx",
+      "screenshots": [
+        "docs/assets/interactive/core-services-proxy-remove/03-review-and-run-remove-nginx.png",
+        "docs/assets/interactive/core-services-proxy-remove/04-confirm-removal.png",
+        "docs/assets/interactive/core-services-proxy-remove/05-remove-nginx-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "update-nginx-config",
+      "category": "Basic Ops",
+      "guide": "docs/guides/backends-and-ports.md#cmd-update-nginx-config",
+      "screenshots": [
+        "docs/assets/interactive/core-services-proxy-regenerate/03-review-and-run-update-nginx-config.png",
+        "docs/assets/interactive/core-services-proxy-regenerate/04-update-nginx-config-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "status",
+      "category": "Basic Ops",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-status",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-status/03-command-result.png",
+        "docs/assets/interactive/operations-inspect-status/04-command-result-earlier-output-1.png",
+        "docs/assets/interactive/operations-inspect-status/05-command-result-earlier-output-2.png",
+        "docs/assets/interactive/operations-runtime-redacted-status/03-command-result.png",
+        "docs/assets/interactive/operations-runtime-redacted-status/04-command-result-earlier-output-1.png",
+        "docs/assets/interactive/operations-runtime-redacted-status/05-command-result-earlier-output-2.png",
+        "docs/assets/interactive/operations-runtime-redacted-status/06-command-result-earlier-output-3.png",
+        "docs/assets/interactive/operations-runtime-full-status/03-command-result.png",
+        "docs/assets/interactive/operations-runtime-full-status/04-command-result-earlier-output-1.png",
+        "docs/assets/interactive/operations-runtime-full-status/05-command-result-earlier-output-2.png",
+        "docs/assets/interactive/operations-runtime-full-status/06-command-result-earlier-output-3.png",
+        "docs/assets/interactive/operations-backup-backup-settings-status/03-command-result.png",
+        "docs/assets/interactive/operations-backup-backup-settings-status/04-command-result-earlier-output-1.png",
+        "docs/assets/interactive/operations-backup-backup-settings-status/05-command-result-earlier-output-2.png",
+        "docs/assets/interactive/operations-backup-backup-settings-status/06-command-result-earlier-output-3.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json",
+        "docs/assets/interactive/operations-inspect-provenance.json",
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "status-all",
+      "category": "Basic Ops",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-status-all",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-status-all/03-command-result.png",
+        "docs/assets/interactive/operations-inspect-status-all/04-command-result-earlier-output-1.png",
+        "docs/assets/interactive/operations-inspect-status-all/05-command-result-earlier-output-2.png",
+        "docs/assets/interactive/operations-inspect-status-all/06-command-result-earlier-output-3.png",
+        "docs/assets/interactive/operations-inspect-status-all/07-command-result-earlier-output-4.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-inspect-provenance.json"
+      ]
+    },
+    {
+      "command": "fix-default-config",
+      "category": "Basic Ops",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-fix-default-config",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-fix-default-config/03-run.png",
+        "docs/assets/interactive/operations-backup-fix-default-config/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "fix-permissions",
+      "category": "Basic Ops",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-fix-permissions",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-fix-permissions/03-normalize-repository-permissions-current.png",
+        "docs/assets/interactive/operations-backup-fix-permissions/04-run.png",
+        "docs/assets/interactive/operations-backup-fix-permissions/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "list-backends",
+      "category": "Backends",
+      "guide": "docs/guides/backends-and-ports.md#cmd-list-backends",
+      "screenshots": [
+        "docs/assets/interactive/core-services-list-backends/03-list-backends-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "add-backend",
+      "category": "Backends",
+      "guide": "docs/guides/backends-and-ports.md#cmd-add-backend",
+      "screenshots": [
+        "docs/assets/interactive/core-all-http-backend/02-enter-a-new-domain.png",
+        "docs/assets/interactive/core-all-http-backend/03-name-the-application.png",
+        "docs/assets/interactive/core-all-http-backend/04-choose-http.png",
+        "docs/assets/interactive/core-all-http-backend/05-use-the-default-network.png",
+        "docs/assets/interactive/core-all-http-backend/06-enter-the-application-image.png",
+        "docs/assets/interactive/core-all-http-backend/07-use-nginx-alpine.png",
+        "docs/assets/interactive/core-all-http-backend/08-set-container-port-80.png",
+        "docs/assets/interactive/core-all-http-backend/09-expose-http-port-80.png",
+        "docs/assets/interactive/core-all-http-backend/10-leave-websocket-disabled.png",
+        "docs/assets/interactive/core-all-http-backend/11-expose-the-application-now.png",
+        "docs/assets/interactive/core-all-http-backend/12-keep-docker-options-empty.png",
+        "docs/assets/interactive/core-all-http-backend/13-review-the-http-backend.png",
+        "docs/assets/interactive/core-all-http-backend/14-backend-created.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-all-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend",
+      "category": "Backends",
+      "guide": "docs/guides/backends-and-ports.md#cmd-remove-backend",
+      "screenshots": [
+        "docs/assets/interactive/core-protocols-backend-remove/03-protocol-example-com.png",
+        "docs/assets/interactive/core-protocols-backend-remove/04-review-and-run-remove-backend.png",
+        "docs/assets/interactive/core-protocols-backend-remove/05-confirm-removal.png",
+        "docs/assets/interactive/core-protocols-backend-remove/06-confirm-container-removal.png",
+        "docs/assets/interactive/core-protocols-backend-remove/07-remove-backend-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-protocols-provenance.json"
+      ]
+    },
+    {
+      "command": "start-backend",
+      "category": "Backends",
+      "guide": "docs/guides/backends-and-ports.md#cmd-start-backend",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-lifecycle-start/03-example-com.png",
+        "docs/assets/interactive/core-services-backend-lifecycle-start/04-review-and-run-start-backend.png",
+        "docs/assets/interactive/core-services-backend-lifecycle-start/05-start-backend-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "stop-backend",
+      "category": "Backends",
+      "guide": "docs/guides/backends-and-ports.md#cmd-stop-backend",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-lifecycle-stop/03-example-com.png",
+        "docs/assets/interactive/core-services-backend-lifecycle-stop/04-review-and-run-stop-backend.png",
+        "docs/assets/interactive/core-services-backend-lifecycle-stop/05-stop-backend-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "restart-backend",
+      "category": "Backends",
+      "guide": "docs/guides/backends-and-ports.md#cmd-restart-backend",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-lifecycle-restart/03-example-com.png",
+        "docs/assets/interactive/core-services-backend-lifecycle-restart/04-review-and-run-restart-backend.png",
+        "docs/assets/interactive/core-services-backend-lifecycle-restart/05-restart-backend-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "update-backend",
+      "category": "Backends",
+      "guide": "docs/guides/backends-and-ports.md#cmd-update-backend",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-update/03-example-com.png",
+        "docs/assets/interactive/core-services-backend-update/04-enter-manually.png",
+        "docs/assets/interactive/core-services-backend-update/05-enter-value.png",
+        "docs/assets/interactive/core-services-backend-update/06-keep-current-80.png",
+        "docs/assets/interactive/core-services-backend-update/07-keep-current-none.png",
+        "docs/assets/interactive/core-services-backend-update/08-dockistrate-net-current.png",
+        "docs/assets/interactive/core-services-backend-update/09-review-and-run-update-backend.png",
+        "docs/assets/interactive/core-services-backend-update/10-update-backend-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "replace-backend-network",
+      "category": "Backends",
+      "guide": "docs/guides/backends-and-ports.md#cmd-replace-backend-network",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-network/03-example-com.png",
+        "docs/assets/interactive/core-services-backend-network/04-enter-manually.png",
+        "docs/assets/interactive/core-services-backend-network/05-enter-value.png",
+        "docs/assets/interactive/core-services-backend-network/06-review-and-run-replace-backend-network.png",
+        "docs/assets/interactive/core-services-backend-network/07-replace-backend-network-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "add-host-alias",
+      "category": "Hosts & Aliases",
+      "guide": "docs/guides/hosts-and-aliases.md#cmd-add-host-alias",
+      "screenshots": [
+        "docs/assets/interactive/core-hosts-hosts-alias/03-example-com.png",
+        "docs/assets/interactive/core-hosts-hosts-alias/04-enter-alias.png",
+        "docs/assets/interactive/core-hosts-hosts-alias/05-enter-value.png",
+        "docs/assets/interactive/core-hosts-hosts-alias/06-review-and-run-add-host-alias.png",
+        "docs/assets/interactive/core-hosts-hosts-alias/07-add-host-alias-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-hosts-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-host-alias",
+      "category": "Hosts & Aliases",
+      "guide": "docs/guides/hosts-and-aliases.md#cmd-remove-host-alias",
+      "screenshots": [
+        "docs/assets/interactive/core-hosts-remove-host-alias/03-enter-value.png",
+        "docs/assets/interactive/core-hosts-remove-host-alias/04-review-and-run-remove-host-alias.png",
+        "docs/assets/interactive/core-hosts-remove-host-alias/05-confirm-removal.png",
+        "docs/assets/interactive/core-hosts-remove-host-alias/06-remove-host-alias-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-hosts-provenance.json"
+      ]
+    },
+    {
+      "command": "list-host-aliases",
+      "category": "Hosts & Aliases",
+      "guide": "docs/guides/hosts-and-aliases.md#cmd-list-host-aliases",
+      "screenshots": [
+        "docs/assets/interactive/core-hosts-list-host-aliases/03-example-com.png",
+        "docs/assets/interactive/core-hosts-list-host-aliases/04-list-host-aliases-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-hosts-provenance.json"
+      ]
+    },
+    {
+      "command": "add-dedicated-host",
+      "category": "Hosts & Aliases",
+      "guide": "docs/guides/hosts-and-aliases.md#cmd-add-dedicated-host",
+      "screenshots": [
+        "docs/assets/interactive/core-hosts-hosts-dedicated/03-enter-value.png",
+        "docs/assets/interactive/core-hosts-hosts-dedicated/04-example-com.png",
+        "docs/assets/interactive/core-hosts-hosts-dedicated/05-yes-current.png",
+        "docs/assets/interactive/core-hosts-hosts-dedicated/06-yes-current.png",
+        "docs/assets/interactive/core-hosts-hosts-dedicated/07-yes-current.png",
+        "docs/assets/interactive/core-hosts-hosts-dedicated/08-yes-current.png",
+        "docs/assets/interactive/core-hosts-hosts-dedicated/09-yes-current.png",
+        "docs/assets/interactive/core-hosts-hosts-dedicated/10-review-and-run-add-dedicated-host.png",
+        "docs/assets/interactive/core-hosts-hosts-dedicated/11-add-dedicated-host-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-hosts-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-dedicated-host",
+      "category": "Hosts & Aliases",
+      "guide": "docs/guides/hosts-and-aliases.md#cmd-remove-dedicated-host",
+      "screenshots": [
+        "docs/assets/interactive/core-hosts-remove-dedicated-host/03-app-example-com.png",
+        "docs/assets/interactive/core-hosts-remove-dedicated-host/04-review-and-run-remove-dedicated-host.png",
+        "docs/assets/interactive/core-hosts-remove-dedicated-host/05-confirm-removal.png",
+        "docs/assets/interactive/core-hosts-remove-dedicated-host/06-remove-dedicated-host-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-hosts-provenance.json"
+      ]
+    },
+    {
+      "command": "list-dedicated-hosts",
+      "category": "Hosts & Aliases",
+      "guide": "docs/guides/hosts-and-aliases.md#cmd-list-dedicated-hosts",
+      "screenshots": [
+        "docs/assets/interactive/core-hosts-list-dedicated-hosts/03-example-com.png",
+        "docs/assets/interactive/core-hosts-list-dedicated-hosts/04-list-dedicated-hosts-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-hosts-provenance.json"
+      ]
+    },
+    {
+      "command": "set-dedicated-host-inherit",
+      "category": "Hosts & Aliases",
+      "guide": "docs/guides/hosts-and-aliases.md#cmd-set-dedicated-host-inherit",
+      "screenshots": [
+        "docs/assets/interactive/core-hosts-hosts-inheritance/03-app-example-com.png",
+        "docs/assets/interactive/core-hosts-hosts-inheritance/04-headers-current-yes.png",
+        "docs/assets/interactive/core-hosts-hosts-inheritance/05-no.png",
+        "docs/assets/interactive/core-hosts-hosts-inheritance/06-review-and-run-set-dedicated-host-inherit.png",
+        "docs/assets/interactive/core-hosts-hosts-inheritance/07-set-dedicated-host-inherit-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-hosts-provenance.json"
+      ]
+    },
+    {
+      "command": "show-dedicated-host-inherit",
+      "category": "Hosts & Aliases",
+      "guide": "docs/guides/hosts-and-aliases.md#cmd-show-dedicated-host-inherit",
+      "screenshots": [
+        "docs/assets/interactive/core-hosts-show-dedicated-host-inherit/03-app-example-com.png",
+        "docs/assets/interactive/core-hosts-show-dedicated-host-inherit/04-show-dedicated-host-inherit-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-hosts-provenance.json"
+      ]
+    },
+    {
+      "command": "init-domain-config",
+      "category": "Domain Configuration",
+      "guide": "docs/guides/domain-configuration.md#cmd-init-domain-config",
+      "screenshots": [
+        "docs/assets/interactive/core-migration-domain-init/03-enter-value.png",
+        "docs/assets/interactive/core-migration-domain-init/04-certificates-without-a-backend-container.png",
+        "docs/assets/interactive/core-migration-domain-init/05-review-and-run-init-domain-config.png",
+        "docs/assets/interactive/core-migration-domain-init/06-init-domain-config-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-migration-provenance.json"
+      ]
+    },
+    {
+      "command": "validate-domain-config",
+      "category": "Domain Configuration",
+      "guide": "docs/guides/domain-configuration.md#cmd-validate-domain-config",
+      "screenshots": [
+        "docs/assets/interactive/core-all-validate-draft/03-select-example-com.png",
+        "docs/assets/interactive/core-all-validate-draft/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-all-provenance.json"
+      ]
+    },
+    {
+      "command": "apply-domain-config",
+      "category": "Domain Configuration",
+      "guide": "docs/guides/domain-configuration.md#cmd-apply-domain-config",
+      "screenshots": [
+        "docs/assets/interactive/core-all-preview-draft/03-select-example-com.png",
+        "docs/assets/interactive/core-all-preview-draft/04-choose-preview-or-apply.png",
+        "docs/assets/interactive/core-all-preview-draft/05-command-result.png",
+        "docs/assets/interactive/core-all-apply-draft/03-select-example-com.png",
+        "docs/assets/interactive/core-all-apply-draft/04-choose-preview-or-apply.png",
+        "docs/assets/interactive/core-all-apply-draft/05-review-and-apply.png",
+        "docs/assets/interactive/core-all-apply-draft/06-command-result.png",
+        "docs/assets/interactive/core-branches-pending-edit-review-apply/06-confirm-applying-the-pending-header.png",
+        "docs/assets/interactive/core-branches-pending-edit-review-apply/07-pending-files-applied-collect-the-original-command-again.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-all-provenance.json",
+        "docs/assets/interactive/core-branches-provenance.json"
+      ]
+    },
+    {
+      "command": "migrate-state",
+      "category": "Domain Configuration",
+      "guide": "docs/guides/domain-configuration.md#cmd-migrate-state",
+      "screenshots": [
+        "docs/assets/interactive/core-migration-domain-migrate-preview/03-review-changes-without-applying-them-current.png",
+        "docs/assets/interactive/core-migration-domain-migrate-preview/04-enter-value.png",
+        "docs/assets/interactive/core-migration-domain-migrate-preview/05-migrate-state-result.png",
+        "docs/assets/interactive/core-migration-domain-migrate-apply/03-apply-changes.png",
+        "docs/assets/interactive/core-migration-domain-migrate-apply/04-enter-value.png",
+        "docs/assets/interactive/core-migration-domain-migrate-apply/05-review-and-run-migrate-state.png",
+        "docs/assets/interactive/core-migration-domain-migrate-apply/06-migrate-state-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-migration-provenance.json"
+      ]
+    },
+    {
+      "command": "add-port",
+      "category": "Routing & Ports",
+      "guide": "docs/guides/backends-and-ports.md#cmd-add-port",
+      "screenshots": [
+        "docs/assets/interactive/core-all-https-port/03-select-the-existing-application.png",
+        "docs/assets/interactive/core-all-https-port/04-expose-https-port-443.png",
+        "docs/assets/interactive/core-all-https-port/05-keep-backend-port-80.png",
+        "docs/assets/interactive/core-all-https-port/06-choose-https.png",
+        "docs/assets/interactive/core-all-https-port/07-generate-a-local-certificate.png",
+        "docs/assets/interactive/core-all-https-port/08-keep-websocket-off.png",
+        "docs/assets/interactive/core-all-https-port/09-keep-http3-off.png",
+        "docs/assets/interactive/core-all-https-port/10-keep-automatic-alt-svc.png",
+        "docs/assets/interactive/core-all-https-port/11-review-https-configuration.png",
+        "docs/assets/interactive/core-all-https-port/12-https-listener-created.png",
+        "docs/assets/interactive/core-routing-ports-http/03-example-com.png",
+        "docs/assets/interactive/core-routing-ports-http/04-enter-manually.png",
+        "docs/assets/interactive/core-routing-ports-http/05-enter-value.png",
+        "docs/assets/interactive/core-routing-ports-http/06-enter-manually.png",
+        "docs/assets/interactive/core-routing-ports-http/07-enter-value.png",
+        "docs/assets/interactive/core-routing-ports-http/08-http-current.png",
+        "docs/assets/interactive/core-routing-ports-http/09-no-current.png",
+        "docs/assets/interactive/core-routing-ports-http/10-review-and-run-add-port.png",
+        "docs/assets/interactive/core-routing-ports-http/11-add-port-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-all-provenance.json",
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-port",
+      "category": "Routing & Ports",
+      "guide": "docs/guides/backends-and-ports.md#cmd-remove-port",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-ports-remove/03-example-com.png",
+        "docs/assets/interactive/core-routing-ports-remove/04-8081-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/core-routing-ports-remove/05-review-and-run-remove-port.png",
+        "docs/assets/interactive/core-routing-ports-remove/06-confirm-removal.png",
+        "docs/assets/interactive/core-routing-ports-remove/07-remove-port-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "update-port",
+      "category": "Routing & Ports",
+      "guide": "docs/guides/backends-and-ports.md#cmd-update-port",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-ports-update/03-example-com.png",
+        "docs/assets/interactive/core-routing-ports-update/04-8080-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/core-routing-ports-update/05-enter-manually.png",
+        "docs/assets/interactive/core-routing-ports-update/06-enter-value.png",
+        "docs/assets/interactive/core-routing-ports-update/07-keep-current-80.png",
+        "docs/assets/interactive/core-routing-ports-update/08-keep-current-http.png",
+        "docs/assets/interactive/core-routing-ports-update/09-keep-current-no.png",
+        "docs/assets/interactive/core-routing-ports-update/10-review-and-run-update-port.png",
+        "docs/assets/interactive/core-routing-ports-update/11-update-port-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "enable-ws",
+      "category": "Routing & Ports",
+      "guide": "docs/guides/backends-and-ports.md#cmd-enable-ws",
+      "screenshots": [
+        "docs/assets/interactive/core-protocols-ports-websocket-enable/03-protocol-example-com.png",
+        "docs/assets/interactive/core-protocols-ports-websocket-enable/04-enter-value.png",
+        "docs/assets/interactive/core-protocols-ports-websocket-enable/05-review-and-run-enable-ws.png",
+        "docs/assets/interactive/core-protocols-ports-websocket-enable/06-enable-ws-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-protocols-provenance.json"
+      ]
+    },
+    {
+      "command": "disable-ws",
+      "category": "Routing & Ports",
+      "guide": "docs/guides/backends-and-ports.md#cmd-disable-ws",
+      "screenshots": [
+        "docs/assets/interactive/core-protocols-ports-websocket-disable/03-protocol-example-com.png",
+        "docs/assets/interactive/core-protocols-ports-websocket-disable/04-enter-value.png",
+        "docs/assets/interactive/core-protocols-ports-websocket-disable/05-review-and-run-disable-ws.png",
+        "docs/assets/interactive/core-protocols-ports-websocket-disable/06-disable-ws-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-protocols-provenance.json"
+      ]
+    },
+    {
+      "command": "set-port-redirect",
+      "category": "Routing & Ports",
+      "guide": "docs/guides/backends-and-ports.md#cmd-set-port-redirect",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-ports-redirect/03-example-com.png",
+        "docs/assets/interactive/core-routing-ports-redirect/04-80-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/core-routing-ports-redirect/05-on.png",
+        "docs/assets/interactive/core-routing-ports-redirect/06-moved-permanently-current.png",
+        "docs/assets/interactive/core-routing-ports-redirect/07-review-and-run-set-port-redirect.png",
+        "docs/assets/interactive/core-routing-ports-redirect/08-set-port-redirect-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-port-redirect",
+      "category": "Routing & Ports",
+      "guide": "docs/guides/backends-and-ports.md#cmd-remove-port-redirect",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-ports-redirect-remove/03-example-com.png",
+        "docs/assets/interactive/core-routing-ports-redirect-remove/04-80-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/core-routing-ports-redirect-remove/05-review-and-run-remove-port-redirect.png",
+        "docs/assets/interactive/core-routing-ports-redirect-remove/06-confirm-removal.png",
+        "docs/assets/interactive/core-routing-ports-redirect-remove/07-remove-port-redirect-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "list-port-mappings",
+      "category": "Routing & Ports",
+      "guide": "docs/guides/backends-and-ports.md#cmd-list-port-mappings",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-search/03-list-port-mappings-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "add-path-option",
+      "category": "Advanced Path Routing",
+      "guide": "docs/guides/path-routing.md#cmd-add-path-option",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-path-routing/03-example-com.png",
+        "docs/assets/interactive/core-routing-path-routing/04-80-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/core-routing-path-routing/05-enter-value.png",
+        "docs/assets/interactive/core-routing-path-routing/06-inherit-current.png",
+        "docs/assets/interactive/core-routing-path-routing/07-enter-value.png",
+        "docs/assets/interactive/core-routing-path-routing/08-enter-value.png",
+        "docs/assets/interactive/core-routing-path-routing/09-prefix-current.png",
+        "docs/assets/interactive/core-routing-path-routing/10-10.png",
+        "docs/assets/interactive/core-routing-path-routing/11-enter-manually.png",
+        "docs/assets/interactive/core-routing-path-routing/12-enter-value.png",
+        "docs/assets/interactive/core-routing-path-routing/13-strip-prefix.png",
+        "docs/assets/interactive/core-routing-path-routing/14-enter-manually.png",
+        "docs/assets/interactive/core-routing-path-routing/15-enter-value.png",
+        "docs/assets/interactive/core-routing-path-routing/16-auto-current.png",
+        "docs/assets/interactive/core-routing-path-routing/17-review-and-run-add-path-option.png",
+        "docs/assets/interactive/core-routing-path-routing/18-add-path-option-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "update-path-option",
+      "category": "Advanced Path Routing",
+      "guide": "docs/guides/path-routing.md#cmd-update-path-option",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-path-update/03-example-com.png",
+        "docs/assets/interactive/core-routing-path-update/04-80-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/core-routing-path-update/05-api.png",
+        "docs/assets/interactive/core-routing-path-update/06-enter-value.png",
+        "docs/assets/interactive/core-routing-path-update/07-enter-value.png",
+        "docs/assets/interactive/core-routing-path-update/08-inherit.png",
+        "docs/assets/interactive/core-routing-path-update/09-enter-value.png",
+        "docs/assets/interactive/core-routing-path-update/10-enter-value.png",
+        "docs/assets/interactive/core-routing-path-update/11-prefix.png",
+        "docs/assets/interactive/core-routing-path-update/12-50.png",
+        "docs/assets/interactive/core-routing-path-update/13-enter-manually.png",
+        "docs/assets/interactive/core-routing-path-update/14-enter-value.png",
+        "docs/assets/interactive/core-routing-path-update/15-strip-prefix.png",
+        "docs/assets/interactive/core-routing-path-update/16-enter-manually.png",
+        "docs/assets/interactive/core-routing-path-update/17-enter-value.png",
+        "docs/assets/interactive/core-routing-path-update/18-auto.png",
+        "docs/assets/interactive/core-routing-path-update/19-review-and-run-update-path-option.png",
+        "docs/assets/interactive/core-routing-path-update/20-update-path-option-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-path-option",
+      "category": "Advanced Path Routing",
+      "guide": "docs/guides/path-routing.md#cmd-remove-path-option",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-path-remove/03-example-com.png",
+        "docs/assets/interactive/core-routing-path-remove/04-80-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/core-routing-path-remove/05-service.png",
+        "docs/assets/interactive/core-routing-path-remove/06-review-and-run-remove-path-option.png",
+        "docs/assets/interactive/core-routing-path-remove/07-confirm-removal.png",
+        "docs/assets/interactive/core-routing-path-remove/08-remove-path-option-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-all-path-options",
+      "category": "Advanced Path Routing",
+      "guide": "docs/guides/path-routing.md#cmd-remove-all-path-options",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-path-remove-all/03-example-com.png",
+        "docs/assets/interactive/core-routing-path-remove-all/04-review-and-run-remove-all-path-options.png",
+        "docs/assets/interactive/core-routing-path-remove-all/05-confirm-removal.png",
+        "docs/assets/interactive/core-routing-path-remove-all/06-remove-all-path-options-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "list-path-options",
+      "category": "Advanced Path Routing",
+      "guide": "docs/guides/path-routing.md#cmd-list-path-options",
+      "screenshots": [
+        "docs/assets/interactive/core-routing-list-path-options/03-example-com.png",
+        "docs/assets/interactive/core-routing-list-path-options/04-enter-value.png",
+        "docs/assets/interactive/core-routing-list-path-options/05-list-path-options-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-routing-provenance.json"
+      ]
+    },
+    {
+      "command": "set-port-http3",
+      "category": "Port TLS & HTTP/3",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-set-port-http3",
+      "screenshots": [
+        "docs/assets/interactive/security-tls-http3/03-443.png",
+        "docs/assets/interactive/security-tls-http3/04-on.png",
+        "docs/assets/interactive/security-tls-http3/05-auto-current.png",
+        "docs/assets/interactive/security-tls-http3/06-run.png",
+        "docs/assets/interactive/security-tls-http3/07-command-result.png",
+        "docs/assets/interactive/security-tls-http3-disable/03-443.png",
+        "docs/assets/interactive/security-tls-http3-disable/04-off.png",
+        "docs/assets/interactive/security-tls-http3-disable/05-auto-current.png",
+        "docs/assets/interactive/security-tls-http3-disable/06-run.png",
+        "docs/assets/interactive/security-tls-http3-disable/07-command-result.png",
+        "docs/assets/interactive/security-branches-http3-custom-advertisement/05-custom-manual-value.png",
+        "docs/assets/interactive/security-branches-http3-custom-advertisement/06-enter-value.png",
+        "docs/assets/interactive/security-branches-http3-custom-advertisement/07-run.png",
+        "docs/assets/interactive/security-branches-http3-custom-advertisement/08-command-result.png",
+        "docs/assets/interactive/security-branches-http3-suppress-advertisement/03-443.png",
+        "docs/assets/interactive/security-branches-http3-suppress-advertisement/04-on-current.png",
+        "docs/assets/interactive/security-branches-http3-suppress-advertisement/05-off.png",
+        "docs/assets/interactive/security-branches-http3-suppress-advertisement/06-run.png",
+        "docs/assets/interactive/security-branches-http3-suppress-advertisement/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-branches-provenance.json",
+        "docs/assets/interactive/security-tls-provenance.json"
+      ]
+    },
+    {
+      "command": "list-port-http3",
+      "category": "Port TLS & HTTP/3",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-list-port-http3",
+      "screenshots": [
+        "docs/assets/interactive/security-tls-list-port-http3/03-443.png",
+        "docs/assets/interactive/security-tls-list-port-http3/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-tls-provenance.json"
+      ]
+    },
+    {
+      "command": "set-port-tls-protocols",
+      "category": "Port TLS & HTTP/3",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-set-port-tls-protocols",
+      "screenshots": [
+        "docs/assets/interactive/security-tls-tls-settings/03-443.png",
+        "docs/assets/interactive/security-tls-tls-settings/04-enter-value.png",
+        "docs/assets/interactive/security-tls-tls-settings/05-run.png",
+        "docs/assets/interactive/security-tls-tls-settings/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-tls-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-port-tls-protocols",
+      "category": "Port TLS & HTTP/3",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-remove-port-tls-protocols",
+      "screenshots": [
+        "docs/assets/interactive/security-tls-remove-port-tls-protocols/03-443.png",
+        "docs/assets/interactive/security-tls-remove-port-tls-protocols/04-run.png",
+        "docs/assets/interactive/security-tls-remove-port-tls-protocols/05-enter-value.png",
+        "docs/assets/interactive/security-tls-remove-port-tls-protocols/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-tls-provenance.json"
+      ]
+    },
+    {
+      "command": "set-port-tls-ciphers",
+      "category": "Port TLS & HTTP/3",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-set-port-tls-ciphers",
+      "screenshots": [
+        "docs/assets/interactive/security-tls-set-port-tls-ciphers/03-443.png",
+        "docs/assets/interactive/security-tls-set-port-tls-ciphers/04-enter-value.png",
+        "docs/assets/interactive/security-tls-set-port-tls-ciphers/05-run.png",
+        "docs/assets/interactive/security-tls-set-port-tls-ciphers/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-tls-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-port-tls-ciphers",
+      "category": "Port TLS & HTTP/3",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-remove-port-tls-ciphers",
+      "screenshots": [
+        "docs/assets/interactive/security-tls-remove-port-tls-ciphers/03-443.png",
+        "docs/assets/interactive/security-tls-remove-port-tls-ciphers/04-run.png",
+        "docs/assets/interactive/security-tls-remove-port-tls-ciphers/05-enter-value.png",
+        "docs/assets/interactive/security-tls-remove-port-tls-ciphers/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-tls-provenance.json"
+      ]
+    },
+    {
+      "command": "start-all-backends",
+      "category": "Bulk Backend Operations",
+      "guide": "docs/guides/backends-and-ports.md#cmd-start-all-backends",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-bulk-start/03-review-and-run-start-all-backends.png",
+        "docs/assets/interactive/core-services-backend-bulk-start/04-start-all-backends-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "stop-all-backends",
+      "category": "Bulk Backend Operations",
+      "guide": "docs/guides/backends-and-ports.md#cmd-stop-all-backends",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-bulk-stop/03-review-and-run-stop-all-backends.png",
+        "docs/assets/interactive/core-services-backend-bulk-stop/04-stop-all-backends-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "restart-all-backends",
+      "category": "Bulk Backend Operations",
+      "guide": "docs/guides/backends-and-ports.md#cmd-restart-all-backends",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-bulk-restart/03-review-and-run-restart-all-backends.png",
+        "docs/assets/interactive/core-services-backend-bulk-restart/04-restart-all-backends-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-all-backends",
+      "category": "Bulk Backend Operations",
+      "guide": "docs/guides/backends-and-ports.md#cmd-remove-all-backends",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-bulk-remove/03-review-and-run-remove-all-backends.png",
+        "docs/assets/interactive/core-services-backend-bulk-remove/04-confirm-removal.png",
+        "docs/assets/interactive/core-services-backend-bulk-remove/05-confirm-container-removal.png",
+        "docs/assets/interactive/core-services-backend-bulk-remove/06-confirm-container-removal.png",
+        "docs/assets/interactive/core-services-backend-bulk-remove/07-remove-all-backends-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "command": "add-cert",
+      "category": "Certificates",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-add-cert",
+      "screenshots": [
+        "docs/assets/interactive/security-certificates-certificates/03-example-com.png",
+        "docs/assets/interactive/security-certificates-certificates/04-enter-manually.png",
+        "docs/assets/interactive/security-certificates-certificates/05-enter-value.png",
+        "docs/assets/interactive/security-certificates-certificates/06-generate-self-signed-certificate-current.png",
+        "docs/assets/interactive/security-certificates-certificates/07-run.png",
+        "docs/assets/interactive/security-certificates-certificates/08-enter-value.png",
+        "docs/assets/interactive/security-certificates-certificates/09-enter-value.png",
+        "docs/assets/interactive/security-certificates-certificates/10-command-result.png",
+        "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/03-example-com.png",
+        "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/04-enter-manually.png",
+        "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/05-enter-value.png",
+        "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/06-generate-let-s-encrypt-certificate.png",
+        "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/07-cancel.png",
+        "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/08-return-without-running.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/03-example-com.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/04-enter-manually.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/05-enter-value.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/06-upload-existing-fullchain-pem-and-privkey-pem.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/07-enter-value.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/08-enter-value.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/09-run.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/10-enter-value.png",
+        "docs/assets/interactive/security-certificates-certificate-upload/11-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-certificates-provenance.json"
+      ],
+      "limitations": [
+        "Self-signed and imported certificates are verified. Public ACME issuance requires controlled DNS and public reachability and is not live verified."
+      ]
+    },
+    {
+      "command": "replace-cert",
+      "category": "Certificates",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-replace-cert",
+      "screenshots": [
+        "docs/assets/interactive/security-certificates-replace-cert/03-example-com.png",
+        "docs/assets/interactive/security-certificates-replace-cert/04-8443.png",
+        "docs/assets/interactive/security-certificates-replace-cert/05-generate-self-signed-certificate-current.png",
+        "docs/assets/interactive/security-certificates-replace-cert/06-run.png",
+        "docs/assets/interactive/security-certificates-replace-cert/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-certificates-provenance.json"
+      ]
+    },
+    {
+      "command": "list-certs",
+      "category": "Certificates",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-list-certs",
+      "screenshots": [
+        "docs/assets/interactive/security-certificates-list-certs/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-certificates-provenance.json"
+      ]
+    },
+    {
+      "command": "renew-certs",
+      "category": "Certificates",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-renew-certs",
+      "screenshots": [
+        "docs/assets/interactive/security-certificates-certificate-renewal-review/03-cancel.png",
+        "docs/assets/interactive/security-certificates-certificate-renewal-review/04-return-without-running.png",
+        "docs/assets/interactive/security-certificates-certificate-renewal-scan/03-run.png",
+        "docs/assets/interactive/security-certificates-certificate-renewal-scan/04-command-result.png"
+      ],
+      "verification": "not-live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-certificates-provenance.json"
+      ],
+      "limitation": "The real renewal scan is captured, but the disposable VM has no publicly issued certificate due for renewal. Actual ACME renewal is not live verified."
+    },
+    {
+      "command": "remove-cert",
+      "category": "Certificates",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-remove-cert",
+      "screenshots": [
+        "docs/assets/interactive/security-certificates-remove-uploaded-certificate/03-example-com.png",
+        "docs/assets/interactive/security-certificates-remove-uploaded-certificate/04-9443.png",
+        "docs/assets/interactive/security-certificates-remove-uploaded-certificate/05-run.png",
+        "docs/assets/interactive/security-certificates-remove-uploaded-certificate/06-enter-value.png",
+        "docs/assets/interactive/security-certificates-remove-uploaded-certificate/07-command-result.png",
+        "docs/assets/interactive/security-certificates-remove-cert/03-example-com.png",
+        "docs/assets/interactive/security-certificates-remove-cert/04-8443.png",
+        "docs/assets/interactive/security-certificates-remove-cert/05-run.png",
+        "docs/assets/interactive/security-certificates-remove-cert/06-enter-value.png",
+        "docs/assets/interactive/security-certificates-remove-cert/07-command-result.png",
+        "docs/assets/interactive/core-branches-navigation-missing-certificates/03-return-from-missing-certificates-guidance.png",
+        "docs/assets/interactive/core-branches-navigation-missing-certificates/04-return-from-command-search.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-branches-provenance.json",
+        "docs/assets/interactive/security-certificates-provenance.json"
+      ]
+    },
+    {
+      "command": "clean-all",
+      "category": "Clean & Uninstall",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-clean-all",
+      "screenshots": [
+        "docs/assets/interactive/operations-cleanup-clean-all/03-example-com.png",
+        "docs/assets/interactive/operations-cleanup-clean-all/04-run.png",
+        "docs/assets/interactive/operations-cleanup-clean-all/05-enter-value.png",
+        "docs/assets/interactive/operations-cleanup-clean-all/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-cleanup-provenance.json"
+      ]
+    },
+    {
+      "command": "uninstall-all",
+      "category": "Clean & Uninstall",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-uninstall-all",
+      "screenshots": [
+        "docs/assets/interactive/operations-uninstall-uninstall-all/03-config-certs-runtime-tmp-capture-acme.png",
+        "docs/assets/interactive/operations-uninstall-uninstall-all/04-run.png",
+        "docs/assets/interactive/operations-uninstall-uninstall-all/05-enter-value.png",
+        "docs/assets/interactive/operations-uninstall-uninstall-all/06-enter-value.png",
+        "docs/assets/interactive/operations-uninstall-uninstall-all/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-uninstall-provenance.json"
+      ]
+    },
+    {
+      "command": "add-backend-header",
+      "category": "Backend Headers",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-add-backend-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-headers/03-example-com.png",
+        "docs/assets/interactive/security-headers-headers/04-response.png",
+        "docs/assets/interactive/security-headers-headers/05-enter-value.png",
+        "docs/assets/interactive/security-headers-headers/06-enter-value.png",
+        "docs/assets/interactive/security-headers-headers/07-run.png",
+        "docs/assets/interactive/security-headers-headers/08-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "update-backend-header",
+      "category": "Backend Headers",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-update-backend-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-update-backend-header/03-example-com.png",
+        "docs/assets/interactive/security-headers-update-backend-header/04-response.png",
+        "docs/assets/interactive/security-headers-update-backend-header/05-x-guide.png",
+        "docs/assets/interactive/security-headers-update-backend-header/06-enter-value.png",
+        "docs/assets/interactive/security-headers-update-backend-header/07-run.png",
+        "docs/assets/interactive/security-headers-update-backend-header/08-command-result.png",
+        "docs/assets/interactive/core-branches-navigation-missing-headers/03-return-from-missing-headers-guidance.png",
+        "docs/assets/interactive/core-branches-navigation-missing-headers/04-return-from-command-search.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-branches-provenance.json",
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-header",
+      "category": "Backend Headers",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-remove-backend-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-remove-backend-header/03-example-com.png",
+        "docs/assets/interactive/security-headers-remove-backend-header/04-response.png",
+        "docs/assets/interactive/security-headers-remove-backend-header/05-x-guide.png",
+        "docs/assets/interactive/security-headers-remove-backend-header/06-run.png",
+        "docs/assets/interactive/security-headers-remove-backend-header/07-enter-value.png",
+        "docs/assets/interactive/security-headers-remove-backend-header/08-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-all-backend-headers",
+      "category": "Backend Headers",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-remove-all-backend-headers",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-headers-bulk-cancel/03-example-com.png",
+        "docs/assets/interactive/security-headers-headers-bulk-cancel/04-cancel.png",
+        "docs/assets/interactive/security-headers-headers-bulk-cancel/05-return-without-running.png",
+        "docs/assets/interactive/security-headers-remove-all-backend-headers/03-example-com.png",
+        "docs/assets/interactive/security-headers-remove-all-backend-headers/04-run.png",
+        "docs/assets/interactive/security-headers-remove-all-backend-headers/05-enter-value.png",
+        "docs/assets/interactive/security-headers-remove-all-backend-headers/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "list-backend-headers",
+      "category": "Backend Headers",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-list-backend-headers",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-list-backend-headers/03-example-com.png",
+        "docs/assets/interactive/security-headers-list-backend-headers/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-all-headers",
+      "category": "Backend Headers",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-remove-all-headers",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-remove-all-headers/03-run.png",
+        "docs/assets/interactive/security-headers-remove-all-headers/04-enter-value.png",
+        "docs/assets/interactive/security-headers-remove-all-headers/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backend-hsts",
+      "category": "Backend Headers",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-backend-hsts",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-backend-hsts/03-example-com.png",
+        "docs/assets/interactive/security-headers-set-backend-hsts/04-enter-value.png",
+        "docs/assets/interactive/security-headers-set-backend-hsts/05-run.png",
+        "docs/assets/interactive/security-headers-set-backend-hsts/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backend-csp",
+      "category": "Backend Headers",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-backend-csp",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-backend-csp/03-example-com.png",
+        "docs/assets/interactive/security-headers-set-backend-csp/04-enter-value.png",
+        "docs/assets/interactive/security-headers-set-backend-csp/05-run.png",
+        "docs/assets/interactive/security-headers-set-backend-csp/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "list-log-fields",
+      "category": "Logging",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-list-log-fields",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-list-log-fields/03-command-result.png",
+        "docs/assets/interactive/operations-inspect-list-log-fields--session-002/03-command-result.png",
+        "docs/assets/interactive/operations-inspect-list-log-fields--session-003/03-command-result.png",
+        "docs/assets/interactive/operations-inspect-log-fields-restored/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-inspect-provenance.json"
+      ]
+    },
+    {
+      "command": "add-log-field",
+      "category": "Logging",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-add-log-field",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-add-log-field/03-enter-value.png",
+        "docs/assets/interactive/operations-inspect-add-log-field/04-enter-value.png",
+        "docs/assets/interactive/operations-inspect-add-log-field/05-run.png",
+        "docs/assets/interactive/operations-inspect-add-log-field/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-inspect-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-log-field",
+      "category": "Logging",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-remove-log-field",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-remove-log-field/03-upstream-response-time.png",
+        "docs/assets/interactive/operations-inspect-remove-log-field/04-run.png",
+        "docs/assets/interactive/operations-inspect-remove-log-field/05-enter-value.png",
+        "docs/assets/interactive/operations-inspect-remove-log-field/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-inspect-provenance.json"
+      ]
+    },
+    {
+      "command": "update-log-field",
+      "category": "Logging",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-update-log-field",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-update-log-field/03-request-time.png",
+        "docs/assets/interactive/operations-inspect-update-log-field/04-enter-value.png",
+        "docs/assets/interactive/operations-inspect-update-log-field/05-run.png",
+        "docs/assets/interactive/operations-inspect-update-log-field/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-inspect-provenance.json"
+      ]
+    },
+    {
+      "command": "move-log-field",
+      "category": "Logging",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-move-log-field",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-move-log-field/03-enter-value.png",
+        "docs/assets/interactive/operations-inspect-move-log-field/04-enter-value.png",
+        "docs/assets/interactive/operations-inspect-move-log-field/05-run.png",
+        "docs/assets/interactive/operations-inspect-move-log-field/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-inspect-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backend-http-version",
+      "category": "Backend Protocol & IP Overrides",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-backend-http-version",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-backend-http-version/03-example-com.png",
+        "docs/assets/interactive/operations-runtime-set-backend-http-version/04-http2.png",
+        "docs/assets/interactive/operations-runtime-set-backend-http-version/05-run.png",
+        "docs/assets/interactive/operations-runtime-set-backend-http-version/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-http-version",
+      "category": "Backend Protocol & IP Overrides",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-remove-backend-http-version",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-remove-backend-http-version/03-example-com.png",
+        "docs/assets/interactive/operations-runtime-remove-backend-http-version/04-run.png",
+        "docs/assets/interactive/operations-runtime-remove-backend-http-version/05-enter-value.png",
+        "docs/assets/interactive/operations-runtime-remove-backend-http-version/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backend-client-ip-header",
+      "category": "Backend Protocol & IP Overrides",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-backend-client-ip-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-client-ip/03-example-com.png",
+        "docs/assets/interactive/security-headers-client-ip/04-enter-value.png",
+        "docs/assets/interactive/security-headers-client-ip/05-run.png",
+        "docs/assets/interactive/security-headers-client-ip/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-client-ip-header",
+      "category": "Backend Protocol & IP Overrides",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-remove-backend-client-ip-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-remove-backend-client-ip-header/03-example-com.png",
+        "docs/assets/interactive/security-headers-remove-backend-client-ip-header/04-run.png",
+        "docs/assets/interactive/security-headers-remove-backend-client-ip-header/05-enter-value.png",
+        "docs/assets/interactive/security-headers-remove-backend-client-ip-header/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backend-proxy-ip-header",
+      "category": "Backend Protocol & IP Overrides",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-backend-proxy-ip-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/03-example-com.png",
+        "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/04-enter-value.png",
+        "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/05-run.png",
+        "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-proxy-ip-header",
+      "category": "Backend Protocol & IP Overrides",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-remove-backend-proxy-ip-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/03-example-com.png",
+        "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/04-run.png",
+        "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/05-enter-value.png",
+        "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "enable-backend-mtls",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-enable-backend-mtls",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-mtls-clients/03-example-com.png",
+        "docs/assets/interactive/security-mtls-mtls-clients/04-enter-value.png",
+        "docs/assets/interactive/security-mtls-mtls-clients/05-run.png",
+        "docs/assets/interactive/security-mtls-mtls-clients/06-command-result.png",
+        "docs/assets/interactive/security-mtls-mtls-reenable/03-example-com.png",
+        "docs/assets/interactive/security-mtls-mtls-reenable/04-enter-value.png",
+        "docs/assets/interactive/security-mtls-mtls-reenable/05-run.png",
+        "docs/assets/interactive/security-mtls-mtls-reenable/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "disable-backend-mtls",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-disable-backend-mtls",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-disable-backend-mtls/03-example-com.png",
+        "docs/assets/interactive/security-mtls-disable-backend-mtls/04-run.png",
+        "docs/assets/interactive/security-mtls-disable-backend-mtls/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "add-backend-client-cert",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-add-backend-client-cert",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-add-backend-client-cert/03-example-com.png",
+        "docs/assets/interactive/security-mtls-add-backend-client-cert/04-enter-value.png",
+        "docs/assets/interactive/security-mtls-add-backend-client-cert/05-run.png",
+        "docs/assets/interactive/security-mtls-add-backend-client-cert/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "revoke-backend-client-cert",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-revoke-backend-client-cert",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-revoke-backend-client-cert/03-example-com.png",
+        "docs/assets/interactive/security-mtls-revoke-backend-client-cert/04-enter-value.png",
+        "docs/assets/interactive/security-mtls-revoke-backend-client-cert/05-run.png",
+        "docs/assets/interactive/security-mtls-revoke-backend-client-cert/06-enter-value.png",
+        "docs/assets/interactive/security-mtls-revoke-backend-client-cert/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-client-cert",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-remove-backend-client-cert",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-remove-backend-client-cert/03-example-com.png",
+        "docs/assets/interactive/security-mtls-remove-backend-client-cert/04-second-client.png",
+        "docs/assets/interactive/security-mtls-remove-backend-client-cert/05-run.png",
+        "docs/assets/interactive/security-mtls-remove-backend-client-cert/06-enter-value.png",
+        "docs/assets/interactive/security-mtls-remove-backend-client-cert/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "list-backend-client-certs",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-list-backend-client-certs",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-list-backend-client-certs/03-example-com.png",
+        "docs/assets/interactive/security-mtls-list-backend-client-certs/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "replace-backend-client-cert",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-replace-backend-client-cert",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-mtls-rotation/03-example-com.png",
+        "docs/assets/interactive/security-mtls-mtls-rotation/04-guide-client.png",
+        "docs/assets/interactive/security-mtls-mtls-rotation/05-run.png",
+        "docs/assets/interactive/security-mtls-mtls-rotation/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "export-backend-client-p12",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-export-backend-client-p12",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-mtls-export/03-example-com.png",
+        "docs/assets/interactive/security-mtls-mtls-export/04-guide-client.png",
+        "docs/assets/interactive/security-mtls-mtls-export/05-run.png",
+        "docs/assets/interactive/security-mtls-mtls-export/06-enter-value.png",
+        "docs/assets/interactive/security-mtls-mtls-export/07-enter-value.png",
+        "docs/assets/interactive/security-mtls-mtls-export/08-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "list-backend-cas",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-list-backend-cas",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-list-backend-cas/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "replace-backend-ca",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-replace-backend-ca",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-mtls-authority-review/03-example-com.png",
+        "docs/assets/interactive/security-mtls-mtls-authority-review/04-cancel.png",
+        "docs/assets/interactive/security-mtls-mtls-authority-review/05-return-without-running.png",
+        "docs/assets/interactive/security-mtls-mtls-authority/03-example-com.png",
+        "docs/assets/interactive/security-mtls-mtls-authority/04-run.png",
+        "docs/assets/interactive/security-mtls-mtls-authority/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-ca",
+      "category": "Backend mTLS & Client Certs",
+      "guide": "docs/guides/mutual-tls.md#cmd-remove-backend-ca",
+      "screenshots": [
+        "docs/assets/interactive/security-mtls-remove-backend-ca/03-example-com.png",
+        "docs/assets/interactive/security-mtls-remove-backend-ca/04-run.png",
+        "docs/assets/interactive/security-mtls-remove-backend-ca/05-enter-value.png",
+        "docs/assets/interactive/security-mtls-remove-backend-ca/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-mtls-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backend-acl-policy",
+      "category": "Backend Access Overrides",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-set-backend-acl-policy",
+      "screenshots": [
+        "docs/assets/interactive/security-access-access-defaults/03-example-com.png",
+        "docs/assets/interactive/security-access-access-defaults/04-allow-current-current.png",
+        "docs/assets/interactive/security-access-access-defaults/05-run.png",
+        "docs/assets/interactive/security-access-access-defaults/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-acl-policy",
+      "category": "Backend Access Overrides",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-remove-backend-acl-policy",
+      "screenshots": [
+        "docs/assets/interactive/security-access-remove-backend-acl-policy/03-example-com.png",
+        "docs/assets/interactive/security-access-remove-backend-acl-policy/04-run.png",
+        "docs/assets/interactive/security-access-remove-backend-acl-policy/05-enter-value.png",
+        "docs/assets/interactive/security-access-remove-backend-acl-policy/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backend-acl-status",
+      "category": "Backend Access Overrides",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-set-backend-acl-status",
+      "screenshots": [
+        "docs/assets/interactive/security-access-set-backend-acl-status/03-example-com.png",
+        "docs/assets/interactive/security-access-set-backend-acl-status/04-enter-value.png",
+        "docs/assets/interactive/security-access-set-backend-acl-status/05-run.png",
+        "docs/assets/interactive/security-access-set-backend-acl-status/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-acl-status",
+      "category": "Backend Access Overrides",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-remove-backend-acl-status",
+      "screenshots": [
+        "docs/assets/interactive/security-access-remove-backend-acl-status/03-example-com.png",
+        "docs/assets/interactive/security-access-remove-backend-acl-status/04-run.png",
+        "docs/assets/interactive/security-access-remove-backend-acl-status/05-enter-value.png",
+        "docs/assets/interactive/security-access-remove-backend-acl-status/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backend-security-rule-status",
+      "category": "Backend Access Overrides",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-set-backend-security-rule-status",
+      "screenshots": [
+        "docs/assets/interactive/security-access-set-backend-security-rule-status/03-example-com.png",
+        "docs/assets/interactive/security-access-set-backend-security-rule-status/04-enter-value.png",
+        "docs/assets/interactive/security-access-set-backend-security-rule-status/05-run.png",
+        "docs/assets/interactive/security-access-set-backend-security-rule-status/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-backend-security-rule-status",
+      "category": "Backend Access Overrides",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-remove-backend-security-rule-status",
+      "screenshots": [
+        "docs/assets/interactive/security-access-remove-backend-security-rule-status/03-example-com.png",
+        "docs/assets/interactive/security-access-remove-backend-security-rule-status/04-run.png",
+        "docs/assets/interactive/security-access-remove-backend-security-rule-status/05-enter-value.png",
+        "docs/assets/interactive/security-access-remove-backend-security-rule-status/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "add-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-add-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-acl-rules/03-example-com.png",
+        "docs/assets/interactive/security-acl-acl-rules/04-apply-to-l7-and-l3-tcp-uses-client-ip.png",
+        "docs/assets/interactive/security-acl-acl-rules/05-allow.png",
+        "docs/assets/interactive/security-acl-acl-rules/06-enter-value.png",
+        "docs/assets/interactive/security-acl-acl-rules/07-run.png",
+        "docs/assets/interactive/security-acl-acl-rules/08-command-result.png",
+        "docs/assets/interactive/security-acl-acl-second-rule/03-example-com.png",
+        "docs/assets/interactive/security-acl-acl-second-rule/04-layer-7-remote-addr-also-used-for-tcp-streams.png",
+        "docs/assets/interactive/security-acl-acl-second-rule/05-allow.png",
+        "docs/assets/interactive/security-acl-acl-second-rule/06-enter-value.png",
+        "docs/assets/interactive/security-acl-acl-second-rule/07-run.png",
+        "docs/assets/interactive/security-acl-acl-second-rule/08-command-result.png",
+        "docs/assets/interactive/security-branches-acl-deny-client/04-layer-7-remote-addr-also-used-for-tcp-streams.png",
+        "docs/assets/interactive/security-branches-acl-deny-client/05-deny.png",
+        "docs/assets/interactive/security-branches-acl-deny-client/06-enter-value.png",
+        "docs/assets/interactive/security-branches-acl-deny-client/07-enter-value.png",
+        "docs/assets/interactive/security-branches-acl-deny-client/08-run.png",
+        "docs/assets/interactive/security-branches-acl-deny-client/09-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json",
+        "docs/assets/interactive/security-branches-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-remove-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-remove-acl/03-example-com-l7-allow-198-51-100-10.png",
+        "docs/assets/interactive/security-acl-remove-acl/04-run.png",
+        "docs/assets/interactive/security-acl-remove-acl/05-enter-value.png",
+        "docs/assets/interactive/security-acl-remove-acl/06-command-result.png",
+        "docs/assets/interactive/security-branches-acl-deny-client-remove/03-example-com-l7-deny-172-18-0-1.png",
+        "docs/assets/interactive/security-branches-acl-deny-client-remove/04-run.png",
+        "docs/assets/interactive/security-branches-acl-deny-client-remove/05-enter-value.png",
+        "docs/assets/interactive/security-branches-acl-deny-client-remove/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json",
+        "docs/assets/interactive/security-branches-provenance.json"
+      ]
+    },
+    {
+      "command": "disable-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-disable-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-disable-acl/03-example-com-l7-deny-203-0-113-0-24.png",
+        "docs/assets/interactive/security-acl-disable-acl/04-run.png",
+        "docs/assets/interactive/security-acl-disable-acl/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json"
+      ]
+    },
+    {
+      "command": "enable-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-enable-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-enable-acl/03-example-com-l7-deny-203-0-113-0-24-disabled.png",
+        "docs/assets/interactive/security-acl-enable-acl/04-run.png",
+        "docs/assets/interactive/security-acl-enable-acl/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json"
+      ]
+    },
+    {
+      "command": "disable-all-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-disable-all-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-disable-all-acl/03-run.png",
+        "docs/assets/interactive/security-acl-disable-all-acl/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json"
+      ]
+    },
+    {
+      "command": "enable-all-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-enable-all-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-enable-all-acl/03-run.png",
+        "docs/assets/interactive/security-acl-enable-all-acl/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-all-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-remove-all-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-acl-remove-all-cancel/03-cancel.png",
+        "docs/assets/interactive/security-acl-acl-remove-all-cancel/04-return-without-running.png",
+        "docs/assets/interactive/security-acl-remove-all-acl/03-run.png",
+        "docs/assets/interactive/security-acl-remove-all-acl/04-enter-value.png",
+        "docs/assets/interactive/security-acl-remove-all-acl/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json"
+      ]
+    },
+    {
+      "command": "update-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-update-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-update-acl/03-example-com-both-allow-203-0-113-8.png",
+        "docs/assets/interactive/security-acl-update-acl/04-keep-current-example-com.png",
+        "docs/assets/interactive/security-acl-update-acl/05-layer-7-client-ip-cidr-supported.png",
+        "docs/assets/interactive/security-acl-update-acl/06-deny.png",
+        "docs/assets/interactive/security-acl-update-acl/07-enter-value.png",
+        "docs/assets/interactive/security-acl-update-acl/08-enter-value.png",
+        "docs/assets/interactive/security-acl-update-acl/09-run.png",
+        "docs/assets/interactive/security-acl-update-acl/10-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json"
+      ]
+    },
+    {
+      "command": "move-acl-rule",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-move-acl-rule",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-move-acl-rule/03-enter-value.png",
+        "docs/assets/interactive/security-acl-move-acl-rule/04-enter-value.png",
+        "docs/assets/interactive/security-acl-move-acl-rule/05-run.png",
+        "docs/assets/interactive/security-acl-move-acl-rule/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json"
+      ]
+    },
+    {
+      "command": "list-acl",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-list-acl",
+      "screenshots": [
+        "docs/assets/interactive/security-acl-list-acl/03-command-result.png",
+        "docs/assets/interactive/security-acl-acl-cleanup-result/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-acl-provenance.json"
+      ]
+    },
+    {
+      "command": "add-security-rule",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-add-security-rule",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-security-rules/03-example-com.png",
+        "docs/assets/interactive/security-rules-security-rules/04-block-when-conditions-match-recommended-for-new-rules.png",
+        "docs/assets/interactive/security-rules-security-rules/05-enter-value.png",
+        "docs/assets/interactive/security-rules-security-rules/06-and.png",
+        "docs/assets/interactive/security-rules-security-rules/07-enter-value.png",
+        "docs/assets/interactive/security-rules-security-rules/08-header-request-header-name-required.png",
+        "docs/assets/interactive/security-rules-security-rules/09-enter-value.png",
+        "docs/assets/interactive/security-rules-security-rules/10-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.png",
+        "docs/assets/interactive/security-rules-security-rules/11-enter-value.png",
+        "docs/assets/interactive/security-rules-security-rules/12-method-http-method-get-post.png",
+        "docs/assets/interactive/security-rules-security-rules/13-equals-string-equals-example-method-equals-post.png",
+        "docs/assets/interactive/security-rules-security-rules/14-enter-value.png",
+        "docs/assets/interactive/security-rules-security-rules/15-confirm.png",
+        "docs/assets/interactive/security-rules-security-rules/16-command-result.png",
+        "docs/assets/interactive/security-rules-security-require/03-example-com.png",
+        "docs/assets/interactive/security-rules-security-require/04-require-conditions-to-match.png",
+        "docs/assets/interactive/security-rules-security-require/05-enter-value.png",
+        "docs/assets/interactive/security-rules-security-require/06-enter-value.png",
+        "docs/assets/interactive/security-rules-security-require/07-header-request-header-name-required.png",
+        "docs/assets/interactive/security-rules-security-require/08-enter-value.png",
+        "docs/assets/interactive/security-rules-security-require/09-equals-string-equals-example-header-x-guide-equals-prod.png",
+        "docs/assets/interactive/security-rules-security-require/10-enter-value.png",
+        "docs/assets/interactive/security-rules-security-require/11-confirm.png",
+        "docs/assets/interactive/security-rules-security-require/12-command-result.png",
+        "docs/assets/interactive/security-rules-security-allow/03-example-com.png",
+        "docs/assets/interactive/security-rules-security-allow/04-allow-past-later-block-rules.png",
+        "docs/assets/interactive/security-rules-security-allow/05-enter-value.png",
+        "docs/assets/interactive/security-rules-security-allow/06-header-request-header-name-required.png",
+        "docs/assets/interactive/security-rules-security-allow/07-enter-value.png",
+        "docs/assets/interactive/security-rules-security-allow/08-equals-string-equals-example-header-x-guide-equals-prod.png",
+        "docs/assets/interactive/security-rules-security-allow/09-enter-value.png",
+        "docs/assets/interactive/security-rules-security-allow/10-confirm.png",
+        "docs/assets/interactive/security-rules-security-allow/11-command-result.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/03-example-com.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/04-block-when-conditions-match-recommended-for-new-rules.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/05-enter-value.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/06-enter-value.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/07-header-request-header-name-required.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/08-enter-value.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/09-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/10-enter-value.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/11-confirm.png",
+        "docs/assets/interactive/security-rules-security-block-after-allow/12-command-result.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/05-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/06-or.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/07-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/08-cookie-request-cookie-name-required.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/09-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/10-exists-value-present-header-exists-example-cookie-session-exists.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/11-argument-query-parameter-name-required.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/12-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/13-equals-string-equals-example-arg-token-equals-prod.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/14-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/15-variable-nginx-variable-name-required.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/16-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/17-equals-string-equals-example-var-request-method-equals-foo.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/18-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/19-ip-client-ip-address.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/20-real-ip-realip-remote-addr.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/21-equals-string-equals-example-ip-l3-equals-192-168-1-10.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/22-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/23-path-normalized-path.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/24-matches-regex-matches-case-insensitive-example-path-matches-health.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/25-enter-value.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/26-confirm.png",
+        "docs/assets/interactive/security-branches-security-condition-branches/27-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-branches-provenance.json",
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "update-security-rule",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-update-security-rule",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-update-security-rule/03-and-example-com-n-2-mode-and-action-block-status-403-reason-loc-auto.png",
+        "docs/assets/interactive/security-rules-update-security-rule/04-enter-value.png",
+        "docs/assets/interactive/security-rules-update-security-rule/05-block-when-conditions-match-recommended-for-new-rules-current.png",
+        "docs/assets/interactive/security-rules-update-security-rule/06-enter-value.png",
+        "docs/assets/interactive/security-rules-update-security-rule/07-keep-current.png",
+        "docs/assets/interactive/security-rules-update-security-rule/08-run.png",
+        "docs/assets/interactive/security-rules-update-security-rule/09-command-result.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/06-enter-value.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/07-replace.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/08-enter-value.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/09-or.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/10-header-request-header-name-required.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/11-enter-value.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/12-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/13-enter-value.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/14-method-http-method-get-post.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/15-equals-string-equals-example-method-equals-post.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/16-enter-value.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/17-run.png",
+        "docs/assets/interactive/security-branches-security-replace-conditions/18-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-branches-provenance.json",
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-security-rule",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-remove-security-rule",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-remove-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto.png",
+        "docs/assets/interactive/security-rules-remove-security-rule/04-run.png",
+        "docs/assets/interactive/security-rules-remove-security-rule/05-enter-value.png",
+        "docs/assets/interactive/security-rules-remove-security-rule/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-all-security-rules",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-remove-all-security-rules",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-security-bulk-cancel/03-cancel.png",
+        "docs/assets/interactive/security-rules-security-bulk-cancel/04-return-without-running.png",
+        "docs/assets/interactive/security-rules-remove-all-security-rules/03-run.png",
+        "docs/assets/interactive/security-rules-remove-all-security-rules/04-enter-value.png",
+        "docs/assets/interactive/security-rules-remove-all-security-rules/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "disable-security-rule",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-disable-security-rule",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-disable-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto.png",
+        "docs/assets/interactive/security-rules-disable-security-rule/04-run.png",
+        "docs/assets/interactive/security-rules-disable-security-rule/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "enable-security-rule",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-enable-security-rule",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-enable-security-rule/03-and-example-com-n-2-mode-and-action-block-status-404-reason-loc-auto-disabled.png",
+        "docs/assets/interactive/security-rules-enable-security-rule/04-run.png",
+        "docs/assets/interactive/security-rules-enable-security-rule/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "disable-all-security-rules",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-disable-all-security-rules",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-disable-all-security-rules/03-run.png",
+        "docs/assets/interactive/security-rules-disable-all-security-rules/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "enable-all-security-rules",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-enable-all-security-rules",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-enable-all-security-rules/03-run.png",
+        "docs/assets/interactive/security-rules-enable-all-security-rules/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "move-security-rule",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-move-security-rule",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-move-security-rule/03-enter-value.png",
+        "docs/assets/interactive/security-rules-move-security-rule/04-enter-value.png",
+        "docs/assets/interactive/security-rules-move-security-rule/05-run.png",
+        "docs/assets/interactive/security-rules-move-security-rule/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "set-security-rule-mode",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-set-security-rule-mode",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-set-security-rule-mode/03-and-example-com-n-2-mode-and-action-block-status-403-reason-loc-auto.png",
+        "docs/assets/interactive/security-rules-set-security-rule-mode/04-or.png",
+        "docs/assets/interactive/security-rules-set-security-rule-mode/05-run.png",
+        "docs/assets/interactive/security-rules-set-security-rule-mode/06-command-result.png",
+        "docs/assets/interactive/security-rules-security-mode-reset/03-or-example-com-n-2-mode-or-action-block-status-403-reason-loc-auto.png",
+        "docs/assets/interactive/security-rules-security-mode-reset/04-and-current.png",
+        "docs/assets/interactive/security-rules-security-mode-reset/05-run.png",
+        "docs/assets/interactive/security-rules-security-mode-reset/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "duplicate-security-rule",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-duplicate-security-rule",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-duplicate-security-rule/03-enter-value.png",
+        "docs/assets/interactive/security-rules-duplicate-security-rule/04-run.png",
+        "docs/assets/interactive/security-rules-duplicate-security-rule/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "list-security-rules",
+      "category": "Access Control & Rules",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-list-security-rules",
+      "screenshots": [
+        "docs/assets/interactive/security-rules-list-security-rules/03-example-com.png",
+        "docs/assets/interactive/security-rules-list-security-rules/04-command-result.png",
+        "docs/assets/interactive/security-branches-security-replacement-list/03-example-com.png",
+        "docs/assets/interactive/security-branches-security-replacement-list/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-branches-provenance.json",
+        "docs/assets/interactive/security-rules-provenance.json"
+      ]
+    },
+    {
+      "command": "check-config",
+      "category": "Diagnostics",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-check-config",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-check-config/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-inspect-provenance.json"
+      ]
+    },
+    {
+      "command": "tail-proxy-logs",
+      "category": "Diagnostics",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-tail-proxy-logs",
+      "screenshots": [
+        "docs/assets/interactive/operations-inspect-tail-proxy-logs/03-enter-value.png",
+        "docs/assets/interactive/operations-inspect-tail-proxy-logs/04-observe-the-application-request-in-proxy-logs.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-inspect-provenance.json"
+      ]
+    },
+    {
+      "command": "help-update",
+      "category": "Updates",
+      "guide": "docs/guides/updates.md#cmd-help-update",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-help-update/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "upgrade-preflight",
+      "category": "Updates",
+      "guide": "docs/guides/updates.md#cmd-upgrade-preflight",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-upgrade-preflight/03-enter-value.png",
+        "docs/assets/interactive/operations-backup-upgrade-preflight/04-yes.png",
+        "docs/assets/interactive/operations-backup-upgrade-preflight/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "create-backup",
+      "category": "Backups & Restore",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-create-backup",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-create-backup/03-enter-value.png",
+        "docs/assets/interactive/operations-backup-create-backup/04-run.png",
+        "docs/assets/interactive/operations-backup-create-backup/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "list-backups",
+      "category": "Backups & Restore",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-list-backups",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-list-backups/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "restore-backup",
+      "category": "Backups & Restore",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-restore-backup",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-restore-backup/03-20261109-113607-before-demo-change-tar-gz.png",
+        "docs/assets/interactive/operations-backup-restore-backup/04-enter-value.png",
+        "docs/assets/interactive/operations-backup-restore-backup/05-run.png",
+        "docs/assets/interactive/operations-backup-restore-backup/06-enter-value.png",
+        "docs/assets/interactive/operations-backup-restore-backup/07-command-result.png",
+        "docs/assets/interactive/core-branches-navigation-restore-manual/03-use-a-backup-outside-the-local-backup-folder.png",
+        "docs/assets/interactive/core-branches-navigation-restore-manual/04-enter-the-received-backup-path.png",
+        "docs/assets/interactive/core-branches-navigation-restore-manual/05-keep-the-optional-backend-details-empty.png",
+        "docs/assets/interactive/core-branches-navigation-restore-manual/06-run.png",
+        "docs/assets/interactive/core-branches-navigation-restore-manual/07-confirm-restoring-the-received-backup.png",
+        "docs/assets/interactive/core-branches-navigation-restore-manual/08-the-external-backup-is-restored.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-branches-provenance.json",
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "set-auto-backups",
+      "category": "Backups & Restore",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-set-auto-backups",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-set-auto-backups/03-true.png",
+        "docs/assets/interactive/operations-backup-set-auto-backups/04-run.png",
+        "docs/assets/interactive/operations-backup-set-auto-backups/05-command-result.png",
+        "docs/assets/interactive/operations-backup-auto-backups-restored/03-false.png",
+        "docs/assets/interactive/operations-backup-auto-backups-restored/04-run.png",
+        "docs/assets/interactive/operations-backup-auto-backups-restored/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backup-retention",
+      "category": "Backups & Restore",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-set-backup-retention",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-set-backup-retention/03-enter-value.png",
+        "docs/assets/interactive/operations-backup-set-backup-retention/04-run.png",
+        "docs/assets/interactive/operations-backup-set-backup-retention/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "set-backup-compression",
+      "category": "Backups & Restore",
+      "guide": "docs/guides/backups-restore-cleanup.md#cmd-set-backup-compression",
+      "screenshots": [
+        "docs/assets/interactive/operations-backup-set-backup-compression/03-true-current.png",
+        "docs/assets/interactive/operations-backup-set-backup-compression/04-run.png",
+        "docs/assets/interactive/operations-backup-set-backup-compression/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-backup-provenance.json"
+      ]
+    },
+    {
+      "command": "set-nginx-directive",
+      "category": "Global Nginx Directives",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-nginx-directive",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-nginx-directive/03-global-http.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive/04-client-max-body-size.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive/05-enter-value.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive/06-run.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive/07-command-result.png",
+        "docs/assets/interactive/operations-branches-scoped-directive/03-path-location.png",
+        "docs/assets/interactive/operations-branches-scoped-directive/04-example-com.png",
+        "docs/assets/interactive/operations-branches-scoped-directive/05-80-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/operations-branches-scoped-directive/06-limited.png",
+        "docs/assets/interactive/operations-branches-scoped-directive/07-client-max-body-size.png",
+        "docs/assets/interactive/operations-branches-scoped-directive/08-enter-value.png",
+        "docs/assets/interactive/operations-branches-scoped-directive/09-run.png",
+        "docs/assets/interactive/operations-branches-scoped-directive/10-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-branches-provenance.json",
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "set-nginx-directive-raw",
+      "category": "Global Nginx Directives",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-nginx-directive-raw",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/03-global-http.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/04-enter-manually.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/05-enter-value.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/06-enter-value.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/07-run.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/08-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-nginx-directive",
+      "category": "Global Nginx Directives",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-remove-nginx-directive",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-remove-nginx-directive/03-global-http.png",
+        "docs/assets/interactive/operations-runtime-remove-nginx-directive/04-client-max-body-size.png",
+        "docs/assets/interactive/operations-runtime-remove-nginx-directive/05-run.png",
+        "docs/assets/interactive/operations-runtime-remove-nginx-directive/06-enter-value.png",
+        "docs/assets/interactive/operations-runtime-remove-nginx-directive/07-command-result.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-remove/03-path-location.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-remove/04-example-com.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-remove/05-80-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-remove/06-limited.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-remove/07-client-max-body-size.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-remove/08-run.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-remove/09-enter-value.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-remove/10-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-branches-provenance.json",
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-all-nginx-directives",
+      "category": "Global Nginx Directives",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-remove-all-nginx-directives",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/03-global-http.png",
+        "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/04-run.png",
+        "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/05-enter-value.png",
+        "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/06-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "list-nginx-directives",
+      "category": "Global Nginx Directives",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-list-nginx-directives",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-list-nginx-directives/03-all-scopes.png",
+        "docs/assets/interactive/operations-runtime-list-nginx-directives/04-command-result.png",
+        "docs/assets/interactive/operations-runtime-directives-restored/03-all-scopes.png",
+        "docs/assets/interactive/operations-runtime-directives-restored/04-command-result.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-list/03-path-location.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-list/04-example-com.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-list/05-80-80-proto-http-ws-no-cert-none.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-list/06-limited.png",
+        "docs/assets/interactive/operations-branches-scoped-directive-list/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-branches-provenance.json",
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "list-nginx-directive-catalog",
+      "category": "Global Nginx Directives",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-list-nginx-directive-catalog",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-list-nginx-directive-catalog/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "set-nginx-directive-strict",
+      "category": "Global Nginx Directives",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-nginx-directive-strict",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/03-off.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/04-run.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/05-command-result.png",
+        "docs/assets/interactive/operations-runtime-directive-strict-restored/03-on.png",
+        "docs/assets/interactive/operations-runtime-directive-strict-restored/04-run.png",
+        "docs/assets/interactive/operations-runtime-directive-strict-restored/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "show-nginx-directive-strict",
+      "category": "Global Nginx Directives",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-show-nginx-directive-strict",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-show-nginx-directive-strict/03-command-result.png",
+        "docs/assets/interactive/operations-runtime-show-nginx-directive-strict--session-002/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "control-server-tokens",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-control-server-tokens",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-control-server-tokens/03-off-current.png",
+        "docs/assets/interactive/security-headers-control-server-tokens/04-run.png",
+        "docs/assets/interactive/security-headers-control-server-tokens/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "show-server-tokens",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-show-server-tokens",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-show-server-tokens/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-client-ip-header",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-client-ip-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-client-ip-header/03-enter-value.png",
+        "docs/assets/interactive/security-headers-set-client-ip-header/04-run.png",
+        "docs/assets/interactive/security-headers-set-client-ip-header/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-proxy-ip-header",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-proxy-ip-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-proxy-ip-header/03-enter-value.png",
+        "docs/assets/interactive/security-headers-set-proxy-ip-header/04-run.png",
+        "docs/assets/interactive/security-headers-set-proxy-ip-header/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "add-header",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-add-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-add-header/03-response.png",
+        "docs/assets/interactive/security-headers-add-header/04-enter-value.png",
+        "docs/assets/interactive/security-headers-add-header/05-enter-value.png",
+        "docs/assets/interactive/security-headers-add-header/06-run.png",
+        "docs/assets/interactive/security-headers-add-header/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "update-header",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-update-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-update-header/03-response.png",
+        "docs/assets/interactive/security-headers-update-header/04-x-global-guide.png",
+        "docs/assets/interactive/security-headers-update-header/05-enter-value.png",
+        "docs/assets/interactive/security-headers-update-header/06-run.png",
+        "docs/assets/interactive/security-headers-update-header/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "remove-header",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-remove-header",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-remove-header/03-response.png",
+        "docs/assets/interactive/security-headers-remove-header/04-x-global-guide.png",
+        "docs/assets/interactive/security-headers-remove-header/05-run.png",
+        "docs/assets/interactive/security-headers-remove-header/06-enter-value.png",
+        "docs/assets/interactive/security-headers-remove-header/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "list-headers",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-list-headers",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-list-headers/03-command-result.png",
+        "docs/assets/interactive/security-headers-headers-global-removed/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-hsts",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-hsts",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-hsts/03-enter-value.png",
+        "docs/assets/interactive/security-headers-set-hsts/04-run.png",
+        "docs/assets/interactive/security-headers-set-hsts/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-csp",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-csp",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-csp/03-enter-value.png",
+        "docs/assets/interactive/security-headers-set-csp/04-run.png",
+        "docs/assets/interactive/security-headers-set-csp/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-trusted-proxies",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-trusted-proxies",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-trusted-proxies/03-enter-value.png",
+        "docs/assets/interactive/security-headers-set-trusted-proxies/04-run.png",
+        "docs/assets/interactive/security-headers-set-trusted-proxies/05-command-result.png",
+        "docs/assets/interactive/security-headers-client-ip-trusted-peer/03-enter-value.png",
+        "docs/assets/interactive/security-headers-client-ip-trusted-peer/04-run.png",
+        "docs/assets/interactive/security-headers-client-ip-trusted-peer/05-command-result.png",
+        "docs/assets/interactive/security-headers-trusted-proxies-reset/03-enter-value.png",
+        "docs/assets/interactive/security-headers-trusted-proxies-reset/04-run.png",
+        "docs/assets/interactive/security-headers-trusted-proxies-reset/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-real-ip-recursive",
+      "category": "Global Headers & IP",
+      "guide": "docs/guides/headers-real-ip-hsts-csp.md#cmd-set-real-ip-recursive",
+      "screenshots": [
+        "docs/assets/interactive/security-headers-set-real-ip-recursive/03-on-current.png",
+        "docs/assets/interactive/security-headers-set-real-ip-recursive/04-run.png",
+        "docs/assets/interactive/security-headers-set-real-ip-recursive/05-command-result.png",
+        "docs/assets/interactive/security-headers-real-ip-recursive-reset/03-off.png",
+        "docs/assets/interactive/security-headers-real-ip-recursive-reset/04-run.png",
+        "docs/assets/interactive/security-headers-real-ip-recursive-reset/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-headers-provenance.json"
+      ]
+    },
+    {
+      "command": "set-security-rule-status",
+      "category": "Global Access Defaults",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-set-security-rule-status",
+      "screenshots": [
+        "docs/assets/interactive/security-access-set-security-rule-status/03-enter-value.png",
+        "docs/assets/interactive/security-access-set-security-rule-status/04-run.png",
+        "docs/assets/interactive/security-access-set-security-rule-status/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "set-acl-status",
+      "category": "Global Access Defaults",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-set-acl-status",
+      "screenshots": [
+        "docs/assets/interactive/security-access-set-acl-status/03-enter-value.png",
+        "docs/assets/interactive/security-access-set-acl-status/04-run.png",
+        "docs/assets/interactive/security-access-set-acl-status/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "set-acl-policy",
+      "category": "Global Access Defaults",
+      "guide": "docs/guides/access-control-security-rules.md#cmd-set-acl-policy",
+      "screenshots": [
+        "docs/assets/interactive/security-access-set-acl-policy/03-deny-current-current.png",
+        "docs/assets/interactive/security-access-set-acl-policy/04-run.png",
+        "docs/assets/interactive/security-access-set-acl-policy/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-access-provenance.json"
+      ]
+    },
+    {
+      "command": "set-http-version",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-http-version",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-http-version/03-http1-1.png",
+        "docs/assets/interactive/operations-runtime-set-http-version/04-run.png",
+        "docs/assets/interactive/operations-runtime-set-http-version/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "set-tls-protocols",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-set-tls-protocols",
+      "screenshots": [
+        "docs/assets/interactive/security-tls-set-tls-protocols/03-enter-value.png",
+        "docs/assets/interactive/security-tls-set-tls-protocols/04-run.png",
+        "docs/assets/interactive/security-tls-set-tls-protocols/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-tls-provenance.json"
+      ]
+    },
+    {
+      "command": "set-tls-ciphers",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/tls-certificates-http3.md#cmd-set-tls-ciphers",
+      "screenshots": [
+        "docs/assets/interactive/security-tls-set-tls-ciphers/03-enter-value.png",
+        "docs/assets/interactive/security-tls-set-tls-ciphers/04-run.png",
+        "docs/assets/interactive/security-tls-set-tls-ciphers/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/security-tls-provenance.json"
+      ]
+    },
+    {
+      "command": "set-nginx-docker-opts",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-nginx-docker-opts",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/03-enter-manually.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/04-enter-value.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/05-enter-value.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/06-run.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/07-command-result.png",
+        "docs/assets/interactive/operations-runtime-runtime-options-cleared/03-clear-current-options.png",
+        "docs/assets/interactive/operations-runtime-runtime-options-cleared/04-run.png",
+        "docs/assets/interactive/operations-runtime-runtime-options-cleared/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "show-nginx-docker-opts",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-show-nginx-docker-opts",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-show-nginx-docker-opts/03-command-result.png",
+        "docs/assets/interactive/operations-runtime-show-nginx-docker-opts--session-002/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "set-visibility-policy",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-visibility-policy",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-visibility-policy/03-redacted-display-history-audit.png",
+        "docs/assets/interactive/operations-runtime-set-visibility-policy/04-run.png",
+        "docs/assets/interactive/operations-runtime-set-visibility-policy/05-command-result.png",
+        "docs/assets/interactive/operations-runtime-visibility-restored/03-full-visibility.png",
+        "docs/assets/interactive/operations-runtime-visibility-restored/04-run.png",
+        "docs/assets/interactive/operations-runtime-visibility-restored/05-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "show-visibility-policy",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-show-visibility-policy",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-show-visibility-policy/03-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "set-nginx-image",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-nginx-image",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-nginx-image/03-use-current-image-nginx-1-31-7-sha256-6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf1.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-image/04-refresh-latest-tagged-images-on-use-existing-behavior-current.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-image/05-run.png",
+        "docs/assets/interactive/operations-runtime-set-nginx-image/06-command-result.png",
+        "docs/assets/interactive/operations-branches-manual-nginx-image/03-enter-manually.png",
+        "docs/assets/interactive/operations-branches-manual-nginx-image/04-enter-value.png",
+        "docs/assets/interactive/operations-branches-manual-nginx-image/05-skip-explicit-pulls-docker-can-fetch-missing-images.png",
+        "docs/assets/interactive/operations-branches-manual-nginx-image/06-run.png",
+        "docs/assets/interactive/operations-branches-manual-nginx-image/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-branches-provenance.json",
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "set-certbot-image",
+      "category": "Global TLS & Runtime",
+      "guide": "docs/guides/advanced-nginx-docker-options.md#cmd-set-certbot-image",
+      "screenshots": [
+        "docs/assets/interactive/operations-runtime-set-certbot-image/03-use-current-image-certbot-certbot-v5-8-0-sha256-f70ad0adbb7e117f0fe42a63c553f28e.png",
+        "docs/assets/interactive/operations-runtime-set-certbot-image/04-refresh-latest-tagged-images-on-use-existing-behavior-current.png",
+        "docs/assets/interactive/operations-runtime-set-certbot-image/05-run.png",
+        "docs/assets/interactive/operations-runtime-set-certbot-image/06-command-result.png",
+        "docs/assets/interactive/operations-branches-manual-certbot-image/03-enter-manually.png",
+        "docs/assets/interactive/operations-branches-manual-certbot-image/04-enter-value.png",
+        "docs/assets/interactive/operations-branches-manual-certbot-image/05-skip-explicit-pulls-docker-can-fetch-missing-images.png",
+        "docs/assets/interactive/operations-branches-manual-certbot-image/06-run.png",
+        "docs/assets/interactive/operations-branches-manual-certbot-image/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-branches-provenance.json",
+        "docs/assets/interactive/operations-runtime-provenance.json"
+      ]
+    },
+    {
+      "command": "start-capture",
+      "category": "Traffic Capture",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-start-capture",
+      "screenshots": [
+        "docs/assets/interactive/operations-traffic-traffic-capture/03-enter-value.png",
+        "docs/assets/interactive/operations-traffic-traffic-capture/04-run.png",
+        "docs/assets/interactive/operations-traffic-traffic-capture/05-specific-backend-s.png",
+        "docs/assets/interactive/operations-traffic-traffic-capture/06-enter-value.png",
+        "docs/assets/interactive/operations-traffic-traffic-capture/07-enter-value.png",
+        "docs/assets/interactive/operations-traffic-traffic-capture/08-command-result.png",
+        "docs/assets/interactive/operations-traffic-tls-traffic-capture/03-enter-value.png",
+        "docs/assets/interactive/operations-traffic-tls-traffic-capture/04-run.png",
+        "docs/assets/interactive/operations-traffic-tls-traffic-capture/05-all-nginx-traffic-clients-and-backends.png",
+        "docs/assets/interactive/operations-traffic-tls-traffic-capture/06-enter-value.png",
+        "docs/assets/interactive/operations-traffic-tls-traffic-capture/07-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-traffic-provenance.json"
+      ]
+    },
+    {
+      "command": "stop-capture",
+      "category": "Traffic Capture",
+      "guide": "docs/guides/diagnostics-capture.md#cmd-stop-capture",
+      "screenshots": [
+        "docs/assets/interactive/operations-traffic-stop-capture/03-run.png",
+        "docs/assets/interactive/operations-traffic-stop-capture/04-command-result.png",
+        "docs/assets/interactive/operations-traffic-stop-tls-capture/03-run.png",
+        "docs/assets/interactive/operations-traffic-stop-tls-capture/04-command-result.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/operations-traffic-provenance.json"
+      ]
+    }
+  ],
+  "home": [
+    {
+      "feature": "home",
+      "guide": "docs/guides/interactive-workflows.md#home-home",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-help/01-home.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "feature": "search",
+      "guide": "docs/guides/interactive-workflows.md#home-search",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-search/02-find-list-port-mappings.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "feature": "recent",
+      "guide": "docs/guides/interactive-workflows.md#home-recent",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-favorites/01-choose-a-task.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "feature": "favorites",
+      "guide": "docs/guides/interactive-workflows.md#home-favorites",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-favorites/03-add-to-favorites.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "feature": "manual-entry",
+      "guide": "docs/guides/interactive-workflows.md#home-manual-entry",
+      "screenshots": [
+        "docs/assets/interactive/core-services-backend-network/05-enter-value.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "feature": "back",
+      "guide": "docs/guides/interactive-workflows.md#home-back",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-back-review-cancel/04-back-to-backend-selection.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "feature": "review",
+      "guide": "docs/guides/interactive-workflows.md#home-review",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-back-review-cancel/07-edit-previous-answers.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "feature": "cancel",
+      "guide": "docs/guides/interactive-workflows.md#home-cancel",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-back-review-cancel/10-cancel-before-running.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    },
+    {
+      "feature": "help",
+      "guide": "docs/guides/interactive-workflows.md#home-help",
+      "screenshots": [
+        "docs/assets/interactive/core-services-navigation-help/02-contextual-help.png"
+      ],
+      "verification": "live-verified",
+      "evidence": [
+        "docs/assets/interactive/core-services-provenance.json"
+      ]
+    }
+  ]
+}

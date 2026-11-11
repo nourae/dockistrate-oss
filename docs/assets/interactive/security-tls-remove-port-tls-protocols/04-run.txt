@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Port TLS Protocols (remove-port-tls-protocols)
+  Description: Clear TLS protocol override for an HTTPS port
+
+Arguments:
+  Listen port: 443
+
+CLI equivalent:
+  ./dockistrate.sh remove-port-tls-protocols 443
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,6 @@
+mode (and|or):
+  1) and (current)
+> 2) or
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

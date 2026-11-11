@@ -1,0 +1,1087 @@
+{
+  "schema_version": 1,
+  "scenario": "core-protocols",
+  "source_commit": "3d2ee0b58e2f729255105b30e5715990696f107b",
+  "started_at": "2026-11-07T16:16:00.322082+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42390384054",
+  "github_run_attempt": "1",
+  "scenario_module": "core",
+  "group": "protocols",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"44 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-05 19:27:56 +0000 UTC\",\"CreatedSince\":\"45 hours ago\",\"Digest\":\"sha256:a0f2e268f2ce8f3709611a90054ec6a8ae31f6251f5896b8648b9bb99835e30a\",\"ID\":\"sha256:a0f2e268f2ce8f3709611a90054ec6a8ae31f6251f5896b8648b9bb99835e30a\",\"Repository\":\"python\",\"SharedSize\":\"N/A\",\"Size\":\"81.7MB\",\"Tag\":\"3-alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T16:21:42.402195+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 3,
+      "title": "protocol.example.com",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/03-protocol-example-com.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/03-protocol-example-com.txt",
+      "image_sha256": "a98671727a850fe9dfc5eb94965771ed13d64fae0fc507262670d4773f707e87",
+      "transcript_sha256": "28b3c0bcd1e47402dd14567a777f03024a74df93d70886a25100df8cdfe3b11d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 71431,
+      "selected": "protocol.example.com"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/04-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/04-enter-manually.txt",
+      "image_sha256": "b01b4430138b010917b4b8cc7c6ea0ddd35521bbfde50ed93a87873b03e09256",
+      "transcript_sha256": "5de30eb221a07edf8b04add21f0fae812d5469d52d3118376c46019bff426c6d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 72799,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/05-enter-value.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/05-enter-value.txt",
+      "image_sha256": "fd6792a0d2db5437259747622398a412b9be37f55fdb17838dcc6c13e8d05a2f",
+      "transcript_sha256": "455ab21719515a425e04eb436b9b6db4f2d00797b78415b6c5f658b0f4e22055",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 72886,
+      "value": "18080"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/06-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/06-enter-manually.txt",
+      "image_sha256": "ed8d7fd38826c16bc52c9bfa5ef5e30b79ac852c076fad3eea7b1e3f53009513",
+      "transcript_sha256": "873bcfc39a307165b7cc83de0f78113d0a7890fee166c45c7e68905998f905ff",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 74749,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/07-enter-value.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/07-enter-value.txt",
+      "image_sha256": "b300f77f7255a4ae6bc72035464e311cec11a1a4e1d24aa68904410ebec08133",
+      "transcript_sha256": "f869c01e22d31dc1e7438be9674c54139fa034ec5e8cd7d45c4572171b34ad68",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 74860,
+      "value": "8080"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 8,
+      "title": "HTTP (current)",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/08-http-current.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/08-http-current.txt",
+      "image_sha256": "f3e5e4c7139e9bd8998cec309a89e95c854dd709ef2fbe00bd07dd0568d6e50f",
+      "transcript_sha256": "3c899443655106e7ec1e6a59967894c609ccd20b36a9f632d434bcf772613ade",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 75102,
+      "selected": "HTTP (current)"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 9,
+      "title": "no (current)",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/09-no-current.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/09-no-current.txt",
+      "image_sha256": "b7d4a99fced0f261bfbe86d83d95a9936bd156eebff0bafab32c5f41cb958973",
+      "transcript_sha256": "4c809a996d9655427c9bafdb01aa42865c1e1e13fb9e66581ecce795993a1506",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 75278,
+      "selected": "no (current)"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 10,
+      "title": "Review and run add-port",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/10-review-and-run-add-port.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/10-review-and-run-add-port.txt",
+      "image_sha256": "6d00d31169a11dd5a1858c0a0c937aed446df9461b192ccc12a0bcec5b18b780",
+      "transcript_sha256": "ba341c5194ae4fc4789fa7c041d3393011948dcef4d0a49d871c642d5995595c",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 75763,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-http",
+      "journey_family": "core-protocols-ports-websocket-http",
+      "session_index": 1,
+      "step": 11,
+      "title": "add-port result",
+      "kind": "result",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-http/11-add-port-result.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-http/11-add-port-result.txt",
+      "image_sha256": "530c3e0a073d954c77c6af09d90fa13da6fe8ea54d67f448bc8a9481482421e0",
+      "transcript_sha256": "872bfe52b607e7635318aa0b05020080f7c93e11a0f897f6b398643521630251",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log",
+      "pty_byte_offset": 77305,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-protocols-protocol-http",
+      "journey_family": "core-protocols-protocol-http",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-protocols-protocol-http/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-protocols-protocol-http/01-verify-the-application-response.txt",
+      "image_sha256": "bba7d1822bce14cae7655f56451d50b7d62a88bce48aa69d49ebc8b4659948f4",
+      "transcript_sha256": "df1b29a1e2cd47224ca655c371608e5f88028be470c631239d20e831719d6b97",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-protocol-http.pty.log",
+      "pty_byte_offset": 287,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-protocols-ports-websocket-enable",
+      "journey_family": "core-protocols-ports-websocket-enable",
+      "session_index": 1,
+      "step": 3,
+      "title": "protocol.example.com",
+      "kind": "menu",
+      "command": "enable-ws",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-enable/03-protocol-example-com.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-enable/03-protocol-example-com.txt",
+      "image_sha256": "5548e29c46a052dbacdf7dd2919a8018a767198c2306ac5183958d5f784bc290",
+      "transcript_sha256": "28b3c0bcd1e47402dd14567a777f03024a74df93d70886a25100df8cdfe3b11d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-enable.pty.log",
+      "pty_byte_offset": 83229,
+      "selected": "protocol.example.com"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-enable",
+      "journey_family": "core-protocols-ports-websocket-enable",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "enable-ws",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-enable/04-enter-value.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-enable/04-enter-value.txt",
+      "image_sha256": "1161fbf879dda6c26da41a7a2a31bbd602ddde61ce8472e07399c86851111f56",
+      "transcript_sha256": "455ab21719515a425e04eb436b9b6db4f2d00797b78415b6c5f658b0f4e22055",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-enable.pty.log",
+      "pty_byte_offset": 83316,
+      "value": "18080"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-enable",
+      "journey_family": "core-protocols-ports-websocket-enable",
+      "session_index": 1,
+      "step": 5,
+      "title": "Review and run enable-ws",
+      "kind": "menu",
+      "command": "enable-ws",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-enable/05-review-and-run-enable-ws.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-enable/05-review-and-run-enable-ws.txt",
+      "image_sha256": "c5306b128a0f4e9846073de001ed13ec7b56dd0986dd0a5fe3618885ac4e2101",
+      "transcript_sha256": "565c8c832a970eee2597b498298065af21dccc5ff2fced70ede518e5b95dff5b",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-enable.pty.log",
+      "pty_byte_offset": 83698,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-enable",
+      "journey_family": "core-protocols-ports-websocket-enable",
+      "session_index": 1,
+      "step": 6,
+      "title": "enable-ws result",
+      "kind": "result",
+      "command": "enable-ws",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-enable/06-enable-ws-result.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-enable/06-enable-ws-result.txt",
+      "image_sha256": "238797b1240a196ba48cb36e17eaca7b2bb3e6ee3abdc34ef630d71082c75581",
+      "transcript_sha256": "c247a2b093cefd32ad93c74089c9593aaff0cb5e52c815fa8b82948e89aea77e",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-enable.pty.log",
+      "pty_byte_offset": 84931,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-protocols-websocket-upgrade-and-frame",
+      "journey_family": "core-protocols-websocket-upgrade-and-frame",
+      "session_index": 1,
+      "step": 1,
+      "title": "WebSocket upgrade and response frame",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-protocols-websocket-upgrade-and-frame/01-websocket-upgrade-and-response-frame.png",
+      "transcript": "docs/assets/interactive/core-protocols-websocket-upgrade-and-frame/01-websocket-upgrade-and-response-frame.txt",
+      "image_sha256": "de6e38fff5363925a170e95fa0cfe62a6a5dac0236e8d115c6efc2aa3e61b741",
+      "transcript_sha256": "1f24e1b7c6eac470fbbd90c0d36d65a79462385f26fdde01d60562ad32db0b35",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-websocket-upgrade-and-frame.pty.log",
+      "pty_byte_offset": 314,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-protocols-ports-websocket-disable",
+      "journey_family": "core-protocols-ports-websocket-disable",
+      "session_index": 1,
+      "step": 3,
+      "title": "protocol.example.com",
+      "kind": "menu",
+      "command": "disable-ws",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-disable/03-protocol-example-com.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-disable/03-protocol-example-com.txt",
+      "image_sha256": "c59115e94ced117959604fd833865ccd3204d56b0ca627c9b66e39b3f61df708",
+      "transcript_sha256": "28b3c0bcd1e47402dd14567a777f03024a74df93d70886a25100df8cdfe3b11d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-disable.pty.log",
+      "pty_byte_offset": 75328,
+      "selected": "protocol.example.com"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-disable",
+      "journey_family": "core-protocols-ports-websocket-disable",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "disable-ws",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-disable/04-enter-value.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-disable/04-enter-value.txt",
+      "image_sha256": "9208dfc2ebe14e9dfd08688a6f3967a76c0d87696680b7b758e5c1853669343f",
+      "transcript_sha256": "455ab21719515a425e04eb436b9b6db4f2d00797b78415b6c5f658b0f4e22055",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-disable.pty.log",
+      "pty_byte_offset": 75415,
+      "value": "18080"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-disable",
+      "journey_family": "core-protocols-ports-websocket-disable",
+      "session_index": 1,
+      "step": 5,
+      "title": "Review and run disable-ws",
+      "kind": "menu",
+      "command": "disable-ws",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-disable/05-review-and-run-disable-ws.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-disable/05-review-and-run-disable-ws.txt",
+      "image_sha256": "8b346c05b72eb9a828249a50f338020247d02ba72c68e5a0da800b7d0416d16d",
+      "transcript_sha256": "36b4382735b61a7576ca5f08e52bb8b7b78e6dc04a4cb35361cdbc05ce12db07",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-disable.pty.log",
+      "pty_byte_offset": 75802,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-protocols-ports-websocket-disable",
+      "journey_family": "core-protocols-ports-websocket-disable",
+      "session_index": 1,
+      "step": 6,
+      "title": "disable-ws result",
+      "kind": "result",
+      "command": "disable-ws",
+      "image": "docs/assets/interactive/core-protocols-ports-websocket-disable/06-disable-ws-result.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-websocket-disable/06-disable-ws-result.txt",
+      "image_sha256": "93d24317089c7f40d160c88226c7fd5ae2e9ece4d4590c6d05ed4a0dc73cc9ca",
+      "transcript_sha256": "832ea9ab44d9abace1c7ca43ba7a4e5c416457882aa34e972af65de26c881d7a",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-disable.pty.log",
+      "pty_byte_offset": 77036,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-protocols-websocket-upgrade-disabled",
+      "journey_family": "core-protocols-websocket-upgrade-disabled",
+      "session_index": 1,
+      "step": 1,
+      "title": "WebSocket off returns the ordinary HTTP response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-protocols-websocket-upgrade-disabled/01-websocket-off-returns-the-ordinary-http-response.png",
+      "transcript": "docs/assets/interactive/core-protocols-websocket-upgrade-disabled/01-websocket-off-returns-the-ordinary-http-response.txt",
+      "image_sha256": "8b4553a002f0a236634041deb8af93534a01648b40499d1bbbb9331c0f0fc13e",
+      "transcript_sha256": "626c2941c3c94a8af829eb40dc6f9207963bdb799bad2533420f9e37b57db00e",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-websocket-upgrade-disabled.pty.log",
+      "pty_byte_offset": 279,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-protocols-ports-stream-tcp",
+      "journey_family": "core-protocols-ports-stream-tcp",
+      "session_index": 1,
+      "step": 3,
+      "title": "protocol.example.com",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-tcp/03-protocol-example-com.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-tcp/03-protocol-example-com.txt",
+      "image_sha256": "c20dde11e9e5ad7617a7c70460a14f8897d1380555294ca71b8ac982e42cc123",
+      "transcript_sha256": "28b3c0bcd1e47402dd14567a777f03024a74df93d70886a25100df8cdfe3b11d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log",
+      "pty_byte_offset": 71434,
+      "selected": "protocol.example.com"
+    },
+    {
+      "journey": "core-protocols-ports-stream-tcp",
+      "journey_family": "core-protocols-ports-stream-tcp",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-tcp/04-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-tcp/04-enter-manually.txt",
+      "image_sha256": "8e5d2fd25298a9c83b8860253f026b8ad957638c547cb1228d556a206df700a4",
+      "transcript_sha256": "5de30eb221a07edf8b04add21f0fae812d5469d52d3118376c46019bff426c6d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log",
+      "pty_byte_offset": 72806,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-protocols-ports-stream-tcp",
+      "journey_family": "core-protocols-ports-stream-tcp",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-tcp/05-enter-value.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-tcp/05-enter-value.txt",
+      "image_sha256": "5a319ba367f5c7e93792568bd2acc211e7d2d538f23a352b1eb505adc884ac37",
+      "transcript_sha256": "82aa980608e1f2f60edbcb2248ea3873a3bfe48aa6f35c4ab6093dc66d3a34a6",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log",
+      "pty_byte_offset": 72893,
+      "value": "19090"
+    },
+    {
+      "journey": "core-protocols-ports-stream-tcp",
+      "journey_family": "core-protocols-ports-stream-tcp",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-tcp/06-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-tcp/06-enter-manually.txt",
+      "image_sha256": "016f6a73aefd0b6a5a0b35f0c67e9e27fa994925ba7c030b503dd200dc4a24ec",
+      "transcript_sha256": "873bcfc39a307165b7cc83de0f78113d0a7890fee166c45c7e68905998f905ff",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log",
+      "pty_byte_offset": 74752,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-protocols-ports-stream-tcp",
+      "journey_family": "core-protocols-ports-stream-tcp",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-tcp/07-enter-value.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-tcp/07-enter-value.txt",
+      "image_sha256": "d9d1ade729d7c3f8fbb5879db3782d792b307d570b622ebc425940f0e24b2ddf",
+      "transcript_sha256": "92f62017dff96c87183152f41dfccdc1a378156bab97490bfbe690e1b44bc5ff",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log",
+      "pty_byte_offset": 74863,
+      "value": "9090"
+    },
+    {
+      "journey": "core-protocols-ports-stream-tcp",
+      "journey_family": "core-protocols-ports-stream-tcp",
+      "session_index": 1,
+      "step": 8,
+      "title": "TCP",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-tcp/08-tcp.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-tcp/08-tcp.txt",
+      "image_sha256": "fb7a1269eb6721480117139534fbab4ae6540787ed0b301ee97fd5fdc2a6d3bf",
+      "transcript_sha256": "f9388aab00cd866b39ddbb2945748c93a55d0bacbf095c9a2bfd66cf3348d66a",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log",
+      "pty_byte_offset": 75571,
+      "selected": "TCP"
+    },
+    {
+      "journey": "core-protocols-ports-stream-tcp",
+      "journey_family": "core-protocols-ports-stream-tcp",
+      "session_index": 1,
+      "step": 9,
+      "title": "Review and run add-port",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-tcp/09-review-and-run-add-port.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-tcp/09-review-and-run-add-port.txt",
+      "image_sha256": "52cf7fdbce3f9395dfcc0771abacfbc913658caf92b447d363cf9aa5edc66d06",
+      "transcript_sha256": "d64cfa417c3f14dc6cd71abb78d904628be9730c3e04e6db44b2d35a769d5c7c",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log",
+      "pty_byte_offset": 76054,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-protocols-ports-stream-tcp",
+      "journey_family": "core-protocols-ports-stream-tcp",
+      "session_index": 1,
+      "step": 10,
+      "title": "add-port result",
+      "kind": "result",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-tcp/10-add-port-result.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-tcp/10-add-port-result.txt",
+      "image_sha256": "3874fa150b0c68f6313a46c9f02d14c43eec7fd635c1c247baa4d9d76c5a4342",
+      "transcript_sha256": "26437e65fd9a0dedce1b77a9eb03b4586ad220a9098ccce0f9fc19be14240f31",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log",
+      "pty_byte_offset": 77605,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-protocols-tcp-proxy-response",
+      "journey_family": "core-protocols-tcp-proxy-response",
+      "session_index": 1,
+      "step": 1,
+      "title": "TCP application responds through the proxy",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-protocols-tcp-proxy-response/01-tcp-application-responds-through-the-proxy.png",
+      "transcript": "docs/assets/interactive/core-protocols-tcp-proxy-response/01-tcp-application-responds-through-the-proxy.txt",
+      "image_sha256": "ba0ef240506a7c6a73cb30387029c2748c6fac7eb248b57ec9747602d5c0e13e",
+      "transcript_sha256": "6e4d19f6f6524844a4f504ac95dca19151d3b374c7b7d13184186925fc149b02",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-tcp-proxy-response.pty.log",
+      "pty_byte_offset": 113,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-protocols-ports-stream-udp",
+      "journey_family": "core-protocols-ports-stream-udp",
+      "session_index": 1,
+      "step": 3,
+      "title": "protocol.example.com",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-udp/03-protocol-example-com.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-udp/03-protocol-example-com.txt",
+      "image_sha256": "e6b652586b243b25c5e84af16588196577fd5558a3aa95bf16c32e9b9a51d841",
+      "transcript_sha256": "28b3c0bcd1e47402dd14567a777f03024a74df93d70886a25100df8cdfe3b11d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log",
+      "pty_byte_offset": 71427,
+      "selected": "protocol.example.com"
+    },
+    {
+      "journey": "core-protocols-ports-stream-udp",
+      "journey_family": "core-protocols-ports-stream-udp",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-udp/04-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-udp/04-enter-manually.txt",
+      "image_sha256": "4701cf05408f09908dfb89d22a8ee019a7e07096f435827b07556e1186c41c23",
+      "transcript_sha256": "5de30eb221a07edf8b04add21f0fae812d5469d52d3118376c46019bff426c6d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log",
+      "pty_byte_offset": 72799,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-protocols-ports-stream-udp",
+      "journey_family": "core-protocols-ports-stream-udp",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-udp/05-enter-value.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-udp/05-enter-value.txt",
+      "image_sha256": "0b80d675405d34f56b0e161afbf889ed905bd88c286af27a1b0c8ea67ba7d772",
+      "transcript_sha256": "d57ca7271b91cba05a24339dd8f9fe02b0f1c648bd6d2e219e0fee80bbd4f946",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log",
+      "pty_byte_offset": 72886,
+      "value": "19091"
+    },
+    {
+      "journey": "core-protocols-ports-stream-udp",
+      "journey_family": "core-protocols-ports-stream-udp",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-udp/06-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-udp/06-enter-manually.txt",
+      "image_sha256": "fe01edb7060664b0f7e7bb43d86bea7afacc299546b91ddf2399a65e7eee2e84",
+      "transcript_sha256": "873bcfc39a307165b7cc83de0f78113d0a7890fee166c45c7e68905998f905ff",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log",
+      "pty_byte_offset": 74749,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-protocols-ports-stream-udp",
+      "journey_family": "core-protocols-ports-stream-udp",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-udp/07-enter-value.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-udp/07-enter-value.txt",
+      "image_sha256": "92f5b143c40bc2e88a074d419d7af975bbfe7c62b555d09369c625b2a596a88f",
+      "transcript_sha256": "87e76679a0fe94e2887605f177016490d74860cf67c7760520989f28116453f6",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log",
+      "pty_byte_offset": 74860,
+      "value": "9091"
+    },
+    {
+      "journey": "core-protocols-ports-stream-udp",
+      "journey_family": "core-protocols-ports-stream-udp",
+      "session_index": 1,
+      "step": 8,
+      "title": "UDP",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-udp/08-udp.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-udp/08-udp.txt",
+      "image_sha256": "18fcf6c9948b7363f2a549ba9ee2edfbf5690ff609b9c0361cf37bdbb4cd5374",
+      "transcript_sha256": "4b13f35fea50c3b56ea346d044003e351d2b74a0b787ceef49d702aaf4964cb8",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log",
+      "pty_byte_offset": 75795,
+      "selected": "UDP"
+    },
+    {
+      "journey": "core-protocols-ports-stream-udp",
+      "journey_family": "core-protocols-ports-stream-udp",
+      "session_index": 1,
+      "step": 9,
+      "title": "Review and run add-port",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-udp/09-review-and-run-add-port.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-udp/09-review-and-run-add-port.txt",
+      "image_sha256": "45100ee80dd6a581a659a945065930bd137f90ce8662de28fc4daa1019fc5389",
+      "transcript_sha256": "71c0cf0bc9b1f01d3a81b7400d61a38c93b87107bd898076c665ef46d0dccaa7",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log",
+      "pty_byte_offset": 76278,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-protocols-ports-stream-udp",
+      "journey_family": "core-protocols-ports-stream-udp",
+      "session_index": 1,
+      "step": 10,
+      "title": "add-port result",
+      "kind": "result",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-protocols-ports-stream-udp/10-add-port-result.png",
+      "transcript": "docs/assets/interactive/core-protocols-ports-stream-udp/10-add-port-result.txt",
+      "image_sha256": "a44ccd9b940800ee035672ba4db157b8845bb849525cf1ffc87776ebdf6dfcca",
+      "transcript_sha256": "e0571fde11f9a4ffb0a25d533585b630f1ef07ec912c717c8c5aa92f61c25139",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log",
+      "pty_byte_offset": 77839,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-protocols-udp-proxy-response",
+      "journey_family": "core-protocols-udp-proxy-response",
+      "session_index": 1,
+      "step": 1,
+      "title": "UDP application responds through the proxy",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-protocols-udp-proxy-response/01-udp-application-responds-through-the-proxy.png",
+      "transcript": "docs/assets/interactive/core-protocols-udp-proxy-response/01-udp-application-responds-through-the-proxy.txt",
+      "image_sha256": "685043f11ff7240d9c8237e17bf2d3d6b4b3de5cf7a8b7f0b1492d125c657591",
+      "transcript_sha256": "184db83a4b77e76e966fa16033aeedb3b19a3a62705b491571d76affcb752227",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-udp-proxy-response.pty.log",
+      "pty_byte_offset": 113,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-protocols-stream-and-websocket-config",
+      "journey_family": "core-protocols-stream-and-websocket-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/core-protocols-stream-and-websocket-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/core-protocols-stream-and-websocket-config/03-configuration-test-passed.txt",
+      "image_sha256": "435719c163054a6a3fb5080d216d6cee80ace5f9fc698019a1e6964ad7a67862",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-stream-and-websocket-config.pty.log",
+      "pty_byte_offset": 8031,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-protocols-backend-remove",
+      "journey_family": "core-protocols-backend-remove",
+      "session_index": 1,
+      "step": 3,
+      "title": "protocol.example.com",
+      "kind": "menu",
+      "command": "remove-backend",
+      "image": "docs/assets/interactive/core-protocols-backend-remove/03-protocol-example-com.png",
+      "transcript": "docs/assets/interactive/core-protocols-backend-remove/03-protocol-example-com.txt",
+      "image_sha256": "3915df9a87d716d2d1555894c794aad687887c9b72c5e0060de9de7ef0492228",
+      "transcript_sha256": "28b3c0bcd1e47402dd14567a777f03024a74df93d70886a25100df8cdfe3b11d",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-backend-remove.pty.log",
+      "pty_byte_offset": 102981,
+      "selected": "protocol.example.com"
+    },
+    {
+      "journey": "core-protocols-backend-remove",
+      "journey_family": "core-protocols-backend-remove",
+      "session_index": 1,
+      "step": 4,
+      "title": "Review and run remove-backend",
+      "kind": "menu",
+      "command": "remove-backend",
+      "image": "docs/assets/interactive/core-protocols-backend-remove/04-review-and-run-remove-backend.png",
+      "transcript": "docs/assets/interactive/core-protocols-backend-remove/04-review-and-run-remove-backend.txt",
+      "image_sha256": "bbf5df95c4eade5c462a022e0ea6e4df9fbd69d4c09a38742f4e85d63f6685ba",
+      "transcript_sha256": "f3f6bf47f9eda514a1047cb454bb0b14a6e60421ffba1dbb582c1599d8b538d9",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-backend-remove.pty.log",
+      "pty_byte_offset": 103414,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-protocols-backend-remove",
+      "journey_family": "core-protocols-backend-remove",
+      "session_index": 1,
+      "step": 5,
+      "title": "Confirm removal",
+      "kind": "input",
+      "command": "remove-backend",
+      "image": "docs/assets/interactive/core-protocols-backend-remove/05-confirm-removal.png",
+      "transcript": "docs/assets/interactive/core-protocols-backend-remove/05-confirm-removal.txt",
+      "image_sha256": "e5140d63e244e089bde6f02fb27cad953c733cf56ff26829548f23e55e105017",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-backend-remove.pty.log",
+      "pty_byte_offset": 103468,
+      "value": "YES"
+    },
+    {
+      "journey": "core-protocols-backend-remove",
+      "journey_family": "core-protocols-backend-remove",
+      "session_index": 1,
+      "step": 6,
+      "title": "Confirm container removal",
+      "kind": "input",
+      "command": "remove-backend",
+      "image": "docs/assets/interactive/core-protocols-backend-remove/06-confirm-container-removal.png",
+      "transcript": "docs/assets/interactive/core-protocols-backend-remove/06-confirm-container-removal.txt",
+      "image_sha256": "c4ec628cb998030c1cd9c38755f534d468f83b01ff16d55d6c062f7065c242da",
+      "transcript_sha256": "e637730cfb7aae03f8d8f87d0598bd618c6d82c3de6795e5d5d377fffb7d21f2",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-backend-remove.pty.log",
+      "pty_byte_offset": 103581,
+      "value": "y"
+    },
+    {
+      "journey": "core-protocols-backend-remove",
+      "journey_family": "core-protocols-backend-remove",
+      "session_index": 1,
+      "step": 7,
+      "title": "remove-backend result",
+      "kind": "result",
+      "command": "remove-backend",
+      "image": "docs/assets/interactive/core-protocols-backend-remove/07-remove-backend-result.png",
+      "transcript": "docs/assets/interactive/core-protocols-backend-remove/07-remove-backend-result.txt",
+      "image_sha256": "fc11099d51c4b3c07de958637dd5165e31cfe386d45692321aa5ec17026bceb1",
+      "transcript_sha256": "3606b5e7609bfa3425b0931f730e8efac68da2aa51d899db96281e0137f7e747",
+      "pty_log": "docs/assets/interactive/evidence/core-protocols/core-protocols-backend-remove.pty.log",
+      "pty_byte_offset": 105223,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "application-fixture",
+      "status": "passed",
+      "file": "docs/assets/interactive/evidence/core-protocols/demo-service.py",
+      "sha256": "8a1b15055189e2cb22475802876353110c202572004b7f1e48dd2837e5181cf7",
+      "description": "Disposable HTTP/WebSocket/TCP/UDP server; application fixture, not a Docker mock"
+    },
+    {
+      "label": "protocol-http",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: protocol.example.com",
+        "http://127.0.0.1:18080/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "protocol-http",
+      "status": "passed",
+      "http_status": 200,
+      "port": 18080,
+      "domain": "protocol.example.com"
+    },
+    {
+      "label": "websocket-upgrade-and-frame",
+      "status": "passed",
+      "argv": [
+        "python3",
+        "/opt/dockistrate-demo-artifacts/evidence/core-protocols/protocol-client.py",
+        "websocket"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "websocket-disabled",
+      "status": "passed",
+      "file": "state/domains/protocol.example.com/runtime/applied/ports.csv",
+      "rows": [
+        {
+          "listen_port": "18080",
+          "upstream_port": "8080",
+          "protocol": "http",
+          "certificate_owner": "",
+          "certificate_id": "",
+          "websocket": "no",
+          "redirect_enabled": "off",
+          "redirect_code": "",
+          "http3_enabled": "off",
+          "alt_svc": "auto"
+        }
+      ]
+    },
+    {
+      "label": "websocket-upgrade-disabled",
+      "status": "passed",
+      "argv": [
+        "python3",
+        "/opt/dockistrate-demo-artifacts/evidence/core-protocols/protocol-client.py",
+        "websocket-disabled"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "tcp-proxy-response",
+      "status": "passed",
+      "argv": [
+        "python3",
+        "/opt/dockistrate-demo-artifacts/evidence/core-protocols/protocol-client.py",
+        "tcp"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "udp-proxy-response",
+      "status": "passed",
+      "argv": [
+        "python3",
+        "/opt/dockistrate-demo-artifacts/evidence/core-protocols/protocol-client.py",
+        "udp"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "protocol-backend-removed",
+      "status": "passed"
+    },
+    {
+      "label": "core-group-complete",
+      "status": "passed",
+      "group": "protocols"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "core"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "fdaf07f8540efd947d0a06fdabb828946ac8f8d1425d625802a2b1fcd2fdbef9",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 44
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/core-protocols-recordings.tar.gz",
+    "sha256": "344ceeca5bb8a1dff712f804f6d30e7395813cb4b63a24cd612c05a64cbd9ec6",
+    "size": 62323,
+    "members": {
+      "docs/assets/interactive/evidence/core-protocols/001-source-commit.log": {
+        "sha256": "5987ca8d9204d09d800b36d6b5bfb8553cd73f23aea59309eb0ed38d6961afa5",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/core-protocols/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-protocols/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/core-protocols/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/core-protocols/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/core-protocols/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/core-protocols/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/core-protocols/008-fixture-image.log": {
+        "sha256": "3f28418a7268aa548ab1932ee0f44a8c058c322f51a079f0a9fdaabf17be8e7b",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/core-protocols/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/core-protocols/010-fixture-backend.log": {
+        "sha256": "758e0eae48e350d48da0c2939e7a9f76fbf659b3eed91b955ed4a821e07a6349",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/core-protocols/011-fixture-public-demo.log": {
+        "sha256": "fb508588acd2bd800a06f3de0175fc11ac7f90b289da362f3194796f68497bbd",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/core-protocols/012-fixture-https.log": {
+        "sha256": "e34ed9da3d87a26ae222283296c825105463f6d6de6fca793c19e51b6a315232",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/core-protocols/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/core-protocols/014-fixture-python-image.log": {
+        "sha256": "1ee438b19932626ebc62b50deaafaa68cd4762ed6e9b444ac2b6cd021b974f37",
+        "size": 540
+      },
+      "docs/assets/interactive/evidence/core-protocols/015-fixture-protocol-backend.log": {
+        "sha256": "cde4822cb79d9f4c938666154280f9be4be679aa75c429bc7092ea6aab0e7627",
+        "size": 1407
+      },
+      "docs/assets/interactive/evidence/core-protocols/016-fixture-protocol-allow.log": {
+        "sha256": "1718e02023156d0e086095dea031f83e7f8f73677fd306e6e39ca974c5bdbff6",
+        "size": 1459
+      },
+      "docs/assets/interactive/evidence/core-protocols/017-command-alias.log": {
+        "sha256": "f8d5adf6aeb15c0d7ee88e12b02ba6eb115bd017526d536f2d149da3ab38fc8e",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/core-protocols/018-command-alias.log": {
+        "sha256": "1d10cb56122b276fe20d185751075b9026b007ca36801eabcaa23ecd70db227f",
+        "size": 10
+      },
+      "docs/assets/interactive/evidence/core-protocols/019-command-alias.log": {
+        "sha256": "0dd72f966ccbd2bd68b094bccf5db753ecf1e8e350a63a826d6b3b901d61332b",
+        "size": 11
+      },
+      "docs/assets/interactive/evidence/core-protocols/020-command-alias.log": {
+        "sha256": "f8d5adf6aeb15c0d7ee88e12b02ba6eb115bd017526d536f2d149da3ab38fc8e",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/core-protocols/021-command-alias.log": {
+        "sha256": "f8d5adf6aeb15c0d7ee88e12b02ba6eb115bd017526d536f2d149da3ab38fc8e",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/core-protocols/022-command-alias.log": {
+        "sha256": "9145f1a36cb15d5fa01c9dd2bb76cf9aa2415ec9aa3fa84d3509bd9ea8fb88d8",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/core-protocols/023-verify-protocol-backend-removed.log": {
+        "sha256": "b5920c6ebcc0448297b5fad50545a02210a67da34c93e34022c960552ec19c68",
+        "size": 634
+      },
+      "docs/assets/interactive/evidence/core-protocols/024-image-identities.log": {
+        "sha256": "714888475b30cb8a6b521b0187ed4d889e9bd4aee2b83ea3062879a7edc2ac40",
+        "size": 3282
+      },
+      "docs/assets/interactive/evidence/core-protocols/commands.jsonl": {
+        "sha256": "622777538c42ce0b3affa9681c37dce2e32a1415a7a003144bc01d19776f9634",
+        "size": 8842
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-backend-remove.events.jsonl": {
+        "sha256": "ceb67856380957995ae5812e6b53e5cfcfb5ebb515e0609fb4a91838044cdb31",
+        "size": 18208
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-backend-remove.pty.log": {
+        "sha256": "cf70d3ff87ff88f1afff1647e630ae9ef179bf684ab1f5a413ffe703b4544c5c",
+        "size": 113341
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.events.jsonl": {
+        "sha256": "bd312ccdd14b0f5c7290da1c7ba192e86cdcea9d968162852a0dfc7914cef350",
+        "size": 20419
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-tcp.pty.log": {
+        "sha256": "8540c0453a8af9af68ff904231b9724d16b58f356cbf2e1a4569b8cae4c8e84a",
+        "size": 85723
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.events.jsonl": {
+        "sha256": "21d822d98719bb0af56c337d48a79cbe138159de34bbd7287ff86775f089c5e3",
+        "size": 20641
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-stream-udp.pty.log": {
+        "sha256": "8bd4106b89ba33f2f0cf51cbfde521e26553944bc2cbaad0101284eeaf7924f5",
+        "size": 85965
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-disable.events.jsonl": {
+        "sha256": "2e4e526012bcfc43128329de49ad9597cd9b0056dc6f9c0f89506ce1c4790c32",
+        "size": 15543
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-disable.pty.log": {
+        "sha256": "37f65f76911f68eb623df4f572d381ce17f3e367e23bc1ffbdf7a84857f3b47e",
+        "size": 85158
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-enable.events.jsonl": {
+        "sha256": "395b123a4e3ee8758a30b17454a40b37b41514436f47d3997ed38a493916080f",
+        "size": 15153
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-enable.pty.log": {
+        "sha256": "5ea9ace90597a5dd18973b3ce0987a1e3a70b4ba4ba8f3ec48fc3caf33293725",
+        "size": 93053
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.events.jsonl": {
+        "sha256": "62fd8cc11f4013e7852873c87602ffd9f82dcf6f8658acf20e674511d15d8fe0",
+        "size": 21193
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-ports-websocket-http.pty.log": {
+        "sha256": "2855acb90c58e275281397ab9cdba7a577c46f36ab5de8dfc52e8f7d4b90dae3",
+        "size": 85419
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-protocol-http.events.jsonl": {
+        "sha256": "6d2695a3df5d25c659b18eb6fa768460e71abd26814ca8c68c1a281430d816e6",
+        "size": 1003
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-protocol-http.pty.log": {
+        "sha256": "2e1a19e78246bfecf4f1324b5d46347584bdbe015ccbf9546cb8c23b87df41e5",
+        "size": 287
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-protocols-final-config.events.jsonl": {
+        "sha256": "e2702d4c01746137696eba6c544f0df64d594c7e8d8f241811cc6b8dce0d1358",
+        "size": 9606
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-protocols-final-config.pty.log": {
+        "sha256": "c0914755425afd2bb4ba0235bd5e7db71468f79b85e538199e7332580c30888d",
+        "size": 16149
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-stream-and-websocket-config.events.jsonl": {
+        "sha256": "2262a490707c6781c7498775b41ec63f4900f06949713c6e2b8eea9ec26ad4de",
+        "size": 9936
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-stream-and-websocket-config.pty.log": {
+        "sha256": "d0724438562e0802079c9db9522aa8b70bebdb1667ff315c9f57ede44e64a8c4",
+        "size": 16153
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-tcp-proxy-response.events.jsonl": {
+        "sha256": "c041348250d93a67f9c1e5cb31d9229b8cbd9b65ac5935171cc23132d83a5375",
+        "size": 981
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-tcp-proxy-response.pty.log": {
+        "sha256": "25d44cfda7016bca19465cbb56210e46dc5483524850c100a7bebd08970fd484",
+        "size": 113
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-udp-proxy-response.events.jsonl": {
+        "sha256": "ed6c9b91e51348e689de23ec27a92bc7ad7110cfc8c8aecea651d7260816cfc0",
+        "size": 981
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-udp-proxy-response.pty.log": {
+        "sha256": "37de40965e5992e26f4b198c957b8b91d9a8af9b98fee45477a38bdba3c1282e",
+        "size": 113
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-websocket-upgrade-and-frame.events.jsonl": {
+        "sha256": "7643729a308887e996ba63ec2445b0f0b0874891a8afea44d9490cf02e555fab",
+        "size": 1047
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-websocket-upgrade-and-frame.pty.log": {
+        "sha256": "44c8a842268cde18715c2048e820cdd71e71bd339385a8d634ca466ae3d04cd4",
+        "size": 314
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-websocket-upgrade-disabled.events.jsonl": {
+        "sha256": "de81b4e7d07023fddc42ec9accef85b1be79f3e78cf9268405babbf9c46df1cf",
+        "size": 1059
+      },
+      "docs/assets/interactive/evidence/core-protocols/core-protocols-websocket-upgrade-disabled.pty.log": {
+        "sha256": "1812c40cc0c077ddc37ac397c536c67971db8fa84a281549f3e6ea30c6120bd1",
+        "size": 279
+      },
+      "docs/assets/interactive/evidence/core-protocols/demo-service.py": {
+        "sha256": "8a1b15055189e2cb22475802876353110c202572004b7f1e48dd2837e5181cf7",
+        "size": 1561
+      },
+      "docs/assets/interactive/evidence/core-protocols/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-protocols/protocol-client.py": {
+        "sha256": "424f4712d1b64d81f80288de8c3ddeb3a93b08fdcfbeb728e501b758b702539a",
+        "size": 1541
+      },
+      "docs/assets/interactive/evidence/core-protocols/websocket-disabled.json": {
+        "sha256": "b980f70bf1af81ad16675f01d067881a0c4fed6176f211c4f480a67fc3e4b9dc",
+        "size": 277
+      }
+    }
+  }
+}

@@ -66,8 +66,12 @@ function uninstall_all() {
     fi
     started_txn=true
   fi
+  if declare -F _domain_runtime_prepare_cleanup_proxy >/dev/null 2>&1; then
+    _domain_runtime_prepare_cleanup_proxy || return 1
+  fi
 
-  local backend_container_candidates="" dom cn
+  local dom="" cn="" index=0 seen_domains=$'\n'
+  local -a cleanup_domains=() backend_domains=() backend_ids=() backend_tokens=()
   if [ -f "$BACKEND_PORTS_FILE" ]; then
     local bp_line="" bp_line_no=0
     while IFS= read -r bp_line || [ -n "$bp_line" ]; do
@@ -78,8 +82,39 @@ function uninstall_all() {
       [ "${STATE_BP_RECORD_TYPE:-}" = "backend" ] || continue
       dom="${STATE_BP_DOMAIN:-}"
       [ -n "$dom" ] || continue
-      backend_container_candidates+=$'backend-'"$(sanitize_domain_name "$dom")"$'\n'
+      case "$seen_domains" in *$'\n'"$dom"$'\n'*) continue ;; esac
+      cleanup_domains+=("$dom")
+      seen_domains+="$dom"$'\n'
     done <"$BACKEND_PORTS_FILE"
+  fi
+  if [ "${SKIP_DOCKER_CHECKS:-false}" != true ]; then
+    # Validate the entire sidecar before using any of its domains, including
+    # managed containers whose backend row was lost from partial state.
+    _backend_identity_read "" true || return 1
+    local identity_file="" identity_line="" identity_line_no=0
+    identity_file="$(_backend_identity_file)" || return 1
+    if [ -f "$identity_file" ]; then
+      while IFS= read -r identity_line || [ -n "$identity_line" ]; do
+        identity_line_no=$((identity_line_no + 1))
+        [ "$identity_line_no" -eq 1 ] && continue
+        csv_parse_line "$identity_line" || return 1
+        dom="${CSV_FIELDS[0]}"
+        case "$seen_domains" in *$'\n'"$dom"$'\n'*) continue ;; esac
+        cleanup_domains+=("$dom")
+        seen_domains+="$dom"$'\n'
+      done <"$identity_file"
+    fi
+    # Preflight all configured and sidecar-only domains before removing state.
+    # Keep immutable IDs/tokens for cleanup after the sidecar has been removed.
+    for ((index = 0; index < ${#cleanup_domains[@]}; index++)); do
+      dom="${cleanup_domains[$index]}"
+      _backend_cleanup_snapshot "$dom" || return 1
+      if [ -n "${BACKEND_CONTAINER_ID:-}" ]; then
+        backend_domains+=("$dom")
+        backend_ids+=("$BACKEND_CONTAINER_ID")
+        backend_tokens+=("$BACKEND_CONTAINER_TOKEN")
+      fi
+    done
   fi
 
   local dedicated_inheritance_file
@@ -91,6 +126,7 @@ function uninstall_all() {
 
   local -a backend_scope_files=(
     "$BACKEND_PORTS_FILE"
+    "$(_backend_identity_file)"
     "$BACKEND_ALIASES_FILE"
     "$dedicated_inheritance_file"
     "$BACKEND_HEADERS_FILE"
@@ -138,12 +174,25 @@ function uninstall_all() {
       safe_rm_rf "$CONFIG_DIR" "$STATE_DIR"
       echo "[Info] Removed directory $CONFIG_DIR."
     fi
+    if [ -n "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ]; then
+      DOMAIN_CONFIG_TERMINAL_UNINSTALL=true
+    fi
     ;;
   esac
 
   if [ -d "$CERTS_DIR" ]; then
     safe_rm_rf "$CERTS_DIR" "$STATE_DIR"
     echo "[Info] Removed $CERTS_DIR."
+  fi
+
+  if [ -n "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ]; then
+    local owner_root=""
+    for owner_root in "${DOMAINS_DIR:-${STATE_DIR}/domains}/"*; do
+      [ -d "$owner_root" ] || continue
+      domain_config_clean_owned_material "${owner_root##*/}" || return 1
+    done
+    _domain_runtime_record shared_remove proxy.dockistrate.invalid scope "$uninstall_scope" || return 1
+    _domain_runtime_finish_operation
   fi
 
   if [ "$uninstall_scope" = "all" ]; then
@@ -180,22 +229,28 @@ function uninstall_all() {
   all) create_backup "" "UninstallAll_all" ;;
   esac
 
-  if [ "$started_txn" = true ]; then
+  if [ -n "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ]; then
+    _domain_runtime_stage_proxy_delete || return 1
+    for ((index = 0; index < ${#backend_ids[@]}; index++)); do
+      dom="${backend_domains[$index]}"
+      _domain_runtime_record remove "$dom" old_id "${backend_ids[$index]}" old_token "${backend_tokens[$index]}" || return 1
+      _domain_runtime_finish_operation
+    done
+  elif [ "$started_txn" = true ]; then
     if nginx_container_is_managed; then
       if ! _cleanup_runtime_stage_container_delete "$NGINX_CONTAINER_NAME"; then
         echo "[Error] Failed to stage deletion for Nginx container '${NGINX_CONTAINER_NAME}'." >&2
         return 1
       fi
     fi
-    if [ -n "$backend_container_candidates" ]; then
-      while read -r cn; do
-        [ -n "$cn" ] || continue
-        if ! _cleanup_runtime_stage_container_delete "$cn"; then
-          echo "[Error] Failed to stage deletion for backend container '${cn}'." >&2
-          return 1
-        fi
-      done < <(printf '%s' "$backend_container_candidates" | sort -u)
-    fi
+    for ((index = 0; index < ${#backend_ids[@]}; index++)); do
+      dom="${backend_domains[$index]}"
+      cn="backend-$(sanitize_domain_name "$dom")"
+      if ! _cleanup_runtime_stage_container_delete "$cn" "$dom" "${backend_ids[$index]}" "${backend_tokens[$index]}"; then
+        echo "[Error] Failed to stage deletion for backend container '${cn}'." >&2
+        return 1
+      fi
+    done
   else
     if nginx_container_is_managed; then
       if ! remove_container_and_anonymous_volumes "$NGINX_CONTAINER_NAME"; then
@@ -204,20 +259,20 @@ function uninstall_all() {
       fi
       echo "[Info] Removed Nginx container."
     fi
-    if [ -n "$backend_container_candidates" ]; then
-      while read -r cn; do
-        [ -n "$cn" ] || continue
-        if ! remove_container_and_anonymous_volumes "$cn" >/dev/null 2>&1; then
-          echo "[Error] Failed to remove backend container '${cn}'." >&2
-          return 1
-        fi
-        echo "[Info] Removed backend container '$cn'."
-      done < <(printf '%s' "$backend_container_candidates" | sort -u)
-    fi
+    for ((index = 0; index < ${#backend_ids[@]}; index++)); do
+      dom="${backend_domains[$index]}"
+      cn="backend-$(sanitize_domain_name "$dom")"
+      _backend_identity_inspect "$dom" "${backend_ids[$index]}" "${backend_tokens[$index]}" || return 1
+      if ! remove_container_and_anonymous_volumes "${backend_ids[$index]}" >/dev/null 2>&1; then
+        echo "[Error] Failed to remove backend container '${cn}'." >&2
+        return 1
+      fi
+      echo "[Info] Removed backend container '$cn'."
+    done
   fi
 
   if [ "$started_txn" = true ]; then
-    end_transaction_success
+    end_transaction_success || return 1
     if ! _cleanup_runtime_finalize_staged_deletes; then
       return 1
     fi

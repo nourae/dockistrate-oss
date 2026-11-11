@@ -1,0 +1,10 @@
+=== Missing setup ===
+Restore Backup needs an existing backup, but no backups are available.
+
+Suggested next action:
+  1) Create backup now
+> 2) Enter backup path manually
+  3) Return to previous menu
+  4) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

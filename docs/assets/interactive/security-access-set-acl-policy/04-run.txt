@@ -1,0 +1,14 @@
+Review command
+  Command: Set ACL Policy (set-acl-policy)
+  Description: Set the global ACL allow/deny policy
+
+Arguments:
+  Policy: deny
+
+CLI equivalent:
+  ./dockistrate.sh set-acl-policy deny
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,16 @@
+Review command
+  Command: Set Nginx Directive Raw (set-nginx-directive-raw)
+  Description: Set a raw nginx directive override with safety validation
+
+Arguments:
+  Directive scope: global
+  Directive name: keepalive_requests
+  Directive value: 200
+
+CLI equivalent:
+  ./dockistrate.sh set-nginx-directive-raw global keepalive_requests 200
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

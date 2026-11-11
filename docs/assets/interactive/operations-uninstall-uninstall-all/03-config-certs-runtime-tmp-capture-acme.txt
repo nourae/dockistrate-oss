@@ -1,0 +1,7 @@
+Uninstall scope (backend|config|all):
+  1) Backend state (default) (current)
+  2) Full config + certs
+> 3) Config + certs + runtime tmp/capture/acme
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

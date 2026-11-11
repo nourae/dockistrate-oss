@@ -35,6 +35,7 @@ function _prompt_nginx_directive_pick_value() {
     ;;
   __MANUAL__)
     read_with_editing "${prompt}: " selected
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if [ "$INTERACTIVE" = true ] && is_back_input "$selected"; then
       return 1
     fi
@@ -121,6 +122,7 @@ function prompt_args_handle_nginx_directives() {
   case "$CMD" in
   set-nginx-directive | set-nginx-directive-raw)
     read_with_editing "directive_value: " value
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if [ "$INTERACTIVE" = true ] && is_back_input "$value"; then
       return 1
     fi

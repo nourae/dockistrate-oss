@@ -1,0 +1,2113 @@
+{
+  "schema_version": 1,
+  "scenario": "operations-runtime",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:42.404802+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "operations",
+  "group": "runtime",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:43:24.771408+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "operations-runtime-list-nginx-directive-catalog",
+      "journey_family": "operations-runtime-list-nginx-directive-catalog",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-nginx-directive-catalog",
+      "image": "docs/assets/interactive/operations-runtime-list-nginx-directive-catalog/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-list-nginx-directive-catalog/03-command-result.txt",
+      "image_sha256": "5981f0c52f1afa009cb3b9e29e43888943fd3dceb1c1ccfd8337e1f548066a58",
+      "transcript_sha256": "b6a59e0401e3ac32a37fe6b004b3454f84d53fb5c9c422f6a3e4b71c25a72f1b",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-list-nginx-directive-catalog.pty.log",
+      "pty_byte_offset": 84969,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive",
+      "journey_family": "operations-runtime-set-nginx-directive",
+      "session_index": 1,
+      "step": 3,
+      "title": "Global (http)",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive/03-global-http.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive/03-global-http.txt",
+      "image_sha256": "0cc9d99228682cfdf07cfc260647380328822b0e25d0d6053924f25a3ff8b07c",
+      "transcript_sha256": "cc6093f1df663bafc8b54a5ceb3616069cb668ca204e5ccd346b2ebf7ec0ad21",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive.pty.log",
+      "pty_byte_offset": 89797,
+      "selected": "Global (http)"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive",
+      "journey_family": "operations-runtime-set-nginx-directive",
+      "session_index": 1,
+      "step": 4,
+      "title": "client_max_body_size",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive/04-client-max-body-size.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive/04-client-max-body-size.txt",
+      "image_sha256": "cd5aff7b357b8b90cbfe273779c5e7ae41a4e950ab9a2aee28367f48867bbc4e",
+      "transcript_sha256": "72facbbb11756fd386815414181158b416d7a8d71d8a6d853229ee1fad18a3e5",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive.pty.log",
+      "pty_byte_offset": 91450,
+      "selected": "client_max_body_size"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive",
+      "journey_family": "operations-runtime-set-nginx-directive",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive/05-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive/05-enter-value.txt",
+      "image_sha256": "1945a6901985e29b8a7e2baca1459a0aae7879fb82651fdfe3aa90c7d40fff43",
+      "transcript_sha256": "002657fa8526b5a9fc48cfbd153f4ea441c50799887b335a0996c0180312d780",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive.pty.log",
+      "pty_byte_offset": 91478,
+      "value": "2m"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive",
+      "journey_family": "operations-runtime-set-nginx-directive",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive/06-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive/06-run.txt",
+      "image_sha256": "62c33611714a81ba7f9df8b1211cd7428db5d14526256d4974d8d039d6df4b62",
+      "transcript_sha256": "7c84dde45db76f7c317bc21fa87708986a91f6b5a0efc4774058a5f5c3139438",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive.pty.log",
+      "pty_byte_offset": 91964,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive",
+      "journey_family": "operations-runtime-set-nginx-directive",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive/07-command-result.txt",
+      "image_sha256": "e1c614f4782cebbb30da4fb186f67a3c9a2eb95cfd82f5788135383bce9fcf47",
+      "transcript_sha256": "26470992720c839d1fdb9b06c076b58f175c271987844b9392b143987707645f",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive.pty.log",
+      "pty_byte_offset": 93198,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-list-nginx-directives",
+      "journey_family": "operations-runtime-list-nginx-directives",
+      "session_index": 1,
+      "step": 3,
+      "title": "All scopes",
+      "kind": "menu",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-runtime-list-nginx-directives/03-all-scopes.png",
+      "transcript": "docs/assets/interactive/operations-runtime-list-nginx-directives/03-all-scopes.txt",
+      "image_sha256": "22aa3cf7a87953c771c4d67187990ed1e9a49037b2c886453160377928cd7bc4",
+      "transcript_sha256": "8dec855344ea37c1fa4e6d2abc27189cd60274631e1a842e1e26594d391affc6",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-list-nginx-directives.pty.log",
+      "pty_byte_offset": 80731,
+      "selected": "All scopes"
+    },
+    {
+      "journey": "operations-runtime-list-nginx-directives",
+      "journey_family": "operations-runtime-list-nginx-directives",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-runtime-list-nginx-directives/04-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-list-nginx-directives/04-command-result.txt",
+      "image_sha256": "6292e38840db9c2b1fc08a2f45f1b93839381223c92ad6af0c618592c04f9c7a",
+      "transcript_sha256": "43ad503c65855ee5b9eb3ce844ed8c829ee04c8b8516d5f0866991d07b24621f",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-list-nginx-directives.pty.log",
+      "pty_byte_offset": 81177,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-body-limit-verification",
+      "journey_family": "operations-runtime-body-limit-verification",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the configured request body limit",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-runtime-body-limit-verification/01-verify-the-configured-request-body-limit.png",
+      "transcript": "docs/assets/interactive/operations-runtime-body-limit-verification/01-verify-the-configured-request-body-limit.txt",
+      "image_sha256": "4c11881e9db908ea0cf6f74ab056b015e919effd3d2d1754e4a47d3357f252ff",
+      "transcript_sha256": "75e6c3a4bca4a8d67298b7dd58bd9c450a3756ea22308b3abdd9ef6246b7faa9",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-body-limit-verification.pty.log",
+      "pty_byte_offset": 328,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-raw",
+      "journey_family": "operations-runtime-set-nginx-directive-raw",
+      "session_index": 1,
+      "step": 3,
+      "title": "Global (http)",
+      "kind": "menu",
+      "command": "set-nginx-directive-raw",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/03-global-http.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/03-global-http.txt",
+      "image_sha256": "27a858c5b50ad93f7318563c80544a1fb7b293b08588fb00d9c3aa1ae46bd10e",
+      "transcript_sha256": "cc6093f1df663bafc8b54a5ceb3616069cb668ca204e5ccd346b2ebf7ec0ad21",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-raw.pty.log",
+      "pty_byte_offset": 90960,
+      "selected": "Global (http)"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-raw",
+      "journey_family": "operations-runtime-set-nginx-directive-raw",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "set-nginx-directive-raw",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/04-enter-manually.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/04-enter-manually.txt",
+      "image_sha256": "67a281642be8a1232ffc1291806401f35f48fd73b80ecc3620baf6cd5eb60630",
+      "transcript_sha256": "e99c454b4d9fd30d7369068054e9835526f01a63b4465b7a677538e6bb98602b",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-raw.pty.log",
+      "pty_byte_offset": 102189,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-raw",
+      "journey_family": "operations-runtime-set-nginx-directive-raw",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-nginx-directive-raw",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/05-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/05-enter-value.txt",
+      "image_sha256": "eff6683cc308d0bbc397fdabf8f23bdaf3d6624decf4e00ba1ecfce69837ba3a",
+      "transcript_sha256": "5ea48d7a7c0c01173aa3a3f84b7ac352a2dc901dc281d3527adccdae94719615",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-raw.pty.log",
+      "pty_byte_offset": 102232,
+      "value": "keepalive_requests"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-raw",
+      "journey_family": "operations-runtime-set-nginx-directive-raw",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-nginx-directive-raw",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/06-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/06-enter-value.txt",
+      "image_sha256": "160231fa20cdf9c28943e1ff4f8966613d7c584c0461748375c0571e0b3ced1a",
+      "transcript_sha256": "1b736ca314c84228d1dce99815647b45fc8a440059a12945c9a29d1ae8027f13",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-raw.pty.log",
+      "pty_byte_offset": 102272,
+      "value": "200"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-raw",
+      "journey_family": "operations-runtime-set-nginx-directive-raw",
+      "session_index": 1,
+      "step": 7,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-directive-raw",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/07-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/07-run.txt",
+      "image_sha256": "83d9ce5964f7e0ac066302bd1b1205aefcad37c037f40c0fb2eefe781c616804",
+      "transcript_sha256": "b89bd688af6c5492bb85d3e28af8bb41d6474af0cbd45cab1da54aa6760569fa",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-raw.pty.log",
+      "pty_byte_offset": 102748,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-raw",
+      "journey_family": "operations-runtime-set-nginx-directive-raw",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-directive-raw",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/08-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-raw/08-command-result.txt",
+      "image_sha256": "f0514d514f381e99b0ecd926a9764540f70c24431c7fb79ccb671c91f0e9a711",
+      "transcript_sha256": "90db84db516489bbf66632f0d7d749cf1f209940ca61b393ce617324f45fa050",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-raw.pty.log",
+      "pty_byte_offset": 103985,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-show-nginx-directive-strict",
+      "journey_family": "operations-runtime-show-nginx-directive-strict",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "show-nginx-directive-strict",
+      "image": "docs/assets/interactive/operations-runtime-show-nginx-directive-strict/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-show-nginx-directive-strict/03-command-result.txt",
+      "image_sha256": "2f6eb24de7bdbebf63371c85c325540f7c5d5f154f06bde7df7122adefe25018",
+      "transcript_sha256": "2fa10f0ba5f544bf5001e81f4e2d4d54d34bb84628c941defedd0ac75ac25d22",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-directive-strict.pty.log",
+      "pty_byte_offset": 74394,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-strict",
+      "journey_family": "operations-runtime-set-nginx-directive-strict",
+      "session_index": 1,
+      "step": 3,
+      "title": "off",
+      "kind": "menu",
+      "command": "set-nginx-directive-strict",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/03-off.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/03-off.txt",
+      "image_sha256": "98f3458ea616703a59abbf264331e01f1aa5913febe7dcdb203777defaa79094",
+      "transcript_sha256": "d9c191e16a57db4d2d9d36198e046a125932d2e6dc1253aa445c623291b24765",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-strict.pty.log",
+      "pty_byte_offset": 92114,
+      "selected": "off"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-strict",
+      "journey_family": "operations-runtime-set-nginx-directive-strict",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-directive-strict",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/04-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/04-run.txt",
+      "image_sha256": "efd37c8dfc33ad6b846ff0438d9fb9ce290859e276870fddfe0e40e1cbc32cce",
+      "transcript_sha256": "e9e59605975da9e9d3a754ed5964f1ef4cefb0b46f190d89c8d24efc5f1d2750",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-strict.pty.log",
+      "pty_byte_offset": 92495,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-directive-strict",
+      "journey_family": "operations-runtime-set-nginx-directive-strict",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-directive-strict",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-directive-strict/05-command-result.txt",
+      "image_sha256": "49f85303db5be0291b1c4b1312ec0b6e50de13d2c3a984c7ec81063e40ae31e8",
+      "transcript_sha256": "5947dcfea53e90b8cd16572bc1cc07665ac62be7fd4d6ad2c0117cc56e6acd24",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-strict.pty.log",
+      "pty_byte_offset": 93697,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-show-nginx-directive-strict--session-002",
+      "journey_family": "operations-runtime-show-nginx-directive-strict",
+      "session_index": 2,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "show-nginx-directive-strict",
+      "image": "docs/assets/interactive/operations-runtime-show-nginx-directive-strict--session-002/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-show-nginx-directive-strict--session-002/03-command-result.txt",
+      "image_sha256": "4a9a561d6d9bd1c0f3e801e3db18c98fbf2cbd9d0f4a389e953b8a9a7acfba61",
+      "transcript_sha256": "0495ddba296abc33fade222ec7758cdbd7dcff8ce77affd05794035090b21c8c",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-directive-strict--session-002.pty.log",
+      "pty_byte_offset": 74384,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-directive-strict-restored",
+      "journey_family": "operations-runtime-directive-strict-restored",
+      "session_index": 1,
+      "step": 3,
+      "title": "on",
+      "kind": "menu",
+      "command": "set-nginx-directive-strict",
+      "image": "docs/assets/interactive/operations-runtime-directive-strict-restored/03-on.png",
+      "transcript": "docs/assets/interactive/operations-runtime-directive-strict-restored/03-on.txt",
+      "image_sha256": "d5c47eb303438ec8f11c8a953e0ea22bd3cfc5c067d0eb435634cd3c8b54cbf1",
+      "transcript_sha256": "04bf7a2334adb0f4cf14ee6061f377a0027b34956f0af11e48bdb3acfec662d9",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directive-strict-restored.pty.log",
+      "pty_byte_offset": 92113,
+      "selected": "on"
+    },
+    {
+      "journey": "operations-runtime-directive-strict-restored",
+      "journey_family": "operations-runtime-directive-strict-restored",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-directive-strict",
+      "image": "docs/assets/interactive/operations-runtime-directive-strict-restored/04-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-directive-strict-restored/04-run.txt",
+      "image_sha256": "2f946620085669e09b65710b4dc8af59abeae730caccd40bfc58e99c425c7864",
+      "transcript_sha256": "50d188ff87f101ea459597b81d8c1b67adec5c19866e058ee94d88da2f140677",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directive-strict-restored.pty.log",
+      "pty_byte_offset": 92492,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-directive-strict-restored",
+      "journey_family": "operations-runtime-directive-strict-restored",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-directive-strict",
+      "image": "docs/assets/interactive/operations-runtime-directive-strict-restored/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-directive-strict-restored/05-command-result.txt",
+      "image_sha256": "a0d2feddca6c3b95def26208cd5760b49caa180d9f2d5006f62d1ab76df0b6c4",
+      "transcript_sha256": "d90527df2062ad1ff4c78dc7805c20b937b4a74e0a375765bb7e33f126d41da8",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directive-strict-restored.pty.log",
+      "pty_byte_offset": 93693,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-directive-config",
+      "journey_family": "operations-runtime-directive-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/operations-runtime-directive-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/operations-runtime-directive-config/03-configuration-test-passed.txt",
+      "image_sha256": "fa3af2c25cd342829c4ab4c04636e34f3d4611240d215f67cb74406426e6a833",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directive-config.pty.log",
+      "pty_byte_offset": 8031,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-remove-nginx-directive",
+      "journey_family": "operations-runtime-remove-nginx-directive",
+      "session_index": 1,
+      "step": 3,
+      "title": "Global (http)",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-remove-nginx-directive/03-global-http.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-nginx-directive/03-global-http.txt",
+      "image_sha256": "dd5b71c6e868cd0c3a77dbae35ec153397c036a8f9cf4c25bcff8ff7d596e16a",
+      "transcript_sha256": "cc6093f1df663bafc8b54a5ceb3616069cb668ca204e5ccd346b2ebf7ec0ad21",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-nginx-directive.pty.log",
+      "pty_byte_offset": 96710,
+      "selected": "Global (http)"
+    },
+    {
+      "journey": "operations-runtime-remove-nginx-directive",
+      "journey_family": "operations-runtime-remove-nginx-directive",
+      "session_index": 1,
+      "step": 4,
+      "title": "client_max_body_size",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-remove-nginx-directive/04-client-max-body-size.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-nginx-directive/04-client-max-body-size.txt",
+      "image_sha256": "7793d134c66e2705884ca84a27ea28a7f88ec83018898265232a8829efb99747",
+      "transcript_sha256": "8cf486f9d37900d36deb7df929a6c2ec61e739861369b54b2c46703d4fd458e4",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-nginx-directive.pty.log",
+      "pty_byte_offset": 98483,
+      "selected": "client_max_body_size"
+    },
+    {
+      "journey": "operations-runtime-remove-nginx-directive",
+      "journey_family": "operations-runtime-remove-nginx-directive",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-remove-nginx-directive/05-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-nginx-directive/05-run.txt",
+      "image_sha256": "25f9bb6a8996153f1c21348b9f4c38ed3fa5138f32852c9b3bd118f1b8a9d3de",
+      "transcript_sha256": "6a860b06ad74e5f7f352f42516fa28e661ad7d56c7894e92b3b404031c92771d",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-nginx-directive.pty.log",
+      "pty_byte_offset": 98975,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-remove-nginx-directive",
+      "journey_family": "operations-runtime-remove-nginx-directive",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-remove-nginx-directive/06-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-nginx-directive/06-enter-value.txt",
+      "image_sha256": "0a3c599c6cc82128eb22cf712afd431464ed6b7f2c4b771625e856f8fe9df609",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-nginx-directive.pty.log",
+      "pty_byte_offset": 99029,
+      "value": "YES"
+    },
+    {
+      "journey": "operations-runtime-remove-nginx-directive",
+      "journey_family": "operations-runtime-remove-nginx-directive",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-runtime-remove-nginx-directive/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-nginx-directive/07-command-result.txt",
+      "image_sha256": "3d842e6d6b08d5c0fd2418e2506e8791f6c36146a07b5a43f76256366cc2cb93",
+      "transcript_sha256": "e549878aef24654f9605cee21c7a1c77149d4dd8e4770f663ef3b4eea48581e6",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-nginx-directive.pty.log",
+      "pty_byte_offset": 100274,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-remove-all-nginx-directives",
+      "journey_family": "operations-runtime-remove-all-nginx-directives",
+      "session_index": 1,
+      "step": 3,
+      "title": "Global (http)",
+      "kind": "menu",
+      "command": "remove-all-nginx-directives",
+      "image": "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/03-global-http.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/03-global-http.txt",
+      "image_sha256": "846c0b5e14f3f0ff694223966986824b61c98b77de25005a1d7281a9e409abab",
+      "transcript_sha256": "bb32d1f049fd1e7b7da8843afc4f7a1342ab846cb4c7d33583e883b26b3a0548",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-all-nginx-directives.pty.log",
+      "pty_byte_offset": 101328,
+      "selected": "Global (http)"
+    },
+    {
+      "journey": "operations-runtime-remove-all-nginx-directives",
+      "journey_family": "operations-runtime-remove-all-nginx-directives",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-all-nginx-directives",
+      "image": "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/04-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/04-run.txt",
+      "image_sha256": "443fc5308538e6f20e3d92b5d2a31d00c5ba5877f62a828d497f9c77345eb88b",
+      "transcript_sha256": "8d698b81d473df97de4e666510d268bc7f4477ad05f050fad9404917711893f3",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-all-nginx-directives.pty.log",
+      "pty_byte_offset": 101782,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-remove-all-nginx-directives",
+      "journey_family": "operations-runtime-remove-all-nginx-directives",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-all-nginx-directives",
+      "image": "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/05-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/05-enter-value.txt",
+      "image_sha256": "cec45a68d7a784f755d06287201941a116d9649f236c4bedf093e64c0b887d50",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-all-nginx-directives.pty.log",
+      "pty_byte_offset": 101836,
+      "value": "YES"
+    },
+    {
+      "journey": "operations-runtime-remove-all-nginx-directives",
+      "journey_family": "operations-runtime-remove-all-nginx-directives",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-all-nginx-directives",
+      "image": "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-all-nginx-directives/06-command-result.txt",
+      "image_sha256": "3a7b119442112b93e4b0c31946273af2b881b02b852f81db8ca7658870672d62",
+      "transcript_sha256": "c4d833e8554a16426f24bbbf0ed8ac149d165201bf3c97f45e0be54a5ba21db2",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-all-nginx-directives.pty.log",
+      "pty_byte_offset": 103056,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-directives-restored",
+      "journey_family": "operations-runtime-directives-restored",
+      "session_index": 1,
+      "step": 3,
+      "title": "All scopes",
+      "kind": "menu",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-runtime-directives-restored/03-all-scopes.png",
+      "transcript": "docs/assets/interactive/operations-runtime-directives-restored/03-all-scopes.txt",
+      "image_sha256": "d5b2c888313621c36c65273523f4de2f154edd5aa16d56351318b2b6fb3c3395",
+      "transcript_sha256": "8dec855344ea37c1fa4e6d2abc27189cd60274631e1a842e1e26594d391affc6",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directives-restored.pty.log",
+      "pty_byte_offset": 80740,
+      "selected": "All scopes"
+    },
+    {
+      "journey": "operations-runtime-directives-restored",
+      "journey_family": "operations-runtime-directives-restored",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-runtime-directives-restored/04-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-directives-restored/04-command-result.txt",
+      "image_sha256": "15e55375e5653278e4e1b508843cf64a4d8f092e0e016849fb59f707bffad032",
+      "transcript_sha256": "8366ea379d979e0b7ce9dd4b8f4dca86d21ef6cab2fd59c7df4677330168fc17",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directives-restored.pty.log",
+      "pty_byte_offset": 81065,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-set-http-version",
+      "journey_family": "operations-runtime-set-http-version",
+      "session_index": 1,
+      "step": 3,
+      "title": "http1.1",
+      "kind": "menu",
+      "command": "set-http-version",
+      "image": "docs/assets/interactive/operations-runtime-set-http-version/03-http1-1.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-http-version/03-http1-1.txt",
+      "image_sha256": "0105380653266d338f923dd3516d66b8fa7afa5e95d3bde6a15e421dd8ebeb7f",
+      "transcript_sha256": "274a1c0177449151c9654cca31c85b9149cc193b0c1858c6994542b243866ab0",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-http-version.pty.log",
+      "pty_byte_offset": 82655,
+      "selected": "http1.1"
+    },
+    {
+      "journey": "operations-runtime-set-http-version",
+      "journey_family": "operations-runtime-set-http-version",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-http-version",
+      "image": "docs/assets/interactive/operations-runtime-set-http-version/04-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-http-version/04-run.txt",
+      "image_sha256": "2210645e1a1dd12a2c36ee5d6769f1a876d97316ff8cef0c232a3b40de972a97",
+      "transcript_sha256": "d499ee976b4c5d2f48639ede3067a55bc035c046bb37e5afb01262f25b5efc51",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-http-version.pty.log",
+      "pty_byte_offset": 82996,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-http-version",
+      "journey_family": "operations-runtime-set-http-version",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-http-version",
+      "image": "docs/assets/interactive/operations-runtime-set-http-version/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-http-version/05-command-result.txt",
+      "image_sha256": "4ff65980f1b099b366a549ae46f8b7c21921f1a375079629e9ed98c625fa2fbe",
+      "transcript_sha256": "77d99d07076689c586b19380ab7e61d7b049a690c661f3b51c63945de55d1c9d",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-http-version.pty.log",
+      "pty_byte_offset": 84199,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-set-backend-http-version",
+      "journey_family": "operations-runtime-set-backend-http-version",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-backend-http-version",
+      "image": "docs/assets/interactive/operations-runtime-set-backend-http-version/03-example-com.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-backend-http-version/03-example-com.txt",
+      "image_sha256": "f489fbd222073a632aab315269df716d599c9101c189e061fdd04392db2dc423",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-backend-http-version.pty.log",
+      "pty_byte_offset": 92852,
+      "selected": "example.com"
+    },
+    {
+      "journey": "operations-runtime-set-backend-http-version",
+      "journey_family": "operations-runtime-set-backend-http-version",
+      "session_index": 1,
+      "step": 4,
+      "title": "http2",
+      "kind": "menu",
+      "command": "set-backend-http-version",
+      "image": "docs/assets/interactive/operations-runtime-set-backend-http-version/04-http2.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-backend-http-version/04-http2.txt",
+      "image_sha256": "eeb6908e14a81def6a941e6c2971285259160948e38b77fbeecc6eb48fde8706",
+      "transcript_sha256": "4d4a69409143134b7db69877bf44e787425f363bdbe2af9aa5ae254c1ab25434",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-backend-http-version.pty.log",
+      "pty_byte_offset": 93184,
+      "selected": "http2"
+    },
+    {
+      "journey": "operations-runtime-set-backend-http-version",
+      "journey_family": "operations-runtime-set-backend-http-version",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backend-http-version",
+      "image": "docs/assets/interactive/operations-runtime-set-backend-http-version/05-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-backend-http-version/05-run.txt",
+      "image_sha256": "64765461dda88a055dc239a6f488c483d3a2f366902803609a5d1d0ece1545ac",
+      "transcript_sha256": "8859529c36172c029bf7305ea5c667c7220b2723abf2c892e5aa4c5976bcba2a",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-backend-http-version.pty.log",
+      "pty_byte_offset": 93577,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-backend-http-version",
+      "journey_family": "operations-runtime-set-backend-http-version",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backend-http-version",
+      "image": "docs/assets/interactive/operations-runtime-set-backend-http-version/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-backend-http-version/06-command-result.txt",
+      "image_sha256": "984171b0d324d60b6faa842ae3e26cae3001ae8e5334b53fd59e5035e145effa",
+      "transcript_sha256": "5102dcb73d388e3657aa7c51452edac47b40fa22313b9a2b3173143c2213106b",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-backend-http-version.pty.log",
+      "pty_byte_offset": 94794,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-http2-negotiation",
+      "journey_family": "operations-runtime-http2-negotiation",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify HTTP2 negotiation",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-runtime-http2-negotiation/01-verify-http2-negotiation.png",
+      "transcript": "docs/assets/interactive/operations-runtime-http2-negotiation/01-verify-http2-negotiation.txt",
+      "image_sha256": "f1a7e793e08824481c7e8438af2454bb239985a2ccfc55f620c4e5a8ffc8457a",
+      "transcript_sha256": "de8be4f714518e8786303c9c05ccc7fc5aa21cc3100d0cee6e72d1540577de34",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-http2-negotiation.pty.log",
+      "pty_byte_offset": 209,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "operations-runtime-remove-backend-http-version",
+      "journey_family": "operations-runtime-remove-backend-http-version",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-http-version",
+      "image": "docs/assets/interactive/operations-runtime-remove-backend-http-version/03-example-com.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-backend-http-version/03-example-com.txt",
+      "image_sha256": "d839af7253c2d2338f1b7f75c6d4ac827f0e7f0c87e78c9a59f37ee8d9bc90bf",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-backend-http-version.pty.log",
+      "pty_byte_offset": 106977,
+      "selected": "example.com"
+    },
+    {
+      "journey": "operations-runtime-remove-backend-http-version",
+      "journey_family": "operations-runtime-remove-backend-http-version",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-http-version",
+      "image": "docs/assets/interactive/operations-runtime-remove-backend-http-version/04-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-backend-http-version/04-run.txt",
+      "image_sha256": "ee8bcfb1529e44755f8d5296a99f204b499a14b3ee2b5003084925e4ea18a2d6",
+      "transcript_sha256": "c7875e0714106cb34896a6c4a724543c45384bec43ee0c829dbdaa42aa99fc1f",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-backend-http-version.pty.log",
+      "pty_byte_offset": 107414,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-remove-backend-http-version",
+      "journey_family": "operations-runtime-remove-backend-http-version",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-http-version",
+      "image": "docs/assets/interactive/operations-runtime-remove-backend-http-version/05-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-backend-http-version/05-enter-value.txt",
+      "image_sha256": "327a5bad9be3c1d65486ff1cbec693854674f8f1af6767848b56d80d194453fc",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-backend-http-version.pty.log",
+      "pty_byte_offset": 107468,
+      "value": "YES"
+    },
+    {
+      "journey": "operations-runtime-remove-backend-http-version",
+      "journey_family": "operations-runtime-remove-backend-http-version",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-http-version",
+      "image": "docs/assets/interactive/operations-runtime-remove-backend-http-version/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-remove-backend-http-version/06-command-result.txt",
+      "image_sha256": "26f5455041c8fc792a013ec9b5217320e11c3c945e5bfb19f08dab873a70fc4a",
+      "transcript_sha256": "eb0635e98f343de8e973f1bb99ee6be56a07acf5991620d1284ec017397480f3",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-backend-http-version.pty.log",
+      "pty_byte_offset": 108700,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-http-version-inheritance",
+      "journey_family": "operations-runtime-http-version-inheritance",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify inherited HTTP1.1",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-runtime-http-version-inheritance/01-verify-inherited-http1-1.png",
+      "transcript": "docs/assets/interactive/operations-runtime-http-version-inheritance/01-verify-inherited-http1-1.txt",
+      "image_sha256": "4b60ec0ac238bfd52c365c8582bc395d28d9bf304d69485c2071a5a0b0248b8c",
+      "transcript_sha256": "2d625ff7b87131a8a94f060fccb2378bd3c2f735a6daac18d55412cbf3706a3c",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-http-version-inheritance.pty.log",
+      "pty_byte_offset": 211,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "operations-runtime-show-nginx-docker-opts",
+      "journey_family": "operations-runtime-show-nginx-docker-opts",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "show-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-show-nginx-docker-opts/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-show-nginx-docker-opts/03-command-result.txt",
+      "image_sha256": "2e505812bdac180b35a95069d738ed1d3f3f3789ac8a79d2917aa68b9fb8afbd",
+      "transcript_sha256": "83090897060501011e0b75ffaef7f60b9c4a59a32a4379c4836aaa67d4731f3f",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-docker-opts.pty.log",
+      "pty_byte_offset": 72861,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-docker-opts",
+      "journey_family": "operations-runtime-set-nginx-docker-opts",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "set-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/03-enter-manually.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/03-enter-manually.txt",
+      "image_sha256": "3f54c99a82b1fe44c1c071d58536b9be59e0ff848c2635f6c025c66baafc34ed",
+      "transcript_sha256": "542a254bc05cae8d354c75a4d18c9d81998fb11dfa7c8fad16442e76d78aea35",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-docker-opts.pty.log",
+      "pty_byte_offset": 88679,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "operations-runtime-set-nginx-docker-opts",
+      "journey_family": "operations-runtime-set-nginx-docker-opts",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/04-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/04-enter-value.txt",
+      "image_sha256": "b68fca505d5bf2d9c2501780017569cd4ea1ae7b0a4afae7a9537af87fae139c",
+      "transcript_sha256": "adea13aa4bc3734bfa23843f776da65d0686ff5e473df6b24727a000c92d75a0",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-docker-opts.pty.log",
+      "pty_byte_offset": 89063,
+      "value": "--label docs-example=true"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-docker-opts",
+      "journey_family": "operations-runtime-set-nginx-docker-opts",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/05-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/05-enter-value.txt",
+      "image_sha256": "c8b32ec0e2309d8dd2ee69d459a5e80295578b30e9130a84448d87ca70ed21a8",
+      "transcript_sha256": "8da772748133fa927533736046eddda3532708c51c8a06a92286b8af006a97ab",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-docker-opts.pty.log",
+      "pty_byte_offset": 89084,
+      "value": ""
+    },
+    {
+      "journey": "operations-runtime-set-nginx-docker-opts",
+      "journey_family": "operations-runtime-set-nginx-docker-opts",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/06-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/06-run.txt",
+      "image_sha256": "bc7d5f815e0f7dc18712dd54ecedc9b11043495b65fafe652af9ac2462ddd719",
+      "transcript_sha256": "e07f1b426608e3b7551a56f0a132753186f4e854c8e622fccde8ad0fcef31c63",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-docker-opts.pty.log",
+      "pty_byte_offset": 89525,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-docker-opts",
+      "journey_family": "operations-runtime-set-nginx-docker-opts",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-docker-opts/07-command-result.txt",
+      "image_sha256": "276504f03693d1d57f8f5e5921681101b549493414c54e88cec3a7567b03ef88",
+      "transcript_sha256": "506c4fdc43372f8aa9afc4b365aa51d23dc7cfdf02032cdd738ee69cca15af19",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-docker-opts.pty.log",
+      "pty_byte_offset": 91107,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-show-nginx-docker-opts--session-002",
+      "journey_family": "operations-runtime-show-nginx-docker-opts",
+      "session_index": 2,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "show-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-show-nginx-docker-opts--session-002/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-show-nginx-docker-opts--session-002/03-command-result.txt",
+      "image_sha256": "3194ef3ac5bebaa757d9d155ac1597200d28f03e90013f1f0d474f4244b28c36",
+      "transcript_sha256": "7d7bfc05d8c98f80bce3713b347efff1e05b978e9418ba8c6f829850039c004d",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-docker-opts--session-002.pty.log",
+      "pty_byte_offset": 72882,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-runtime-options-cleared",
+      "journey_family": "operations-runtime-runtime-options-cleared",
+      "session_index": 1,
+      "step": 3,
+      "title": "Clear current options",
+      "kind": "menu",
+      "command": "set-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-runtime-options-cleared/03-clear-current-options.png",
+      "transcript": "docs/assets/interactive/operations-runtime-runtime-options-cleared/03-clear-current-options.txt",
+      "image_sha256": "99612fe9ec1fbc3aed3d34ff52b6dbc13b4f2c550575872cfd853c7e4e0402fb",
+      "transcript_sha256": "cd09bd988eca83ad96cada8933e59a3317f90e0d60361405555ffd63c305e986",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-runtime-options-cleared.pty.log",
+      "pty_byte_offset": 88829,
+      "selected": "Clear current options"
+    },
+    {
+      "journey": "operations-runtime-runtime-options-cleared",
+      "journey_family": "operations-runtime-runtime-options-cleared",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-runtime-options-cleared/04-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-runtime-options-cleared/04-run.txt",
+      "image_sha256": "51a112c50572ea621791ca15ab9b2712183957beeae894ed884bda8f18c27004",
+      "transcript_sha256": "6c5310701beb05c0b58ee71756ef2eb24953c0c7cd9e2549e59127555b98529b",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-runtime-options-cleared.pty.log",
+      "pty_byte_offset": 89208,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-runtime-options-cleared",
+      "journey_family": "operations-runtime-runtime-options-cleared",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-docker-opts",
+      "image": "docs/assets/interactive/operations-runtime-runtime-options-cleared/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-runtime-options-cleared/05-command-result.txt",
+      "image_sha256": "3a945f7cdd5aa171d167ccabb2d0024ab186d7514182be67d462a06f54af5923",
+      "transcript_sha256": "7cc6417b754cf342807f5b64c301338a8f5b6aab6cc922372808daf2f8ef2b5f",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-runtime-options-cleared.pty.log",
+      "pty_byte_offset": 90784,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-set-visibility-policy",
+      "journey_family": "operations-runtime-set-visibility-policy",
+      "session_index": 1,
+      "step": 3,
+      "title": "Redacted display/history/audit",
+      "kind": "menu",
+      "command": "set-visibility-policy",
+      "image": "docs/assets/interactive/operations-runtime-set-visibility-policy/03-redacted-display-history-audit.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-visibility-policy/03-redacted-display-history-audit.txt",
+      "image_sha256": "057d0cc408356794be92595ac220aab25c8b56b3c73108e3b1b584a86e410989",
+      "transcript_sha256": "69b99231a3ecf2e5577e4e2973b961dba5b070803978b48b990320542985d553",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-visibility-policy.pty.log",
+      "pty_byte_offset": 84596,
+      "selected": "Redacted display/history/audit"
+    },
+    {
+      "journey": "operations-runtime-set-visibility-policy",
+      "journey_family": "operations-runtime-set-visibility-policy",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-visibility-policy",
+      "image": "docs/assets/interactive/operations-runtime-set-visibility-policy/04-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-visibility-policy/04-run.txt",
+      "image_sha256": "6f5648a8bb1b1badfac75998eb649fabc1661414393863ee8460cb779eefe0aa",
+      "transcript_sha256": "82891e6d585495db1f60a4ae0c69fa00c6914bfa03fd7118e7a61e99d430dea6",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-visibility-policy.pty.log",
+      "pty_byte_offset": 84984,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-visibility-policy",
+      "journey_family": "operations-runtime-set-visibility-policy",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-visibility-policy",
+      "image": "docs/assets/interactive/operations-runtime-set-visibility-policy/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-visibility-policy/05-command-result.txt",
+      "image_sha256": "ee5d40b45cfe827f613f9fe99db00ba3fcd30be81c041e77ec8fd2eb9684e26c",
+      "transcript_sha256": "49372eb9300850467f071b28f597d6b32e09be3ae526b0d7104de1d597a76256",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-visibility-policy.pty.log",
+      "pty_byte_offset": 85123,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-show-visibility-policy",
+      "journey_family": "operations-runtime-show-visibility-policy",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "show-visibility-policy",
+      "image": "docs/assets/interactive/operations-runtime-show-visibility-policy/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-show-visibility-policy/03-command-result.txt",
+      "image_sha256": "16cb031aa62c71a222b6ee7e20fa53e9fad4cc9636e5458b23a9d129985a3c01",
+      "transcript_sha256": "4216051e3409d02f364319a7eec104f5e4b1aa75a0dc484b7f4c15e16150ab7b",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-visibility-policy.pty.log",
+      "pty_byte_offset": 71275,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-redacted-status",
+      "journey_family": "operations-runtime-redacted-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-runtime-redacted-status/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-redacted-status/03-command-result.txt",
+      "image_sha256": "bd79324df3e622f382cd748925b73904a311985048e068ee78e1e9216a5e3fce",
+      "transcript_sha256": "ae1949733f7357e7949727381ef31b9c752ef8771c5e3284e98bc04cfae0bf8a",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-redacted-status.pty.log",
+      "pty_byte_offset": 82637,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-redacted-status",
+      "journey_family": "operations-runtime-redacted-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result \u2014 earlier output 1",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-runtime-redacted-status/04-command-result-earlier-output-1.png",
+      "transcript": "docs/assets/interactive/operations-runtime-redacted-status/04-command-result-earlier-output-1.txt",
+      "image_sha256": "801a0b015afdf22458dd4d15fc1f51e1071d0642cded2c18952ad4008310c15a",
+      "transcript_sha256": "ae1949733f7357e7949727381ef31b9c752ef8771c5e3284e98bc04cfae0bf8a",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-redacted-status.pty.log",
+      "pty_byte_offset": 82637,
+      "viewport": "scrollback",
+      "scrollback_steps": 1
+    },
+    {
+      "journey": "operations-runtime-redacted-status",
+      "journey_family": "operations-runtime-redacted-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result \u2014 earlier output 2",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-runtime-redacted-status/05-command-result-earlier-output-2.png",
+      "transcript": "docs/assets/interactive/operations-runtime-redacted-status/05-command-result-earlier-output-2.txt",
+      "image_sha256": "878b254b8f2c6e849dd2068d581a6f37fcfd7397326bd33242763d3529922f44",
+      "transcript_sha256": "ae1949733f7357e7949727381ef31b9c752ef8771c5e3284e98bc04cfae0bf8a",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-redacted-status.pty.log",
+      "pty_byte_offset": 82637,
+      "viewport": "scrollback",
+      "scrollback_steps": 2
+    },
+    {
+      "journey": "operations-runtime-redacted-status",
+      "journey_family": "operations-runtime-redacted-status",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result \u2014 earlier output 3",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-runtime-redacted-status/06-command-result-earlier-output-3.png",
+      "transcript": "docs/assets/interactive/operations-runtime-redacted-status/06-command-result-earlier-output-3.txt",
+      "image_sha256": "3f64fda7e654ec3e76576567296b8dd020efe672cf9885e0c5a2f371cb6f7bfc",
+      "transcript_sha256": "ae1949733f7357e7949727381ef31b9c752ef8771c5e3284e98bc04cfae0bf8a",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-redacted-status.pty.log",
+      "pty_byte_offset": 82637,
+      "viewport": "top",
+      "scrollback_steps": 3
+    },
+    {
+      "journey": "operations-runtime-visibility-restored",
+      "journey_family": "operations-runtime-visibility-restored",
+      "session_index": 1,
+      "step": 3,
+      "title": "Full visibility",
+      "kind": "menu",
+      "command": "set-visibility-policy",
+      "image": "docs/assets/interactive/operations-runtime-visibility-restored/03-full-visibility.png",
+      "transcript": "docs/assets/interactive/operations-runtime-visibility-restored/03-full-visibility.txt",
+      "image_sha256": "7f599de22838a3b94f74fe48a3a8530912492c84741a85e388026655d78cb0a8",
+      "transcript_sha256": "ec5f75abacd25d0b71f2a8e55b930658a4cbd9a1e57e6f7513a9a01bbc224b4f",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-visibility-restored.pty.log",
+      "pty_byte_offset": 84591,
+      "selected": "Full visibility"
+    },
+    {
+      "journey": "operations-runtime-visibility-restored",
+      "journey_family": "operations-runtime-visibility-restored",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-visibility-policy",
+      "image": "docs/assets/interactive/operations-runtime-visibility-restored/04-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-visibility-restored/04-run.txt",
+      "image_sha256": "a2af8653b8a517efe6bd2d1d7f7073c4316be83f94783960db7d20749b86c267",
+      "transcript_sha256": "932a5badd0394fa205655fad5292b3fff863ffe3bb174ed4316b4e4adf83028e",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-visibility-restored.pty.log",
+      "pty_byte_offset": 84971,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-visibility-restored",
+      "journey_family": "operations-runtime-visibility-restored",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-visibility-policy",
+      "image": "docs/assets/interactive/operations-runtime-visibility-restored/05-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-visibility-restored/05-command-result.txt",
+      "image_sha256": "b1ac9b841800b8fa7a1b7e875f03fe08e4d94a90d25d06d224fd4d2d0355610b",
+      "transcript_sha256": "1e6bf8779961c83f6d731d73957efda5788d584e506ef52f3f131353d9e0e612",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-visibility-restored.pty.log",
+      "pty_byte_offset": 85106,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-full-status",
+      "journey_family": "operations-runtime-full-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-runtime-full-status/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-full-status/03-command-result.txt",
+      "image_sha256": "f6cf19be057b8fc589448365acc685160f9b2490d79f9257e55b698c67151447",
+      "transcript_sha256": "f63a1f041190063b5e58edf5938446e7cf81c558d83a383f6a45137e1378f475",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-full-status.pty.log",
+      "pty_byte_offset": 82636,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-full-status",
+      "journey_family": "operations-runtime-full-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result \u2014 earlier output 1",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-runtime-full-status/04-command-result-earlier-output-1.png",
+      "transcript": "docs/assets/interactive/operations-runtime-full-status/04-command-result-earlier-output-1.txt",
+      "image_sha256": "fb1bbef4a691c844a30c5481cef6e930d5c90f5b9aad9e8cc0a7b657cf4c3088",
+      "transcript_sha256": "f63a1f041190063b5e58edf5938446e7cf81c558d83a383f6a45137e1378f475",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-full-status.pty.log",
+      "pty_byte_offset": 82636,
+      "viewport": "scrollback",
+      "scrollback_steps": 1
+    },
+    {
+      "journey": "operations-runtime-full-status",
+      "journey_family": "operations-runtime-full-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result \u2014 earlier output 2",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-runtime-full-status/05-command-result-earlier-output-2.png",
+      "transcript": "docs/assets/interactive/operations-runtime-full-status/05-command-result-earlier-output-2.txt",
+      "image_sha256": "2ad05a25398fd832329e30f8154f777554c18a159508a19fbeeb39663203ccf9",
+      "transcript_sha256": "f63a1f041190063b5e58edf5938446e7cf81c558d83a383f6a45137e1378f475",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-full-status.pty.log",
+      "pty_byte_offset": 82636,
+      "viewport": "scrollback",
+      "scrollback_steps": 2
+    },
+    {
+      "journey": "operations-runtime-full-status",
+      "journey_family": "operations-runtime-full-status",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result \u2014 earlier output 3",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-runtime-full-status/06-command-result-earlier-output-3.png",
+      "transcript": "docs/assets/interactive/operations-runtime-full-status/06-command-result-earlier-output-3.txt",
+      "image_sha256": "0394912956979684d61c049de997685bad4445c6307d80e9fcd021b37577a2d5",
+      "transcript_sha256": "f63a1f041190063b5e58edf5938446e7cf81c558d83a383f6a45137e1378f475",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-full-status.pty.log",
+      "pty_byte_offset": 82636,
+      "viewport": "top",
+      "scrollback_steps": 3
+    },
+    {
+      "journey": "operations-runtime-set-nginx-image",
+      "journey_family": "operations-runtime-set-nginx-image",
+      "session_index": 1,
+      "step": 3,
+      "title": "Use current image: nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47 (current)",
+      "kind": "menu",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-image/03-use-current-image-nginx-1-31-7-sha256-6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf1.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-image/03-use-current-image-nginx-1-31-7-sha256-6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf1.txt",
+      "image_sha256": "c4f3e939b9239d7fdd7e054dc9650d28ac7952bf0e9b36ca07c958c2397c9da0",
+      "transcript_sha256": "6392f5113d2c37f5dbbd303477137c513fe8bea23687a80d48e2851fc1a705cc",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-image.pty.log",
+      "pty_byte_offset": 86283,
+      "selected": "Use current image: nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47 (current)"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-image",
+      "journey_family": "operations-runtime-set-nginx-image",
+      "session_index": 1,
+      "step": 4,
+      "title": "Refresh latest-tagged images on use (existing behavior) (current)",
+      "kind": "menu",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-image/04-refresh-latest-tagged-images-on-use-existing-behavior-current.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-image/04-refresh-latest-tagged-images-on-use-existing-behavior-current.txt",
+      "image_sha256": "806ea6998fb0580ff4c8f20318cc6079173e1a751425c727671348d6702e0640",
+      "transcript_sha256": "d713ac0961086f21dbd4bf2affb66ee1c45cfebfb72e4ea36a94f9d4a33108da",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-image.pty.log",
+      "pty_byte_offset": 86797,
+      "selected": "Refresh latest-tagged images on use (existing behavior) (current)"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-image",
+      "journey_family": "operations-runtime-set-nginx-image",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-image/05-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-image/05-run.txt",
+      "image_sha256": "0cfe61507e9817e9bccf687e7f7e2c1e2508693276b32450d8289d25eb44b274",
+      "transcript_sha256": "22b39ff6fb170ac21ddd5a0e269e6cd22b2b9c70ffc76fa1660975194f2021c8",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-image.pty.log",
+      "pty_byte_offset": 87342,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-nginx-image",
+      "journey_family": "operations-runtime-set-nginx-image",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-runtime-set-nginx-image/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-nginx-image/06-command-result.txt",
+      "image_sha256": "01ffa1ffc097b8ec36608fc4d8cc682834de0fe6f2fc5c95ddd07708fa46556f",
+      "transcript_sha256": "b3efffbb7240a5387515c080a188f8884712367fc02fd7fc21398b7b3bc4d8e0",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-image.pty.log",
+      "pty_byte_offset": 89183,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-set-certbot-image",
+      "journey_family": "operations-runtime-set-certbot-image",
+      "session_index": 1,
+      "step": 3,
+      "title": "Use current image: certbot/certbot:v5.8.0@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20 (current)",
+      "kind": "menu",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-runtime-set-certbot-image/03-use-current-image-certbot-certbot-v5-8-0-sha256-f70ad0adbb7e117f0fe42a63c553f28e.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-certbot-image/03-use-current-image-certbot-certbot-v5-8-0-sha256-f70ad0adbb7e117f0fe42a63c553f28e.txt",
+      "image_sha256": "c357dfbfd885ac787ebbd85158e8da1367f2d9d6027f9424f0837004aba0a490",
+      "transcript_sha256": "e2f3fc613b915a167882a77130a3be44f3937a795d963749a8c824a073861f74",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-certbot-image.pty.log",
+      "pty_byte_offset": 83948,
+      "selected": "Use current image: certbot/certbot:v5.8.0@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20 (current)"
+    },
+    {
+      "journey": "operations-runtime-set-certbot-image",
+      "journey_family": "operations-runtime-set-certbot-image",
+      "session_index": 1,
+      "step": 4,
+      "title": "Refresh latest-tagged images on use (existing behavior) (current)",
+      "kind": "menu",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-runtime-set-certbot-image/04-refresh-latest-tagged-images-on-use-existing-behavior-current.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-certbot-image/04-refresh-latest-tagged-images-on-use-existing-behavior-current.txt",
+      "image_sha256": "323dc6b0f7877a1120ac884d22f9cabc59bad98831251c3c46cd46896c7de6dd",
+      "transcript_sha256": "d713ac0961086f21dbd4bf2affb66ee1c45cfebfb72e4ea36a94f9d4a33108da",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-certbot-image.pty.log",
+      "pty_byte_offset": 84462,
+      "selected": "Refresh latest-tagged images on use (existing behavior) (current)"
+    },
+    {
+      "journey": "operations-runtime-set-certbot-image",
+      "journey_family": "operations-runtime-set-certbot-image",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-runtime-set-certbot-image/05-run.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-certbot-image/05-run.txt",
+      "image_sha256": "ac3bea5a3e436358a9eabef8fe512cae3691cb97cf35494c460a5637fa3b5869",
+      "transcript_sha256": "78bd8babb48380be867818504cc28b065465aa51524407b44e5f529d2c024687",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-certbot-image.pty.log",
+      "pty_byte_offset": 85030,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-runtime-set-certbot-image",
+      "journey_family": "operations-runtime-set-certbot-image",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-runtime-set-certbot-image/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-runtime-set-certbot-image/06-command-result.txt",
+      "image_sha256": "6c25251be1db1069d0041665dcbcb1259a5abe55f84dbe9d609c7eacb7568681",
+      "transcript_sha256": "f615e4ada80ce2a810f2402d1e7c5294ecca27298a512681cb88259e5a9846e4",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-certbot-image.pty.log",
+      "pty_byte_offset": 85432,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-runtime-runtime-options-config",
+      "journey_family": "operations-runtime-runtime-options-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/operations-runtime-runtime-options-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/operations-runtime-runtime-options-config/03-configuration-test-passed.txt",
+      "image_sha256": "79b076351ab5088477d78c9fe231a559b5536f3ed329822ac32b426125cf749f",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/operations-runtime/operations-runtime-runtime-options-config.pty.log",
+      "pty_byte_offset": 8027,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "list-nginx-directive-catalog-interactive-result",
+      "status": "passed",
+      "command": "list-nginx-directive-catalog",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-nginx-directive-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-directive",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "list-nginx-directives-interactive-result",
+      "status": "passed",
+      "command": "list-nginx-directives",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "oversized-body-rejected",
+      "status": "passed",
+      "http_status": 413,
+      "headers": "docs/assets/interactive/evidence/operations-runtime/oversized-body-rejected.headers"
+    },
+    {
+      "label": "ordinary-body-limit-unaffected",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-runtime/ordinary-body-limit-unaffected.headers"
+    },
+    {
+      "label": "body-limit-verification",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "-H",
+        "Host: example.com",
+        "--data-binary",
+        "@/opt/dockistrate-demo-fixtures/oversized-body.bin",
+        "http://127.0.0.1/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "set-nginx-directive-raw-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-directive-raw",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "show-nginx-directive-strict-interactive-result",
+      "status": "passed",
+      "command": "show-nginx-directive-strict",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-nginx-directive-strict-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-directive-strict",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "show-nginx-directive-strict-interactive-result",
+      "status": "passed",
+      "command": "show-nginx-directive-strict",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-nginx-directive-strict-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-directive-strict",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "directive-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-runtime/directive-response.headers"
+    },
+    {
+      "label": "remove-nginx-directive-interactive-result",
+      "status": "passed",
+      "command": "remove-nginx-directive",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "remove-all-nginx-directives-interactive-result",
+      "status": "passed",
+      "command": "remove-all-nginx-directives",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "list-nginx-directives-interactive-result",
+      "status": "passed",
+      "command": "list-nginx-directives",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-http-version-interactive-result",
+      "status": "passed",
+      "command": "set-http-version",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-backend-http-version-interactive-result",
+      "status": "passed",
+      "command": "set-backend-http-version",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "http-version-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-runtime/http-version-response.headers"
+    },
+    {
+      "label": "http2-negotiation",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-ksS",
+        "--http2",
+        "--resolve",
+        "example.com:443:127.0.0.1",
+        "-o",
+        "/dev/null",
+        "-w",
+        "HTTP version: %{http_version}; status: %{http_code}\\n",
+        "https://example.com/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "remove-backend-http-version-interactive-result",
+      "status": "passed",
+      "command": "remove-backend-http-version",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "http-version-inheritance",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-ksS",
+        "--http2",
+        "--resolve",
+        "example.com:443:127.0.0.1",
+        "-o",
+        "/dev/null",
+        "-w",
+        "HTTP version: %{http_version}; status: %{http_code}\\n",
+        "https://example.com/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "show-nginx-docker-opts-interactive-result",
+      "status": "passed",
+      "command": "show-nginx-docker-opts",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-nginx-docker-opts-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-docker-opts",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "show-nginx-docker-opts-interactive-result",
+      "status": "passed",
+      "command": "show-nginx-docker-opts",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-nginx-docker-opts-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-docker-opts",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-visibility-policy-interactive-result",
+      "status": "passed",
+      "command": "set-visibility-policy",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "show-visibility-policy-interactive-result",
+      "status": "passed",
+      "command": "show-visibility-policy",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "status-interactive-result",
+      "status": "passed",
+      "command": "status",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-visibility-policy-interactive-result",
+      "status": "passed",
+      "command": "set-visibility-policy",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "status-interactive-result",
+      "status": "passed",
+      "command": "status",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-nginx-image-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-image",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-certbot-image-interactive-result",
+      "status": "passed",
+      "command": "set-certbot-image",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "runtime-options-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-runtime/runtime-options-response.headers"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "operations"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "26b4ab9bb74928ee9bc68abf481a7180bf6428660f5e3a4dd11a21671ee8a8fe",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 82
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/operations-runtime-recordings.tar.gz",
+    "sha256": "c9ce37f7f0d5194eb965332f298d5e39a86d51d1a389d72c8c73dd953769e051",
+    "size": 224134,
+    "members": {
+      "docs/assets/interactive/evidence/operations-runtime/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/operations-runtime/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-runtime/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/operations-runtime/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/operations-runtime/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-runtime/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/operations-runtime/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/operations-runtime/008-fixture-image.log": {
+        "sha256": "241540001f042d60e00e01567f077c87d4d30362120899cc9a68ef0633d65c22",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/operations-runtime/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/operations-runtime/010-fixture-backend.log": {
+        "sha256": "0b8ecb11b57ad6a86680afd7e65bf7c07e5636f1bd1e949e733b5c1af6b271c2",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/operations-runtime/011-fixture-public-demo.log": {
+        "sha256": "c7373274f67c9c2754ddf4b2daf8e20768ff3d9c88cc5566a181df30e281090b",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/operations-runtime/012-fixture-https.log": {
+        "sha256": "e70b0c00be6df8037b3f8df07bf959926e113ca1e005eacff94bd2ce146ec7c3",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/operations-runtime/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/operations-runtime/014-command-alias.log": {
+        "sha256": "5be99cf711c8497280ab856cd5a2b79019722c50dd33d37bb89da54c919baaf8",
+        "size": 29
+      },
+      "docs/assets/interactive/evidence/operations-runtime/015-command-alias.log": {
+        "sha256": "68c7dc0a450270899a2b85c5b0434c3e81a6b96dbe60ae804b3b6892b3593cdf",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/operations-runtime/016-command-alias.log": {
+        "sha256": "719cb7d4136e6d22615c43e6bee5ecc716b8b53995d6879376f22d942b12a1fd",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/operations-runtime/017-command-alias.log": {
+        "sha256": "82fdecab7c50942f60aa389bbb8d9af5a854b711cd8f2794bcf67f4094e3e31e",
+        "size": 24
+      },
+      "docs/assets/interactive/evidence/operations-runtime/018-command-alias.log": {
+        "sha256": "4e102f52168ab66dc1bf3df9e332a48a94121c1a5aca5e49a046be9d3a9b274c",
+        "size": 28
+      },
+      "docs/assets/interactive/evidence/operations-runtime/019-command-alias.log": {
+        "sha256": "f305dc445c36c3aa570f1d84c9ce11cc45d70534f4b9b7ee29f3e559a9d4ab50",
+        "size": 27
+      },
+      "docs/assets/interactive/evidence/operations-runtime/020-command-alias.log": {
+        "sha256": "4e102f52168ab66dc1bf3df9e332a48a94121c1a5aca5e49a046be9d3a9b274c",
+        "size": 28
+      },
+      "docs/assets/interactive/evidence/operations-runtime/021-command-alias.log": {
+        "sha256": "f305dc445c36c3aa570f1d84c9ce11cc45d70534f4b9b7ee29f3e559a9d4ab50",
+        "size": 27
+      },
+      "docs/assets/interactive/evidence/operations-runtime/022-command-alias.log": {
+        "sha256": "324be7640d38e7a73a95ddf9f8948368629c3777f86ce168f534c0010167e844",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/operations-runtime/023-command-alias.log": {
+        "sha256": "94ea55f098b31f5a46e78d093527759b2bf57d4cc011c98167c16ee8e2dcbbe6",
+        "size": 28
+      },
+      "docs/assets/interactive/evidence/operations-runtime/024-command-alias.log": {
+        "sha256": "719cb7d4136e6d22615c43e6bee5ecc716b8b53995d6879376f22d942b12a1fd",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/operations-runtime/025-command-alias.log": {
+        "sha256": "09555173b1444571465fa94bfd939e34d4dbd67fcfbfc924d76f47123e75c592",
+        "size": 17
+      },
+      "docs/assets/interactive/evidence/operations-runtime/026-command-alias.log": {
+        "sha256": "189930105265ff6e95e8fc0e55e8f60621d3ae6069984bc4ca3db47900aa5c27",
+        "size": 25
+      },
+      "docs/assets/interactive/evidence/operations-runtime/027-command-alias.log": {
+        "sha256": "797ca4623e24f88f1519a1e4f4ebe524d34d86d52471a51773c3e36818169355",
+        "size": 28
+      },
+      "docs/assets/interactive/evidence/operations-runtime/028-command-alias.log": {
+        "sha256": "a7b868f9333a4f616168b13821ed2220d02af431a0e79b972adbab107e325c58",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/operations-runtime/029-command-alias.log": {
+        "sha256": "1810dd135c58105b31c629d74f855ace9ee43b1517720dadb791b6764bc7a76e",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/operations-runtime/030-command-alias.log": {
+        "sha256": "a7b868f9333a4f616168b13821ed2220d02af431a0e79b972adbab107e325c58",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/operations-runtime/031-runtime-label.log": {
+        "sha256": "a17fcf0a2f50e2d495e4f90ce263410edc183add6c62699a2facbccf60410f74",
+        "size": 5
+      },
+      "docs/assets/interactive/evidence/operations-runtime/032-command-alias.log": {
+        "sha256": "1810dd135c58105b31c629d74f855ace9ee43b1517720dadb791b6764bc7a76e",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/operations-runtime/033-fixture-visible-value.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/operations-runtime/034-command-alias.log": {
+        "sha256": "8cbc820b1869009f4dd1c6498dd6d9475c6b8a42ff2ffeb7b7b4e98005a516fb",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/operations-runtime/035-command-alias.log": {
+        "sha256": "3540742b7d264c57c85e54a55de20c7283a61f4694fd027b1a954502a73415ec",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/operations-runtime/036-command-alias.log": {
+        "sha256": "1ea622c2c5c31ea9770c8832e15c8ae9351c2fc63dcdd282c753c891fcd03ac1",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-runtime/037-command-alias.log": {
+        "sha256": "8cbc820b1869009f4dd1c6498dd6d9475c6b8a42ff2ffeb7b7b4e98005a516fb",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/operations-runtime/038-command-alias.log": {
+        "sha256": "1ea622c2c5c31ea9770c8832e15c8ae9351c2fc63dcdd282c753c891fcd03ac1",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-runtime/039-fixture-remove-visible-value.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/operations-runtime/040-command-alias.log": {
+        "sha256": "1927c25f1510f42b471b399196d754ae7dc642fd365f22be50da822442994885",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/operations-runtime/041-command-alias.log": {
+        "sha256": "a2fb157964921e234f9bc70319ef3e62a6510aec06fc4b0f63117a4535ecea4c",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/operations-runtime/042-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/operations-runtime/commands.jsonl": {
+        "sha256": "84d21db8e19cf8e2ec8b7f6ad239f7e6984df7fa4fc72b405876eb151d2cfd39",
+        "size": 18272
+      },
+      "docs/assets/interactive/evidence/operations-runtime/directive-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-runtime/directive-response.headers": {
+        "sha256": "b0ebe04046fb43e14d2449e0c20c53dc736c16c108bbc65ab50a3945295d680f",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-runtime/directive-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-runtime/directive-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-runtime/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-runtime/http-version-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-runtime/http-version-response.headers": {
+        "sha256": "45ba629aaf2acd421bf44f0926fa4c771ece3020bf2cffe5648fbe498f09ea93",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/operations-runtime/http-version-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-runtime/http-version-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-body-limit-verification.events.jsonl": {
+        "sha256": "0bddf36f8097e55932de78ee5195caf5ceea28545db40ff0c077c1a57f60b95a",
+        "size": 1207
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-body-limit-verification.pty.log": {
+        "sha256": "8486d848134bfae9d56b1eb0b23c02877ae91aeea74dff83a2afe5a765fc3534",
+        "size": 328
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directive-config.events.jsonl": {
+        "sha256": "9ddfcd72c3041fd6833873a73b73e74dd7340288b0cbc09260661c8d7c387bfc",
+        "size": 9474
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directive-config.pty.log": {
+        "sha256": "6eb3755323c7bc4d8744db8d892fe675146dfb787eb4b7dace9c158577e8aa83",
+        "size": 16145
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directive-strict-restored.events.jsonl": {
+        "sha256": "241bf5743390aa34ecdd265f3cac57837789681e3e1080b7461036c32ccab7c1",
+        "size": 19915
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directive-strict-restored.pty.log": {
+        "sha256": "e99573671ce9fc70f6eafc59c3cedcfad4fc3056994165066bea2d23578e3211",
+        "size": 101807
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directives-restored.events.jsonl": {
+        "sha256": "0acb7719842bc5ae2faa40dc9fbeb50b416571c6df3cec2545fe69d0f2519969",
+        "size": 15758
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-directives-restored.pty.log": {
+        "sha256": "d7b5af4a935a56aa4734fb486844c84ca579a6e4509ba6f820d11891a7fde99f",
+        "size": 89179
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-full-status.events.jsonl": {
+        "sha256": "51b5038ddd1f04283aba32cf5244f5d31b8180597a0e666b509ce4092614e062",
+        "size": 16403
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-full-status.pty.log": {
+        "sha256": "b06f952957c859419729d35ad685b495a6931d5246d0def1ecb0ce3ffb16c7e1",
+        "size": 90752
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-http-version-inheritance.events.jsonl": {
+        "sha256": "3ee35111f67867187d29b049a21235f33558f81dbe0d686ab139be06cb7452dc",
+        "size": 1237
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-http-version-inheritance.pty.log": {
+        "sha256": "7f06960a95d5493a9ae054a35ba860a58af2fcfa49202c5c8941c0d4cf627d98",
+        "size": 211
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-http2-negotiation.events.jsonl": {
+        "sha256": "12192094ce906034eeadb510e4a2d056adcb242aa6fa44ed13d1150b0e1acad7",
+        "size": 1195
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-http2-negotiation.pty.log": {
+        "sha256": "018044c857f005d50c03e31ce0526521cba15400761303922d76702fabb87389",
+        "size": 209
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-list-nginx-directive-catalog.events.jsonl": {
+        "sha256": "2d86b784f216c93cea28b7da7b6e491d59beb88ade2c403ee7b06e592917e40b",
+        "size": 20101
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-list-nginx-directive-catalog.pty.log": {
+        "sha256": "c43425655b6a7d5df6308a1f28b3c17be292fd25c0a180e9268b432375098827",
+        "size": 93074
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-list-nginx-directives.events.jsonl": {
+        "sha256": "ae6e58de0d837cdc37327415fd756f6dbfb77f9e5722fcdc829f7a559749838d",
+        "size": 16105
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-list-nginx-directives.pty.log": {
+        "sha256": "bb70504e3297510cfde9ac7d1328e5206112f30c5e1894128605230e03b1b1c2",
+        "size": 89282
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-redacted-status.events.jsonl": {
+        "sha256": "5a047f624a4ff9a2c84de950663e5779cab4d7fd3e004549cbc12441f799ea9c",
+        "size": 16755
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-redacted-status.pty.log": {
+        "sha256": "0e2224daddd217a068f3efd0bf9ca4fff50fb7b9ff9c23bc98a8c1335f2687a8",
+        "size": 90753
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-all-nginx-directives.events.jsonl": {
+        "sha256": "4de656c2d6ca6965ea9e8bc8b79adec73b02bf99191220de37e5cefe876ba4b2",
+        "size": 21783
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-all-nginx-directives.pty.log": {
+        "sha256": "7be5218eeff3b9545ba1fe9f4a71b64ca4e0ccf50ab53ed85371f5fbfddbac7b",
+        "size": 111170
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-backend-http-version.events.jsonl": {
+        "sha256": "ecc20d9a44e3bcb18d593f791360a1848cfed6f6f89ee5d2cc6033ca53fa5e04",
+        "size": 21427
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-backend-http-version.pty.log": {
+        "sha256": "b4e6ef1bcc9945f687772cf2425d56a46dcd186bc2101aaa1ee0998cc7cb4318",
+        "size": 116814
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-nginx-directive.events.jsonl": {
+        "sha256": "7c2ca6370d144991da181a7e8541072644a8412083587cff6d97e20582160673",
+        "size": 20891
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-remove-nginx-directive.pty.log": {
+        "sha256": "c2fc077a85c096586a95e36119dacc8312e538aa5fc227084756257f8efa5f90",
+        "size": 108388
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-runtime-options-cleared.events.jsonl": {
+        "sha256": "bce5495e6fe06c67f06fe60795904d596f0f63e5e5a9243152add6c6b9345ed4",
+        "size": 18837
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-runtime-options-cleared.pty.log": {
+        "sha256": "404efbff9b4ca00b7ebaa12ea0fc1ca5ec96d96cc671569a5707d5484033d4d9",
+        "size": 98898
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-runtime-options-config.events.jsonl": {
+        "sha256": "1f85b36a1551d04837322e8dbc7704632f985e58c6b390de9adf7efdbb2129d0",
+        "size": 9870
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-runtime-options-config.pty.log": {
+        "sha256": "5462e14956bb5e2aad26ad3cc134263fd972a6b02a404c77a69ed48696f31b08",
+        "size": 16141
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-backend-http-version.events.jsonl": {
+        "sha256": "6a5022520f57460e68cc1908b03543568050f19f1d451fececd2a5dc0630c544",
+        "size": 19851
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-backend-http-version.pty.log": {
+        "sha256": "9d5cc8af543ede07856010973ee5c0ced56dc1c1af761325f2232b5a1534eb52",
+        "size": 102908
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-certbot-image.events.jsonl": {
+        "sha256": "90a424a5554e4ccb294bc338ff1f898cdd721178ce2fbb5fea77b99ab05e5624",
+        "size": 17174
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-certbot-image.pty.log": {
+        "sha256": "8cc74e5f7b2ef0928914b4cefac0d53eec694bb30c27710e13c19251e997bd24",
+        "size": 93546
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-http-version.events.jsonl": {
+        "sha256": "35b5a247685402aff215908f4dfdda85fe00f5750506e373845ed13e92d311a8",
+        "size": 15797
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-http-version.pty.log": {
+        "sha256": "92aca59ca430319df0ea581c9812bf9d112a09ad86a032c23fb9093b2481af1b",
+        "size": 92317
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-raw.events.jsonl": {
+        "sha256": "27b4cb4011e9bd3262762c5d4a89641b7781239d0febdf4db9b4dd27840f06ae",
+        "size": 26340
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-raw.pty.log": {
+        "sha256": "7d939bf4c53f22a58921f175dc253c880915535165bae424bc0fab03db33f640",
+        "size": 112099
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-strict.events.jsonl": {
+        "sha256": "5a5155509ded1846250a674e12f431791f79870251022b9b7a4a6b03118c0e86",
+        "size": 20049
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive-strict.pty.log": {
+        "sha256": "609f5c6d31617d69f5d65ab5b55f0e68b8b3a209aa38129f528ea23f98116da7",
+        "size": 101811
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive.events.jsonl": {
+        "sha256": "717ec3dbb2af363ca877359164d74484ba108d3fd32881d41aa09c5e1d46cd91",
+        "size": 19767
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-directive.pty.log": {
+        "sha256": "5cc39920ff6c92dcfa44491d59bb502d35d7bcc6ab84fe23fcd3b55f8650ad2a",
+        "size": 101299
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-docker-opts.events.jsonl": {
+        "sha256": "2cb668cb9b81754259dd064b45050ad9d88948f1162d77986157682896b1ddfc",
+        "size": 20946
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-docker-opts.pty.log": {
+        "sha256": "c827f654b023a739a4f34eb65f4029dc5e01a5f1ac4b007fcd6908c7d4280fb9",
+        "size": 99221
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-image.events.jsonl": {
+        "sha256": "d1f80d03bd2c9eb27f3974e39ff9bb9accb19752fc8cec1de9c12f90b2a67b75",
+        "size": 17775
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-nginx-image.pty.log": {
+        "sha256": "f511294de9ec75adf97e33dd8b39ee35dcd223286243c056d693702968a5f02f",
+        "size": 97297
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-visibility-policy.events.jsonl": {
+        "sha256": "417fb0f47f359df9bfca6c99c7d9e667859add0c530d20b34c4fbeec2ce76f81",
+        "size": 17028
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-set-visibility-policy.pty.log": {
+        "sha256": "0ca588b475bdd3aa40cbaf65f126a79d09bdedab79fa0b6c316e41304b01de0a",
+        "size": 93237
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-directive-strict--session-002.events.jsonl": {
+        "sha256": "53876fabac7504757057232ea2955a98144efe12a9a474278471c1246037481c",
+        "size": 18264
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-directive-strict--session-002.pty.log": {
+        "sha256": "65d8556b999a60007c95f218bd646d264016c485e35f0f3c9e4b5d138e439399",
+        "size": 82498
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-directive-strict.events.jsonl": {
+        "sha256": "705cfd04fc4059e8f8310734e9dbe0d3c71b4802a3deaa6fef9a2ace2aba6705",
+        "size": 17470
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-directive-strict.pty.log": {
+        "sha256": "ac53bd2dd40b4e787850f60a916638f7c65dead52bc0e3f50add2bf28f363089",
+        "size": 82520
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-docker-opts--session-002.events.jsonl": {
+        "sha256": "c4e09acc6444471cdaa17ad40def0b21b8a5e20d1ff180dbb6be4b1814c47594",
+        "size": 16115
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-docker-opts--session-002.pty.log": {
+        "sha256": "48a9afc77b0a6fb3a7ba02cc983d49951dcb1085a384927aec63911321cd09d0",
+        "size": 80996
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-docker-opts.events.jsonl": {
+        "sha256": "da39964e2f143b573d914ae0a93efe5ec9f1f86ebc64d6bb9c32c42bd8907f9b",
+        "size": 15368
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-nginx-docker-opts.pty.log": {
+        "sha256": "50a2fb0c3c5e1afb969c6d4c58438f952ea93a9a422dfad0c5213644b68a6df4",
+        "size": 80975
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-visibility-policy.events.jsonl": {
+        "sha256": "c6040d21650bbee6761d1a6a8edc33e15180999296245c9d2e38783fa5793768",
+        "size": 15352
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-show-visibility-policy.pty.log": {
+        "sha256": "e6f4e9e78d5e0571a2eb568fc3d8250908e5188280231943696c60b985214d21",
+        "size": 79389
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-visibility-restored.events.jsonl": {
+        "sha256": "a591999234a69c167489d9ee5a76e7cdd75a0d36ad23da53205581400eb237a3",
+        "size": 16761
+      },
+      "docs/assets/interactive/evidence/operations-runtime/operations-runtime-visibility-restored.pty.log": {
+        "sha256": "12736420a1a478ec73036c7b3a41cffe918cdb8264ed74f2794ab29332010ddc",
+        "size": 93220
+      },
+      "docs/assets/interactive/evidence/operations-runtime/ordinary-body-limit-unaffected.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-runtime/ordinary-body-limit-unaffected.headers": {
+        "sha256": "4ec1a437e8fc25a517706b149710bdd89f19263154f787cf00010225ccf52a6a",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-runtime/ordinary-body-limit-unaffected.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-runtime/ordinary-body-limit-unaffected.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-runtime/oversized-body-rejected.body": {
+        "sha256": "3e4dbdfce5e2f7b7f90a7c3e20559a1f2097e0838787179ab39a0dd19a1a1b7f",
+        "size": 183
+      },
+      "docs/assets/interactive/evidence/operations-runtime/oversized-body-rejected.headers": {
+        "sha256": "f78df597f34fa06c6015c739c29c42e6b3003010f1b23f3cdb04542ffe039cfb",
+        "size": 165
+      },
+      "docs/assets/interactive/evidence/operations-runtime/oversized-body-rejected.status": {
+        "sha256": "c11eae0cc2e648efe410effd75e64dfca8f6b6532b51f6cfa29e5c03503be0d7",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-runtime/oversized-body-rejected.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-runtime/runtime-options-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-runtime/runtime-options-response.headers": {
+        "sha256": "e6df21ad345db24e5d332133b1af74a7496162c98bfe1e756a262795eeb1083d",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-runtime/runtime-options-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-runtime/runtime-options-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+Docker image:
+  1) ghcr.io/dependabot/dependabot-updater-core:latest (@57ad85c77c5f, created 8 days ago)
+  2) ghcr.io/github/gh-aw-firewall/agent:latest (@921e50aed7b2, created 6 days ago)
+  3) ghcr.io/github/gh-aw-firewall/api-proxy:latest (@f36a9fc78aef, created 6 days ago)
+  4) ghcr.io/github/gh-aw-firewall/squid:latest (@34260cb89ea5, created 2 weeks ago)
+  5) ghcr.io/github/gh-aw-mcpg:latest (@3719f62df622, created 7 days ago)
+  6) ghcr.io/github/github-mcp-server:latest (@250bc6ce7078, created 2 weeks ago)
+  7) nginx:alpine (@713fc2ebfd92, created 44 hours ago)
+> 8) Enter manually...
+  9) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

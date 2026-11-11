@@ -9,7 +9,7 @@ if [ -f "${LOADER_MODULE_DIR}/common.sh" ]; then
 fi
 
 for loader_file in "${LOADER_MODULE_DIR}"/*.sh; do
-  loader_basename="$(basename "${loader_file}")"
+  loader_basename="${loader_file##*/}"
   if [ "${loader_basename}" = "common.sh" ]; then
     continue
   fi

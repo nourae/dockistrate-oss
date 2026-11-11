@@ -1,0 +1,16 @@
+Review command
+  Command: Set Dedicated Host Inherit (set-dedicated-host-inherit)
+  Description: Set inheritance for a dedicated host (mtls/acl/security_rules/headers/paths/all)
+
+Arguments:
+  Hostname: app.example.com
+  Inheritance setting: headers
+  Value: no
+
+CLI equivalent:
+  ./dockistrate.sh set-dedicated-host-inherit app.example.com headers no
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,96 @@
+{
+  "diagnostics": {
+    "commands": [
+      "status",
+      "status-all",
+      "check-config",
+      "tail-proxy-logs"
+    ],
+    "journeys": []
+  },
+  "log-fields": {
+    "commands": [
+      "list-log-fields",
+      "add-log-field",
+      "update-log-field",
+      "move-log-field",
+      "remove-log-field"
+    ],
+    "journeys": [
+      "log-fields-restored",
+      "logging-config"
+    ]
+  },
+  "traffic-capture": {
+    "commands": [
+      "start-capture",
+      "stop-capture"
+    ],
+    "journeys": [
+      "traffic-capture",
+      "packet-inspection",
+      "tls-packet-inspection",
+      "tls-traffic-capture",
+      "stop-tls-capture"
+    ],
+    "journey_titles": {
+      "traffic-capture": "Capture one backend",
+      "tls-traffic-capture": "Capture and decrypt HTTPS",
+      "stop-tls-capture": "Stop HTTPS capture"
+    }
+  },
+  "backup-restore": {
+    "commands": [
+      "create-backup",
+      "list-backups",
+      "restore-backup"
+    ],
+    "journeys": [
+      "restore-config",
+      "navigation-restore-manual",
+      "manual-restore-before",
+      "manual-restore-after"
+    ],
+    "journey_titles": {
+      "navigation-restore-manual": "Restore a backup stored outside the backup folder"
+    }
+  },
+  "backup-settings": {
+    "commands": [
+      "set-auto-backups",
+      "set-backup-retention",
+      "set-backup-compression"
+    ],
+    "journeys": [
+      "backup-settings-status",
+      "auto-backups-restored"
+    ]
+  },
+  "configuration-repair": {
+    "commands": [
+      "fix-default-config",
+      "fix-permissions"
+    ],
+    "journeys": [
+      "repair-config"
+    ]
+  },
+  "cleanup": {
+    "commands": [
+      "clean-all",
+      "uninstall-all"
+    ],
+    "journeys": [
+      "clean-preserved-route",
+      "clean-remaining-backends",
+      "uninstall-remaining-containers"
+    ]
+  },
+  "updates": {
+    "commands": [
+      "help-update",
+      "upgrade-preflight"
+    ],
+    "journeys": []
+  }
+}

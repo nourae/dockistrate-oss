@@ -9,7 +9,7 @@ if [ -f "${DEPENDENCIES_MODULE_DIR}/common.sh" ]; then
 fi
 
 for dependencies_file in "${DEPENDENCIES_MODULE_DIR}"/*.sh; do
-  dependencies_basename="$(basename "${dependencies_file}")"
+  dependencies_basename="${dependencies_file##*/}"
   if [ "${dependencies_basename}" = "common.sh" ]; then
     continue
   fi

@@ -1,0 +1,14 @@
+Review command
+  Command: Restart Backend (restart-backend)
+  Description: Restart a backend container
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh restart-backend example.com
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

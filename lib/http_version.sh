@@ -9,7 +9,7 @@ if [ -f "${HTTP_VERSION_MODULE_DIR}/common.sh" ]; then
 fi
 
 for http_version_file in "${HTTP_VERSION_MODULE_DIR}"/*.sh; do
-  http_version_basename="$(basename "${http_version_file}")"
+  http_version_basename="${http_version_file##*/}"
   if [ "${http_version_basename}" = "common.sh" ]; then
     continue
   fi

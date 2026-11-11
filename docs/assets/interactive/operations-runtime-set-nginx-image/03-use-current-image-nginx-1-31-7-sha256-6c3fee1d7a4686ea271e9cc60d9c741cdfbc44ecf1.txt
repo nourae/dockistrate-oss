@@ -1,0 +1,8 @@
+nginx image:
+  1) Latest (if-missing mode refreshes :latest on use)
+  2) Latest (always pull newest)
+> 3) Use current image: nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47 (current)
+  4) Enter manually...
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

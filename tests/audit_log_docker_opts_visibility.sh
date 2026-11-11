@@ -19,6 +19,8 @@ source "$ROOT_DIR/lib/utils/operator_visibility.sh"
 source "$ROOT_DIR/lib/cli/common.sh"
 # shellcheck source=../lib/cli/arg_metadata.sh
 source "$ROOT_DIR/lib/cli/arg_metadata.sh"
+# shellcheck source=../lib/cli/command_visibility.sh
+source "$ROOT_DIR/lib/cli/command_visibility.sh"
 # shellcheck source=../lib/cli/run_command.sh
 source "$ROOT_DIR/lib/cli/run_command.sh"
 
@@ -64,7 +66,7 @@ function record_audit_message() {
   audit_log "$(_run_command_audit_message "$@")"
 }
 
-record_audit_message add-backend example.com nginx:alpine 80 http 80 selfsigned yes "--env SECRET=top"
+INTERACTIVE=true record_audit_message add-backend example.com nginx:alpine 80 http 80 selfsigned yes "--env SECRET=top"
 record_audit_message add-backend example.com nginx:alpine 80 http --listen 80 --cert selfsigned
 record_audit_message update-backend example.com --docker-opts "--env TOKEN=hidden"
 record_audit_message update-backend example.com --container-port 8080
@@ -105,7 +107,7 @@ done
 
 VISIBILITY_POLICY=redacted
 : >"$AUDIT_LOG_FILE"
-record_audit_message add-backend example.com nginx:alpine 80 http 80 selfsigned yes "--env SECRET=top"
+INTERACTIVE=true record_audit_message add-backend example.com nginx:alpine 80 http 80 selfsigned yes "--env SECRET=top"
 record_audit_message update-backend example.com --docker-opts "--env TOKEN=hidden"
 record_audit_message update-backend example.com --docker-opts __DOCKER_OPTS_CLEAR__
 record_audit_message start-nginx --docker-opts="--env NGINX_SECRET=hidden"
@@ -181,12 +183,12 @@ if _run_command_has_sensitive_args set-nginx-docker-opts ""; then
   echo "[Error] Sensitive-arg detector should not flag empty variadic docker opts clears." >&2
   exit 1
 fi
-if _run_command_has_sensitive_args start-nginx --unknown-flag nginx:mainline; then
-  echo "[Error] Unknown long flags should not shift positional detection into false sensitive matches." >&2
+if ! _run_command_has_sensitive_args start-nginx --unknown-flag nginx:mainline; then
+  echo "[Error] Rejected start-nginx suffix should be conservatively hidden." >&2
   exit 1
 fi
 
-for unexpected in SECRET=top TOKEN=hidden NGINX_SECRET=hidden UNQUOTED_DOCKER_SECRET=hidden EMPTY_FLAG_DOCKER_SECRET=hidden UNKNOWN_SHIFT_SECRET=hidden GLOBAL_SECRET=hidden VARIADIC_SECRET=top EMPTY_FIRST_VARIADIC_SECRET=top "--cpus" HEADER_SECRET=hidden SPLIT_HEADER_SECRET=hidden EMPTY_FLAG_HEADER_SECRET=hidden MIXED_HEADER_SECRET=hidden "max-age=60" POST_BOUNDARY_SECRET=hidden SHIFT_SECRET=hidden "--network [REDACTED]" "--unknown-flag [REDACTED]"; do
+for unexpected in SECRET=top TOKEN=hidden NGINX_SECRET=hidden UNQUOTED_DOCKER_SECRET=hidden EMPTY_FLAG_DOCKER_SECRET=hidden UNKNOWN_SHIFT_SECRET=hidden GLOBAL_SECRET=hidden VARIADIC_SECRET=top EMPTY_FIRST_VARIADIC_SECRET=top "--cpus" HEADER_SECRET=hidden SPLIT_HEADER_SECRET=hidden EMPTY_FLAG_HEADER_SECRET=hidden MIXED_HEADER_SECRET=hidden "max-age=60" POST_BOUNDARY_SECRET=hidden SHIFT_SECRET=hidden "--network [REDACTED]"; do
   if grep -Fq -- "$unexpected" "$AUDIT_LOG_FILE"; then
     echo "[Error] Audit log leaked redacted operator value: $unexpected" >&2
     cat "$AUDIT_LOG_FILE" >&2
@@ -199,18 +201,18 @@ for expected in \
   "update-backend example.com --docker-opts __DOCKER_OPTS_CLEAR__" \
   "start-nginx --docker-opts=[REDACTED]" \
   "start-nginx --docker-opts [REDACTED]" \
-  "start-nginx --unknown-flag nginx:mainline --docker-opts [REDACTED]" \
+  "start-nginx [REDACTED]" \
   "set-nginx-docker-opts [REDACTED]" \
   "add-header response X-Token [REDACTED]" \
-  "add-header --req-resp response --header X-Token --value [REDACTED]" \
-  "add-header --req-resp response --header X-Token [REDACTED]" \
+  "add-header --req-resp response [REDACTED]" \
+  "add-header --req-resp response [REDACTED]" \
   "set-hsts [REDACTED]" \
   "set-hsts off" \
   "set-hsts Off" \
   "set-csp off" \
   "set-csp OFF" \
   "add-backend example.com nginx:alpine 80 http --docker-opts [REDACTED] --no-expose" \
-  "add-backend --domain example.com --image nginx:alpine --container-port 80 --protocol http --listen 80 --cert-path selfsigned --ws yes --network mynet --docker-opts [REDACTED]"; do
+  "add-backend --domain example.com --image nginx:alpine [REDACTED]"; do
   if ! grep -Fq -- "$expected" "$AUDIT_LOG_FILE"; then
     echo "[Error] Audit log missing expected redacted context: $expected" >&2
     cat "$AUDIT_LOG_FILE" >&2

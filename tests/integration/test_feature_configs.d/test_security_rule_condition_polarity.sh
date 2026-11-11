@@ -35,7 +35,7 @@ test_security_rule_condition_polarity() {
   assertEquals "add-security-rule not_exists" 0 $?
 
   local rules_file="${CONFIG_DIR}/nginx_conf/conf.d/security_rules.inc"
-  assertFileContainsSubstring '$host = polarity-rule.test' "$rules_file"
+  assertFileContainsSubstring '$dockistrate_security_identity = polarity-rule.test' "$rules_file"
   assertFileContainsSubstring '$http_x_eq = "secret"' "$rules_file"
   assertFileContainsSubstring '$http_x_neq != "secret"' "$rules_file"
   assertFileContainsSubstring '$uri ~* "^\/admin"' "$rules_file"

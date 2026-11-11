@@ -27,23 +27,22 @@ function add_security_ip() {
     echo "[Error] Invalid status code: $code" >&2
     exit 1
   fi
-  local started_txn=false
-  if ! _config_begin_transaction_if_needed started_txn "add_security_ip_${domain}_${scope}"; then
-    exit 1
-  fi
-  mkdir -p "$(dirname "$SECURITY_IP_RULES_DB")"
-  _sr_ensure_ip_db || exit 1
   # Allow a single space-separated list when coming from interactive picker
   if [ $# -eq 1 ]; then
     case "$1" in
     *" "*)
       local _arr=()
       read -r -a _arr <<<"$1"
+      if [ "${#_arr[@]}" -eq 0 ]; then
+        echo "[Error] Invalid IP/CIDR '$1'" >&2
+        exit 1
+      fi
       set -- "${_arr[@]}"
       ;;
     esac
   fi
-  local ip
+  local ip seen_ip
+  local seen_ips=()
   for ip in "$@"; do
     if ! is_valid_ip_or_cidr "$ip"; then
       echo "[Error] Invalid IP/CIDR '$ip'" >&2
@@ -58,14 +57,51 @@ function add_security_ip() {
       exit 1
     fi
     _sr_validate_acl_cidr_deny_status "$scope" "$action" "$ip" "$code" || exit 1
-    _sr_require_unique_acl_rule "$domain" "$scope" "$action" "$ip" "$code" || exit 1
+    if [ "${#seen_ips[@]}" -gt 0 ]; then
+      for seen_ip in "${seen_ips[@]}"; do
+        if [ "$seen_ip" = "$ip" ]; then
+          _sr_acl_duplicate_error "$domain" "$scope" "$action" "$ip" "$code"
+          return 1
+        fi
+      done
+    fi
+    seen_ips[${#seen_ips[@]}]="$ip"
+  done
+
+  local started_txn=false
+  if ! _config_begin_return_transaction_if_needed started_txn "add_security_ip_${domain}_${scope}"; then
+    return 1
+  fi
+  if ! domain_exists "$domain"; then
+    echo "[Error] Domain '$domain' was removed before the ACL rule could be saved." >&2
+    transaction_return_failure || true
+    return 1
+  fi
+  if ! mkdir -p "$(dirname "$SECURITY_IP_RULES_DB")" || ! _sr_ensure_ip_db; then
+    transaction_return_failure
+    return 1
+  fi
+
+  for ip in "$@"; do
+    if ! _sr_require_unique_acl_rule "$domain" "$scope" "$action" "$ip" "$code"; then
+      transaction_return_failure
+      return 1
+    fi
   done
 
   for ip in "$@"; do
-    csv_append_row "$SECURITY_IP_RULES_DB" "$STATE_SECURITY_IP_RULES_HEADER" "1" "$domain" "$scope" "$action" "$ip" "$code"
+    if ! csv_append_row "$SECURITY_IP_RULES_DB" "$STATE_SECURITY_IP_RULES_HEADER" "1" "$domain" "$scope" "$action" "$ip" "$code"; then
+      transaction_return_failure
+      return 1
+    fi
     echo "[Info] Added security IP ${scope} ${action} ${ip} for ${domain}"
   done
-  create_backup "" "AddSecIP_${domain}_${scope}"
-  update_nginx_config_for_security_change || { transaction_return_failure; exit 1; }
-  _config_end_transaction_if_started "$started_txn"
+  if ! create_backup "" "AddSecIP_${domain}_${scope}" || ! update_nginx_config_for_security_change; then
+    transaction_return_failure
+    return 1
+  fi
+  if ! _config_end_transaction_if_started "$started_txn"; then
+    transaction_return_failure
+    return 1
+  fi
 }

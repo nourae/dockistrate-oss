@@ -1,0 +1,5 @@
+YES
+[Info] Removing Nginx container after configuration commit.
+[Info] Removed Nginx container.
+
+Press Enter to continue...

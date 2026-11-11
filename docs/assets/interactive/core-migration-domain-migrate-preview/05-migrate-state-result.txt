@@ -1,0 +1,7 @@
+/opt/dockistrate-demo-fixtures/migration/backend-details.csv
+[Info] Migration preflight passed (schema 1 -> 5). No state or containers were changed.
+  Add explicit require actions to existing security rules; preserve draft/applied separation.
+  Merge listener options into ports.csv and import paths into certificates.csv; remove the split option files.
+  legacy.example.com
+
+Press Enter to continue...

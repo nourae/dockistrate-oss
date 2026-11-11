@@ -34,11 +34,13 @@ LOG_DIR="$STATE_DIR/logs"
 ERROR_LOG_DIR="$LOG_DIR/errors"
 TMP_DIR="$STATE_DIR/tmp"
 BACKUP_DIR="$STATE_DIR/backups"
+LAST_POST_BACKUP_FILE="$BACKUP_DIR/last_post_backup.txt"
 NGINX_CONFIG_DIR="$CONFIG_DIR/nginx_conf"
 NGINX_HTTP_CONF_DIR="$NGINX_CONFIG_DIR/conf.d"
 NGINX_STREAM_CONF_DIR="$NGINX_CONFIG_DIR/stream_conf"
 CERTS_DIR="$STATE_DIR/certs"
 BACKEND_PORTS_FILE="$CONFIG_DIR/backend_ports.csv"
+BACKEND_IDENTITY_FILE="$CONFIG_DIR/backend_identity.csv"
 BACKEND_HEADERS_FILE="$CONFIG_DIR/backend_headers.csv"
 BACKEND_HTTP_FILE="$CONFIG_DIR/backend_http_versions.csv"
 BACKEND_MTLS_FILE="$CONFIG_DIR/backend_mtls.csv"
@@ -51,6 +53,7 @@ SECURITY_RULES_DB="$CONFIG_DIR/security_rules.csv"
 SECURITY_IP_RULES_DB="$CONFIG_DIR/security_ip_rules.csv"
 BACKEND_DOCKER_OPTS_FILE="$CONFIG_DIR/backend_docker_opts.csv"
 
+SKIP_DOCKER_CHECKS=false
 INTERACTIVE=false
 
 mkdir -p \
@@ -95,7 +98,7 @@ domain,security_rule_status_code
 EOF_SEC_STATUS
 
 cat >"$SECURITY_RULES_DB" <<'EOF_SEC_RULES'
-enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location
+enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location,action
 EOF_SEC_RULES
 
 cat >"$SECURITY_IP_RULES_DB" <<'EOF_SEC_IPS'
@@ -103,28 +106,47 @@ enabled,domain,scope,action,ip_value,status_code
 EOF_SEC_IPS
 
 cat >"$BACKEND_DOCKER_OPTS_FILE" <<'EOF_DOCKER_OPTS'
-key,docker_options
+domain,docker_options
 EOF_DOCKER_OPTS
 
-container_exists_calls=0
+# Seed a managed Docker fixture through the shared metadata-aware mock so the
+# production saved-identity loader and ownership predicate stay active.
+test_backend_token="$(printf '%032d' 2)"
+test_backend_id="$(DOCKER_MOCK_RUNTIME_DIR="$TMP_ROOT/docker" "$ROOT_DIR/tests/mocks/docker" run -d \
+  --name backend-example.com --network dockistrate-net \
+  --label com.dockistrate.managed=true --label com.dockistrate.role=backend \
+  --label "com.dockistrate.state-dir=$(_backend_identity_state_dir)" \
+  --label com.dockistrate.backend-domain=example.com \
+  --label "com.dockistrate.backend-launch=$test_backend_token" nginx:alpine)"
+_backend_runtime_is_full_container_id "$test_backend_id"
+_backend_identity_store example.com "$test_backend_id" "$test_backend_token"
+
 docker_rm_marker="$TMP_ROOT/docker-rm-called"
 
-function container_exists() {
-  container_exists_calls=$((container_exists_calls + 1))
-  [ "$container_exists_calls" -eq 1 ]
-}
-
-function docker() {
-  if [ "${1:-}" = "rm" ]; then
-    : >"$docker_rm_marker"
-    return 1
-  fi
-  return 0
-}
+# Keep Docker external, as in production. A shell function inherits Bash 3's
+# transaction ERR trap when the expected missing-container inspect fails.
+mkdir -p "$TMP_ROOT/bin"
+cat >"$TMP_ROOT/bin/docker" <<'EOF_DOCKER'
+#!/usr/bin/env bash
+set -Eeuo pipefail
+if [ "${1:-}" = rm ]; then
+  : >"$FIXTURE_DOCKER_RM_MARKER"
+  exit 1
+fi
+DOCKER_MOCK_RUNTIME_DIR="$FIXTURE_DOCKER_RUNTIME_DIR" "$FIXTURE_DOCKER_EXECUTABLE" "$@"
+EOF_DOCKER
+chmod +x "$TMP_ROOT/bin/docker"
+export FIXTURE_DOCKER_RM_MARKER="$docker_rm_marker"
+export FIXTURE_DOCKER_RUNTIME_DIR="$TMP_ROOT/docker"
+export FIXTURE_DOCKER_EXECUTABLE="$ROOT_DIR/tests/mocks/docker"
+export PATH="$TMP_ROOT/bin:$PATH"
 
 function create_backup() { :; }
 function capture_docker_logs() { :; }
-function update_nginx_config() { :; }
+function update_nginx_config() {
+  # Model external disappearance only after the configuration mutation.
+  DOCKER_MOCK_RUNTIME_DIR="$TMP_ROOT/docker" "$ROOT_DIR/tests/mocks/docker" rm -f "$test_backend_id" >/dev/null
+}
 function log_msg() { :; }
 
 output="$(remove_backend example.com 2>&1)"

@@ -1,0 +1,8 @@
+Search all commands:
+Filter: replace-backend-network
+Press S or / to search, C to clear, Enter to select, ? for help
+  1) Backends :: Replace Backend Network — Move a backend container to a different
+    Docker network
+> 2) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

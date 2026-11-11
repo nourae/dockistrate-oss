@@ -39,9 +39,31 @@ function _ensure_nginx_mount_sources() {
 }
 
 function recreate_nginx_container() {
-  local image
-  image="$(normalize_nginx_image "${1:-$NGINX_IMAGE}")"
-  local capture_tls_enabled="false" keylog_host_dir="" keylog_file="" keylog_name=""
+  local image="${1:-$NGINX_IMAGE}"
+  require_valid_image_ref "$image" "Nginx" || return 1
+  image="$(normalize_nginx_image "$image")" || return 1
+  # Reject invalid saved options before preparing state or replacing a proxy.
+  local normalized_nginx_docker_opts="${NGINX_DOCKER_OPTS:-}"
+  if [ -n "$normalized_nginx_docker_opts" ]; then
+    if ! normalized_nginx_docker_opts="$(normalize_docker_opts_for_storage "$normalized_nginx_docker_opts" "saved nginx docker options" "nginx")"; then
+      return 1
+    fi
+  fi
+
+  local -a nginx_docker_args=()
+  if [ -n "$normalized_nginx_docker_opts" ]; then
+    local docker_opts_lines="" docker_arg_line=""
+    if ! _parse_docker_opts_capture_lines docker_opts_lines "$normalized_nginx_docker_opts" "saved nginx docker options"; then
+      return 1
+    fi
+    if [ -n "$docker_opts_lines" ]; then
+      while IFS= read -r docker_arg_line; do
+        nginx_docker_args+=("$docker_arg_line")
+      done < <(printf '%s' "$docker_opts_lines")
+    fi
+  fi
+
+  local capture_tls_enabled="false" keylog_host_dir="" keylog_file="" keylog_name="" keylog_source_fingerprint=""
   local keylog_dir_mode="700" keylog_file_mode="600"
   if declare -F capture_tls_decrypt_enabled >/dev/null 2>&1 && capture_tls_decrypt_enabled; then
     capture_tls_enabled="true"
@@ -92,6 +114,20 @@ function recreate_nginx_container() {
     runtime_state_paths_guard_if_declared "$ACME_WEBROOT_DIR" "$CERTS_DIR" || return 1
   fi
 
+  # The issuance tree contains CA/client private keys that the proxy must never
+  # receive. Build the complete runtime snapshot before replacing any container.
+  if ! declare -F _nginx_prepare_certificate_projection >/dev/null 2>&1; then
+    # shellcheck source=lib/nginx/certificate_projection.sh
+    source "${BASH_SOURCE[0]%/*}/certificate_projection.sh" || return 1
+  fi
+  local proxy_certificate_projection=""
+  if [ "$#" -ge 3 ]; then
+    proxy_certificate_projection="${3:-}"
+    _nginx_verify_certificate_projection "$proxy_certificate_projection" || return 1
+  else
+    _nginx_prepare_certificate_projection proxy_certificate_projection || return 1
+  fi
+
   local current_bindings=""
   if nginx_container_is_managed && container_running "$NGINX_CONTAINER_NAME"; then
     current_bindings="$(container_published_port_bindings "$NGINX_CONTAINER_NAME" | xargs)"
@@ -127,15 +163,23 @@ function recreate_nginx_container() {
     if ! ensure_sslkeylog_library "$image"; then
       return 1
     fi
+    # Direct-source callers may provide their own build function; load the
+    # shared fingerprint helper without introducing module-load side effects.
+    if ! declare -F _sslkeylog_source_fingerprint >/dev/null 2>&1; then
+      # shellcheck source=lib/nginx/ensure_sslkeylog_library.sh
+      source "$(dirname "${BASH_SOURCE[0]}")/ensure_sslkeylog_library.sh" || return 1
+    fi
+    keylog_source_fingerprint="$(_sslkeylog_source_fingerprint)" || return 1
     capture_tls_args+=("-v" "${keylog_host_dir}:${NGINX_CAPTURE_KEYS_DIR}")
     capture_tls_args+=("-v" "${SSLKEYLOG_LIB_BUILD_FILE}:${NGINX_SSLKEYLOG_LIB_PATH}:ro")
     capture_tls_args+=("-e" "SSLKEYLOGFILE=${NGINX_CAPTURE_KEYS_DIR}/${keylog_name}")
     capture_tls_args+=("-e" "LIBSSL_SSLKEYLOGFILE=${NGINX_CAPTURE_KEYS_DIR}/${keylog_name}")
+    capture_tls_args+=("-e" "DOCKISTRATE_SSLKEYLOG_SOURCE_SHA256=${keylog_source_fingerprint}")
     capture_tls_args+=("-e" "LD_PRELOAD=${NGINX_SSLKEYLOG_LIB_PATH}")
   fi
 
   if nginx_container_is_managed; then
-    _nginx_mark_runtime_rollback_needed
+    _nginx_mark_runtime_rollback_needed || return 1
     remove_container_and_anonymous_volumes "$NGINX_CONTAINER_NAME" &>/dev/null || true
   fi
 
@@ -146,27 +190,9 @@ function recreate_nginx_container() {
 
   echo "[Info] Creating Nginx container with published ports: ${ports_display}"
 
-  local normalized_nginx_docker_opts="${NGINX_DOCKER_OPTS:-}"
-  if [ -n "$normalized_nginx_docker_opts" ]; then
-    if ! normalized_nginx_docker_opts="$(normalize_docker_opts_for_storage "$normalized_nginx_docker_opts" "saved nginx docker options" "nginx")"; then
-      return 1
-    fi
-  fi
-
-  local -a nginx_docker_args=()
-  if [ -n "$normalized_nginx_docker_opts" ]; then
-    local docker_opts_lines=""
-    if ! docker_opts_lines="$(_parse_docker_opts_to_lines "$normalized_nginx_docker_opts" "saved nginx docker options")"; then
-      return 1
-    fi
-    if [ -n "$docker_opts_lines" ]; then
-      while IFS= read -r docker_arg_line; do
-        nginx_docker_args+=("$docker_arg_line")
-      done <<<"$docker_opts_lines"
-    fi
-  fi
-
-  local xtrace_state="" suppress_docker_xtrace=false
+  local expected_state_dir="" xtrace_state="" suppress_docker_xtrace=false
+  expected_state_dir="$(_nginx_expected_state_dir_label && printf '.')" || return 1
+  expected_state_dir="${expected_state_dir%.}"
   if [ -n "$normalized_nginx_docker_opts" ] && operator_visibility_is_redacted; then
     suppress_docker_xtrace=true
     xtrace_disable xtrace_state
@@ -178,21 +204,27 @@ function recreate_nginx_container() {
   fi
   docker_run_cmd+=("--label" "${DOCKISTRATE_MANAGED_LABEL_KEY}=true")
   docker_run_cmd+=("--label" "${DOCKISTRATE_ROLE_LABEL_KEY}=${DOCKISTRATE_ROLE_PROXY}")
-  docker_run_cmd+=("--label" "${DOCKISTRATE_STATE_DIR_LABEL_KEY}=$(_nginx_expected_state_dir_label)")
+  docker_run_cmd+=("--label" "${DOCKISTRATE_STATE_DIR_LABEL_KEY}=${expected_state_dir}")
   # Bash 3 + set -u: avoid expanding empty arrays directly.
   if [ ${#port_args[@]} -gt 0 ]; then
     docker_run_cmd+=("${port_args[@]}")
   fi
   docker_run_cmd+=("-v" "${NGINX_CONFIG_DIR}:${NGINX_CONTAINER_CONF_ROOT}:ro")
-  docker_run_cmd+=("-v" "${CERTS_DIR}:/etc/letsencrypt:ro")
+  docker_run_cmd+=("-v" "${proxy_certificate_projection}:/etc/letsencrypt:ro")
   if [ ${#capture_tls_args[@]} -gt 0 ]; then
     docker_run_cmd+=("${capture_tls_args[@]}")
   fi
   docker_run_cmd+=("-v" "${ACME_WEBROOT_DIR}:/var/www/certbot:ro")
   docker_run_cmd+=("--network" "$DEFAULT_NETWORK")
   docker_run_cmd+=("$image" "nginx" "-g" "daemon off;" "-c" "${NGINX_CONTAINER_MAIN_CONF}")
+  if ! _nginx_verify_certificate_projection "$proxy_certificate_projection"; then
+    if [ "$suppress_docker_xtrace" = true ]; then
+      xtrace_restore "$xtrace_state"
+    fi
+    return 1
+  fi
   if ! nginx_container_is_managed; then
-    _nginx_mark_runtime_rollback_needed
+    _nginx_mark_runtime_rollback_needed || return 1
   fi
   if ! "${docker_run_cmd[@]}"; then
     if [ "$suppress_docker_xtrace" = true ]; then

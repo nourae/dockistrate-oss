@@ -35,6 +35,7 @@ INTERACTIVE=false
 BASE_DIR="$TMP_ROOT"
 STATE_DIR="$BASE_DIR/state"
 CONFIG_DIR="$STATE_DIR/config"
+GLOBAL_SETTINGS_FILE="$CONFIG_DIR/global_settings.csv"
 LOG_DIR="$STATE_DIR/logs"
 ERROR_LOG_DIR="$LOG_DIR/errors"
 TMP_DIR="$STATE_DIR/tmp"
@@ -50,6 +51,8 @@ CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha256"
 
 mkdir -p "$CONFIG_DIR" "$LOG_DIR" "$ERROR_LOG_DIR" "$TMP_DIR" "$BACKUP_DIR" \
   "$CERTS_DIR" "$CERTS_DIR/mtls" "$NGINX_HTTP_CONF_DIR" "$NGINX_STREAM_CONF_DIR"
+# Runtime rollback reloads the fixture settings before running recovery hooks.
+_save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
 
 function log_msg() { :; }
 function create_backup() { :; }

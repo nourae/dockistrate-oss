@@ -12,7 +12,7 @@ fi
 source "${UTILS_DIR}/common.sh"
 
 for utils_file in "${UTILS_DIR}"/*.sh; do
-  utils_basename="$(basename "$utils_file")"
+  utils_basename="${utils_file##*/}"
   if [ "$utils_basename" = "common.sh" ]; then
     continue
   fi

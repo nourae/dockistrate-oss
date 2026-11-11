@@ -4,17 +4,19 @@ test_remove_backend_cleans_records_and_configs() {
   local docker_log_file="${STATE_DIR}/docker_remove_backend_cleanup.log"
   rm -f "$docker_log_file"
 
-  run_dockistrate add-backend cleanup.test nginx:alpine 7070 http >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend cleanup.test nginx:alpine 7070 http >/dev/null
   assertEquals "seed add-backend" 0 $?
-  PATH="${MOCK_BIN_DIR}:$PATH" docker run -d --name backend-cleanup.test nginx:alpine >/dev/null
+  local original_id
+  original_id="$(PATH="${MOCK_BIN_DIR}:$PATH" docker inspect -f '{{.Id}}' backend-cleanup.test)"
+  assertEquals "managed backend has a full immutable identity" 64 "${#original_id}"
 
   local remove_output
-  remove_output="$(DOCKER_MOCK_LOG_FILE="$docker_log_file" \
+  remove_output="$(SKIP_DOCKER_CHECKS=false DOCKER_MOCK_LOG_FILE="$docker_log_file" \
     run_dockistrate remove-backend cleanup.test)"
   assertEquals "remove-backend should succeed" 0 $?
   assertStringContains "remove output" "Removed config entries" "$remove_output"
   assertTrue "remove-backend should remove container with anonymous volumes" \
-    "grep -Fq 'subcommand=rm -f -v backend-cleanup.test' '$docker_log_file'"
+    "grep -Fq 'subcommand=rm -f -v ${original_id}' '$docker_log_file'"
 
   if [ -f "${CONFIG_DIR}/backend_ports.csv" ]; then
     if grep -q '^backend,cleanup.test,' "${CONFIG_DIR}/backend_ports.csv"; then

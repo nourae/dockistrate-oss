@@ -8,27 +8,15 @@ test_update_port_handles_quoted_cert_ref_csv_safely() {
   run_dockistrate add-port "$domain" 8443 9000 https none no >/dev/null
   assertEquals "seed https mapping for quoted update-port test" 0 $?
 
-  mkdir -p "${CERTS_DIR}/custom/live/comma,cert_443"
-
+  local quoted_rel="${domain}/selfsigned-8443"
   local ports_file="${CONFIG_DIR}/backend_ports.csv"
-  local rewritten_file="${TMP_DIR}/backend_ports_update_port_quoted.csv"
-  : >"$rewritten_file"
-  while IFS= read -r line || [ -n "$line" ]; do
-    case "$line" in
-    "port,${domain},,,,,8443,9000,https,"*)
-      printf '%s\n' "port,${domain},,,,,8443,9000,https,\"custom/live/comma,cert_443\",no,off,,off,auto,,,,,," >>"$rewritten_file"
-      ;;
-    *)
-      printf '%s\n' "$line" >>"$rewritten_file"
-      ;;
-    esac
-  done <"$ports_file"
-  mv "$rewritten_file" "$ports_file"
+  integration_seed_quoted_domain_fixture "$domain" 8443 || return
 
   local output
   output="$(run_dockistrate update-port "$domain" 8443 --container-port 9100)"
   assertEquals "update-port should succeed with quoted cert_ref rows present" 0 $?
   assertStringContains "update-port output" "Updated port mapping for ${domain} on 8443." "$output"
 
-  assertFileContains "port,${domain},,,,,8443,9100,https,\"custom/live/comma,cert_443\",no,off,,off,auto,,,,,," "$ports_file"
+  assertFileContains "port,${domain},,,,,8443,9100,https,${quoted_rel},no,off,,off,auto,,,,,," "$ports_file"
+  integration_assert_quoted_domain_fixture "$domain"
 }

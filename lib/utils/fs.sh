@@ -11,8 +11,14 @@ function _realpath_portable() {
 
   [ -n "$target" ] || return 1
 
+  if [ "${target#/}" = "$target" ]; then
+    target="$start_dir/$target"
+  fi
   if command -v realpath >/dev/null 2>&1; then
-    if resolved="$(realpath "$target" 2>/dev/null)"; then
+    if resolved="$(realpath "$target" 2>/dev/null && printf '.')"; then
+      # realpath and pwd emit one newline delimiter. Preserve any preceding
+      # newline bytes that belong to the path itself.
+      case "$resolved" in *$'\n.') resolved="${resolved%$'\n.'}" ;; *) return 1 ;; esac
       printf '%s' "$resolved"
       return 0
     fi
@@ -21,10 +27,6 @@ function _realpath_portable() {
   while [ "${target%/}" != "$target" ] && [ "$target" != "/" ]; do
     target="${target%/}"
   done
-
-  if [ "${target#/}" = "$target" ]; then
-    target="$start_dir/$target"
-  fi
 
   while [ $max_links -gt 0 ]; do
     dir="${target%/*}"
@@ -36,48 +38,58 @@ function _realpath_portable() {
       [ -n "$base" ] || base="/"
     fi
 
-    if ! cd "$dir" 2>/dev/null; then
-      cd "$start_dir" 2>/dev/null || true
+    if ! cd -- "$dir" >/dev/null 2>&1; then
+      cd -- "$start_dir" >/dev/null 2>&1 || true
       return 1
     fi
 
-    resolved_dir="$(pwd -P 2>/dev/null)" || {
-      cd "$start_dir" 2>/dev/null || true
+    resolved_dir="$(pwd -P 2>/dev/null && printf '.')" || {
+      cd -- "$start_dir" >/dev/null 2>&1 || true
       return 1
     }
+    case "$resolved_dir" in
+    *$'\n.') resolved_dir="${resolved_dir%$'\n.'}" ;;
+    *)
+      cd -- "$start_dir" >/dev/null 2>&1 || true
+      return 1
+      ;;
+    esac
 
     if [ "$base" = "/" ]; then
-      cd "$start_dir" 2>/dev/null || true
+      cd -- "$start_dir" >/dev/null 2>&1 || true
       printf '/'
       return 0
     fi
 
     if [ -L "$base" ]; then
       if ! command -v readlink >/dev/null 2>&1; then
-        cd "$start_dir" 2>/dev/null || true
+        cd -- "$start_dir" >/dev/null 2>&1 || true
         return 1
       fi
-      link="$(readlink "$base")" || {
-        cd "$start_dir" 2>/dev/null || true
+      # BSD readlink may omit its default delimiter when the target ends in a
+      # newline. -n has the same raw-output contract on GNU and BSD systems.
+      link="$(readlink -n "./$base" && printf '.')" || {
+        cd -- "$start_dir" >/dev/null 2>&1 || true
         return 1
       }
+      link="${link%.}"
       if [ "${link#/}" = "$link" ]; then
         target="$resolved_dir/$link"
       else
         target="$link"
       fi
-      cd "$start_dir" 2>/dev/null || true
+      cd -- "$start_dir" >/dev/null 2>&1 || true
       max_links=$((max_links - 1))
       continue
     fi
 
     resolved="$resolved_dir/$base"
-    cd "$start_dir" 2>/dev/null || true
+    cd -- "$start_dir" >/dev/null 2>&1 || true
     printf '%s' "$resolved"
     return 0
   done
 
-  cd "$start_dir" 2>/dev/null || true
+  cd -- "$start_dir" >/dev/null 2>&1 || true
   return 1
 }
 
@@ -162,8 +174,18 @@ function make_temp_for_file() {
     return 1
   fi
   local __mtf_dir __mtf_base __mtf_tmp __mtf_old_umask
-  __mtf_dir="$(dirname "$target")"
-  __mtf_base="$(basename "$target")"
+  if [[ "$target" == /* && "$target" != */ && "$target" != *//* ]]; then
+    # Ordinary absolute paths need no separator normalization. Preserve every
+    # filename byte; unusual separator forms retain the portable utilities.
+    __mtf_dir="${target%/*}"
+    [ -n "$__mtf_dir" ] || __mtf_dir=/
+    __mtf_base="${target##*/}"
+  else
+    __mtf_dir="$(dirname "$target" && printf '.')" || return 1
+    __mtf_dir="${__mtf_dir%$'\n.'}"
+    __mtf_base="$(basename "$target" && printf '.')" || return 1
+    __mtf_base="${__mtf_base%$'\n.'}"
+  fi
   if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
     runtime_state_path_guard_if_declared "$__mtf_dir" "temp file directory" || return 1
     runtime_state_path_guard_if_declared "$target" "temp file target" || return 1
@@ -249,7 +271,8 @@ function copy_file_atomic() {
   }
 
   local target_dir tmp_file="" old_umask
-  target_dir="$(dirname "$target")"
+  target_dir="$(dirname "$target" && printf '.')" || return 1
+  target_dir="${target_dir%$'\n.'}"
   if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
     runtime_state_path_guard_if_declared "$target_dir" "copy target directory" || return 1
     runtime_state_path_guard_if_declared "$target" "copy target file" || return 1
@@ -296,9 +319,10 @@ function _normalize_delete_target_path() {
   [ "$base" != "." ] || return 1
   [ "$base" != ".." ] || return 1
 
-  if ! resolved_parent="$(_realpath_portable "$parent" 2>/dev/null)"; then
+  if ! resolved_parent="$(_realpath_portable "$parent" 2>/dev/null && printf '.')"; then
     return 1
   fi
+  resolved_parent="${resolved_parent%.}"
 
   if [ "$resolved_parent" = "/" ]; then
     printf '/%s' "$base"
@@ -320,10 +344,11 @@ function _safe_delete_validate_target() {
   fi
 
   local target_norm root root_norm within_allowed=false
-  if ! target_norm="$(_normalize_delete_target_path "$target")"; then
+  if ! target_norm="$(_normalize_delete_target_path "$target" && printf '.')"; then
     echo "[Error] Refusing to delete unresolved path: $target" >&2
     return 1
   fi
+  target_norm="${target_norm%.}"
 
   case "$target_norm" in
   /)
@@ -334,11 +359,12 @@ function _safe_delete_validate_target() {
 
   for root in "$@"; do
     [ -n "$root" ] || continue
-    if ! root_norm="$(_normalize_delete_target_path "$root")"; then
-      if ! root_norm="$(_realpath_portable "$root" 2>/dev/null)"; then
+    if ! root_norm="$(_normalize_delete_target_path "$root" && printf '.')"; then
+      if ! root_norm="$(_realpath_portable "$root" 2>/dev/null && printf '.')"; then
         continue
       fi
     fi
+    root_norm="${root_norm%.}"
     case "$target_norm" in
     "$root_norm" | "$root_norm"/*)
       within_allowed=true
@@ -368,9 +394,10 @@ function safe_rm_rf() {
   fi
 
   local target_norm
-  if ! target_norm="$(_safe_delete_validate_target "$target" "$@")"; then
+  if ! target_norm="$(_safe_delete_validate_target "$target" "$@" && printf '.')"; then
     return 1
   fi
+  target_norm="${target_norm%.}"
 
   rm -rf "$target_norm"
 }
@@ -388,25 +415,29 @@ function safe_rm_f() {
   fi
 
   local target_norm
-  if ! target_norm="$(_safe_delete_validate_target "$target" "$@")"; then
+  if ! target_norm="$(_safe_delete_validate_target "$target" "$@" && printf '.')"; then
     return 1
   fi
+  target_norm="${target_norm%.}"
 
   rm -f "$target_norm"
 }
 
 # Read a line with readline editing (arrow/home/end) when TTY is available.
 # Falls back to plain read elsewhere. Optional third argument sets default when empty.
+# READ_WITH_EDITING_CANCEL_REASON records EOF without changing the return/value
+# contract for callers that treat closed input like an empty/default response.
 function read_with_editing() {
   local prompt="$1" __out="$2" __default="${3:-}" __val=""
+  READ_WITH_EDITING_CANCEL_REASON=""
   if [[ ! "$__out" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
     echo "[Error] Invalid output variable name: $__out" >&2
     return 1
   fi
   if [ -t 0 ] && [ -t 1 ]; then
-    read -r -e -p "$prompt" __val || true
+    read -r -e -p "$prompt" __val || READ_WITH_EDITING_CANCEL_REASON=eof
   else
-    read -r -p "$prompt" __val || true
+    read -r -p "$prompt" __val || READ_WITH_EDITING_CANCEL_REASON=eof
   fi
   if [ -z "$__val" ] && [ -n "$__default" ]; then
     __val="$__default"
@@ -416,6 +447,7 @@ function read_with_editing() {
 
 function read_multiline_with_editing() {
   local prompt="$1" __out="$2" __default="${3:-}" __line="" __val="" __first=true
+  READ_WITH_EDITING_CANCEL_REASON=""
   if [[ ! "$__out" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
     echo "[Error] Invalid output variable name: $__out" >&2
     return 1
@@ -423,28 +455,15 @@ function read_multiline_with_editing() {
 
   while true; do
     local line_prompt="$prompt"
-    local read_status=0
     if [ "$__first" != true ]; then
       line_prompt="> "
     fi
 
     __line=""
     if [ -t 0 ] && [ -t 1 ]; then
-      if ! read -r -e -p "$line_prompt" __line; then
-        read_status=$?
-      fi
+      read -r -e -p "$line_prompt" __line || READ_WITH_EDITING_CANCEL_REASON=eof
     else
-      if ! read -r -p "$line_prompt" __line; then
-        read_status=$?
-      fi
-    fi
-
-    if [ "$read_status" -ne 0 ]; then
-      # EOF or read error: treat as empty input and exit.
-      if [ "$__first" = true ] && [ -n "$__default" ]; then
-        __val="$__default"
-      fi
-      break
+      read -r -p "$line_prompt" __line || READ_WITH_EDITING_CANCEL_REASON=eof
     fi
 
     if [ -z "$__line" ]; then
@@ -460,6 +479,7 @@ function read_multiline_with_editing() {
     else
       __val+=$'\n'"$__line"
     fi
+    [ "$READ_WITH_EDITING_CANCEL_REASON" != eof ] || break
   done
 
   printf -v "$__out" '%s' "$__val"

@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Nginx (remove-nginx)
+  Description: Remove the Nginx proxy container
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh remove-nginx
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

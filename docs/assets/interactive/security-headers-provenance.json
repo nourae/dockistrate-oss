@@ -1,0 +1,2501 @@
+{
+  "schema_version": 1,
+  "scenario": "security-headers",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:49.275646+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "security",
+  "group": "headers",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:49:12.175703+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "security-headers-headers",
+      "journey_family": "security-headers-headers",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-backend-header",
+      "image": "docs/assets/interactive/security-headers-headers/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-headers/03-example-com.txt",
+      "image_sha256": "6f9b4071a3c90eab131b2f69e66e5d901c4a4da097fc7743b3fdf5bb9dfabe53",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers.pty.log",
+      "pty_byte_offset": 76187,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-headers",
+      "journey_family": "security-headers-headers",
+      "session_index": 1,
+      "step": 4,
+      "title": "response",
+      "kind": "menu",
+      "command": "add-backend-header",
+      "image": "docs/assets/interactive/security-headers-headers/04-response.png",
+      "transcript": "docs/assets/interactive/security-headers-headers/04-response.txt",
+      "image_sha256": "f3c6e2e999b174cec8cbc9e15195ed2d61c136de1abbf9631e6ef3a63169ddce",
+      "transcript_sha256": "051c14c48d9b3ca2d4c2101fc508f4c1c2cc1a6027d829507baf01b0165778bc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers.pty.log",
+      "pty_byte_offset": 76693,
+      "selected": "response"
+    },
+    {
+      "journey": "security-headers-headers",
+      "journey_family": "security-headers-headers",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-backend-header",
+      "image": "docs/assets/interactive/security-headers-headers/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-headers/05-enter-value.txt",
+      "image_sha256": "ddab81331519507eeba64fafac71e317897a96061ad7fdd6ba45ac7f9c6b4640",
+      "transcript_sha256": "f057795fa844ef6eadfb6ac937731c54353173be67cd16c7a2e3838bcf0ad54f",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers.pty.log",
+      "pty_byte_offset": 76769,
+      "value": "X-Guide"
+    },
+    {
+      "journey": "security-headers-headers",
+      "journey_family": "security-headers-headers",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-backend-header",
+      "image": "docs/assets/interactive/security-headers-headers/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-headers/06-enter-value.txt",
+      "image_sha256": "ab1d31062edb147937f71220da5c73789b93168513083a56dfe25a1272646afd",
+      "transcript_sha256": "c78f506577db1c8ec91d6ca081459ec8915bf7532c1ed4bfa7ac626928b4e66c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers.pty.log",
+      "pty_byte_offset": 76896,
+      "value": "preview"
+    },
+    {
+      "journey": "security-headers-headers",
+      "journey_family": "security-headers-headers",
+      "session_index": 1,
+      "step": 7,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-backend-header",
+      "image": "docs/assets/interactive/security-headers-headers/07-run.png",
+      "transcript": "docs/assets/interactive/security-headers-headers/07-run.txt",
+      "image_sha256": "8a9f931691a622efc22310aa6cf3fbfade48b0b6ef55a7b01f7c3c6879b83dd0",
+      "transcript_sha256": "f278a6a3166ccb1da7dc62c86e6c00d7ddfe56f0cc60f5bf782ffb9c8e34b028",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers.pty.log",
+      "pty_byte_offset": 77368,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-headers",
+      "journey_family": "security-headers-headers",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-backend-header",
+      "image": "docs/assets/interactive/security-headers-headers/08-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-headers/08-command-result.txt",
+      "image_sha256": "8ae41959465b52e85ae9a41e6620965a07bc3c44a7b1345f200d050fe53db8e3",
+      "transcript_sha256": "a7b8ad401865313b1862cd4353579ffcfe71380c4f8b24b45ed7712ae1bfc17d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers.pty.log",
+      "pty_byte_offset": 78573,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-headers-verified",
+      "journey_family": "security-headers-headers-verified",
+      "session_index": 1,
+      "step": 1,
+      "title": "Read the new response header",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-headers-headers-verified/01-read-the-new-response-header.png",
+      "transcript": "docs/assets/interactive/security-headers-headers-verified/01-read-the-new-response-header.txt",
+      "image_sha256": "5f7b73554a8132d7a4b835e5308c988bb03d87a6e8d51388f77eb7c1fe10f025",
+      "transcript_sha256": "965ddd1110fa61c61762207cd19ed79e27bf6dcd73f167c2c797fc86b7895ff9",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers-verified.pty.log",
+      "pty_byte_offset": 357,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-headers-list-backend-headers",
+      "journey_family": "security-headers-list-backend-headers",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "list-backend-headers",
+      "image": "docs/assets/interactive/security-headers-list-backend-headers/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-list-backend-headers/03-example-com.txt",
+      "image_sha256": "2bc8b8a43d75971873e5b693d41222bdbcb06c5214169990ecdefa6411d99186",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-list-backend-headers.pty.log",
+      "pty_byte_offset": 80586,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-list-backend-headers",
+      "journey_family": "security-headers-list-backend-headers",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-backend-headers",
+      "image": "docs/assets/interactive/security-headers-list-backend-headers/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-list-backend-headers/04-command-result.txt",
+      "image_sha256": "a89c5d032c74de5280ebef9c00048f41b7cf0643cc6af15808317176435f4bd6",
+      "transcript_sha256": "a307170a1d76327e976f0a06212f4662d5cecdfb6cd179d443b891323e7d5a8c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-list-backend-headers.pty.log",
+      "pty_byte_offset": 80652,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-update-backend-header",
+      "journey_family": "security-headers-update-backend-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/security-headers-update-backend-header/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-update-backend-header/03-example-com.txt",
+      "image_sha256": "4e73e29f589909fc51831d3f0f9c1d8f19bb194d53f19defefa4da6e2535a230",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-backend-header.pty.log",
+      "pty_byte_offset": 70596,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-update-backend-header",
+      "journey_family": "security-headers-update-backend-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "response",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/security-headers-update-backend-header/04-response.png",
+      "transcript": "docs/assets/interactive/security-headers-update-backend-header/04-response.txt",
+      "image_sha256": "aeb4f25c5f0d18ed854fb7fd5898d2ed4c677d064197a60b9c8550e3f075b957",
+      "transcript_sha256": "051c14c48d9b3ca2d4c2101fc508f4c1c2cc1a6027d829507baf01b0165778bc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-backend-header.pty.log",
+      "pty_byte_offset": 71102,
+      "selected": "response"
+    },
+    {
+      "journey": "security-headers-update-backend-header",
+      "journey_family": "security-headers-update-backend-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "X-Guide",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/security-headers-update-backend-header/05-x-guide.png",
+      "transcript": "docs/assets/interactive/security-headers-update-backend-header/05-x-guide.txt",
+      "image_sha256": "261a1af4e926815d6bfd94347ec44f3767be351aaeb56872f6d39d5b13f34aaa",
+      "transcript_sha256": "901557fa0ae6ddfb6cf256320355c2823f2b07e025dc0c62a991cc93ed80eb6a",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-backend-header.pty.log",
+      "pty_byte_offset": 71254,
+      "selected": "X-Guide"
+    },
+    {
+      "journey": "security-headers-update-backend-header",
+      "journey_family": "security-headers-update-backend-header",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/security-headers-update-backend-header/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-update-backend-header/06-enter-value.txt",
+      "image_sha256": "8483121e92f5a5bb5ed0b11068736a340ece15b8466a6ff5cdfb8b850be0d7c1",
+      "transcript_sha256": "5a7e28fb00c4f2992bdd221bde31ce8f2192c6ff7c20b67bcb3eed5cfff9b16d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-backend-header.pty.log",
+      "pty_byte_offset": 71381,
+      "value": "reviewed"
+    },
+    {
+      "journey": "security-headers-update-backend-header",
+      "journey_family": "security-headers-update-backend-header",
+      "session_index": 1,
+      "step": 7,
+      "title": "Run",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/security-headers-update-backend-header/07-run.png",
+      "transcript": "docs/assets/interactive/security-headers-update-backend-header/07-run.txt",
+      "image_sha256": "f32b83ce74a5f6627d2ea41048e9d4a39661983791a7c8cf8cae72d48451285f",
+      "transcript_sha256": "48f938b1555af8c0c812bdb6dfcdda9d81c6cb2e576880dbe153d35c4b9b04db",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-backend-header.pty.log",
+      "pty_byte_offset": 71841,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-update-backend-header",
+      "journey_family": "security-headers-update-backend-header",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/security-headers-update-backend-header/08-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-update-backend-header/08-command-result.txt",
+      "image_sha256": "c195ab4d3f740b61aebbe0e6405a457771a39a97d35e930f08b953261b59b1ac",
+      "transcript_sha256": "a7b8ad401865313b1862cd4353579ffcfe71380c4f8b24b45ed7712ae1bfc17d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-backend-header.pty.log",
+      "pty_byte_offset": 73046,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-remove-backend-header",
+      "journey_family": "security-headers-remove-backend-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-header/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-header/03-example-com.txt",
+      "image_sha256": "00745e12f961d64550a240fde821f57a9471e178d6b5aded8f1c627d2f281ebe",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-header.pty.log",
+      "pty_byte_offset": 103471,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-remove-backend-header",
+      "journey_family": "security-headers-remove-backend-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "response",
+      "kind": "menu",
+      "command": "remove-backend-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-header/04-response.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-header/04-response.txt",
+      "image_sha256": "c83741d503676f1438ade158bcd654ed76cec9077400ad0aa699ae584c8dfd30",
+      "transcript_sha256": "051c14c48d9b3ca2d4c2101fc508f4c1c2cc1a6027d829507baf01b0165778bc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-header.pty.log",
+      "pty_byte_offset": 103977,
+      "selected": "response"
+    },
+    {
+      "journey": "security-headers-remove-backend-header",
+      "journey_family": "security-headers-remove-backend-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "X-Guide",
+      "kind": "menu",
+      "command": "remove-backend-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-header/05-x-guide.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-header/05-x-guide.txt",
+      "image_sha256": "7bf220849961bd7bc04ea7b1843879fcfb22da6ae4a9c175a343a409e3d1bf39",
+      "transcript_sha256": "901557fa0ae6ddfb6cf256320355c2823f2b07e025dc0c62a991cc93ed80eb6a",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-header.pty.log",
+      "pty_byte_offset": 104129,
+      "selected": "X-Guide"
+    },
+    {
+      "journey": "security-headers-remove-backend-header",
+      "journey_family": "security-headers-remove-backend-header",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-header/06-run.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-header/06-run.txt",
+      "image_sha256": "e491ba8f072f3a541214f9b32689442b276cedda03860469b796f1aa3dfc5100",
+      "transcript_sha256": "29b0692b15b5b41c4921809265d4ea82a0eb71cfa6806346381e853c0eb7ca45",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-header.pty.log",
+      "pty_byte_offset": 104610,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-remove-backend-header",
+      "journey_family": "security-headers-remove-backend-header",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-header/07-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-header/07-enter-value.txt",
+      "image_sha256": "901fe376e237d0b173a8a962c251965d8bcc3917d7fef838afb24e2675e7b03d",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-header.pty.log",
+      "pty_byte_offset": 104664,
+      "value": "YES"
+    },
+    {
+      "journey": "security-headers-remove-backend-header",
+      "journey_family": "security-headers-remove-backend-header",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-header/08-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-header/08-command-result.txt",
+      "image_sha256": "c05c0fc6e6ff752a7250c2c13fb1cfaf6e025be9f223285ca4af4c0ce378744d",
+      "transcript_sha256": "943e7300841a14d8586c6568c043e7702c36998309a8c2a081416541aa2f8cc8",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-header.pty.log",
+      "pty_byte_offset": 105880,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-headers-backend-removed",
+      "journey_family": "security-headers-headers-backend-removed",
+      "session_index": 1,
+      "step": 1,
+      "title": "Inspect headers after removal",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-headers-headers-backend-removed/01-inspect-headers-after-removal.png",
+      "transcript": "docs/assets/interactive/security-headers-headers-backend-removed/01-inspect-headers-after-removal.txt",
+      "image_sha256": "6d7df41a05cb61fa71c8147c0543fdedcc36affbee80dca03689cde5bd133448",
+      "transcript_sha256": "98fb4845ebe646cea3efe5ce83cb103019ad0c925cec947fe87a6e0b115b2872",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers-backend-removed.pty.log",
+      "pty_byte_offset": 89,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-headers-add-header",
+      "journey_family": "security-headers-add-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "response",
+      "kind": "menu",
+      "command": "add-header",
+      "image": "docs/assets/interactive/security-headers-add-header/03-response.png",
+      "transcript": "docs/assets/interactive/security-headers-add-header/03-response.txt",
+      "image_sha256": "ea3773142257753224d06b7aa91f60b66b600012571c4710d0eaaa71938361e6",
+      "transcript_sha256": "051c14c48d9b3ca2d4c2101fc508f4c1c2cc1a6027d829507baf01b0165778bc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-add-header.pty.log",
+      "pty_byte_offset": 72019,
+      "selected": "response"
+    },
+    {
+      "journey": "security-headers-add-header",
+      "journey_family": "security-headers-add-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-header",
+      "image": "docs/assets/interactive/security-headers-add-header/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-add-header/04-enter-value.txt",
+      "image_sha256": "53196278d6041a82d7460656f55727b8f6914734520dda041a0cd28e26a48be1",
+      "transcript_sha256": "82916901f075bb44810fc9ae258b447e677c1531d9c1dcf74796e7515b073d6b",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-add-header.pty.log",
+      "pty_byte_offset": 72102,
+      "value": "X-Global-Guide"
+    },
+    {
+      "journey": "security-headers-add-header",
+      "journey_family": "security-headers-add-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-header",
+      "image": "docs/assets/interactive/security-headers-add-header/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-add-header/05-enter-value.txt",
+      "image_sha256": "6e521d74979362bf8a512c13624798ac3e57dd3b082f238324b1e31ca390be1d",
+      "transcript_sha256": "5a5f4acc409f361a32492db7e1797f3f60f775a91e9e2ba510eb76b52175dc83",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-add-header.pty.log",
+      "pty_byte_offset": 72229,
+      "value": "preview"
+    },
+    {
+      "journey": "security-headers-add-header",
+      "journey_family": "security-headers-add-header",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-header",
+      "image": "docs/assets/interactive/security-headers-add-header/06-run.png",
+      "transcript": "docs/assets/interactive/security-headers-add-header/06-run.txt",
+      "image_sha256": "ca653d8bbc2e08f3af58e6bbd96d2cca39469a2d8c401b7537aa5ace34ed12dc",
+      "transcript_sha256": "dc25a4fa471973fbc456b7d709b38e569c9cfe673d6069016daa67c0f046d7d7",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-add-header.pty.log",
+      "pty_byte_offset": 72640,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-add-header",
+      "journey_family": "security-headers-add-header",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-header",
+      "image": "docs/assets/interactive/security-headers-add-header/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-add-header/07-command-result.txt",
+      "image_sha256": "915982a367555a8985a27d5535198eba084b14b607b2860428eb7cb838884064",
+      "transcript_sha256": "a7b8ad401865313b1862cd4353579ffcfe71380c4f8b24b45ed7712ae1bfc17d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-add-header.pty.log",
+      "pty_byte_offset": 73845,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-list-headers",
+      "journey_family": "security-headers-list-headers",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-headers",
+      "image": "docs/assets/interactive/security-headers-list-headers/03-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-list-headers/03-command-result.txt",
+      "image_sha256": "7e544913a06be8c178cf493049665433609f240a4ef5456df1f37d557924b538",
+      "transcript_sha256": "b41a0e0e3003fbb81be851d32c2fcb6cb2e6bf90b95988ee2e81b6d259ea9cfd",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-list-headers.pty.log",
+      "pty_byte_offset": 75738,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-update-header",
+      "journey_family": "security-headers-update-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "response",
+      "kind": "menu",
+      "command": "update-header",
+      "image": "docs/assets/interactive/security-headers-update-header/03-response.png",
+      "transcript": "docs/assets/interactive/security-headers-update-header/03-response.txt",
+      "image_sha256": "82351898d2c5596e9259406e42d971faef1e8245a1ccebbae83930a7c2ec6a66",
+      "transcript_sha256": "051c14c48d9b3ca2d4c2101fc508f4c1c2cc1a6027d829507baf01b0165778bc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-header.pty.log",
+      "pty_byte_offset": 68704,
+      "selected": "response"
+    },
+    {
+      "journey": "security-headers-update-header",
+      "journey_family": "security-headers-update-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "X-Global-Guide",
+      "kind": "menu",
+      "command": "update-header",
+      "image": "docs/assets/interactive/security-headers-update-header/04-x-global-guide.png",
+      "transcript": "docs/assets/interactive/security-headers-update-header/04-x-global-guide.txt",
+      "image_sha256": "283841f5a27141bbdeee51d208470892cfbcc2025c5dc5294ebd85d6d153d12c",
+      "transcript_sha256": "b53d2d4a6d0929aef87fd90714b98ddb7a111f02ec88028423ef6352d34e3a1d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-header.pty.log",
+      "pty_byte_offset": 68863,
+      "selected": "X-Global-Guide"
+    },
+    {
+      "journey": "security-headers-update-header",
+      "journey_family": "security-headers-update-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-header",
+      "image": "docs/assets/interactive/security-headers-update-header/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-update-header/05-enter-value.txt",
+      "image_sha256": "ccf49b0f95c8735b237848a0491ce6eac3ea57882681ba14d3cb5de348606e27",
+      "transcript_sha256": "5a7e28fb00c4f2992bdd221bde31ce8f2192c6ff7c20b67bcb3eed5cfff9b16d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-header.pty.log",
+      "pty_byte_offset": 68990,
+      "value": "reviewed"
+    },
+    {
+      "journey": "security-headers-update-header",
+      "journey_family": "security-headers-update-header",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "update-header",
+      "image": "docs/assets/interactive/security-headers-update-header/06-run.png",
+      "transcript": "docs/assets/interactive/security-headers-update-header/06-run.txt",
+      "image_sha256": "627f0431e785f0644fd3ca7bf23a35dbdb3818d622cfd860903a7b57d4fe9278",
+      "transcript_sha256": "3075655414e9b98b5c9bd274b796637668b21f1c46c77a7be712dcb13fa7f9cd",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-header.pty.log",
+      "pty_byte_offset": 69401,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-update-header",
+      "journey_family": "security-headers-update-header",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "update-header",
+      "image": "docs/assets/interactive/security-headers-update-header/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-update-header/07-command-result.txt",
+      "image_sha256": "c6b091bce27e884e1d9f8fb3d7dc96d6622489c054503026aad78679101090f7",
+      "transcript_sha256": "a7b8ad401865313b1862cd4353579ffcfe71380c4f8b24b45ed7712ae1bfc17d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-update-header.pty.log",
+      "pty_byte_offset": 70606,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-remove-header",
+      "journey_family": "security-headers-remove-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "response",
+      "kind": "menu",
+      "command": "remove-header",
+      "image": "docs/assets/interactive/security-headers-remove-header/03-response.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-header/03-response.txt",
+      "image_sha256": "e532c4fbfedae585cefbbaeaba993b79c5743008608f5c92d8713ee6f2e3640d",
+      "transcript_sha256": "051c14c48d9b3ca2d4c2101fc508f4c1c2cc1a6027d829507baf01b0165778bc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-header.pty.log",
+      "pty_byte_offset": 93547,
+      "selected": "response"
+    },
+    {
+      "journey": "security-headers-remove-header",
+      "journey_family": "security-headers-remove-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "X-Global-Guide",
+      "kind": "menu",
+      "command": "remove-header",
+      "image": "docs/assets/interactive/security-headers-remove-header/04-x-global-guide.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-header/04-x-global-guide.txt",
+      "image_sha256": "5f53f757afe17d92e127abbe346f72dc68b95c3b3d2839b13c87eee7f6dc711d",
+      "transcript_sha256": "b53d2d4a6d0929aef87fd90714b98ddb7a111f02ec88028423ef6352d34e3a1d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-header.pty.log",
+      "pty_byte_offset": 93706,
+      "selected": "X-Global-Guide"
+    },
+    {
+      "journey": "security-headers-remove-header",
+      "journey_family": "security-headers-remove-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-header",
+      "image": "docs/assets/interactive/security-headers-remove-header/05-run.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-header/05-run.txt",
+      "image_sha256": "8107b15487de05c612b2b81aec848c3723577c748633e9bb7247678d991ee2ad",
+      "transcript_sha256": "ec57c217f5a6500eb8205f00f5290d274a43148b5c25da14ce342486745928e1",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-header.pty.log",
+      "pty_byte_offset": 94132,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-remove-header",
+      "journey_family": "security-headers-remove-header",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-header",
+      "image": "docs/assets/interactive/security-headers-remove-header/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-header/06-enter-value.txt",
+      "image_sha256": "318b7a6cc8d9d87cde72164ddac9105bfd82c27b3eae0e49e2204148c6248c2a",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-header.pty.log",
+      "pty_byte_offset": 94186,
+      "value": "YES"
+    },
+    {
+      "journey": "security-headers-remove-header",
+      "journey_family": "security-headers-remove-header",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-header",
+      "image": "docs/assets/interactive/security-headers-remove-header/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-header/07-command-result.txt",
+      "image_sha256": "ebeb6773937230c7d0ce3745bb693e1639f42b5af1f84a771df11e6551f8638f",
+      "transcript_sha256": "943e7300841a14d8586c6568c043e7702c36998309a8c2a081416541aa2f8cc8",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-header.pty.log",
+      "pty_byte_offset": 95402,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-headers-global-removed",
+      "journey_family": "security-headers-headers-global-removed",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-headers",
+      "image": "docs/assets/interactive/security-headers-headers-global-removed/03-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-headers-global-removed/03-command-result.txt",
+      "image_sha256": "892939bd96ed898eb35f193fa533f56146a814a5a4863157a9348fb81d673532",
+      "transcript_sha256": "83090897060501011e0b75ffaef7f60b9c4a59a32a4379c4836aaa67d4731f3f",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers-global-removed.pty.log",
+      "pty_byte_offset": 75714,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-hsts",
+      "journey_family": "security-headers-set-hsts",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-hsts",
+      "image": "docs/assets/interactive/security-headers-set-hsts/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-set-hsts/03-enter-value.txt",
+      "image_sha256": "ff3ce038cf6f4a95aa263798c0d788e537c02a7239fd1bd137adedff86aeb04c",
+      "transcript_sha256": "07d24d3b0493afd78fa90bec770eda978acd4e56f7db12ca6867445c335acf04",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-hsts.pty.log",
+      "pty_byte_offset": 80002,
+      "value": "max-age=300"
+    },
+    {
+      "journey": "security-headers-set-hsts",
+      "journey_family": "security-headers-set-hsts",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-hsts",
+      "image": "docs/assets/interactive/security-headers-set-hsts/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-hsts/04-run.txt",
+      "image_sha256": "27721dcee8f034cb7aa10472a46f9fb6babd8842b763578b80ae4f022c0ce931",
+      "transcript_sha256": "3eb24ef6157afc517a158638b81bc0f9685e53813e52996e1a7f5614c35a1c39",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-hsts.pty.log",
+      "pty_byte_offset": 80322,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-hsts",
+      "journey_family": "security-headers-set-hsts",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-hsts",
+      "image": "docs/assets/interactive/security-headers-set-hsts/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-hsts/05-command-result.txt",
+      "image_sha256": "b2a7581c1fec8bf89c09529f03bf8ec3f5061e2496209d0c07e6b361eb84693e",
+      "transcript_sha256": "a7b8ad401865313b1862cd4353579ffcfe71380c4f8b24b45ed7712ae1bfc17d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-hsts.pty.log",
+      "pty_byte_offset": 81527,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-csp",
+      "journey_family": "security-headers-set-csp",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-csp",
+      "image": "docs/assets/interactive/security-headers-set-csp/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-set-csp/03-enter-value.txt",
+      "image_sha256": "905e6fa8bf7b036a24e38a74bd373a78dd5e4d81470df531cd5f7e199f5b4ff1",
+      "transcript_sha256": "b82166973f74cf3eb09d9b76975abd16fb463db724519fc1620103635d5f8aa1",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-csp.pty.log",
+      "pty_byte_offset": 79977,
+      "value": "default-src 'self'"
+    },
+    {
+      "journey": "security-headers-set-csp",
+      "journey_family": "security-headers-set-csp",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-csp",
+      "image": "docs/assets/interactive/security-headers-set-csp/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-csp/04-run.txt",
+      "image_sha256": "f6d3718495350343ec892421217e71913882ca5df25605090be95df2337d566e",
+      "transcript_sha256": "81ec08e9f7c13622d6ab441c2e1895b6d533a1ab5fe9918928653917adbbb00c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-csp.pty.log",
+      "pty_byte_offset": 80336,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-csp",
+      "journey_family": "security-headers-set-csp",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-csp",
+      "image": "docs/assets/interactive/security-headers-set-csp/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-csp/05-command-result.txt",
+      "image_sha256": "f58477a75e1065a086a412a4f30e3d896785d55d28e30dff42cfe4606b270baf",
+      "transcript_sha256": "a7b8ad401865313b1862cd4353579ffcfe71380c4f8b24b45ed7712ae1bfc17d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-csp.pty.log",
+      "pty_byte_offset": 81541,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-backend-hsts",
+      "journey_family": "security-headers-set-backend-hsts",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-backend-hsts",
+      "image": "docs/assets/interactive/security-headers-set-backend-hsts/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-hsts/03-example-com.txt",
+      "image_sha256": "dfa5be31e4afb04eee8adfdec77b48d8aaec2bc2ad070ae80c343ff75498c8f7",
+      "transcript_sha256": "b3be62dc16c7396ff15db6f2e7ace786dea5d5ca310a65c6774d2de0c9b9ccfc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-hsts.pty.log",
+      "pty_byte_offset": 90120,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-set-backend-hsts",
+      "journey_family": "security-headers-set-backend-hsts",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-backend-hsts",
+      "image": "docs/assets/interactive/security-headers-set-backend-hsts/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-hsts/04-enter-value.txt",
+      "image_sha256": "678bca8a3b7250be0651fb64a8a6ec14b1403483487b2ed44c3e19a595180842",
+      "transcript_sha256": "025456ebf562ca1bf97ab15f37dcf0be44ad0fc111504be953f13709d213d585",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-hsts.pty.log",
+      "pty_byte_offset": 90192,
+      "value": "max-age=600"
+    },
+    {
+      "journey": "security-headers-set-backend-hsts",
+      "journey_family": "security-headers-set-backend-hsts",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backend-hsts",
+      "image": "docs/assets/interactive/security-headers-set-backend-hsts/05-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-hsts/05-run.txt",
+      "image_sha256": "8b66bff45ea1a660edfeba474cb1058b786dc71456fb0308a962a637460eea54",
+      "transcript_sha256": "94ee9595c16c3c92141f37fe65740f4957b2fca8a6b33ee5d073a4ea06610058",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-hsts.pty.log",
+      "pty_byte_offset": 90584,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-backend-hsts",
+      "journey_family": "security-headers-set-backend-hsts",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backend-hsts",
+      "image": "docs/assets/interactive/security-headers-set-backend-hsts/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-hsts/06-command-result.txt",
+      "image_sha256": "5f7c3fa838bcd1bdc0922afc88efa62ac6831debe75048252d28474103e90837",
+      "transcript_sha256": "a7b8ad401865313b1862cd4353579ffcfe71380c4f8b24b45ed7712ae1bfc17d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-hsts.pty.log",
+      "pty_byte_offset": 91789,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-backend-csp",
+      "journey_family": "security-headers-set-backend-csp",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-backend-csp",
+      "image": "docs/assets/interactive/security-headers-set-backend-csp/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-csp/03-example-com.txt",
+      "image_sha256": "8be2b887abc37188ea7cf3c0c776082db7622784f6e596b2fb49d5569c65d6a7",
+      "transcript_sha256": "b3be62dc16c7396ff15db6f2e7ace786dea5d5ca310a65c6774d2de0c9b9ccfc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-csp.pty.log",
+      "pty_byte_offset": 89481,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-set-backend-csp",
+      "journey_family": "security-headers-set-backend-csp",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-backend-csp",
+      "image": "docs/assets/interactive/security-headers-set-backend-csp/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-csp/04-enter-value.txt",
+      "image_sha256": "4774b4d6323af8f341e2e2a99f38b1e04813dc612413ad09c1be38a51cd6c4de",
+      "transcript_sha256": "3a48c5b5877f542941353ea29c54846a4de2b97669cfa856f380e6ecc4e3981f",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-csp.pty.log",
+      "pty_byte_offset": 89639,
+      "value": "default-src 'none'"
+    },
+    {
+      "journey": "security-headers-set-backend-csp",
+      "journey_family": "security-headers-set-backend-csp",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backend-csp",
+      "image": "docs/assets/interactive/security-headers-set-backend-csp/05-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-csp/05-run.txt",
+      "image_sha256": "381800ed187393e60dfad16b033b33aa75c274094bcfee86afb7e6a04dea89b3",
+      "transcript_sha256": "755849c5e698c1c1302b0b2aac48b4a775cf5ad81a32495de0aa4832d9c2d041",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-csp.pty.log",
+      "pty_byte_offset": 90070,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-backend-csp",
+      "journey_family": "security-headers-set-backend-csp",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backend-csp",
+      "image": "docs/assets/interactive/security-headers-set-backend-csp/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-csp/06-command-result.txt",
+      "image_sha256": "ef568b1d7c751762d74c75d39d3e25e0ea2e68910485f8c19458a0fd3fa7bb80",
+      "transcript_sha256": "a7b8ad401865313b1862cd4353579ffcfe71380c4f8b24b45ed7712ae1bfc17d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-csp.pty.log",
+      "pty_byte_offset": 91275,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-headers-bulk-cancel",
+      "journey_family": "security-headers-headers-bulk-cancel",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-all-backend-headers",
+      "image": "docs/assets/interactive/security-headers-headers-bulk-cancel/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-headers-bulk-cancel/03-example-com.txt",
+      "image_sha256": "75aa476b073910cb2a3bb16c63b5dd7f71430f093fb0d7af73261d44fd2cb85e",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers-bulk-cancel.pty.log",
+      "pty_byte_offset": 99870,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-headers-bulk-cancel",
+      "journey_family": "security-headers-headers-bulk-cancel",
+      "session_index": 1,
+      "step": 4,
+      "title": "Cancel",
+      "kind": "menu",
+      "command": "remove-all-backend-headers",
+      "image": "docs/assets/interactive/security-headers-headers-bulk-cancel/04-cancel.png",
+      "transcript": "docs/assets/interactive/security-headers-headers-bulk-cancel/04-cancel.txt",
+      "image_sha256": "06cf682a30bad3b1e3e540555e55a441457f5876a50e46a0419325e121a859d3",
+      "transcript_sha256": "034d0cc36dc1b0a7e0c45519f98af7307497d9d291763bbd67f68f41a68e174c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers-bulk-cancel.pty.log",
+      "pty_byte_offset": 101172,
+      "selected": "Cancel"
+    },
+    {
+      "journey": "security-headers-headers-bulk-cancel",
+      "journey_family": "security-headers-headers-bulk-cancel",
+      "session_index": 1,
+      "step": 5,
+      "title": "Return without running",
+      "kind": "menu",
+      "command": "remove-all-backend-headers",
+      "image": "docs/assets/interactive/security-headers-headers-bulk-cancel/05-return-without-running.png",
+      "transcript": "docs/assets/interactive/security-headers-headers-bulk-cancel/05-return-without-running.txt",
+      "image_sha256": "b8943995c3fde898f940b27ec57a8969fc6412ea9e7a927e68cd2212f241befd",
+      "transcript_sha256": "95b29a0c7ccc91fc5a68ee5009a815764c9992ae579b59accadcc788c4807923",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers-bulk-cancel.pty.log",
+      "pty_byte_offset": 101818,
+      "selected": "Back"
+    },
+    {
+      "journey": "security-headers-remove-all-backend-headers",
+      "journey_family": "security-headers-remove-all-backend-headers",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-all-backend-headers",
+      "image": "docs/assets/interactive/security-headers-remove-all-backend-headers/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-all-backend-headers/03-example-com.txt",
+      "image_sha256": "9653a333943b8c0c315121926fb7c19d31a9e71c99667b8f2583107aed093c8f",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-backend-headers.pty.log",
+      "pty_byte_offset": 99879,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-remove-all-backend-headers",
+      "journey_family": "security-headers-remove-all-backend-headers",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-all-backend-headers",
+      "image": "docs/assets/interactive/security-headers-remove-all-backend-headers/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-all-backend-headers/04-run.txt",
+      "image_sha256": "79f493127bd40a70937604df8663130f226452579c4bf8694c3d041eca3956f2",
+      "transcript_sha256": "be923c1cfdc2fea45d7f941c54673eb4258c393c2d1cfbb4d7b836c4fa02adbc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-backend-headers.pty.log",
+      "pty_byte_offset": 100313,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-remove-all-backend-headers",
+      "journey_family": "security-headers-remove-all-backend-headers",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-all-backend-headers",
+      "image": "docs/assets/interactive/security-headers-remove-all-backend-headers/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-all-backend-headers/05-enter-value.txt",
+      "image_sha256": "c8f5e085672be4894dcff969474651717c9240459e893e88012d969f3c3fa018",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-backend-headers.pty.log",
+      "pty_byte_offset": 100367,
+      "value": "YES"
+    },
+    {
+      "journey": "security-headers-remove-all-backend-headers",
+      "journey_family": "security-headers-remove-all-backend-headers",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-all-backend-headers",
+      "image": "docs/assets/interactive/security-headers-remove-all-backend-headers/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-all-backend-headers/06-command-result.txt",
+      "image_sha256": "bf0eaf150b05460c47552ee3231a1dc4b0bc1edefd24eec55a425ec1440d50d9",
+      "transcript_sha256": "943e7300841a14d8586c6568c043e7702c36998309a8c2a081416541aa2f8cc8",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-backend-headers.pty.log",
+      "pty_byte_offset": 101583,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-remove-all-headers",
+      "journey_family": "security-headers-remove-all-headers",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-all-headers",
+      "image": "docs/assets/interactive/security-headers-remove-all-headers/03-run.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-all-headers/03-run.txt",
+      "image_sha256": "1c4ef2d00f46d06c6222570402156ee69fa4467d95f6b39b6a2222942eaed21b",
+      "transcript_sha256": "4fb93d134a6e7c8a9936f77d82c3b3d19a41171d13bc20d1d902ccd27f3a60ce",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-headers.pty.log",
+      "pty_byte_offset": 97692,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-remove-all-headers",
+      "journey_family": "security-headers-remove-all-headers",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-all-headers",
+      "image": "docs/assets/interactive/security-headers-remove-all-headers/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-all-headers/04-enter-value.txt",
+      "image_sha256": "aa494dba0fdfafcecc4a71cb3bc6c4418fab26c0c0408fac23761b9fa7972d15",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-headers.pty.log",
+      "pty_byte_offset": 97746,
+      "value": "YES"
+    },
+    {
+      "journey": "security-headers-remove-all-headers",
+      "journey_family": "security-headers-remove-all-headers",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-all-headers",
+      "image": "docs/assets/interactive/security-headers-remove-all-headers/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-all-headers/05-command-result.txt",
+      "image_sha256": "16124f1deac5086a70908d03455f24de5df6c4c3349b65a9f10f8a96eabb158c",
+      "transcript_sha256": "943e7300841a14d8586c6568c043e7702c36998309a8c2a081416541aa2f8cc8",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-headers.pty.log",
+      "pty_byte_offset": 98962,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-control-server-tokens",
+      "journey_family": "security-headers-control-server-tokens",
+      "session_index": 1,
+      "step": 3,
+      "title": "off (current)",
+      "kind": "menu",
+      "command": "control-server-tokens",
+      "image": "docs/assets/interactive/security-headers-control-server-tokens/03-off-current.png",
+      "transcript": "docs/assets/interactive/security-headers-control-server-tokens/03-off-current.txt",
+      "image_sha256": "0110ae25fa7fa6c618d93209264fd903f53f60da2bbac8484bfd7d0367267d5c",
+      "transcript_sha256": "b9b0db437eaf12473a6b4dd8adc64fe6d36e3838a0ca90c23153e57bfaf092a6",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-control-server-tokens.pty.log",
+      "pty_byte_offset": 96299,
+      "selected": "off (current)"
+    },
+    {
+      "journey": "security-headers-control-server-tokens",
+      "journey_family": "security-headers-control-server-tokens",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "control-server-tokens",
+      "image": "docs/assets/interactive/security-headers-control-server-tokens/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-control-server-tokens/04-run.txt",
+      "image_sha256": "735602ab4df82d2d35a75a6fbd4a34b885283df43a045be538ef9381f0d404d2",
+      "transcript_sha256": "8e2e9612b812a17cf808278c938907aadeec09efe20855cec8af146f45f8b604",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-control-server-tokens.pty.log",
+      "pty_byte_offset": 96639,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-control-server-tokens",
+      "journey_family": "security-headers-control-server-tokens",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "control-server-tokens",
+      "image": "docs/assets/interactive/security-headers-control-server-tokens/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-control-server-tokens/05-command-result.txt",
+      "image_sha256": "c81ac2a4a14b2689efb0b08741bda0decf902f74dd2f8166b9d56bee9bef54e0",
+      "transcript_sha256": "1340c9e9be018d56f8176e8f7f6ce66fb25422553fc3084ff60af4c1d3a7f82d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-control-server-tokens.pty.log",
+      "pty_byte_offset": 97832,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-show-server-tokens",
+      "journey_family": "security-headers-show-server-tokens",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "show-server-tokens",
+      "image": "docs/assets/interactive/security-headers-show-server-tokens/03-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-show-server-tokens/03-command-result.txt",
+      "image_sha256": "56ce37f2a0d9b1f99ca5d630778ac0771a916c22b1ec43cf495f08f23ff09a45",
+      "transcript_sha256": "0495ddba296abc33fade222ec7758cdbd7dcff8ce77affd05794035090b21c8c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-show-server-tokens.pty.log",
+      "pty_byte_offset": 70185,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-headers-config",
+      "journey_family": "security-headers-headers-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/security-headers-headers-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/security-headers-headers-config/03-configuration-test-passed.txt",
+      "image_sha256": "8a8ea2a0ce23860667a1ad6ef87fb4b4ba39543cc2a3cf1e99121d60864a4aae",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-headers-config.pty.log",
+      "pty_byte_offset": 8039,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-client-ip-header",
+      "journey_family": "security-headers-set-client-ip-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-client-ip-header/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-set-client-ip-header/03-enter-value.txt",
+      "image_sha256": "73af052d18f8ee3f21395011d1fb75bb1ed4d4b48a091851297dd8e545768c3a",
+      "transcript_sha256": "d2a8e702358ec47b8ce254ba5bd5e0f08fd17729b09b5260440c2189ac345525",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-client-ip-header.pty.log",
+      "pty_byte_offset": 84142,
+      "value": "X-Forwarded-For"
+    },
+    {
+      "journey": "security-headers-set-client-ip-header",
+      "journey_family": "security-headers-set-client-ip-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-client-ip-header/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-client-ip-header/04-run.txt",
+      "image_sha256": "700106055333178418670f1ab1e576cfe44b5a51503a184f589f966076b24918",
+      "transcript_sha256": "28bb2a52a105785242613b483b752c7e18d3284dff70f19f162e47a555f1c448",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-client-ip-header.pty.log",
+      "pty_byte_offset": 84540,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-client-ip-header",
+      "journey_family": "security-headers-set-client-ip-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-client-ip-header/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-client-ip-header/05-command-result.txt",
+      "image_sha256": "24fa5947d0668c2f39d5c8724ca4390c9b3586396a1ccc8361209d16f3db4429",
+      "transcript_sha256": "f00c9a6adb7302b384249c247459d127708e4a2e6580dd633caea234ee34affc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-client-ip-header.pty.log",
+      "pty_byte_offset": 86045,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-proxy-ip-header",
+      "journey_family": "security-headers-set-proxy-ip-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-proxy-ip-header/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-set-proxy-ip-header/03-enter-value.txt",
+      "image_sha256": "c721c0d931b7307458d73287151e23869bf07b778e2a90b026e869484ab365db",
+      "transcript_sha256": "28cd513cf3843815f7a604918adae9cc172f3f3ffd2f8ce8cde5046c1c84b511",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-proxy-ip-header.pty.log",
+      "pty_byte_offset": 83912,
+      "value": "Proxy-IP"
+    },
+    {
+      "journey": "security-headers-set-proxy-ip-header",
+      "journey_family": "security-headers-set-proxy-ip-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-proxy-ip-header/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-proxy-ip-header/04-run.txt",
+      "image_sha256": "46e62ec0205cbc17c66a8361e1eab886ba99f19cc81b923ab78f2acfd81a763a",
+      "transcript_sha256": "98857dd0c59cbd0031e99c994b069c1ac73ad03bfbbf121b4f980983313df1dc",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-proxy-ip-header.pty.log",
+      "pty_byte_offset": 84285,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-proxy-ip-header",
+      "journey_family": "security-headers-set-proxy-ip-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-proxy-ip-header/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-proxy-ip-header/05-command-result.txt",
+      "image_sha256": "825e7bae77aca022b40a8bb12a8e1e534e6096bcb5e4912de67472e796bcbd20",
+      "transcript_sha256": "35ca6721d0046e97c0c10348ec309aeea1f7937f669b38dc581f66927295147e",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-proxy-ip-header.pty.log",
+      "pty_byte_offset": 85501,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-client-ip",
+      "journey_family": "security-headers-client-ip",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-backend-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-client-ip/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-client-ip/03-example-com.txt",
+      "image_sha256": "6f65e8cdb72da674440f0edc8493e67a6d985a9cd9db75e5222940325d542c29",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-client-ip.pty.log",
+      "pty_byte_offset": 94359,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-client-ip",
+      "journey_family": "security-headers-client-ip",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-backend-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-client-ip/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-client-ip/04-enter-value.txt",
+      "image_sha256": "d128ca9d6b5b01aaca6c6b576a2cc5658269b9ede82ffe78c0f856a7b8335f68",
+      "transcript_sha256": "84dfe259d1f31eb5b4ec1174ba7116f0151526ab38b3b19655da8217609628fb",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-client-ip.pty.log",
+      "pty_byte_offset": 94523,
+      "value": "X-Real-IP"
+    },
+    {
+      "journey": "security-headers-client-ip",
+      "journey_family": "security-headers-client-ip",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backend-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-client-ip/05-run.png",
+      "transcript": "docs/assets/interactive/security-headers-client-ip/05-run.txt",
+      "image_sha256": "5bf4dddfce7249e2029eb1f61e255a5436113aff830e4ddda57d38b3bf5ec228",
+      "transcript_sha256": "0227cf3d422a5e39c8bf9f7bc208be0bec7ac54f7d4244ac499232cabba0b139",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-client-ip.pty.log",
+      "pty_byte_offset": 94961,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-client-ip",
+      "journey_family": "security-headers-client-ip",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backend-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-client-ip/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-client-ip/06-command-result.txt",
+      "image_sha256": "2da5efa539a4ff70568636e3116837c43a41ce5911d9fc326a968ce68fc28629",
+      "transcript_sha256": "04ef4f0d78f6dd05f18a587ae50a20589532d7651701d0216538eb868cd414cd",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-client-ip.pty.log",
+      "pty_byte_offset": 96467,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-backend-proxy-ip-header",
+      "journey_family": "security-headers-set-backend-proxy-ip-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-backend-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/03-example-com.txt",
+      "image_sha256": "96fc395c522f33b1b7608ed393bc714e587f3417d4076b7de889b0b4c5fe8f9f",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-proxy-ip-header.pty.log",
+      "pty_byte_offset": 93826,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-set-backend-proxy-ip-header",
+      "journey_family": "security-headers-set-backend-proxy-ip-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-backend-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/04-enter-value.txt",
+      "image_sha256": "dc7afce723da16ece2c14d250f585ef759df2038f476cda9317d02d55232bb67",
+      "transcript_sha256": "72d6b9aab68ea81cf6514c1c7833f8640d08804f13f9139c3c839fea4237996c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-proxy-ip-header.pty.log",
+      "pty_byte_offset": 93990,
+      "value": "Backend-Proxy-IP"
+    },
+    {
+      "journey": "security-headers-set-backend-proxy-ip-header",
+      "journey_family": "security-headers-set-backend-proxy-ip-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backend-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/05-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/05-run.txt",
+      "image_sha256": "1b47f2a8789a8200f44c80dceac45044673e07a7714709bcdebc63ae59981355",
+      "transcript_sha256": "5c8dab2cb7b6021c9352b411e8ebb08ec618e4f873cda1c56ed629bd8461df09",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-proxy-ip-header.pty.log",
+      "pty_byte_offset": 94434,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-backend-proxy-ip-header",
+      "journey_family": "security-headers-set-backend-proxy-ip-header",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backend-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-backend-proxy-ip-header/06-command-result.txt",
+      "image_sha256": "c18cc6cfe1b194c4afa307c0024ce20484c3cfd2f6f05b861f14f8b215941cda",
+      "transcript_sha256": "f6ad220a481b18e51ff275dafe7775a4e2c9c247947273027a8a403e94618011",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-proxy-ip-header.pty.log",
+      "pty_byte_offset": 95665,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-trusted-proxies",
+      "journey_family": "security-headers-set-trusted-proxies",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-set-trusted-proxies/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-set-trusted-proxies/03-enter-value.txt",
+      "image_sha256": "df4fe9c054f60be2f83ce00ce215ca8c0e59ebbad31270551e210886734f6712",
+      "transcript_sha256": "76db0af358e87133638d05058728f4d49a0fc38ca36ce606ffacc3febb238624",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-trusted-proxies.pty.log",
+      "pty_byte_offset": 83627,
+      "value": "198.51.100.10/32"
+    },
+    {
+      "journey": "security-headers-set-trusted-proxies",
+      "journey_family": "security-headers-set-trusted-proxies",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-set-trusted-proxies/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-trusted-proxies/04-run.txt",
+      "image_sha256": "411d4cd5ca9c3772869077a3dfe3b1d5a5aa5f1c428a666be5858e339698d721",
+      "transcript_sha256": "91fe25ddf1e53bef3417f6aa56fcdadcd24d4f0a0160cb69b30c6100ac6b0b37",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-trusted-proxies.pty.log",
+      "pty_byte_offset": 84008,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-trusted-proxies",
+      "journey_family": "security-headers-set-trusted-proxies",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-set-trusted-proxies/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-trusted-proxies/05-command-result.txt",
+      "image_sha256": "fb70c586e5abaf22a6cf10417e1eea207dfb9c546eba63ef9b27dccb7411ca1f",
+      "transcript_sha256": "4da43179e5f96d7cb28ac1c9899a87c2f8611c9052b38de9995f3c7dd47b5ae7",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-trusted-proxies.pty.log",
+      "pty_byte_offset": 85578,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-set-real-ip-recursive",
+      "journey_family": "security-headers-set-real-ip-recursive",
+      "session_index": 1,
+      "step": 3,
+      "title": "on (current)",
+      "kind": "menu",
+      "command": "set-real-ip-recursive",
+      "image": "docs/assets/interactive/security-headers-set-real-ip-recursive/03-on-current.png",
+      "transcript": "docs/assets/interactive/security-headers-set-real-ip-recursive/03-on-current.txt",
+      "image_sha256": "98aae8958b8883758a5f05e1729195ee71098bbcad086c592298ab59199645b8",
+      "transcript_sha256": "5ef757b81d5c9c116201e2fdd0a0cc3f54148f69d630270b7ffd2cebd12ae604",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-real-ip-recursive.pty.log",
+      "pty_byte_offset": 83858,
+      "selected": "on (current)"
+    },
+    {
+      "journey": "security-headers-set-real-ip-recursive",
+      "journey_family": "security-headers-set-real-ip-recursive",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-real-ip-recursive",
+      "image": "docs/assets/interactive/security-headers-set-real-ip-recursive/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-set-real-ip-recursive/04-run.txt",
+      "image_sha256": "9c4ff9c3195524666768cabe5593071b8d2570e21971e0ffae0e835a33e6afa5",
+      "transcript_sha256": "20e3d4107591ff09fe8f6fad1b6cb5ca24a24dd5f5ecfb3e3383acffa499da68",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-real-ip-recursive.pty.log",
+      "pty_byte_offset": 84196,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-set-real-ip-recursive",
+      "journey_family": "security-headers-set-real-ip-recursive",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-real-ip-recursive",
+      "image": "docs/assets/interactive/security-headers-set-real-ip-recursive/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-set-real-ip-recursive/05-command-result.txt",
+      "image_sha256": "4abc8d70cfa1ab8e06e145ffa81274966eae1af5c659338ca376a22676ad2f51",
+      "transcript_sha256": "ee542b01882d3f936dbfe4b12509f6aa8ce2e6e39bee855aeb7aa31cf2c62d9d",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-set-real-ip-recursive.pty.log",
+      "pty_byte_offset": 85749,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-client-ip-config",
+      "journey_family": "security-headers-client-ip-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/security-headers-client-ip-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/security-headers-client-ip-config/03-configuration-test-passed.txt",
+      "image_sha256": "61b2421ee8f5b0a43f44d3a9d6c00d8cb2b064d97bd1d0952ee0d6d71bb518a1",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-client-ip-config.pty.log",
+      "pty_byte_offset": 8031,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-client-ip-trusted-peer",
+      "journey_family": "security-headers-client-ip-trusted-peer",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-client-ip-trusted-peer/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-client-ip-trusted-peer/03-enter-value.txt",
+      "image_sha256": "37c76dbb0fe29a1bd1daaec13a226e4ca8e3090e013d5df5d60f1c36aa57aa3d",
+      "transcript_sha256": "78d71619c533de4beeb8923fef7b360eaab58904daec27b12b2f33d37a0bc8b2",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-client-ip-trusted-peer.pty.log",
+      "pty_byte_offset": 83166,
+      "value": "172.18.0.1/32"
+    },
+    {
+      "journey": "security-headers-client-ip-trusted-peer",
+      "journey_family": "security-headers-client-ip-trusted-peer",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-client-ip-trusted-peer/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-client-ip-trusted-peer/04-run.txt",
+      "image_sha256": "7aa48aa3b7fde324a96ae03221b8a770b5cbf99533b9227b3bbd429af88e8251",
+      "transcript_sha256": "2e5fa660a616b320474d0d3bc4fe3427b3e1e5c4328d913a4b48d90ab9be3977",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-client-ip-trusted-peer.pty.log",
+      "pty_byte_offset": 83541,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-client-ip-trusted-peer",
+      "journey_family": "security-headers-client-ip-trusted-peer",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-client-ip-trusted-peer/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-client-ip-trusted-peer/05-command-result.txt",
+      "image_sha256": "f2f90d8b34c08e08c4b5a4dd3b39a2161713e5ba847acdd389f4ad5750bb0458",
+      "transcript_sha256": "7cbee7b336a1e6480286fa078f86b8e300348bb27f8bfb49b42b4902a3dcb06f",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-client-ip-trusted-peer.pty.log",
+      "pty_byte_offset": 85108,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-verify-client-ip",
+      "journey_family": "security-headers-verify-client-ip",
+      "session_index": 1,
+      "step": 1,
+      "title": "Trusted header changes the client while retaining the peer",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-headers-verify-client-ip/01-trusted-header-changes-the-client-while-retaining-the-peer.png",
+      "transcript": "docs/assets/interactive/security-headers-verify-client-ip/01-trusted-header-changes-the-client-while-retaining-the-peer.txt",
+      "image_sha256": "cdd1289d719434c0a057cdfee0e5374d093c699529bdfbbcd7654631e9005e13",
+      "transcript_sha256": "1c2f76a53b3bd9f4ccf9619865a7212512cbf47aa67fe62410bc1db61e11650a",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-verify-client-ip.pty.log",
+      "pty_byte_offset": 421,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-headers-remove-backend-client-ip-header",
+      "journey_family": "security-headers-remove-backend-client-ip-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-client-ip-header/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-client-ip-header/03-example-com.txt",
+      "image_sha256": "ceeb6d78d30056c0ed14c7b17e988c98b1d5976040bd948f4894326e7858b79e",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-client-ip-header.pty.log",
+      "pty_byte_offset": 108240,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-remove-backend-client-ip-header",
+      "journey_family": "security-headers-remove-backend-client-ip-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-client-ip-header/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-client-ip-header/04-run.txt",
+      "image_sha256": "e82c18b107b4eea6ac404186891b3d1980e086de28f365699410ddd1e0f94fdf",
+      "transcript_sha256": "712bf3d2d76d7a768eadd7059ea961a37715375f3eb58b071088cd70909596d4",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-client-ip-header.pty.log",
+      "pty_byte_offset": 108693,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-remove-backend-client-ip-header",
+      "journey_family": "security-headers-remove-backend-client-ip-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-client-ip-header/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-client-ip-header/05-enter-value.txt",
+      "image_sha256": "35e441fdb735cda641d316e7f4e39b4e999046817c8f86fcc4e03a85801246d2",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-client-ip-header.pty.log",
+      "pty_byte_offset": 108747,
+      "value": "YES"
+    },
+    {
+      "journey": "security-headers-remove-backend-client-ip-header",
+      "journey_family": "security-headers-remove-backend-client-ip-header",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-client-ip-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-client-ip-header/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-client-ip-header/06-command-result.txt",
+      "image_sha256": "16fc51c0e1ca458035bde9cf3f67e113698956058893658488f2dd03a3dd7c68",
+      "transcript_sha256": "4220f902e62347f48cefa2db04bd705929621672b594c6d2d47e243d3082839a",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-client-ip-header.pty.log",
+      "pty_byte_offset": 110264,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-remove-backend-proxy-ip-header",
+      "journey_family": "security-headers-remove-backend-proxy-ip-header",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/03-example-com.txt",
+      "image_sha256": "e85d8b54d7432826558d81b9fbcfe69492361410e53335439dccce41006e1abf",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-proxy-ip-header.pty.log",
+      "pty_byte_offset": 106650,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-headers-remove-backend-proxy-ip-header",
+      "journey_family": "security-headers-remove-backend-proxy-ip-header",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/04-run.txt",
+      "image_sha256": "8a0d810af6ed48397ae5460397d8552a9047be6cf0ef102fc26e4d384b947dce",
+      "transcript_sha256": "736612229ef1c5c5144d3232d259e6d7dbe94f1dc2833161c2b7cda67aaa6d86",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-proxy-ip-header.pty.log",
+      "pty_byte_offset": 107099,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-remove-backend-proxy-ip-header",
+      "journey_family": "security-headers-remove-backend-proxy-ip-header",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/05-enter-value.txt",
+      "image_sha256": "1214d36a21224fc595b111ceef8a1b53ffb600d99e45ac94f25a241142e05afa",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-proxy-ip-header.pty.log",
+      "pty_byte_offset": 107153,
+      "value": "YES"
+    },
+    {
+      "journey": "security-headers-remove-backend-proxy-ip-header",
+      "journey_family": "security-headers-remove-backend-proxy-ip-header",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-proxy-ip-header",
+      "image": "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-remove-backend-proxy-ip-header/06-command-result.txt",
+      "image_sha256": "8e56b81f1323b7b6d45702e6ca69c63c7f8f2a0c71edf04b1c091bb153d77f74",
+      "transcript_sha256": "297bea97be38bd2ddbed8f9b3d89645157a10b45809eccd71c07183a18576765",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-proxy-ip-header.pty.log",
+      "pty_byte_offset": 108388,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-trusted-proxies-reset",
+      "journey_family": "security-headers-trusted-proxies-reset",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-trusted-proxies-reset/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-headers-trusted-proxies-reset/03-enter-value.txt",
+      "image_sha256": "70a2a630eaadcaf9f8d586259cf21c81b75ecd69a0b7931aa8390c06c00e2670",
+      "transcript_sha256": "65af635b694d84ee11cb58a96ec4c6dfe2344aa9eb9da98d9a685ba1995dea98",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-trusted-proxies-reset.pty.log",
+      "pty_byte_offset": 83152,
+      "value": "none"
+    },
+    {
+      "journey": "security-headers-trusted-proxies-reset",
+      "journey_family": "security-headers-trusted-proxies-reset",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-trusted-proxies-reset/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-trusted-proxies-reset/04-run.txt",
+      "image_sha256": "ce1a092a352c2e1ed5a8c2bf1c9923448427c2dc4a0a585efdfa527b4ac04046",
+      "transcript_sha256": "a9b627afd8a55c94f441a524dd0ced0963aaa6174c3cc963c9fee11585874126",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-trusted-proxies-reset.pty.log",
+      "pty_byte_offset": 83509,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-trusted-proxies-reset",
+      "journey_family": "security-headers-trusted-proxies-reset",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-trusted-proxies",
+      "image": "docs/assets/interactive/security-headers-trusted-proxies-reset/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-trusted-proxies-reset/05-command-result.txt",
+      "image_sha256": "0f48f57f36941227cd9d3129c540e2708642ae4c66addceb741244ffcac7377d",
+      "transcript_sha256": "b02497b695edb8dde9992280d7beda55c371717d1a4f6e6e059cb525ff78ef45",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-trusted-proxies-reset.pty.log",
+      "pty_byte_offset": 85053,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-headers-real-ip-recursive-reset",
+      "journey_family": "security-headers-real-ip-recursive-reset",
+      "session_index": 1,
+      "step": 3,
+      "title": "off",
+      "kind": "menu",
+      "command": "set-real-ip-recursive",
+      "image": "docs/assets/interactive/security-headers-real-ip-recursive-reset/03-off.png",
+      "transcript": "docs/assets/interactive/security-headers-real-ip-recursive-reset/03-off.txt",
+      "image_sha256": "90ae608e280e691b9fb28c2dc0e33a5866fa432bcb3419d2ad405d5480b8ae53",
+      "transcript_sha256": "d9c191e16a57db4d2d9d36198e046a125932d2e6dc1253aa445c623291b24765",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-real-ip-recursive-reset.pty.log",
+      "pty_byte_offset": 83547,
+      "selected": "off"
+    },
+    {
+      "journey": "security-headers-real-ip-recursive-reset",
+      "journey_family": "security-headers-real-ip-recursive-reset",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-real-ip-recursive",
+      "image": "docs/assets/interactive/security-headers-real-ip-recursive-reset/04-run.png",
+      "transcript": "docs/assets/interactive/security-headers-real-ip-recursive-reset/04-run.txt",
+      "image_sha256": "cfd7970b2d04081e6e25836403005bb6b66e36bd095e70f65b5ee71438e9e37f",
+      "transcript_sha256": "7a64924eca6ddfd8633d538f025a71b0a16883f42641b305e787626f9c0c7c01",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-real-ip-recursive-reset.pty.log",
+      "pty_byte_offset": 83887,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-headers-real-ip-recursive-reset",
+      "journey_family": "security-headers-real-ip-recursive-reset",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-real-ip-recursive",
+      "image": "docs/assets/interactive/security-headers-real-ip-recursive-reset/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-headers-real-ip-recursive-reset/05-command-result.txt",
+      "image_sha256": "6d496ca1965eb575adcc6d1019859fe853b3b50141b83fc23e6452f67b9f2e51",
+      "transcript_sha256": "f7c08df579c29d628bfb12019b2f941470241bbd0a3a453610b10bba8bdb1551",
+      "pty_log": "docs/assets/interactive/evidence/security-headers/security-headers-real-ip-recursive-reset.pty.log",
+      "pty_byte_offset": 85441,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "add-backend-header-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-headers/add-backend-header-response.headers"
+    },
+    {
+      "label": "add-backend-header-response-header",
+      "status": "passed",
+      "header": "X-Guide: preview"
+    },
+    {
+      "label": "headers-verified",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "http://127.0.0.1",
+        "-H",
+        "Host: example.com"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "update-backend-header-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-headers/update-backend-header-response.headers"
+    },
+    {
+      "label": "update-backend-header-response-header",
+      "status": "passed",
+      "header": "X-Guide: reviewed"
+    },
+    {
+      "label": "headers-backend-removed",
+      "status": "passed",
+      "argv": [
+        "/opt/dockistrate-demo/dockistrate.sh",
+        "list-backend-headers",
+        "example.com"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "add-header-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-headers/add-header-response.headers"
+    },
+    {
+      "label": "add-header-response-header",
+      "status": "passed",
+      "header": "X-Global-Guide: preview"
+    },
+    {
+      "label": "update-header-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-headers/update-header-response.headers"
+    },
+    {
+      "label": "update-header-response-header",
+      "status": "passed",
+      "header": "X-Global-Guide: reviewed"
+    },
+    {
+      "label": "browser-policy-headers",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-headers/browser-policy-headers.headers"
+    },
+    {
+      "label": "browser-policy-headers-header",
+      "status": "passed",
+      "header": "Strict-Transport-Security: max-age=600"
+    },
+    {
+      "label": "server-token-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-headers/server-token-response.headers"
+    },
+    {
+      "label": "untrusted-forwarding-header",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-headers/untrusted-forwarding-header.headers"
+    },
+    {
+      "label": "untrusted-client-address-preserved",
+      "status": "passed",
+      "peer": "172.18.0.1",
+      "resolved_client": "172.18.0.1"
+    },
+    {
+      "label": "trusted-forwarding-header",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-headers/trusted-forwarding-header.headers"
+    },
+    {
+      "label": "trusted-forwarding-header-header",
+      "status": "passed",
+      "header": "X-Observed-Client: 203.0.113.8"
+    },
+    {
+      "label": "verify-client-ip",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "http://127.0.0.1",
+        "-H",
+        "Host: example.com",
+        "-H",
+        "X-Real-IP: 203.0.113.8"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "security"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "cc371662aad7aab1325c484c0b75869703af8d6a16a3a567215dedfdbeee6321",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 107
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/security-headers-recordings.tar.gz",
+    "sha256": "eadad92e9ee3782a6a315227dafa2e330e17e714db86390f151dccfa035e45de",
+    "size": 258152,
+    "members": {
+      "docs/assets/interactive/evidence/security-headers/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/security-headers/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/security-headers/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/security-headers/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/security-headers/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/security-headers/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-headers/008-fixture-image.log": {
+        "sha256": "f0e07f49398b812f0eed8551885a4dc42cb68f48d5f1ff4ea078f08d5bc7ffb7",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/security-headers/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/security-headers/010-fixture-backend.log": {
+        "sha256": "a43ac0c221fd66afd334fd47f9e8782c63ee90c5a58315ce1c3d28a3a61f8a72",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/security-headers/011-fixture-public-demo.log": {
+        "sha256": "9f6696982021340dff061e0976d9bba7d341e27502cf334b0540ae997fd049a4",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/security-headers/012-fixture-https.log": {
+        "sha256": "978d2bd024c3b92a278e1154172283ea3537bdfc0a4c7aaeb728617bb87fa12b",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/security-headers/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/security-headers/014-command-alias.log": {
+        "sha256": "042bf69a78d986559d56355ae7b3103dd352b3d3d0ff8118aed518c04fd9a6b2",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/security-headers/015-command-alias.log": {
+        "sha256": "20350d321751b891967501baa230a015ca04754fa9e737dc997c6d0421304c78",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/security-headers/016-command-alias.log": {
+        "sha256": "794afabf45b2d8ee50483327029d2023b63a46c65f3889adc6f81dca88ac805a",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/security-headers/017-command-alias.log": {
+        "sha256": "bad680e03c6b88b2e1744c2f1946dca823457290129ddb7c4962e302e30239af",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/security-headers/018-command-alias.log": {
+        "sha256": "7996bddcb99a618836cc35516f48ea32928f1326ff930cb44919040c0fb7fcf5",
+        "size": 11
+      },
+      "docs/assets/interactive/evidence/security-headers/019-command-alias.log": {
+        "sha256": "153378947f33637d9cc4ff6401dba28aa5a80644a11f7d61b2eb341604d2c6e0",
+        "size": 13
+      },
+      "docs/assets/interactive/evidence/security-headers/020-command-alias.log": {
+        "sha256": "dd550ae4f45be115210c08eefdfcc5c8968f7114d7d46f8bb0c629a377a3377e",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/security-headers/021-command-alias.log": {
+        "sha256": "788f27398cb11d67c71be80cef46479b3b8c78efc91fe5bf45736f343fb0bf3f",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/security-headers/022-command-alias.log": {
+        "sha256": "153378947f33637d9cc4ff6401dba28aa5a80644a11f7d61b2eb341604d2c6e0",
+        "size": 13
+      },
+      "docs/assets/interactive/evidence/security-headers/023-command-alias.log": {
+        "sha256": "f0cbf7c6ee5a6e4ed7cbd67a8b45cefe087efe5962fe6e3fdc14b3f43b3eccd1",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/security-headers/024-command-alias.log": {
+        "sha256": "138cef32fdf84e416a7bd9729e36ad79fec42357b31b97a11a30cd98d193bb3a",
+        "size": 8
+      },
+      "docs/assets/interactive/evidence/security-headers/025-command-alias.log": {
+        "sha256": "15b9bb16de8de3712288f38dc7ee1f10b4e05cc6a1e4914abafdbf89e3e99d81",
+        "size": 17
+      },
+      "docs/assets/interactive/evidence/security-headers/026-command-alias.log": {
+        "sha256": "47ad0b68dd8a0eb5c52db32ec0b51b58f5721bac8f15af7065d65b68073cc956",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/security-headers/027-command-alias.log": {
+        "sha256": "a785f26cbab025d1eabe30b103e17ab3ef7465ef79037458b58672d70b8ecd90",
+        "size": 27
+      },
+      "docs/assets/interactive/evidence/security-headers/028-command-alias.log": {
+        "sha256": "a785f26cbab025d1eabe30b103e17ab3ef7465ef79037458b58672d70b8ecd90",
+        "size": 27
+      },
+      "docs/assets/interactive/evidence/security-headers/029-command-alias.log": {
+        "sha256": "9540620aed0726230dc2908cfc6ea1e951bab4073009bb7465f945466fb7df51",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/security-headers/030-command-alias.log": {
+        "sha256": "8eef320865abf24e895b09628c1dea2edb133cab8d2ee8ba23a6693d79a2880b",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/security-headers/031-command-alias.log": {
+        "sha256": "faaf5ca3cec1ba107b4bc76a0f860beb62b61a2bea726460e0ba132056a23b3b",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/security-headers/032-command-alias.log": {
+        "sha256": "c4334deb2b8244b561dc161fa2049d3265bf2ee8710631a41acac6a42b1bf184",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/security-headers/033-command-alias.log": {
+        "sha256": "ebd180a06d27a065064ab3c416a18eb88f6e168dd1d619a0994ce0bfd78261e8",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/security-headers/034-command-alias.log": {
+        "sha256": "9d01e176c6047fe8d0221e52dc20853acde198abd7ef98f292d1bc85365a6c35",
+        "size": 29
+      },
+      "docs/assets/interactive/evidence/security-headers/035-command-alias.log": {
+        "sha256": "a5991f37936a0dac78c5e2653b96e7424c2551a5d973dc58d80177db1f71730f",
+        "size": 28
+      },
+      "docs/assets/interactive/evidence/security-headers/036-command-alias.log": {
+        "sha256": "b6dc4fcc1cc82e668686f70ea6493db3d17da11f39fc296eb26fec6b2da3dfe9",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/security-headers/037-command-alias.log": {
+        "sha256": "3be095abf2ae805c0b664f1f3dbf18f49fb0119aa1763497490d0e5374720dfd",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/security-headers/038-observe-resolved-client.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/security-headers/039-observe-original-peer.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/security-headers/040-command-alias.log": {
+        "sha256": "b6dc4fcc1cc82e668686f70ea6493db3d17da11f39fc296eb26fec6b2da3dfe9",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/security-headers/041-command-alias.log": {
+        "sha256": "c97081fdacd1db65910e088226da4976c337353831c326d6eee20d768d955ebf",
+        "size": 32
+      },
+      "docs/assets/interactive/evidence/security-headers/042-command-alias.log": {
+        "sha256": "7cd79000ac52607c3acb99e4b1fb01431992169c8fc41848d0abf0aa18e56c8d",
+        "size": 31
+      },
+      "docs/assets/interactive/evidence/security-headers/043-command-alias.log": {
+        "sha256": "b6dc4fcc1cc82e668686f70ea6493db3d17da11f39fc296eb26fec6b2da3dfe9",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/security-headers/044-command-alias.log": {
+        "sha256": "3be095abf2ae805c0b664f1f3dbf18f49fb0119aa1763497490d0e5374720dfd",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/security-headers/045-remove-observation-x-observed-client.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/security-headers/046-remove-observation-x-observed-peer.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/security-headers/047-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/security-headers/add-backend-header-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-headers/add-backend-header-response.headers": {
+        "sha256": "03bddaa9be5520b84f799e45824fbe99d126166c9fc8d564093554ae8335ab3f",
+        "size": 256
+      },
+      "docs/assets/interactive/evidence/security-headers/add-backend-header-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-headers/add-backend-header-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/add-header-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-headers/add-header-response.headers": {
+        "sha256": "9eb19da6319c25e414381646e8f72d1f4c8f5e927408255a826379c4e7efc3e8",
+        "size": 263
+      },
+      "docs/assets/interactive/evidence/security-headers/add-header-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-headers/add-header-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/browser-policy-headers.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-headers/browser-policy-headers.headers": {
+        "sha256": "f7103b2506cad33bc20a3ae3ecb8f842b45d31cbf6d51f8530a00f42fa1065df",
+        "size": 380
+      },
+      "docs/assets/interactive/evidence/security-headers/browser-policy-headers.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-headers/browser-policy-headers.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/commands.jsonl": {
+        "sha256": "2ab9986003a98366fe93e97379b61016d2110140027341491d3b5718d8724b99",
+        "size": 21484
+      },
+      "docs/assets/interactive/evidence/security-headers/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-add-header.events.jsonl": {
+        "sha256": "3571f274e325d43ddf515d4ab99335aecf245060a283c00c9454d8ad28a18d70",
+        "size": 15347
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-add-header.pty.log": {
+        "sha256": "0ad08f41eaa65913c2c54d93c3415cfdb03bd30c03ef0d3c1d3a68c803051b99",
+        "size": 81950
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-client-ip-config.events.jsonl": {
+        "sha256": "4d0ee7a759bdaa49c5159aa1a9eb0d3d2c01633dc496bd77d6df9179a90e07d0",
+        "size": 9342
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-client-ip-config.pty.log": {
+        "sha256": "c653c1d532c66aeae6ca0ea0b970c302fcd2fee06d5592b3b2aaa3211195aabc",
+        "size": 16157
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-client-ip-trusted-peer.events.jsonl": {
+        "sha256": "0dff0b4da920fa3342bf3966b42d250fee0ea25610faaf417555f99cfcc0a8ea",
+        "size": 17633
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-client-ip-trusted-peer.pty.log": {
+        "sha256": "ea9c579ee6402cb7150ed4d44775d7ee7de003fc0d2aac4779913fb1bb8930fb",
+        "size": 93234
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-client-ip.events.jsonl": {
+        "sha256": "5a7296898661bbe5dbdb64a54ad603d6d99b8659af1c0b5b7fc80e915312ef9e",
+        "size": 19283
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-client-ip.pty.log": {
+        "sha256": "b0b2dee39be78602d830d04ea902caec6f4d191fbcb106e98e1d9f2ad248734f",
+        "size": 104585
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-control-server-tokens.events.jsonl": {
+        "sha256": "3aeb8da2dae7777ce2fa49e2a6f225c7370eb18a9326f350ed34e5f66a1b23be",
+        "size": 17320
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-control-server-tokens.pty.log": {
+        "sha256": "a6f1b95f2aefece134da6a303fc32e88d813da8c334ae6fe22ce5f91cb2f94bf",
+        "size": 105954
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-backend-removed.events.jsonl": {
+        "sha256": "a82403a759886f884d864615a577d9c92be387f63f332265d911dcf54cf122e9",
+        "size": 988
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-backend-removed.pty.log": {
+        "sha256": "db3ff971f136a8c38db13a58ff6fac7e5f89669e4ba20a836f1d8aca711a4411",
+        "size": 89
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-bulk-cancel.events.jsonl": {
+        "sha256": "d8354f6586199874fd80ed7670f4e6c7e6ae1bab8ae30d4e68c134a9df7c9de3",
+        "size": 18517
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-bulk-cancel.pty.log": {
+        "sha256": "50a5c1cf76769df5c7f0ce268a9e5295568d1650913c812646b7460190d9e4d5",
+        "size": 109921
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-config.events.jsonl": {
+        "sha256": "1b142ae2516cea1db4e65da3f1dfc0260dc237b098fc981eafa9e2ebc53f7237",
+        "size": 9210
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-config.pty.log": {
+        "sha256": "ecb458a6d53abbb2f4f27768944ed74618ec4523554ae89338f6b752fb04a631",
+        "size": 16157
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-global-removed.events.jsonl": {
+        "sha256": "0744e5320a9a540cd02a353a296904a85851d02eb894113c4cb9b8769c42271a",
+        "size": 12249
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-global-removed.pty.log": {
+        "sha256": "0f715fc53baa81d2b91faecb42b0cac026cedffdb9e2fa5f11311742143c544d",
+        "size": 83832
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-verified.events.jsonl": {
+        "sha256": "ba3b0eedc01d1a5759af00bd057c21ca603608182e11dcbfee2146d5dfeeea9c",
+        "size": 1009
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers-verified.pty.log": {
+        "sha256": "9d13cd6902956b026a861b4739ef44af1e939125a48a6647993c324b04d176e4",
+        "size": 357
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers.events.jsonl": {
+        "sha256": "7fb3fabec58ea5752d73a34cfad9bf50e2392fdddb534b3ee5f3e894698ea60d",
+        "size": 17724
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-headers.pty.log": {
+        "sha256": "6f345811aae8d68bb4d8c1aeda8a30c26a8dbff2ee10b24ee216beeb60de718e",
+        "size": 86661
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-list-backend-headers.events.jsonl": {
+        "sha256": "eca0e2004f723b7591fcee76f2d080daa96bb023e4647b46f33161d27992f468",
+        "size": 14953
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-list-backend-headers.pty.log": {
+        "sha256": "29dc77489df9f1be301a6c8db5a72250238d2fe62ad0da38efb3f29000f77b9d",
+        "size": 88757
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-list-headers.events.jsonl": {
+        "sha256": "c05ddd4c763bb7d98836b562bcdedf7a5f7a296c3fa81e99ae9003d63b2183ea",
+        "size": 11354
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-list-headers.pty.log": {
+        "sha256": "bdab463219a8904329b855a9090a5dbc33d6c039de6c7d56a8541940592bea14",
+        "size": 83852
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-real-ip-recursive-reset.events.jsonl": {
+        "sha256": "54c26f0c711c7f7ae54e117f98a8f6e901d554ab246d8160fb9bd1b16d0de0a5",
+        "size": 18138
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-real-ip-recursive-reset.pty.log": {
+        "sha256": "e1bc0edf4479181d96e8c757410e24dc4eb6522ee68bcdb151ed27ca0bc1144d",
+        "size": 93567
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-backend-headers.events.jsonl": {
+        "sha256": "98c6405382fc64132f4e80a3c7a3a15b6ebc00d466a814dd5c8ffabc885ed6b7",
+        "size": 20615
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-backend-headers.pty.log": {
+        "sha256": "967c7905ab36ea9521f03e01e7fbc607743d4818e13b4c3c76884159145042a7",
+        "size": 109688
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-headers.events.jsonl": {
+        "sha256": "6c55415b6300fd83ef889af6eae1175fc11dd5b3dfa6635843d6a306598d98d9",
+        "size": 16450
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-all-headers.pty.log": {
+        "sha256": "3721db700dc9f65f58a79f3a3187c42fb4e8fbc498cff9db1a5b0c1bdc11db00",
+        "size": 107071
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-client-ip-header.events.jsonl": {
+        "sha256": "933e69b7dad1196e1e01c940d863c430467726c8971db5275b80a1aeae245516",
+        "size": 23312
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-client-ip-header.pty.log": {
+        "sha256": "6161deec2c6f7554ed46cdbefb045c8cbaeb685078c3e482c4219956c0736aaf",
+        "size": 118386
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-header.events.jsonl": {
+        "sha256": "dfd90ce4327b7128ec0bfe94c3d1e7897e1b3c9d54d16be78ebb492416ee109a",
+        "size": 20068
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-header.pty.log": {
+        "sha256": "9e56a861ee548eb49cbada808fe528a4d3446c79beed7d66795fdea397529b02",
+        "size": 113981
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-proxy-ip-header.events.jsonl": {
+        "sha256": "e2ac2ffcbeb32c2b08173c604873b5d0d951f73e352ddcafec7ee17fb64b0ed6",
+        "size": 22546
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-backend-proxy-ip-header.pty.log": {
+        "sha256": "eb6485530e9c3df16e7a37fb80317c28a850c854790d0c3a349f55a032d6dbcd",
+        "size": 116510
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-header.events.jsonl": {
+        "sha256": "6bf8092730f60ac00cc8586fce428bced1fd34ea5e5a995358486c2d1d635724",
+        "size": 16072
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-remove-header.pty.log": {
+        "sha256": "78f9fe825d49ec0f476d5d9f56a483c65ff889ba185216086e004233560f078d",
+        "size": 103507
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-csp.events.jsonl": {
+        "sha256": "ddd6dc50f7e26deec7b60a47b639e9740d4904fed7806ff12447a973bb4de91d",
+        "size": 15945
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-csp.pty.log": {
+        "sha256": "ff7c97accb0deb4ef4608af15689503e52a5ac9524db00dd1ba4c796139ec026",
+        "size": 99380
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-hsts.events.jsonl": {
+        "sha256": "2508a816b078fb1376ac94e4083299244f6c32f4fa974bb7b7d583e484d5f2f2",
+        "size": 16257
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-hsts.pty.log": {
+        "sha256": "e03c598f2e38d875f880384da4b5383f42ebbf8f3cc40f5c01ca91681ed758a1",
+        "size": 99890
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-proxy-ip-header.events.jsonl": {
+        "sha256": "4afd56ee4591de43255220d5eab83f8694ee5060a67cfa39d5597b4695113dbb",
+        "size": 21218
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-backend-proxy-ip-header.pty.log": {
+        "sha256": "7571024cf10e0ae4b1b2e7569d116dd19c6902f117ca5d35e7bde7c0be79d24f",
+        "size": 103783
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-client-ip-header.events.jsonl": {
+        "sha256": "6127d57bd2957cc37f4716ad507efd8ace465a1f301ae0f2e18e6217387c3e82",
+        "size": 17740
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-client-ip-header.pty.log": {
+        "sha256": "e3ecdf02d2d1d3e30c73ebe49afdd5ef82d36f8f12da343e36e2e0afd9b2795a",
+        "size": 94159
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-csp.events.jsonl": {
+        "sha256": "23c41b918e76beeb6716ec60b237b31573274a3fddc263e7cdcfd413f359157d",
+        "size": 12490
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-csp.pty.log": {
+        "sha256": "b49ecfffd36c1475ab589a792f87ab57c6ebc1148921fbcc1b7a9fb9b3257640",
+        "size": 89646
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-hsts.events.jsonl": {
+        "sha256": "271e13e88d579df90dcb497bd37778a4242f86625208526ac816af5682da289b",
+        "size": 12695
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-hsts.pty.log": {
+        "sha256": "67d1be987b4ecc139c23b674a1e32966c658bd704feb23a4e2927066cd7b5151",
+        "size": 89632
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-proxy-ip-header.events.jsonl": {
+        "sha256": "ccd50401b50dff80e44563bfe67852906532c4add6560f8f4699f2b0933b2553",
+        "size": 16991
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-proxy-ip-header.pty.log": {
+        "sha256": "c64776456dbff1143c65314e8224856865e2ec2d7b1ab2de6f1858803ee7e80c",
+        "size": 93623
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-real-ip-recursive.events.jsonl": {
+        "sha256": "32cd8fa5144e6273069781cc8284a327c4b57539663297397fedf14105f06242",
+        "size": 17665
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-real-ip-recursive.pty.log": {
+        "sha256": "8adb5e7c5a8e15540fc65738a4ce44aa439854909d64e5a62bdf0787c274c7d4",
+        "size": 93867
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-trusted-proxies.events.jsonl": {
+        "sha256": "4f96a5363ae3a16dc952b234e1a165bcec257bbf744cb27a2a91baac8edb9452",
+        "size": 17275
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-set-trusted-proxies.pty.log": {
+        "sha256": "826689a756d7ede00edee38c84ed76bfcf18a0afffb4c36171f62ff7f7c50f0a",
+        "size": 93700
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-show-server-tokens.events.jsonl": {
+        "sha256": "4fc348181513a242db2f4023d850a6028a670a51c53d47b84f6f1ab76e3ffc86",
+        "size": 13520
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-show-server-tokens.pty.log": {
+        "sha256": "f33bccf88a1971e7bafd9998bb06c2d55da99dbfed3ac11d2778924dcf19e5e3",
+        "size": 78299
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-trusted-proxies-reset.events.jsonl": {
+        "sha256": "01a8af38bff771489e161855aec484de097daef378c2d59878afef76f068c9d5",
+        "size": 17453
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-trusted-proxies-reset.pty.log": {
+        "sha256": "c1872d82017a9024742edf3164dc21fb7c592af01b74ff33a905d05e0872d522",
+        "size": 93179
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-update-backend-header.events.jsonl": {
+        "sha256": "41b5cf4330e802fe69c36e737272fb1fe406cfb075ad4976cbb27f52b52f0ba7",
+        "size": 20071
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-update-backend-header.pty.log": {
+        "sha256": "52526f6b6c7098592e11a60446c4ce9946f8ff45a311d47fe4bf76eb3660b7d8",
+        "size": 81147
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-update-header.events.jsonl": {
+        "sha256": "0807a38ef295e06412ca7f4c935c6a4756debeaa178b8c41d54d29437f4ed6e1",
+        "size": 16125
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-update-header.pty.log": {
+        "sha256": "dba23213729a139fd8307222645fb9c85e5a633aa4911472b979ca2860ab475d",
+        "size": 78719
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-verify-client-ip.events.jsonl": {
+        "sha256": "81e62ac89c8054b6f022a1590af5c52ec22c9fc449a609dc2d68fca4e1a9d981",
+        "size": 1073
+      },
+      "docs/assets/interactive/evidence/security-headers/security-headers-verify-client-ip.pty.log": {
+        "sha256": "fe87140ad549b8a6e8af80361003a616f08cfa4e9aea923df3c4947580ef3bdf",
+        "size": 421
+      },
+      "docs/assets/interactive/evidence/security-headers/server-token-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-headers/server-token-response.headers": {
+        "sha256": "6944f97074097c4fbc936f2a24cad25c60d72dcd2003905aedd690c3b652072b",
+        "size": 231
+      },
+      "docs/assets/interactive/evidence/security-headers/server-token-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-headers/server-token-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/trusted-forwarding-header.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-headers/trusted-forwarding-header.headers": {
+        "sha256": "71284ed58e07156233824427434fbd9f80d722e3a6f20f009f5a1e7eee506f76",
+        "size": 292
+      },
+      "docs/assets/interactive/evidence/security-headers/trusted-forwarding-header.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-headers/trusted-forwarding-header.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/untrusted-forwarding-header.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-headers/untrusted-forwarding-header.headers": {
+        "sha256": "20be0e00907dc67b0a773c83d1cc72c59cbc392bed61868b9ad4489b5a609ab3",
+        "size": 291
+      },
+      "docs/assets/interactive/evidence/security-headers/untrusted-forwarding-header.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-headers/untrusted-forwarding-header.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/update-backend-header-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-headers/update-backend-header-response.headers": {
+        "sha256": "5d9b24280c5d05866586cb27c7d78e1a6a93ea03dfe49965e0caa671935604a5",
+        "size": 257
+      },
+      "docs/assets/interactive/evidence/security-headers/update-backend-header-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-headers/update-backend-header-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-headers/update-header-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-headers/update-header-response.headers": {
+        "sha256": "98e8c43c289f62150f60c328fcf286241486c1e163de46be3ef151f8933adf06",
+        "size": 264
+      },
+      "docs/assets/interactive/evidence/security-headers/update-header-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-headers/update-header-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  }
+}

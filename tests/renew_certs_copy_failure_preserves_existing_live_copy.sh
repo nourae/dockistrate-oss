@@ -82,6 +82,8 @@ mkdir -p \
   "$SECURITY_IP_DIR" "$SECURITY_IP_STREAM_DIR" \
   "$CERTS_DIR/letsencrypt/live" "$CERTS_DIR/letsencrypt/archive" "$CERTS_DIR/letsencrypt/renewal" \
   "$ACME_WEBROOT_DIR"
+# Runtime rollback reloads the fixture settings before running recovery hooks.
+_save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
 
 # shellcheck disable=SC2218
 cat >"$BACKEND_PORTS_FILE" <<'EOF_PORTS'

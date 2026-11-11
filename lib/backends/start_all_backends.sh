@@ -16,16 +16,22 @@ function start_all_backends() {
     backends+="${STATE_BP_DOMAIN}"$'\n'
   done <"$BACKEND_PORTS_FILE"
 
-  printf '%s' "$backends" | awk 'NF > 0' | sort -u | while read -r dom; do
-    local cname="backend-$(sanitize_domain_name "$dom")"
-    if container_exists "$cname"; then
-      docker start "$cname" >/dev/null
-      echo "[Info] Started $cname."
-      log_msg "Started backend container $cname."
-    fi
-  done
+  local dom="" cname="" id="" ids=""
+  # Verify all targets before the first lifecycle operation.
+  while IFS= read -r dom; do
+    [ -n "$dom" ] || continue
+    _backend_container_snapshot "$dom" || return 1
+    ids+="$BACKEND_CONTAINER_ID|$dom"$'\n'
+  done <<<"$backends"
+  while IFS='|' read -r id dom; do
+    [ -n "$id" ] || continue
+    docker start "$id" >/dev/null || return 1
+    cname="backend-$(sanitize_domain_name "$dom")"
+    echo "[Info] Started $cname."
+    log_msg "Started backend container $cname."
+  done <<<"$ids"
 
-  update_nginx_config
+  update_nginx_config || return 1
   create_backup "" "StartAllBackends"
 }
 

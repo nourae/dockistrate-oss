@@ -1,3 +1,4 @@
+# Public snapshot: GitHub-hosted CI only.
 name: CI
 
 on:
@@ -7,35 +8,51 @@ on:
   pull_request:
   workflow_dispatch:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 env:
   SKIP_DOCKER_CHECKS: true
   TEST_TIMEOUT_SECONDS: 180
   TEST_TIMEOUT_INTEGRATION_SECONDS: 900
-  TEST_TIMEOUT_PERSISTED_RENDER_SECONDS: 600
+  TEST_TIMEOUT_PERSISTED_RENDER_SECONDS: 1800
   TEST_TIMEOUT_GRACE_SECONDS: 5
   SHUNIT2_TIMING_TOP: 20
 
 jobs:
-  syntax-and-fast-tests:
-    name: Syntax and fast tests (${{ matrix.os }})
+  domain-config-tests-linux:
+    name: Domain configuration (Linux, shard ${{ matrix.domain_shard_index }}/2)
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 25
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
         os:
           - ubuntu-latest
-          - macos-latest
+        domain_shard_index: [0, 1]
+    env:
+      TEST_DOMAIN_SHARD_TOTAL: 2
+      TEST_DOMAIN_SHARD_INDEX: ${{ matrix.domain_shard_index }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install macOS test dependencies
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && runner.environment == 'github-hosted'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+
+      - name: Verify GNU coreutils
         run: |
-          brew list coreutils >/dev/null 2>&1 || brew install coreutils
-          command -v gtimeout
-          gtimeout --version | head -1
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required (macOS: brew install coreutils)."
+            exit 1
+          fi
 
       - name: Prefer system Bash on macOS
         if: runner.os == 'macOS'
@@ -43,9 +60,136 @@ jobs:
 
       - name: Verify macOS Bash resolution
         if: runner.os == 'macOS'
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
         run: |
           test "$(command -v bash)" = "/bin/bash"
-          bash --version
+          if [ "${BASH_VERSINFO[0]}" -ne 3 ]; then
+            echo "::error::macOS compatibility tests require system Bash 3; got ${BASH_VERSION}."
+            exit 1
+          fi
+          /bin/bash --version
+
+      - name: Print Bash version
+        run: /bin/bash --version
+
+      - name: Verify domain-suite dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
+
+      - name: Run domain configuration suite
+        run: TEST_RUN_SUITE=domain-config exec /bin/bash ./tests/run.sh
+
+  domain-config-tests-macos:
+    name: Domain configuration (macOS, shard ${{ matrix.domain_shard_index }}/4)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+        domain_shard_index:
+          - 0
+          - 1
+          - 2
+          - 3
+    env:
+      TEST_DOMAIN_SHARD_TOTAL: 4
+      TEST_DOMAIN_SHARD_INDEX: ${{ matrix.domain_shard_index }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install macOS test dependencies
+        if: runner.os == 'macOS' && runner.environment == 'github-hosted'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+
+      - name: Verify GNU coreutils
+        run: |
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required (macOS: brew install coreutils)."
+            exit 1
+          fi
+
+      - name: Prefer system Bash on macOS
+        if: runner.os == 'macOS'
+        run: echo "PATH=/bin:/usr/bin:${PATH}" >> "$GITHUB_ENV"
+
+      - name: Verify macOS Bash resolution
+        if: runner.os == 'macOS'
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          test "$(command -v bash)" = "/bin/bash"
+          if [ "${BASH_VERSINFO[0]}" -ne 3 ]; then
+            echo "::error::macOS compatibility tests require system Bash 3; got ${BASH_VERSION}."
+            exit 1
+          fi
+          /bin/bash --version
+
+      - name: Print Bash version
+        run: /bin/bash --version
+
+      - name: Verify domain-suite dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
+
+      - name: Run domain configuration suite
+        run: TEST_RUN_SUITE=domain-config exec /bin/bash ./tests/run.sh
+
+  syntax-and-fast-tests-linux:
+    needs: domain-config-tests-linux
+    if: ${{ always() && !cancelled() }}
+    name: Syntax and fast tests (${{ matrix.os == 'macos-latest' && 'macOS' || 'Linux' }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install macOS test dependencies
+        if: runner.os == 'macOS' && runner.environment == 'github-hosted'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+
+      - name: Verify GNU coreutils
+        run: |
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required (macOS: brew install coreutils)."
+            exit 1
+          fi
+
+      - name: Prefer system Bash on macOS
+        if: runner.os == 'macOS'
+        run: echo "PATH=/bin:/usr/bin:${PATH}" >> "$GITHUB_ENV"
+
+      - name: Verify macOS Bash resolution
+        if: runner.os == 'macOS'
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          test "$(command -v bash)" = "/bin/bash"
+          if [ "${BASH_VERSINFO[0]}" -ne 3 ]; then
+            echo "::error::macOS compatibility tests require system Bash 3; got ${BASH_VERSION}."
+            exit 1
+          fi
+          /bin/bash --version
 
       - name: Print Bash version
         run: /bin/bash --version
@@ -58,10 +202,28 @@ jobs:
           done < <(git ls-files '*.sh' '*.bash')
 
       - name: Install ShellCheck
-        if: runner.os == 'Linux'
+        if: runner.os == 'Linux' && runner.environment == 'github-hosted'
         run: |
           sudo apt-get update
           sudo apt-get install -y shellcheck
+
+      - name: Verify ShellCheck
+        if: runner.os == 'Linux'
+        run: |
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            echo "::error::ShellCheck is required on the Linux runner."
+            exit 1
+          fi
+          shellcheck --version
+
+      - name: Verify fast-suite dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
 
       - name: ShellCheck project scripts
         if: runner.os == 'Linux'
@@ -72,24 +234,164 @@ jobs:
             xargs shellcheck --severity=error
 
       - name: Run fast test suite
-        run: TEST_RUN_SUITE=fast /bin/bash ./tests/run.sh
+        run: TEST_RUN_SUITE=fast exec /bin/bash ./tests/run.sh
 
-  persisted-render:
-    name: Persisted render validation (ubuntu-latest)
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
+      - name: Require domain configuration suite success
+        if: always() && !cancelled()
+        env:
+          DOMAIN_SUITE_RESULT: ${{ needs['domain-config-tests-linux'].result }}
+        run: |
+          if [ "$DOMAIN_SUITE_RESULT" != success ]; then
+            echo "::error::Domain configuration suite did not pass: ${DOMAIN_SUITE_RESULT}."
+            exit 1
+          fi
+
+  syntax-and-fast-tests-macos:
+    needs: domain-config-tests-macos
+    if: ${{ always() && !cancelled() }}
+    name: Syntax and fast tests (${{ matrix.os == 'macos-latest' && 'macOS' || 'Linux' }}, shard ${{ matrix.fast_shard_index }}/2)
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+        fast_shard_index:
+          - 0
+          - 1
+    env:
+      TEST_FAST_SHARD_TOTAL: 2
+      TEST_FAST_SHARD_INDEX: ${{ matrix.fast_shard_index }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install macOS test dependencies
+        if: runner.os == 'macOS' && runner.environment == 'github-hosted'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+
+      - name: Verify GNU coreutils
+        run: |
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required (macOS: brew install coreutils)."
+            exit 1
+          fi
+
+      - name: Prefer system Bash on macOS
+        if: runner.os == 'macOS'
+        run: echo "PATH=/bin:/usr/bin:${PATH}" >> "$GITHUB_ENV"
+
+      - name: Verify macOS Bash resolution
+        if: runner.os == 'macOS'
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          test "$(command -v bash)" = "/bin/bash"
+          if [ "${BASH_VERSINFO[0]}" -ne 3 ]; then
+            echo "::error::macOS compatibility tests require system Bash 3; got ${BASH_VERSION}."
+            exit 1
+          fi
+          /bin/bash --version
 
       - name: Print Bash version
         run: /bin/bash --version
 
-      - name: Run persisted render validation
-        run: TEST_RUN_SUITE=persisted-render /bin/bash ./tests/run.sh
+      - name: Bash syntax check
+        shell: bash
+        run: |
+          while IFS= read -r file; do
+            /bin/bash -n "$file"
+          done < <(git ls-files '*.sh' '*.bash')
 
-  integration-cli:
-    name: Integration CLI (${{ matrix.os }}, shard ${{ matrix.shard_index }})
+      - name: Install ShellCheck
+        if: runner.os == 'Linux' && runner.environment == 'github-hosted'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck
+
+      - name: Verify ShellCheck
+        if: runner.os == 'Linux'
+        run: |
+          if ! command -v shellcheck >/dev/null 2>&1; then
+            echo "::error::ShellCheck is required on the Linux runner."
+            exit 1
+          fi
+          shellcheck --version
+
+      - name: Verify fast-suite dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
+
+      - name: ShellCheck project scripts
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          git ls-files '*.sh' '*.bash' |
+            grep -v '^tests/lib/shunit2' |
+            xargs shellcheck --severity=error
+
+      - name: Run fast test suite
+        run: TEST_RUN_SUITE=fast exec /bin/bash ./tests/run.sh
+
+      - name: Require domain configuration suite success
+        if: always() && !cancelled()
+        env:
+          DOMAIN_SUITE_RESULT: ${{ needs['domain-config-tests-macos'].result }}
+        run: |
+          if [ "$DOMAIN_SUITE_RESULT" != success ]; then
+            echo "::error::Domain configuration suite did not pass: ${DOMAIN_SUITE_RESULT}."
+            exit 1
+          fi
+
+  persisted-render:
+    needs: syntax-and-fast-tests-linux
+    if: >-
+      ${{ always() && !cancelled() &&
+          (needs['syntax-and-fast-tests-linux'].result == 'success' || needs['syntax-and-fast-tests-linux'].result == 'failure') }}
+    name: Persisted render validation (Linux)
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Print Bash version
+        run: /bin/bash --version
+
+      - name: Verify GNU coreutils
+        run: |
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required."
+            exit 1
+          fi
+
+      - name: Verify test dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
+
+      - name: Run persisted render validation
+        run: TEST_RUN_SUITE=persisted-render exec /bin/bash ./tests/run.sh
+
+  integration-cli-linux:
+    needs: syntax-and-fast-tests-linux
+    if: >-
+      ${{ always() && !cancelled() &&
+          (needs['syntax-and-fast-tests-linux'].result == 'success' || needs['syntax-and-fast-tests-linux'].result == 'failure') }}
+    name: Integration CLI (${{ matrix.os == 'macos-latest' && 'macOS' || 'Linux' }}, shard ${{ matrix.shard_index }})
     runs-on: ${{ matrix.os }}
     timeout-minutes: 35
     strategy:
@@ -97,6 +399,76 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
+        shard_index:
+          - 0
+          - 1
+          - 2
+          - 3
+    env:
+      TEST_SHARD_TOTAL: 4
+      TEST_SHARD_INDEX: ${{ matrix.shard_index }}
+      TEST_TIMEOUT_INTEGRATION_SECONDS: 1800
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install macOS test dependencies
+        if: runner.os == 'macOS' && runner.environment == 'github-hosted'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+
+      - name: Verify GNU coreutils
+        run: |
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required (macOS: brew install coreutils)."
+            exit 1
+          fi
+
+      - name: Prefer system Bash on macOS
+        if: runner.os == 'macOS'
+        run: echo "PATH=/bin:/usr/bin:${PATH}" >> "$GITHUB_ENV"
+
+      - name: Verify macOS Bash resolution
+        if: runner.os == 'macOS'
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          test "$(command -v bash)" = "/bin/bash"
+          if [ "${BASH_VERSINFO[0]}" -ne 3 ]; then
+            echo "::error::macOS compatibility tests require system Bash 3; got ${BASH_VERSION}."
+            exit 1
+          fi
+          /bin/bash --version
+
+      - name: Verify test dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
+
+      - name: Run CLI integration suite
+        run: |
+          exec /bin/bash ./tests/lib/run_with_timeout.sh \
+            "$TEST_TIMEOUT_INTEGRATION_SECONDS" \
+            "$TEST_TIMEOUT_GRACE_SECONDS" \
+            "tests/integration/test_cli.sh shard ${TEST_SHARD_INDEX}/${TEST_SHARD_TOTAL}" \
+            -- /bin/bash ./tests/integration/test_cli.sh
+
+  integration-cli-macos:
+    needs: syntax-and-fast-tests-macos
+    if: >-
+      ${{ always() && !cancelled() &&
+          (needs['syntax-and-fast-tests-macos'].result == 'success' || needs['syntax-and-fast-tests-macos'].result == 'failure') }}
+    name: Integration CLI (${{ matrix.os == 'macos-latest' && 'macOS' || 'Linux' }}, shard ${{ matrix.shard_index }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
           - macos-latest
         shard_index:
           - 0
@@ -110,13 +482,19 @@ jobs:
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install macOS test dependencies
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && runner.environment == 'github-hosted'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+
+      - name: Verify GNU coreutils
         run: |
-          brew list coreutils >/dev/null 2>&1 || brew install coreutils
-          command -v gtimeout
-          gtimeout --version | head -1
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required (macOS: brew install coreutils)."
+            exit 1
+          fi
 
       - name: Prefer system Bash on macOS
         if: runner.os == 'macOS'
@@ -124,27 +502,114 @@ jobs:
 
       - name: Verify macOS Bash resolution
         if: runner.os == 'macOS'
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
         run: |
           test "$(command -v bash)" = "/bin/bash"
-          bash --version
+          if [ "${BASH_VERSINFO[0]}" -ne 3 ]; then
+            echo "::error::macOS compatibility tests require system Bash 3; got ${BASH_VERSION}."
+            exit 1
+          fi
+          /bin/bash --version
+
+      - name: Verify test dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
 
       - name: Run CLI integration suite
         run: |
-          /bin/bash ./tests/lib/run_with_timeout.sh \
+          exec /bin/bash ./tests/lib/run_with_timeout.sh \
             "$TEST_TIMEOUT_INTEGRATION_SECONDS" \
             "$TEST_TIMEOUT_GRACE_SECONDS" \
             "tests/integration/test_cli.sh shard ${TEST_SHARD_INDEX}/${TEST_SHARD_TOTAL}" \
             -- /bin/bash ./tests/integration/test_cli.sh
 
-  integration-feature-configs:
-    name: Feature config integration (${{ matrix.os }}, shard ${{ matrix.shard_index }})
+  integration-feature-configs-linux:
+    needs: syntax-and-fast-tests-linux
+    if: >-
+      ${{ always() && !cancelled() &&
+          (needs['syntax-and-fast-tests-linux'].result == 'success' || needs['syntax-and-fast-tests-linux'].result == 'failure') }}
+    name: Feature config integration (${{ matrix.os == 'macos-latest' && 'macOS' || 'Linux' }}, shard ${{ matrix.shard_index }})
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 45
+    timeout-minutes: 65
     strategy:
       fail-fast: false
       matrix:
         os:
           - ubuntu-latest
+        shard_index:
+          - 0
+          - 1
+          - 2
+          - 3
+    env:
+      TEST_SHARD_TOTAL: 4
+      TEST_SHARD_INDEX: ${{ matrix.shard_index }}
+      TEST_TIMEOUT_INTEGRATION_SECONDS: 3600
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install macOS test dependencies
+        if: runner.os == 'macOS' && runner.environment == 'github-hosted'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+
+      - name: Verify GNU coreutils
+        run: |
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required (macOS: brew install coreutils)."
+            exit 1
+          fi
+
+      - name: Prefer system Bash on macOS
+        if: runner.os == 'macOS'
+        run: echo "PATH=/bin:/usr/bin:${PATH}" >> "$GITHUB_ENV"
+
+      - name: Verify macOS Bash resolution
+        if: runner.os == 'macOS'
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
+        run: |
+          test "$(command -v bash)" = "/bin/bash"
+          if [ "${BASH_VERSINFO[0]}" -ne 3 ]; then
+            echo "::error::macOS compatibility tests require system Bash 3; got ${BASH_VERSION}."
+            exit 1
+          fi
+          /bin/bash --version
+
+      - name: Verify test dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
+
+      - name: Run feature-config integration shard
+        run: |
+          exec /bin/bash ./tests/lib/run_with_timeout.sh \
+            "$TEST_TIMEOUT_INTEGRATION_SECONDS" \
+            "$TEST_TIMEOUT_GRACE_SECONDS" \
+            "tests/integration/test_feature_configs.sh shard ${TEST_SHARD_INDEX}/${TEST_SHARD_TOTAL}" \
+            -- /bin/bash ./tests/integration/test_feature_configs.sh
+  integration-feature-configs-macos:
+    needs: syntax-and-fast-tests-macos
+    if: >-
+      ${{ always() && !cancelled() &&
+          (needs['syntax-and-fast-tests-macos'].result == 'success' || needs['syntax-and-fast-tests-macos'].result == 'failure') }}
+    name: Feature config integration (${{ matrix.os == 'macos-latest' && 'macOS' || 'Linux' }}, shard ${{ matrix.shard_index }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 65
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
           - macos-latest
         shard_index:
           - 0
@@ -154,17 +619,23 @@ jobs:
     env:
       TEST_SHARD_TOTAL: 4
       TEST_SHARD_INDEX: ${{ matrix.shard_index }}
-      TEST_TIMEOUT_INTEGRATION_SECONDS: 2400
+      TEST_TIMEOUT_INTEGRATION_SECONDS: 3600
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Install macOS test dependencies
-        if: runner.os == 'macOS'
+        if: runner.os == 'macOS' && runner.environment == 'github-hosted'
+        run: brew list coreutils >/dev/null 2>&1 || brew install coreutils
+
+      - name: Verify GNU coreutils
         run: |
-          brew list coreutils >/dev/null 2>&1 || brew install coreutils
-          command -v gtimeout
-          gtimeout --version | head -1
+          if ! /bin/bash ./tests/lib/run_with_timeout.sh --probe; then
+            echo "::error::GNU coreutils is required (macOS: brew install coreutils)."
+            exit 1
+          fi
 
       - name: Prefer system Bash on macOS
         if: runner.os == 'macOS'
@@ -172,13 +643,27 @@ jobs:
 
       - name: Verify macOS Bash resolution
         if: runner.os == 'macOS'
+        shell: /bin/bash --noprofile --norc -e -o pipefail {0}
         run: |
           test "$(command -v bash)" = "/bin/bash"
-          bash --version
+          if [ "${BASH_VERSINFO[0]}" -ne 3 ]; then
+            echo "::error::macOS compatibility tests require system Bash 3; got ${BASH_VERSION}."
+            exit 1
+          fi
+          /bin/bash --version
+
+      - name: Verify test dependencies
+        run: |
+          for dependency in python3 rsync; do
+            if ! command -v "$dependency" >/dev/null 2>&1; then
+              echo "::error::Install ${dependency} before starting the runner."
+              exit 1
+            fi
+          done
 
       - name: Run feature-config integration shard
         run: |
-          /bin/bash ./tests/lib/run_with_timeout.sh \
+          exec /bin/bash ./tests/lib/run_with_timeout.sh \
             "$TEST_TIMEOUT_INTEGRATION_SECONDS" \
             "$TEST_TIMEOUT_GRACE_SECONDS" \
             "tests/integration/test_feature_configs.sh shard ${TEST_SHARD_INDEX}/${TEST_SHARD_TOTAL}" \

@@ -12,7 +12,7 @@ function _generate_security_rule_line() {
   local sep=$'\x1f' expr
   expr="$(_sr_exprs "$cond" "$esc")" || return 1
   IFS=$sep read -r display_value fail_predicate pass_predicate <<<"$expr"
-  printf 'set $%s_m 0; if ($host = %s) { set $%s_m 1; } ' "$rule_var" "$domain" "$rule_var"
+  printf 'set $%s_m 0; if ($dockistrate_security_identity = %s) { set $%s_m 1; } ' "$rule_var" "$domain" "$rule_var"
   printf 'set $%s_fail 0; if ($%s_m = 1) { set $%s_fail 1; } ' "$rule_var" "$rule_var" "$rule_var"
   printf 'set $%s_p1 0; if (%s %s) { set $%s_p1 1; } ' "$rule_var" "$hv" "$pass_predicate" "$rule_var"
   printf 'if ($%s_p1 = 1) { set $%s_fail 0; } if ($%s_fail = 1) { set $dockistrate_rule_reason "%s"; set $dockistrate_rule_loc "%s"; return %s; }\n' "$rule_var" "$rule_var" "$rule_var" "$esc_reason" "$esc_loc" "$code"
@@ -41,7 +41,7 @@ function _generate_security_rule_multi_line() {
   local n=$(($# / 3))
   ((n >= 2 && n <= 10)) || return 1
   local i idx=0 host_part="" or_part="" and_part="" concat="" ones="" fail_part=""
-  printf -v host_part ' set $%s_m 0; if ($host = %s) { set $%s_m 1; }' "$rule_var" "$domain" "$rule_var"
+  printf -v host_part ' set $%s_m 0; if ($dockistrate_security_identity = %s) { set $%s_m 1; }' "$rule_var" "$domain" "$rule_var"
   printf -v fail_part ' set $%s_fail 0; if ($%s_m = 1) { set $%s_fail 1; }' "$rule_var" "$rule_var" "$rule_var"
   for ((i = 1; i <= n; i++)); do
     local h="${@:$((idx + 1)):1}"
@@ -68,6 +68,49 @@ function _generate_security_rule_multi_line() {
   else
     printf '%s%s%s set $%s_tmp "%s"; if ($%s_tmp = "%s") { set $%s_fail 0; } if ($%s_fail = 1) { set $dockistrate_rule_reason "%s"; set $dockistrate_rule_loc "%s"; return %s; }\n' \
       "$host_part" "$and_part" "$fail_part" "$rule_var" "$concat" "$rule_var" "$ones" "$rule_var" "$rule_var" "$esc_reason" "$esc_loc" "$code"
+  fi
+}
+
+# Block and Allow use the same positive condition truth as Require. An Allow
+# records a decision without ending rewrite/access processing; ACLs, mTLS and
+# subsequent location behavior still run normally.
+function _generate_security_decision_line() {
+  local action="$1" mode="$2" domain="$3" code="$4" reason="$5" loc="$6" seed="$7"
+  shift 7
+  case "$action" in block | allow) ;; *) return 1 ;; esac
+  (($# % 3 == 0)) || return 1
+  local n=$(($# / 3)) i idx=0 rule_var="" concat="" ones=""
+  ((n >= 1 && n <= 10)) || return 1
+  case "$mode:$n" in single:1) ;; and:* | or:*) ((n >= 2)) || return 1 ;; *) return 1 ;; esac
+  _sr_next_rule_var rule_var "$seed"
+  printf 'set $%s_m 0; if ($dockistrate_security_identity = %s) { set $%s_m 1; } ' "$rule_var" "$domain" "$rule_var"
+  printf 'set $%s_pass 0; ' "$rule_var"
+  for ((i = 1; i <= n; i++)); do
+    local selector="${@:$((idx + 1)):1}" cond="${@:$((idx + 2)):1}" value="${@:$((idx + 3)):1}"
+    local hv="" expr="" display_value="" fail_predicate="" pass_predicate="" sep=$'\x1f'
+    idx=$((idx + 3))
+    _sr_selector_to_var "$selector" hv _ || return 1
+    expr="$(_sr_exprs "$cond" "$(_escape_nginx_value "$value")")" || return 1
+    IFS=$sep read -r display_value fail_predicate pass_predicate <<<"$expr" || return 1
+    if [ "$mode" = and ]; then
+      printf 'set $%s_p%d 0; if (%s %s) { set $%s_p%d 1; } ' "$rule_var" "$i" "$hv" "$pass_predicate" "$rule_var" "$i"
+      printf -v concat '%s$%s_p%d' "$concat" "$rule_var" "$i"
+      ones+="1"
+    else
+      printf 'if (%s %s) { set $%s_pass 1; } ' "$hv" "$pass_predicate" "$rule_var"
+    fi
+  done
+  if [ "$mode" = and ]; then
+    printf 'set $%s_tmp "%s"; if ($%s_tmp = "%s") { set $%s_pass 1; } ' "$rule_var" "$concat" "$rule_var" "$ones" "$rule_var"
+  fi
+  # A single string comparison supplies AND without nested Nginx if blocks:
+  # no previous decision, applicable serving identity, and matching condition.
+  printf 'set $%s_selected "$dockistrate_security_decision:$%s_m:$%s_pass"; ' "$rule_var" "$rule_var" "$rule_var"
+  if [ "$action" = allow ]; then
+    printf 'if ($%s_selected = "0:1:1") { set $dockistrate_security_decision 1; }\n' "$rule_var"
+  else
+    printf 'if ($%s_selected = "0:1:1") { set $dockistrate_rule_reason "%s"; set $dockistrate_rule_loc "%s"; return %s; }\n' \
+      "$rule_var" "$(_escape_nginx_value "$reason")" "$(_escape_nginx_value "$loc")" "$code"
   fi
 }
 
@@ -137,12 +180,16 @@ function _persisted_acl_validate_row() {
 # Build nginx include from DB
 
 function _build_security_ip_for_domain() {
-  local domain="$1"
+  local domain="" acl_var_base="${2:-}"
+  domain="$(normalize_domain "$1")"
+  # Full include builds allocate collision-safe names in sorted host order.
+  # A direct single-host render uses the same bounded, deterministic seed.
+  [ -n "$acl_var_base" ] || acl_var_base="$(_sr_hash_rule_seed "acl:$domain")" || return 1
   local default_status policy_l7 policy_l3
-  policy_l7="$(get_backend_acl_policy "$domain")"
+  policy_l7="$(get_backend_acl_policy "$domain")" || return 1
   # Unified ACL policy: L3 uses the same policy value
-  policy_l3="$(get_backend_acl_policy "$domain")"
-  default_status="$(get_backend_acl_status "$domain")"
+  policy_l3="$(get_backend_acl_policy "$domain")" || return 1
+  default_status="$(get_backend_acl_status "$domain")" || return 1
 
   # Gather IP rules for this domain (declare as arrays for Bash 3 compatibility with set -u)
   local -a l7_allow=() l7_deny=() l3_allow=() l3_deny=()
@@ -208,23 +255,12 @@ function _build_security_ip_for_domain() {
   # Collect rules for this domain
   _collect_ip_rules_for "$domain" || return 1
 
-  # For dedicated hosts, inherit rules from target domain if:
-  # 1. No explicit rules exist for the dedicated host
-  # 2. Inheritance is enabled for ACL
-  # This uses an all-or-nothing approach: if ANY explicit rule exists for the dedicated
-  # host, no inheritance occurs. This ensures that dedicated hosts with partial explicit
-  # rules have full control over their ACL behavior.
+  # Alias and dedicated-host rule inheritance is all-or-nothing: an active
+  # explicit rule list replaces the parent's list. Dedicated hosts can opt out.
   local target_domain
-  target_domain="$(backend_for_dedicated_host "$domain")"
+  target_domain="$(_acl_inherited_domain "$domain")" || return 1
   if [ -n "$target_domain" ] && [ ${#l7_allow[@]} -eq 0 ] && [ ${#l7_deny[@]} -eq 0 ] && [ ${#l3_allow[@]} -eq 0 ] && [ ${#l3_deny[@]} -eq 0 ]; then
-    # Check if inheritance is enabled (defaults to yes if function not available)
-    local should_inherit="yes"
-    if command -v should_inherit_acl >/dev/null 2>&1; then
-      should_inherit_acl "$domain" && should_inherit="yes" || should_inherit="no"
-    fi
-    if [ "$should_inherit" = "yes" ]; then
-      _collect_ip_rules_for "$target_domain" || return 1
-    fi
+    _collect_ip_rules_for "$target_domain" || return 1
   fi
 
   # L7 explicit denies should run before deny/all return paths.
@@ -260,6 +296,11 @@ function _build_security_ip_for_domain() {
     if [ "$default_status" = "403" ]; then
       local ip
       local has_allow_all=0
+      # Nginx access rules stop at the first match. Explicit denies must
+      # precede every allow, including overlapping addresses and networks.
+      if [ ${#l7_deny[@]} -gt 0 ]; then
+        _render_l7_deny_rules
+      fi
       for ip in ${l7_allow[@]+"${l7_allow[@]}"}; do
         if is_valid_ipv4 "$ip"; then
           echo "allow ${ip};"
@@ -272,16 +313,12 @@ function _build_security_ip_for_domain() {
         fi
       done
 
-      if [ ${#l7_deny[@]} -gt 0 ]; then
-        _render_l7_deny_rules
-      fi
-
       if [ "$has_allow_all" -eq 1 ]; then
         echo "allow all;"
       fi
       echo "deny all;"
     else
-      local var="sr_${RANDOM}_l7_allow" ip
+      local var="${acl_var_base}_l7_allow" ip
       local has_allow_all=0
       echo "set \$${var} 0;"
       for ip in ${l7_allow[@]+"${l7_allow[@]}"}; do
@@ -309,7 +346,7 @@ function _build_security_ip_for_domain() {
 
   # L3 policy (based on $realip_remote_addr)
   if [ "$policy_l3" = "deny" ]; then
-    local var3="sr_${RANDOM}_l3_allow"
+    local var3="${acl_var_base}_l3_allow"
     echo "set \$${var3} 0;"
     local i ip
     for i in "${!l3_allow[@]}"; do
@@ -334,7 +371,7 @@ function _build_security_ip_for_domain() {
 function _build_security_ip_stream_for_domain() {
   local domain="$1"
   local policy
-  policy="$(get_backend_acl_policy "$domain")"
+  policy="$(get_backend_acl_policy "$domain")" || return 1
 
   # Gather IP rules for this domain (Bash 3-compatible arrays).
   # Stream ACLs use client IP only, so l7/l3/both all map to the same checks.
@@ -381,6 +418,11 @@ function _build_security_ip_stream_for_domain() {
   if [ "$policy" = "deny" ]; then
     local ip
     local has_allow_all=0
+    # Keep stream precedence consistent with HTTP: explicit denies win over
+    # overlapping allows; the policy catch-all remains last.
+    for ip in ${deny[@]+"${deny[@]}"}; do
+      echo "deny ${ip};"
+    done
     for ip in ${allow[@]+"${allow[@]}"}; do
       if is_valid_ipv4 "$ip"; then
         echo "allow ${ip};"
@@ -392,12 +434,6 @@ function _build_security_ip_stream_for_domain() {
         fi
       fi
     done
-    # Explicit denies should be evaluated before catch-all rules.
-    if [ ${#deny[@]} -gt 0 ]; then
-      for ip in ${deny[@]+"${deny[@]}"}; do
-        echo "deny ${ip};"
-      done
-    fi
     if [ "$has_allow_all" -eq 1 ]; then
       echo "allow all;"
     fi

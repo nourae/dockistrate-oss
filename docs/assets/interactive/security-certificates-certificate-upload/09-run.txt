@@ -1,0 +1,18 @@
+Review command
+  Command: Add Cert (add-cert)
+  Description: Generate or upload a certificate for a domain and optional port suffix
+
+Arguments:
+  Domain: example.com
+  Certificate port suffix: 9443
+  Certificate type: upload
+  Fullchain path: /opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem
+  Private key path: /opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/privkey.pem
+
+CLI equivalent:
+  ./dockistrate.sh add-cert example.com 9443 upload /opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem /opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/privkey.pem
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -9,7 +9,7 @@ if [ -f "${TLS_MODULE_DIR}/common.sh" ]; then
 fi
 
 for tls_file in "${TLS_MODULE_DIR}"/*.sh; do
-  tls_basename="$(basename "${tls_file}")"
+  tls_basename="${tls_file##*/}"
   if [ "${tls_basename}" = "common.sh" ]; then
     continue
   fi

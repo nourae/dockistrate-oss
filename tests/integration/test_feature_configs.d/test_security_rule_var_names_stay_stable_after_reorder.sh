@@ -26,21 +26,9 @@ test_security_rule_var_names_stay_stable_after_reorder() {
   run_dockistrate add-security-rule stable-vars.test 1 header X-Other equals other --code 452 >/dev/null
   assertEquals "seed second rule" 0 $?
 
-  local header row1 row2 tmp_file
-  header="$(sed -n '1p' "$rules_db")"
-  row1="$(sed -n '2p' "$rules_db")"
-  row2="$(sed -n '3p' "$rules_db")"
-  tmp_file="${rules_db}.tmp"
-  {
-    printf '%s\n' "$header"
-    printf '%s\n' "$row2"
-    printf '%s\n' "$row1"
-  } >"$tmp_file"
-  mv "$tmp_file" "$rules_db"
-
   local output
-  output="$(run_dockistrate update-nginx-config 2>&1)"
-  assertEquals "update-nginx-config after rule reorder" 0 $?
+  output="$(run_dockistrate move-security-rule 2 1 2>&1)"
+  assertEquals "move-security-rule rebuilds after rule reorder" 0 $?
 
   local base_var_after
   base_var_after="$(extract_single_security_rule_var 'if ($http_x_base = "keep") { set $' "$rules_file")"

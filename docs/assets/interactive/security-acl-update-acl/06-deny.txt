@@ -1,0 +1,7 @@
+Action:
+  1) Keep current: allow
+  2) Allow
+> 3) Deny
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

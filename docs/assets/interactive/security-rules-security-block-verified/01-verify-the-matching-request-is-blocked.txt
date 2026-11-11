@@ -1,0 +1,7 @@
+$ curl --noproxy \* -sS -D - -o /dev/null http://127.0.0.1 -H Host:\ example.com -A BadBot
+HTTP/1.1 403 Forbidden
+Server: nginx/1.31.7
+Date: Mon, 09 Nov 2026 11:35:23 GMT
+Content-Type: text/html
+Content-Length: 153
+Connection: keep-alive

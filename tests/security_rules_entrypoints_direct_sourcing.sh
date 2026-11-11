@@ -21,7 +21,7 @@ for entrypoint_name in "${entrypoint_names[@]}"; do
     # shellcheck source=/dev/null
     source "$entrypoint_file"
 
-    for name in "$ENTRYPOINT_NAME" __dockistrate_security_rules_loaded __dockistrate_security_rules_common_loaded _sr_write_db_line; do
+    for name in "$ENTRYPOINT_NAME" __dockistrate_security_rules_loaded __dockistrate_security_rules_common_loaded _sr_write_db_line _sr_write_db_line_with_action _sr_normalize_action; do
       if ! declare -F "$name" >/dev/null 2>&1; then
         echo "$name should be available after directly sourcing ${ENTRYPOINT_NAME}.sh" >&2
         exit 1

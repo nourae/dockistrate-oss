@@ -70,6 +70,7 @@ function build_security_rules_inc() {
   local security_rules_inc_dir=""
   SR_RULE_COUNTER=0
   SR_RULE_VARS_EMITTED=""
+  validate_backend_aliases_state_for_render || return 1
   security_rules_inc_dir="$(dirname "$SECURITY_RULES_INC")"
   if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
     runtime_state_paths_guard_if_declared "$security_rules_inc_dir" "$SECURITY_RULES_INC" || return 1
@@ -78,11 +79,22 @@ function build_security_rules_inc() {
   if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
     runtime_state_paths_guard_if_declared "$security_rules_inc_dir" "$SECURITY_RULES_INC" || return 1
   fi
-  : >"$SECURITY_RULES_INC"
+  # Every location evaluation starts a new ordered decision sequence, including
+  # an internal redirect that evaluates this include again. This latch never
+  # grants access; it only suppresses later Block/Allow decisions.
+  printf 'set $dockistrate_security_decision 0;\n' >"$SECURITY_RULES_INC"
   # Build per-domain IP policy include files first
   build_security_ip_includes || return 1
   [ -f "$SECURITY_RULES_DB" ] || return 0
   csv_require_header "$SECURITY_RULES_DB" "$STATE_SECURITY_RULES_HEADER" || return 1
+  # Requirements are unconditional prerequisites. Within each phase retain the
+  # persisted global ordering before expanding backend rows to their hosts.
+  _build_security_rules_phase require || return 1
+  _build_security_rules_phase decision
+}
+
+function _build_security_rules_phase() {
+  local phase="$1"
   local line="" line_no=0 rule_id=0
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
@@ -97,7 +109,7 @@ function build_security_rules_inc() {
     fi
     rule_id=$((rule_id + 1))
 
-    local enabled domain mode code n reason loc
+    local enabled domain mode code n reason loc action
     enabled="${CSV_FIELDS[0]}"
     domain="${CSV_FIELDS[1]}"
     mode="${CSV_FIELDS[2]}"
@@ -105,6 +117,14 @@ function build_security_rules_inc() {
     n="${CSV_FIELDS[4]}"
     reason="${CSV_FIELDS[45]:--}"
     loc="${CSV_FIELDS[46]:-auto}"
+    action="$(_sr_normalize_action "${CSV_FIELDS[47]:-require}")" || {
+      _security_rule_render_state_error "$line_no" 'action must be require, block or allow'
+      return 1
+    }
+    case "$phase:$action" in
+    require:require | decision:block | decision:allow) ;;
+    *) continue ;;
+    esac
     _validate_persisted_security_rule_envelope "$line_no" "$enabled" "$domain" "$mode" "$code" "$n" "$reason" "$loc" || return 1
     domain="$(normalize_domain "$domain")"
 
@@ -133,16 +153,29 @@ function build_security_rules_inc() {
       triplets+=("$sel" "$_c" "$_v")
     done
     [ "$enabled" = "1" ] || continue
-    [[ -z "$eff_code" || "$eff_code" == "-" ]] && eff_code="$(get_backend_security_rule_status "$domain")"
-    if ! is_status_code "$eff_code"; then
-      _security_rule_render_state_error "$line_no" "effective status code '${eff_code}' is invalid"
-      return 1
-    fi
-    if [ "$n" -eq 1 ]; then
-      _generate_security_rule_line "$domain" "${triplets[0]}" "${triplets[1]}" "${triplets[2]}" "$eff_code" "$reason" "$loc" "$line" >>"$SECURITY_RULES_INC"
-    else
-      _generate_security_rule_multi_line "$mode" "$domain" "$eff_code" "$reason" "$loc" "$line" "${triplets[@]}" >>"$SECURITY_RULES_INC"
-    fi
+    local recipients="" recipient="" seed=""
+    recipients="$(_sr_rule_recipients_validated "$domain")" || return 1
+    while IFS= read -r recipient || [ -n "$recipient" ]; do
+      [ -n "$recipient" ] || continue
+      eff_code="$code"
+      if [[ -z "$eff_code" || "$eff_code" == "-" ]]; then
+        eff_code="$(get_backend_security_rule_status "$recipient")" || return 1
+      fi
+      if ! is_status_code "$eff_code"; then
+        _security_rule_render_state_error "$line_no" "effective status code '${eff_code}' is invalid"
+        return 1
+      fi
+      # Keep the primary seed stable and distinguish each inherited copy.
+      seed="$line"
+      [ "$recipient" = "$domain" ] || seed+=$'\n'"recipient=${recipient}"
+      if [ "$action" != require ]; then
+        _generate_security_decision_line "$action" "$mode" "$recipient" "$eff_code" "$reason" "$loc" "$seed" "${triplets[@]}" >>"$SECURITY_RULES_INC" || return 1
+      elif [ "$n" -eq 1 ]; then
+        _generate_security_rule_line "$recipient" "${triplets[0]}" "${triplets[1]}" "${triplets[2]}" "$eff_code" "$reason" "$loc" "$seed" >>"$SECURITY_RULES_INC" || return 1
+      else
+        _generate_security_rule_multi_line "$mode" "$recipient" "$eff_code" "$reason" "$loc" "$seed" "${triplets[@]}" >>"$SECURITY_RULES_INC" || return 1
+      fi
+    done <<<"$recipients"
   done <"$SECURITY_RULES_DB"
 }
 

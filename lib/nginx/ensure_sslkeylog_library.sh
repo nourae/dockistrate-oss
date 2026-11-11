@@ -1,22 +1,52 @@
 # shellcheck shell=bash
 
+function _sslkeylog_source_fingerprint() {
+  local fingerprint=""
+  [ -f "${SSLKEYLOG_LIB_SOURCE_FILE:-}" ] || return 1
+  if command -v sha256sum >/dev/null 2>&1; then
+    fingerprint="$(sha256sum <"$SSLKEYLOG_LIB_SOURCE_FILE")" || return 1
+  elif command -v shasum >/dev/null 2>&1; then
+    fingerprint="$(shasum -a 256 <"$SSLKEYLOG_LIB_SOURCE_FILE")" || return 1
+  elif command -v openssl >/dev/null 2>&1; then
+    fingerprint="$(openssl dgst -sha256 -r <"$SSLKEYLOG_LIB_SOURCE_FILE")" || return 1
+  else
+    echo "[Error] Unable to find a SHA-256 checksum tool for the TLS keylog helper." >&2
+    return 1
+  fi
+  fingerprint="${fingerprint%%[[:space:]]*}"
+  [[ "$fingerprint" =~ ^[0-9a-fA-F]{64}$ ]] || {
+    echo "[Error] Invalid SHA-256 fingerprint for the TLS keylog helper source." >&2
+    return 1
+  }
+  printf '%s\n' "$fingerprint" | tr '[:upper:]' '[:lower:]'
+}
+
 function ensure_sslkeylog_library() {
   local image="${1:-$NGINX_IMAGE}"
+  require_valid_image_ref "$image" "Nginx TLS keylog helper" || return 1
   local build_script=""
-  local image_id="" build_meta="" expected_meta=""
+  local image_id="" build_meta="" expected_meta="" source_fingerprint="" built_fingerprint=""
 
   if [ ! -f "$SSLKEYLOG_LIB_SOURCE_FILE" ]; then
     echo "[Error] Missing TLS keylog helper source: ${SSLKEYLOG_LIB_SOURCE_FILE}" >&2
     return 1
   fi
+  source_fingerprint="$(_sslkeylog_source_fingerprint)" || {
+    echo "[Error] Unable to fingerprint TLS keylog helper source." >&2
+    return 1
+  }
+
+  if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
+    runtime_state_paths_guard_if_declared "$SSLKEYLOG_LIB_BUILD_DIR" "$SSLKEYLOG_LIB_BUILD_FILE" "$SSLKEYLOG_LIB_BUILD_META_FILE" || return 1
+  fi
 
   image_id="$(docker image inspect "$image" --format '{{.Id}}' 2>/dev/null || true)"
   if [ -n "$image_id" ]; then
-    expected_meta="${image}|${image_id}"
+    expected_meta="${image}|${image_id}"$'\n'"source=${source_fingerprint}"
   fi
 
-  if [ -s "$SSLKEYLOG_LIB_BUILD_FILE" ] && [ "$SSLKEYLOG_LIB_BUILD_FILE" -nt "$SSLKEYLOG_LIB_SOURCE_FILE" ] && [ -n "$expected_meta" ]; then
-    build_meta="$(sed -n '1p' "$SSLKEYLOG_LIB_BUILD_META_FILE" 2>/dev/null || true)"
+  if [ -s "$SSLKEYLOG_LIB_BUILD_FILE" ] && [ -n "$expected_meta" ]; then
+    build_meta="$(cat "$SSLKEYLOG_LIB_BUILD_META_FILE" 2>/dev/null || true)"
     if [ "$build_meta" = "$expected_meta" ]; then
       return 0
     fi
@@ -29,6 +59,9 @@ function ensure_sslkeylog_library() {
   if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
     runtime_state_paths_guard_if_declared "$SSLKEYLOG_LIB_BUILD_DIR" "$SSLKEYLOG_LIB_BUILD_FILE" "$SSLKEYLOG_LIB_BUILD_META_FILE" || return 1
   fi
+  # A failed or interrupted rebuild must not leave metadata claiming that the
+  # previous source still describes a potentially replaced output file.
+  rm -f "$SSLKEYLOG_LIB_BUILD_META_FILE" || return 1
   mkdir -p "$SSLKEYLOG_LIB_BUILD_DIR"
   if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
     runtime_state_paths_guard_if_declared "$SSLKEYLOG_LIB_BUILD_DIR" "$SSLKEYLOG_LIB_BUILD_FILE" "$SSLKEYLOG_LIB_BUILD_META_FILE" || return 1
@@ -73,6 +106,11 @@ mv "$tmp" "$out"'
 
   if [ ! -s "$SSLKEYLOG_LIB_BUILD_FILE" ]; then
     echo "[Error] TLS keylog helper build did not produce ${SSLKEYLOG_LIB_BUILD_FILE}." >&2
+    return 1
+  fi
+  built_fingerprint="$(_sslkeylog_source_fingerprint)" || return 1
+  if [ "$built_fingerprint" != "$source_fingerprint" ]; then
+    echo "[Error] TLS keylog helper source changed during the build; retry before using it." >&2
     return 1
   fi
 

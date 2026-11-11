@@ -1,0 +1,9 @@
+=== Missing setup ===
+Remove Cert needs an existing certificate, but no certificates are configured.
+
+Suggested next action:
+  1) Add certificate now
+> 2) Return to previous menu
+  3) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

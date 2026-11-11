@@ -3,11 +3,20 @@
 function create_backup() {
   _backup_ensure_runtime_defaults
   # If auto-backups are disabled and this is not a forced manual backup, skip
-  if [ "$ENABLE_AUTO_BACKUPS" != "true" ] && [ "$1" != "ForceManual" ]; then
+  if [ "$ENABLE_AUTO_BACKUPS" != "true" ] && [ "${1:-}" != "ForceManual" ]; then
     return
   fi
 
-  local reason="$2"
+  # Feature helpers run before their outer domain transaction publishes its
+  # source/applied model. A journal request also survives subshell callers.
+  if [ "${1:-}" != ForceManual ] && [ "${DOMAIN_CONFIG_ACTIVE:-false}" = true ] &&
+    [ "${DOMAIN_CONFIG_AUTO_BACKUP_FLUSH:-false}" != true ] &&
+    [ -n "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ] && transaction_is_active; then
+    _domain_runtime_put "$DOMAIN_CONFIG_RUNTIME_JOURNAL/transaction.csv" auto_backup_requested yes
+    return $?
+  fi
+
+  local reason="${2:-}"
   [ -z "$reason" ] && reason="Auto"
   if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
     runtime_state_path_guard_if_declared "$CONFIG_DIR" "backup config source" || return 1
@@ -21,39 +30,77 @@ function create_backup() {
     reason_sanitized="Auto"
   fi
   local backup_name="${timestamp}_${reason_sanitized}"
+  if [ "${DOMAIN_CONFIG_AUTO_BACKUP_FLUSH:-false}" = true ]; then
+    backup_name="${backup_name}_${DOMAIN_CONFIG_RUNTIME_JOURNAL##*.}"
+  fi
   if ! is_valid_backup_name "$backup_name"; then
     echo "[Error] Generated backup name is invalid: $backup_name" >&2
     return 1
   fi
   local backup_path=""
 
-  local cur_checksum=""
-  if [ -d "$CONFIG_DIR" ]; then
+  local cur_checksum="" domain_backup=false
+  if declare -F domain_config_active >/dev/null 2>&1 && domain_config_active; then
+    domain_backup=true
+    cur_checksum="$(domain_config_backup_checksum)" || return 1
+  elif [ -d "$CONFIG_DIR" ]; then
     cur_checksum="$(_config_checksum "$CONFIG_DIR")"
   fi
   local last_checksum=""
   [ -f "$FULL_BACKUP_CHECKSUM_FILE" ] && last_checksum="$(cat "$FULL_BACKUP_CHECKSUM_FILE")"
-  if [ "$cur_checksum" = "$last_checksum" ] && [ "$1" != "ForceManual" ]; then
+  if [ "$cur_checksum" = "$last_checksum" ] && [ "${1:-}" != "ForceManual" ]; then
     return
   fi
 
   local old_umask
   old_umask="$(umask)"
   umask 077
-  _ensure_backup_dir_secure
+  if ! _ensure_backup_dir_secure; then
+    umask "$old_umask"
+    return 1
+  fi
   if ! _backup_resolve_path_within_root backup_path "${BACKUP_DIR}/${backup_name}"; then
     umask "$old_umask"
     return 1
   fi
 
-  if ! mkdir -p "$backup_path"; then
+  if [ "${DOMAIN_CONFIG_AUTO_BACKUP_FLUSH:-false}" = true ]; then
+    if [ -e "$backup_path" ] || [ -L "$backup_path" ] ||
+      [ -e "${backup_path}.tar.gz" ] || [ -L "${backup_path}.tar.gz" ] ||
+      [ -e "${backup_path}.tar.gz.sha256" ] || [ -L "${backup_path}.tar.gz.sha256" ]; then
+      echo '[Error] Automatic backup output already exists.' >&2
+      umask "$old_umask"
+      return 1
+    fi
+    # Record ownership before creation so interrupted, uncommitted operations
+    # can discard only this output and restore the previous public markers.
+    if ! _domain_runtime_put "$DOMAIN_CONFIG_RUNTIME_JOURNAL/automatic_backup/state.csv" output "$backup_path" ||
+      ! mkdir "$backup_path"; then
+      umask "$old_umask"
+      return 1
+    fi
+  elif ! mkdir -p "$backup_path"; then
     echo "[Warn] Failed to create backup directory at $backup_path. Skipping backup."
     umask "$old_umask"
     return
   fi
   chmod 700 "$backup_path" 2>/dev/null || true
 
-  if [ -d "$CONFIG_DIR" ]; then
+  if [ "$domain_backup" = true ]; then
+    if ! domain_config_backup_write "$backup_path"; then
+      echo '[Error] Failed to snapshot domain configuration and certificate material.' >&2
+      _backup_safe_rm_rf "$backup_path" || true
+      umask "$old_umask"
+      return 1
+    fi
+    # A draft may have changed since deduplication inspected it. The saved
+    # checksum must describe this backup's actual payload.
+    if ! cur_checksum="$(cd "$backup_path" && _config_checksum .)"; then
+      _backup_safe_rm_rf "$backup_path" || true
+      umask "$old_umask"
+      return 1
+    fi
+  elif [ -d "$CONFIG_DIR" ]; then
     if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
       runtime_state_path_guard_if_declared "$CONFIG_DIR" "backup config source" || {
         _backup_safe_rm_rf "$backup_path" || true
@@ -103,11 +150,24 @@ function create_backup() {
       return 1
     }
   fi
-  echo "$cur_checksum" >"$FULL_BACKUP_CHECKSUM_FILE"
-  echo "$backup_path" >"$FULL_BACKUP_FILE"
+  if ! {
+    printf '%s\n' "$cur_checksum" >"$FULL_BACKUP_CHECKSUM_FILE" &&
+      printf '%s\n' "$backup_path" >"$FULL_BACKUP_FILE"
+  }; then
+    umask "$old_umask"
+    return 1
+  fi
   log_msg "Created backup: $backup_name"
 
-  # Enforce retention if set
+  # Provisional automatic outputs must not prune rollback evidence before the
+  # durable commit. Their retention runs from committed journal cleanup.
+  if [ "${DOMAIN_CONFIG_AUTO_BACKUP_FLUSH:-false}" != true ]; then
+    _backup_enforce_retention
+  fi
+  umask "$old_umask"
+}
+
+function _backup_enforce_retention() {
   if [ "$BACKUP_RETENTION" -gt 0 ]; then
     echo "[Info] Enforcing backup retention of $BACKUP_RETENTION day(s)..."
     local stale_file
@@ -121,5 +181,4 @@ function create_backup() {
       _backup_safe_rm_rf "$stale_dir" || true
     done < <(find "$BACKUP_DIR" -maxdepth 1 -type d -name "[0-9]*_*" -mtime +"$BACKUP_RETENTION" -print0 2>/dev/null)
   fi
-  umask "$old_umask"
 }

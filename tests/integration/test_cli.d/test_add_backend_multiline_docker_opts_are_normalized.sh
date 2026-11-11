@@ -19,17 +19,17 @@ test_add_backend_multiline_docker_opts_are_normalized() {
   assertStringContains "add-backend output should report backend creation" "Backend for 'multiline-opts.test'" "$output"
 
   local opts_file="${CONFIG_DIR}/backend_docker_opts.csv"
-  local expected_line="backend:multiline-opts.test,--label app=demo --env 'FOO=bar baz' --cap-add SYS_PTRACE"
+  local expected_line="multiline-opts.test,--label app=demo --env 'FOO=bar baz' --cap-add SYS_PTRACE"
   assertTrue "backend docker opts file should exist" "[ -f '$opts_file' ]"
   assertTrue "docker opts should be normalized to a canonical single line" \
     "grep -Fxq \"$expected_line\" '$opts_file'"
 
   local entry_count
-  entry_count="$(grep -c '^backend:multiline-opts\.test,' "$opts_file" || true)"
+  entry_count="$(grep -c '^multiline-opts\.test,' "$opts_file" || true)"
   assertEquals "backend docker opts should only store one row for the backend" "1" "$entry_count"
 
   local stored_opts stored_line
-  stored_line="$(grep '^backend:multiline-opts\.test,' "$opts_file" | head -n 1 || true)"
+  stored_line="$(grep '^multiline-opts\.test,' "$opts_file" | head -n 1 || true)"
   if [ -z "$stored_line" ] || ! csv_parse_line "$stored_line" || [ "$CSV_FIELD_COUNT" -lt 2 ]; then
     fail "Expected valid docker opts CSV row for backend:multiline-opts.test"
     return

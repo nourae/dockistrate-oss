@@ -79,9 +79,10 @@ ${STATE_BACKEND_MTLS_HEADER}
 export.test,${MTLS_DIR}
 EOF_MTLS
 
+_generate_backend_ca "$MTLS_DIR" export.test >/dev/null 2>&1
+_init_backend_mtls_state "$MTLS_DIR" fresh
 printf 'dummy-cert\n' >"$MTLS_DIR/client1.crt"
 printf 'dummy-key\n' >"$MTLS_DIR/client1.key"
-printf 'dummy-ca\n' >"$MTLS_DIR/ca.crt"
 printf 'existing-bundle\n' >"$P12_FILE"
 chmod 640 "$MTLS_DIR/client1.crt" "$MTLS_DIR/ca.crt"
 chmod 600 "$MTLS_DIR/client1.key" "$P12_FILE"

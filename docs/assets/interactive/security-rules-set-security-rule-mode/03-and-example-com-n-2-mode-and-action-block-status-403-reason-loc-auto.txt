@@ -1,0 +1,7 @@
+Numeric row ID from the corresponding list command.
+ID
+Example: 1:
+> 1) AND example.com (n=2, mode=AND) action=block status=403 reason=- loc=auto
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

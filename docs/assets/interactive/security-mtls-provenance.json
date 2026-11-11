@@ -1,0 +1,1442 @@
+{
+  "schema_version": 1,
+  "scenario": "security-mtls",
+  "source_commit": "3d2ee0b58e2f729255105b30e5715990696f107b",
+  "started_at": "2026-11-07T16:16:08.220481+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42390384054",
+  "github_run_attempt": "1",
+  "scenario_module": "security",
+  "group": "mtls",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"44 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T16:24:55.088985+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "security-mtls-mtls-clients",
+      "journey_family": "security-mtls-mtls-clients",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "enable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-mtls-clients/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-clients/03-example-com.txt",
+      "image_sha256": "7b885c074bd30fe0e4e15ee6f269668e00f3e7e8d87c7b91e959b309a08d8d05",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-clients.pty.log",
+      "pty_byte_offset": 86540,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-mtls-clients",
+      "journey_family": "security-mtls-mtls-clients",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "enable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-mtls-clients/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-clients/04-enter-value.txt",
+      "image_sha256": "77c1cfa57fa56dba138664a452b32632d89b7c2d16b3a6775b9a276ec8888642",
+      "transcript_sha256": "d0ab199170d6a0fa9f43589ae7a42ab63a1eb46658c9561beaf519b57bdea3da",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-clients.pty.log",
+      "pty_byte_offset": 86574,
+      "value": "guide-client"
+    },
+    {
+      "journey": "security-mtls-mtls-clients",
+      "journey_family": "security-mtls-mtls-clients",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "enable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-mtls-clients/05-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-clients/05-run.txt",
+      "image_sha256": "95125bbb7013c48f4c84ecd7041bba9da1d2468f8d37a6d1daea352782c5b163",
+      "transcript_sha256": "2ff05da28919af793966c8cb68104b4cb0324588c78ea376a071c74c86af7044",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-clients.pty.log",
+      "pty_byte_offset": 87012,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-mtls-clients",
+      "journey_family": "security-mtls-mtls-clients",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "enable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-mtls-clients/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-clients/06-command-result.txt",
+      "image_sha256": "e8b798acdb0fdeabd7563c01d7d2e449059382b259a26bfc1da40489ae4cb4d0",
+      "transcript_sha256": "ee9497c76b41339eb9daef1afe49fa4d438f117170b96bafe6d08978f8c8a466",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-clients.pty.log",
+      "pty_byte_offset": 88523,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-list-backend-client-certs",
+      "journey_family": "security-mtls-list-backend-client-certs",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "list-backend-client-certs",
+      "image": "docs/assets/interactive/security-mtls-list-backend-client-certs/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-list-backend-client-certs/03-example-com.txt",
+      "image_sha256": "124b3dabbd0fe6ff509bf883a3c9ed88ea2a47c813b8daed2fd9c24692030699",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-list-backend-client-certs.pty.log",
+      "pty_byte_offset": 81073,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-list-backend-client-certs",
+      "journey_family": "security-mtls-list-backend-client-certs",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-backend-client-certs",
+      "image": "docs/assets/interactive/security-mtls-list-backend-client-certs/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-list-backend-client-certs/04-command-result.txt",
+      "image_sha256": "eb0931e847fe132131e9469aa3c7de2bd4fd7f1ee754146fe1c05161b6aa8993",
+      "transcript_sha256": "d82d482c6670db0971d825d39c154bc015a8589ec1fb2842dd5bf38f0ecb76c1",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-list-backend-client-certs.pty.log",
+      "pty_byte_offset": 81123,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-list-backend-cas",
+      "journey_family": "security-mtls-list-backend-cas",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-backend-cas",
+      "image": "docs/assets/interactive/security-mtls-list-backend-cas/03-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-list-backend-cas/03-command-result.txt",
+      "image_sha256": "62142fb424d9faf32e2bd890f092822ebaaaad75db9486a987028bf23286ac7d",
+      "transcript_sha256": "827b17d01a633ece5a3393ef9835cb295d5436dade23270c51c5bbd532a6698e",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-list-backend-cas.pty.log",
+      "pty_byte_offset": 78325,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-mtls-verified",
+      "journey_family": "security-mtls-mtls-verified",
+      "session_index": 1,
+      "step": 1,
+      "title": "Authenticate with the issued client certificate",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-mtls-mtls-verified/01-authenticate-with-the-issued-client-certificate.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-verified/01-authenticate-with-the-issued-client-certificate.txt",
+      "image_sha256": "c5fbec4a1831b6cb343feef8332b5d599cc5b1052ecdedf55734471c555dd5e7",
+      "transcript_sha256": "2b377c76c67678926c0ee3e78a5aa3b5a9f77eb465a24de806557ce671e935ec",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-verified.pty.log",
+      "pty_byte_offset": 579,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-mtls-mtls-export",
+      "journey_family": "security-mtls-mtls-export",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "export-backend-client-p12",
+      "image": "docs/assets/interactive/security-mtls-mtls-export/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-export/03-example-com.txt",
+      "image_sha256": "e7ffe417a80c147a437769d5a152e065f39b7be7d25de09d8b4f001caf33c414",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-export.pty.log",
+      "pty_byte_offset": 69839,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-mtls-export",
+      "journey_family": "security-mtls-mtls-export",
+      "session_index": 1,
+      "step": 4,
+      "title": "guide-client",
+      "kind": "menu",
+      "command": "export-backend-client-p12",
+      "image": "docs/assets/interactive/security-mtls-mtls-export/04-guide-client.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-export/04-guide-client.txt",
+      "image_sha256": "6b0bf1f2abfe15482a084820ee0fd4f96ffc6e87ee77e06274d6f53bfc10ab21",
+      "transcript_sha256": "32800e885dfe4a88c66e426c8fbb141416704036d7c0d5c67d6973caf8118592",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-export.pty.log",
+      "pty_byte_offset": 69949,
+      "selected": "guide-client"
+    },
+    {
+      "journey": "security-mtls-mtls-export",
+      "journey_family": "security-mtls-mtls-export",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "export-backend-client-p12",
+      "image": "docs/assets/interactive/security-mtls-mtls-export/05-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-export/05-run.txt",
+      "image_sha256": "f1c5a5da045c9986198dd5d7b967e071aaea34b6e21b04d842f49fabc68ac998",
+      "transcript_sha256": "c0c901600bb27abab8b26294a3066b8284e67a620f538f0c7abde42a7063207f",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-export.pty.log",
+      "pty_byte_offset": 70389,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-mtls-export",
+      "journey_family": "security-mtls-mtls-export",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "export-backend-client-p12",
+      "image": "docs/assets/interactive/security-mtls-mtls-export/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-export/06-enter-value.txt",
+      "image_sha256": "3696c8f37741a17512d870410ab59d9849d31f4922a9901324ecaa64f7e0a007",
+      "transcript_sha256": "4a057702ece504f1f778874e818659a27137d16f287eef4c62de2f548dc6b0f5",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-export.pty.log",
+      "pty_byte_offset": 70412,
+      "value": "[redacted]"
+    },
+    {
+      "journey": "security-mtls-mtls-export",
+      "journey_family": "security-mtls-mtls-export",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "export-backend-client-p12",
+      "image": "docs/assets/interactive/security-mtls-mtls-export/07-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-export/07-enter-value.txt",
+      "image_sha256": "df623a10a4ea4b245a8d70379a1ab0a4f1eafba3801abfcf8361c5db5da74536",
+      "transcript_sha256": "1d94f43b0b527532f439a0bdbc4e6cb500e780b136c851fb37ec7090f90d5cc1",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-export.pty.log",
+      "pty_byte_offset": 70439,
+      "value": "[redacted]"
+    },
+    {
+      "journey": "security-mtls-mtls-export",
+      "journey_family": "security-mtls-mtls-export",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "export-backend-client-p12",
+      "image": "docs/assets/interactive/security-mtls-mtls-export/08-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-export/08-command-result.txt",
+      "image_sha256": "f6d075dfb0278fd87f0d8f50f2de73b4383fc8637313e39139d23e422b8fb2c6",
+      "transcript_sha256": "f3e9d482f31727cc6ba7b6794a7a82b3e9504c283719e8b36654e13a8e0445bd",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-export.pty.log",
+      "pty_byte_offset": 70570,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-pkcs12-inspection",
+      "journey_family": "security-mtls-pkcs12-inspection",
+      "session_index": 1,
+      "step": 1,
+      "title": "Inspect the protected bundle without displaying keys",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-mtls-pkcs12-inspection/01-inspect-the-protected-bundle-without-displaying-keys.png",
+      "transcript": "docs/assets/interactive/security-mtls-pkcs12-inspection/01-inspect-the-protected-bundle-without-displaying-keys.txt",
+      "image_sha256": "1b55f0a25f271e64bbf0c5f941b098674f0ba1a68756c99b8234099ecb6868f8",
+      "transcript_sha256": "b7440b6451ec8f60cb3d205a5ade64c891d40b9c816935053142d5f49df0f09b",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-pkcs12-inspection.pty.log",
+      "pty_byte_offset": 425,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-mtls-mtls-rotation",
+      "journey_family": "security-mtls-mtls-rotation",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "replace-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-mtls-rotation/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-rotation/03-example-com.txt",
+      "image_sha256": "d9f891a4c769ffd50eb63359e76693fc1e5ec7886ec269a3a0dd3416e96e2d7f",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-rotation.pty.log",
+      "pty_byte_offset": 84725,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-mtls-rotation",
+      "journey_family": "security-mtls-mtls-rotation",
+      "session_index": 1,
+      "step": 4,
+      "title": "guide-client",
+      "kind": "menu",
+      "command": "replace-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-mtls-rotation/04-guide-client.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-rotation/04-guide-client.txt",
+      "image_sha256": "1aba085807bb4213169b798d85fbca3826217c0badd8fcc0c54321ff31856330",
+      "transcript_sha256": "32800e885dfe4a88c66e426c8fbb141416704036d7c0d5c67d6973caf8118592",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-rotation.pty.log",
+      "pty_byte_offset": 84835,
+      "selected": "guide-client"
+    },
+    {
+      "journey": "security-mtls-mtls-rotation",
+      "journey_family": "security-mtls-mtls-rotation",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "replace-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-mtls-rotation/05-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-rotation/05-run.txt",
+      "image_sha256": "59cd5e57d94808a5cbe58cc131f1d4993f54b91a1b1b8c68b6ca2d47be76b397",
+      "transcript_sha256": "956c22727e36701df4502495094a8e46b89d591385f7b4b4cbe501b782b5b334",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-rotation.pty.log",
+      "pty_byte_offset": 85252,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-mtls-rotation",
+      "journey_family": "security-mtls-mtls-rotation",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "replace-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-mtls-rotation/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-rotation/06-command-result.txt",
+      "image_sha256": "635c04378225bd806b9b4d25dbd99d109037d1e7dd55278221daba33e3fba043",
+      "transcript_sha256": "83864de7da7d6cb0d8ad0055bbc79e2fd7fe144f947273a9267322beb6f55406",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-rotation.pty.log",
+      "pty_byte_offset": 86763,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-add-backend-client-cert",
+      "journey_family": "security-mtls-add-backend-client-cert",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-add-backend-client-cert/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-add-backend-client-cert/03-example-com.txt",
+      "image_sha256": "704ee608f6a5b0c6adaec6f41b3cd9e234351858f2144ec708fd47a0a86e6ec7",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-add-backend-client-cert.pty.log",
+      "pty_byte_offset": 76226,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-add-backend-client-cert",
+      "journey_family": "security-mtls-add-backend-client-cert",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-add-backend-client-cert/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-add-backend-client-cert/04-enter-value.txt",
+      "image_sha256": "5454ff6fe26808cbe1cdfcf21566f611a46b4d3a852f8e54bc51a97ba3f26f9b",
+      "transcript_sha256": "04e8c2d530c044af2b25e999407eff9254551c484ab7f09405d6469e5a66f2db",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-add-backend-client-cert.pty.log",
+      "pty_byte_offset": 76261,
+      "value": "second-client"
+    },
+    {
+      "journey": "security-mtls-add-backend-client-cert",
+      "journey_family": "security-mtls-add-backend-client-cert",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-add-backend-client-cert/05-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-add-backend-client-cert/05-run.txt",
+      "image_sha256": "3dcdbae8ab70a10fb9aa5df070acac1237662a74867b6657d04826aeb40c6680",
+      "transcript_sha256": "a8ba74d293f28bcc343ce98d85956b6e943b6b4594204ace7c6c78cbd9508021",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-add-backend-client-cert.pty.log",
+      "pty_byte_offset": 76686,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-add-backend-client-cert",
+      "journey_family": "security-mtls-add-backend-client-cert",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-add-backend-client-cert/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-add-backend-client-cert/06-command-result.txt",
+      "image_sha256": "a01b272bb4097fd238d69583d28f171b3fbc4566ec38c5ebf973f4a4386f31b5",
+      "transcript_sha256": "27c9fbecb55e18727e01b596c21d8e6d5208f8b1e54147c2986ea43958c667d4",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-add-backend-client-cert.pty.log",
+      "pty_byte_offset": 78198,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-revoke-backend-client-cert",
+      "journey_family": "security-mtls-revoke-backend-client-cert",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "revoke-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/03-example-com.txt",
+      "image_sha256": "0242cdc9ba15184cd200d1c858b7e562e791e17a32d7fcddcb9d560df7b8e931",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-revoke-backend-client-cert.pty.log",
+      "pty_byte_offset": 78560,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-revoke-backend-client-cert",
+      "journey_family": "security-mtls-revoke-backend-client-cert",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "revoke-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/04-enter-value.txt",
+      "image_sha256": "315495fc2f4eca06424cc92f00bd47e43ef537e84568892675a95e58463cf5e9",
+      "transcript_sha256": "04e8c2d530c044af2b25e999407eff9254551c484ab7f09405d6469e5a66f2db",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-revoke-backend-client-cert.pty.log",
+      "pty_byte_offset": 78595,
+      "value": "second-client"
+    },
+    {
+      "journey": "security-mtls-revoke-backend-client-cert",
+      "journey_family": "security-mtls-revoke-backend-client-cert",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "revoke-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/05-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/05-run.txt",
+      "image_sha256": "8ba6d8f38068525702ca540ff01821074acc516d7a6be04f4d63d763f1463c5b",
+      "transcript_sha256": "f2a551a4d29a8b99b55b46d54d3897d22145b158e3a8f50b21339f7a8dccd101",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-revoke-backend-client-cert.pty.log",
+      "pty_byte_offset": 79078,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-revoke-backend-client-cert",
+      "journey_family": "security-mtls-revoke-backend-client-cert",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "revoke-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/06-enter-value.txt",
+      "image_sha256": "e014dcf41c5ff99799ce126ee0c6a10118bc92fe8c3ac3862c553f577b9889b9",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-revoke-backend-client-cert.pty.log",
+      "pty_byte_offset": 79132,
+      "value": "YES"
+    },
+    {
+      "journey": "security-mtls-revoke-backend-client-cert",
+      "journey_family": "security-mtls-revoke-backend-client-cert",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "revoke-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-revoke-backend-client-cert/07-command-result.txt",
+      "image_sha256": "3ae1bf0a787c9aed9bdfc47e4fa531a61682a36de4e45bba304851233fc1a661",
+      "transcript_sha256": "d22bb75224797c6325c41232bbb913883b8ddaa1941463bd7420f94aa8df0806",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-revoke-backend-client-cert.pty.log",
+      "pty_byte_offset": 80673,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-remove-backend-client-cert",
+      "journey_family": "security-mtls-remove-backend-client-cert",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-client-cert/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-client-cert/03-example-com.txt",
+      "image_sha256": "2a068894b2bdedecb437e5e174fb4802566db08b221bb3b39008c89b1c567385",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-client-cert.pty.log",
+      "pty_byte_offset": 104764,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-remove-backend-client-cert",
+      "journey_family": "security-mtls-remove-backend-client-cert",
+      "session_index": 1,
+      "step": 4,
+      "title": "second-client",
+      "kind": "menu",
+      "command": "remove-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-client-cert/04-second-client.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-client-cert/04-second-client.txt",
+      "image_sha256": "a66b47a34e9d57eb28a02bc36687c34c17ef3360ca42019d13c482fe411ade81",
+      "transcript_sha256": "d211e3d0252389a56be2ea66f9b2f6da4375a0c73a8e9b1e843502e63813ed30",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-client-cert.pty.log",
+      "pty_byte_offset": 105024,
+      "selected": "second-client"
+    },
+    {
+      "journey": "security-mtls-remove-backend-client-cert",
+      "journey_family": "security-mtls-remove-backend-client-cert",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-client-cert/05-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-client-cert/05-run.txt",
+      "image_sha256": "9ed6396b76a4e781a34b844fa9d80b8cd7b1e5b9fdb786c05d83520239e6b695",
+      "transcript_sha256": "ed127ceb8940b67bd80da4693f6bf4f3d5caa335d31bf4e6193aec56885ab97a",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-client-cert.pty.log",
+      "pty_byte_offset": 105496,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-remove-backend-client-cert",
+      "journey_family": "security-mtls-remove-backend-client-cert",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-client-cert/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-client-cert/06-enter-value.txt",
+      "image_sha256": "d616e620d742fb5c10cfa37d6299d03f9bb0a234c63833deb283ba49b117924c",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-client-cert.pty.log",
+      "pty_byte_offset": 105550,
+      "value": "YES"
+    },
+    {
+      "journey": "security-mtls-remove-backend-client-cert",
+      "journey_family": "security-mtls-remove-backend-client-cert",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-client-cert/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-client-cert/07-command-result.txt",
+      "image_sha256": "f2214d5c6c6d25575da75a7b082ba06e6530e38bb742e6897a66150fc8d92e8d",
+      "transcript_sha256": "01c2a71041862512223379458193b9f6da1606c0c97958048061fe83578d1ffc",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-client-cert.pty.log",
+      "pty_byte_offset": 107074,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-mtls-authority-review",
+      "journey_family": "security-mtls-mtls-authority-review",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "replace-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-mtls-authority-review/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-authority-review/03-example-com.txt",
+      "image_sha256": "0c9faa2b4369bef72a500318e83838f16946ee2cc3a10baaf2a622ffee1f290a",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority-review.pty.log",
+      "pty_byte_offset": 81890,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-mtls-authority-review",
+      "journey_family": "security-mtls-mtls-authority-review",
+      "session_index": 1,
+      "step": 4,
+      "title": "Cancel",
+      "kind": "menu",
+      "command": "replace-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-mtls-authority-review/04-cancel.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-authority-review/04-cancel.txt",
+      "image_sha256": "cbedba765f1005e80feb151b60755368bf2e1556c2e07e78c942291e9bc971df",
+      "transcript_sha256": "0e2fc5c897483abb24831bdb8d8ef64a2a205cb4ff32ecd4da07c2ab7310649e",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority-review.pty.log",
+      "pty_byte_offset": 83015,
+      "selected": "Cancel"
+    },
+    {
+      "journey": "security-mtls-mtls-authority-review",
+      "journey_family": "security-mtls-mtls-authority-review",
+      "session_index": 1,
+      "step": 5,
+      "title": "Return without running",
+      "kind": "menu",
+      "command": "replace-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-mtls-authority-review/05-return-without-running.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-authority-review/05-return-without-running.txt",
+      "image_sha256": "897c796a6b447e95fd8f99e6378ee738d14b382aa2205c4d15ef6b21023a86be",
+      "transcript_sha256": "bcc29671d70dc1a77f93edfe7a9580201bdb8dea5a334bb6581e0ecf36b0d087",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority-review.pty.log",
+      "pty_byte_offset": 83703,
+      "selected": "Back"
+    },
+    {
+      "journey": "security-mtls-mtls-authority",
+      "journey_family": "security-mtls-mtls-authority",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "replace-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-mtls-authority/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-authority/03-example-com.txt",
+      "image_sha256": "30c163b7228035f6bb2a572b68652e8417addb9f2360bcd61ca2928ded1e4462",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority.pty.log",
+      "pty_byte_offset": 81889,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-mtls-authority",
+      "journey_family": "security-mtls-mtls-authority",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "replace-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-mtls-authority/04-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-authority/04-run.txt",
+      "image_sha256": "c3337ef44dcc3cba17f2dd7e11b70645efa69b825332d65dad82fb4616ec4def",
+      "transcript_sha256": "e999a9edb8b892b2e221ea19437a612d0d79c3f21061acc7bd497f4b942637b3",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority.pty.log",
+      "pty_byte_offset": 82264,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-mtls-authority",
+      "journey_family": "security-mtls-mtls-authority",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "replace-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-mtls-authority/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-authority/05-command-result.txt",
+      "image_sha256": "fc33066befe7b9f1fcc4951b58d2a931c91fc1c123296ae1c114636e01a4fd7e",
+      "transcript_sha256": "db87fe33d6a5ae8a429973dff299bf7b6ea0f8aa02b6a24c07c575e0209f6d25",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority.pty.log",
+      "pty_byte_offset": 83786,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-mtls-new-authority-client",
+      "journey_family": "security-mtls-mtls-new-authority-client",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-mtls-new-authority-client/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-new-authority-client/03-example-com.txt",
+      "image_sha256": "c6440ca5b734141e531948b2f89e7aea175406dbbf604195fe618f85e91e41e0",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-new-authority-client.pty.log",
+      "pty_byte_offset": 76229,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-mtls-new-authority-client",
+      "journey_family": "security-mtls-mtls-new-authority-client",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-mtls-new-authority-client/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-new-authority-client/04-enter-value.txt",
+      "image_sha256": "b71c371bb688f9eba13c3d66098901e24a5527ab52623e9ecc5f941fde088114",
+      "transcript_sha256": "ca709cedfaaa0c59239a8053983275d84797c7901c9983a8fe8b3dfb616c98e0",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-new-authority-client.pty.log",
+      "pty_byte_offset": 76269,
+      "value": "replacement-client"
+    },
+    {
+      "journey": "security-mtls-mtls-new-authority-client",
+      "journey_family": "security-mtls-mtls-new-authority-client",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-mtls-new-authority-client/05-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-new-authority-client/05-run.txt",
+      "image_sha256": "5bd139bcd40c2fa00e52cde4935b28af4384b5cb2c3dea212906a2e04629e1a1",
+      "transcript_sha256": "7024d896b02e9a71c29473497b5ddd84b393c02ff8591d5c47b92e60c44c475a",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-new-authority-client.pty.log",
+      "pty_byte_offset": 76704,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-mtls-new-authority-client",
+      "journey_family": "security-mtls-mtls-new-authority-client",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-backend-client-cert",
+      "image": "docs/assets/interactive/security-mtls-mtls-new-authority-client/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-new-authority-client/06-command-result.txt",
+      "image_sha256": "b362783e6b0fdafcdae9f7928de4ebde568787a27c50e326f01390e540b3ad99",
+      "transcript_sha256": "0378863b9357e965e31adc9612e576b9b1d0562a548ce6eb240a5760ddccd778",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-new-authority-client.pty.log",
+      "pty_byte_offset": 78221,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-disable-backend-mtls",
+      "journey_family": "security-mtls-disable-backend-mtls",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "disable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-disable-backend-mtls/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-disable-backend-mtls/03-example-com.txt",
+      "image_sha256": "4ee468cce2a2f9060ab32df0bf9dd91523b27b5339f0b7c47aedfdf9f1b0f885",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-disable-backend-mtls.pty.log",
+      "pty_byte_offset": 76682,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-disable-backend-mtls",
+      "journey_family": "security-mtls-disable-backend-mtls",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "disable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-disable-backend-mtls/04-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-disable-backend-mtls/04-run.txt",
+      "image_sha256": "04bdeccab89871f1cd1913a3d635205cdc4e1a13e5bf8a941c402d6dbe1cf8ec",
+      "transcript_sha256": "664c809d4e79a1e8377dabcf5ef0401e1a2dc67c94e935443505f12d5ed38e23",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-disable-backend-mtls.pty.log",
+      "pty_byte_offset": 77030,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-disable-backend-mtls",
+      "journey_family": "security-mtls-disable-backend-mtls",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "disable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-disable-backend-mtls/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-disable-backend-mtls/05-command-result.txt",
+      "image_sha256": "e6047deb89a6cc5f6b55a36865dc34588d182fc7a282c6b33c2b502d1b7c758b",
+      "transcript_sha256": "7062fa3aeff34f1593cddfafe8e902ac988f8eb7b3165d00d382021ea4ba838a",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-disable-backend-mtls.pty.log",
+      "pty_byte_offset": 78516,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-mtls-reenable",
+      "journey_family": "security-mtls-mtls-reenable",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "enable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-mtls-reenable/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-reenable/03-example-com.txt",
+      "image_sha256": "b53f259bba371afb67a21bf6d6db30f1d97f68a1f971bd3ee0465ea13d0dc4fb",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-reenable.pty.log",
+      "pty_byte_offset": 86549,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-mtls-reenable",
+      "journey_family": "security-mtls-mtls-reenable",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "enable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-mtls-reenable/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-reenable/04-enter-value.txt",
+      "image_sha256": "cb6f49bfdde6fd479ac4d39db56883bbf687d20ca9e39ffc7f6836b3a363f7d7",
+      "transcript_sha256": "ee1231eaccb83a43d6d48bbf4b538897b9fa3f42bbf8e70479ba8fcf49990331",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-reenable.pty.log",
+      "pty_byte_offset": 86570,
+      "value": ""
+    },
+    {
+      "journey": "security-mtls-mtls-reenable",
+      "journey_family": "security-mtls-mtls-reenable",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "enable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-mtls-reenable/05-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-reenable/05-run.txt",
+      "image_sha256": "0d593e65e1bb196223e71f9dcedc22b300d3b85f8a21329ce48edf9a5c065ece",
+      "transcript_sha256": "4fc93582f46a85360c32892169ff2ee42c1d7d1347566e225745a7c32dadb750",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-reenable.pty.log",
+      "pty_byte_offset": 86987,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-mtls-reenable",
+      "journey_family": "security-mtls-mtls-reenable",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "enable-backend-mtls",
+      "image": "docs/assets/interactive/security-mtls-mtls-reenable/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-reenable/06-command-result.txt",
+      "image_sha256": "cafd9f8652c9f650923448cb93e4d6f7a522989dba70c619438bcc529ccdb750",
+      "transcript_sha256": "3830dd74bf4291543255c3c2b73654e11ac0bdf7ec63e820f57bf8bd3eedf627",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-reenable.pty.log",
+      "pty_byte_offset": 88435,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-remove-backend-ca",
+      "journey_family": "security-mtls-remove-backend-ca",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-ca/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-ca/03-example-com.txt",
+      "image_sha256": "d9dfde627a0dc7d1afba7c7a662a68b726188565675e0595c7fd60724c4efdb9",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-ca.pty.log",
+      "pty_byte_offset": 101162,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-mtls-remove-backend-ca",
+      "journey_family": "security-mtls-remove-backend-ca",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-ca/04-run.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-ca/04-run.txt",
+      "image_sha256": "750920eecb23b5792ef29587fe849a55f826397f03f7674034c03bb9d16d7b8d",
+      "transcript_sha256": "c6a02f2579674ff80d50ab95637c67e89a66cd9619aac9c6cc5e4ab0aed96211",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-ca.pty.log",
+      "pty_byte_offset": 101573,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-mtls-remove-backend-ca",
+      "journey_family": "security-mtls-remove-backend-ca",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-ca/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-ca/05-enter-value.txt",
+      "image_sha256": "866b9325f0d94464958f66f18a1c5161914654ba9524f8fb5c774f290b67dc4a",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-ca.pty.log",
+      "pty_byte_offset": 101627,
+      "value": "YES"
+    },
+    {
+      "journey": "security-mtls-remove-backend-ca",
+      "journey_family": "security-mtls-remove-backend-ca",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-ca",
+      "image": "docs/assets/interactive/security-mtls-remove-backend-ca/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-mtls-remove-backend-ca/06-command-result.txt",
+      "image_sha256": "8d15f1b348f44f447cd85c4b4d59ce646b205b4e31b15c7ea0ef34625b64b10d",
+      "transcript_sha256": "dde8ce0e75c34736460b374b38c36a6e9cf2b705a4f39a46eb10222298eed3de",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-ca.pty.log",
+      "pty_byte_offset": 103145,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-mtls-mtls-config",
+      "journey_family": "security-mtls-mtls-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/security-mtls-mtls-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/security-mtls-mtls-config/03-configuration-test-passed.txt",
+      "image_sha256": "a65bdc49c069e5e92ad24d2eda1a1893e3e61ccbf834e04c0cba5f9ca85c81eb",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-config.pty.log",
+      "pty_byte_offset": 8027,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "mtls-no-client",
+      "status": "passed",
+      "http_status": 400,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-no-client.headers"
+    },
+    {
+      "label": "mtls-valid-client",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-valid-client.headers"
+    },
+    {
+      "label": "mtls-verified",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "--fail",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "--resolve",
+        "example.com:443:127.0.0.1",
+        "--cacert",
+        "/opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem",
+        "--cert",
+        "/opt/dockistrate-demo/state/domains/example.com/mtls/guide-client.crt",
+        "--key",
+        "/opt/dockistrate-demo/state/domains/example.com/mtls/guide-client.key",
+        "https://example.com/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "pkcs12-inspection",
+      "status": "passed",
+      "argv": [
+        "openssl",
+        "pkcs12",
+        "-info",
+        "-noout",
+        "-in",
+        "/opt/dockistrate-demo/state/domains/example.com/mtls/guide-client.p12",
+        "-passin",
+        "pass:disposable-docs-password"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "mtls-replacement-client",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-replacement-client.headers"
+    },
+    {
+      "label": "mtls-old-client-rejected",
+      "status": "passed",
+      "http_status": 400,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-old-client-rejected.headers"
+    },
+    {
+      "label": "mtls-revoked-client",
+      "status": "passed",
+      "http_status": 400,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-revoked-client.headers"
+    },
+    {
+      "label": "mtls-prior-authority-rejected",
+      "status": "passed",
+      "http_status": 400,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-prior-authority-rejected.headers"
+    },
+    {
+      "label": "mtls-export-retained-after-ca-rotation",
+      "status": "passed"
+    },
+    {
+      "label": "mtls-new-authority",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-new-authority.headers"
+    },
+    {
+      "label": "mtls-disabled",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-disabled.headers"
+    },
+    {
+      "label": "mtls-authority-removed",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-mtls/mtls-authority-removed.headers"
+    },
+    {
+      "label": "mtls-owned-material-removed",
+      "status": "passed"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "security"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "867849e7979efa46b621c2a832090500dba13686b9ca81b2b085e05821c0dd2e",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 55
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/security-mtls-recordings.tar.gz",
+    "sha256": "1fbbbbde45b5f6ac7e489a47165fee9b8cf8a931d5aa4b2e205555097789467b",
+    "size": 126037,
+    "members": {
+      "docs/assets/interactive/evidence/security-mtls/001-source-commit.log": {
+        "sha256": "5987ca8d9204d09d800b36d6b5bfb8553cd73f23aea59309eb0ed38d6961afa5",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/security-mtls/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/security-mtls/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/security-mtls/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/security-mtls/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/security-mtls/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-mtls/008-fixture-image.log": {
+        "sha256": "50f5963fb14bfb26881a0f745ee1b7171fd4fcab4859024308a5a63a64f29db8",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/security-mtls/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/security-mtls/010-fixture-backend.log": {
+        "sha256": "7223228f65baf92ae0b729d0c63da50e636415cd85ba61626994d4ed62db5397",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/security-mtls/011-fixture-public-demo.log": {
+        "sha256": "a837763130d4eff5850141267cf9b29ddfd4a971e1ed3092f581321690c1aab1",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/security-mtls/012-fixture-https.log": {
+        "sha256": "c59ad8884a54d780e5d93a0129ee22ff8a7f1fbb5f92ae1146c0649f27f2e791",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/security-mtls/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/security-mtls/014-command-alias.log": {
+        "sha256": "1a1ac7ea48ad31cc6a4768ca94112fdb0009346ef4c2d68f040ada728f297dfd",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/security-mtls/015-command-alias.log": {
+        "sha256": "b60f0f52ff191f279532402e40f3f8fccdac044c9046b7d02ae91e948069dafe",
+        "size": 26
+      },
+      "docs/assets/interactive/evidence/security-mtls/016-command-alias.log": {
+        "sha256": "209313e239cf50a55ae8d6d38fbef6ed996f7165028d1d5330a68cf378ef8dd1",
+        "size": 17
+      },
+      "docs/assets/interactive/evidence/security-mtls/017-command-alias.log": {
+        "sha256": "528f9fa445c55351d23583d54cc0b0cecf82f25b363f397f6ef7a8965fb605da",
+        "size": 26
+      },
+      "docs/assets/interactive/evidence/security-mtls/018-command-alias.log": {
+        "sha256": "f5418bf89530b4ff9d5d71fb322d4492f400437eb7141064790171e3f687ad4b",
+        "size": 28
+      },
+      "docs/assets/interactive/evidence/security-mtls/019-command-alias.log": {
+        "sha256": "775cbb77ee78acbd514baad91440507498c12bc5574300fc64d16a9a8e8e5d63",
+        "size": 24
+      },
+      "docs/assets/interactive/evidence/security-mtls/020-command-alias.log": {
+        "sha256": "8c4922d7ea7da55a1a6bcbf88a3878d1dae16e0a933a3c9207fabe2eb1312536",
+        "size": 27
+      },
+      "docs/assets/interactive/evidence/security-mtls/021-command-alias.log": {
+        "sha256": "d977499f435c8bba36afcad8743ffa96d1fa9889a4374e421af24e7698775fcb",
+        "size": 27
+      },
+      "docs/assets/interactive/evidence/security-mtls/022-command-alias.log": {
+        "sha256": "10e85cc0298ff659d741dc5872eddbd360dce5e9a593a1d1fa492191f4705b26",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/security-mtls/023-command-alias.log": {
+        "sha256": "10e85cc0298ff659d741dc5872eddbd360dce5e9a593a1d1fa492191f4705b26",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/security-mtls/024-command-alias.log": {
+        "sha256": "775cbb77ee78acbd514baad91440507498c12bc5574300fc64d16a9a8e8e5d63",
+        "size": 24
+      },
+      "docs/assets/interactive/evidence/security-mtls/025-command-alias.log": {
+        "sha256": "9f793bb0efd9142f84a26e29e039f4e59edc52ef800dcfdb3dce290aadbccc2f",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/security-mtls/026-command-alias.log": {
+        "sha256": "1a1ac7ea48ad31cc6a4768ca94112fdb0009346ef4c2d68f040ada728f297dfd",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/security-mtls/027-command-alias.log": {
+        "sha256": "ff843fbaaa42c0bb0dd6d59969fa30774eb0c8e8170638e168ee6df2c6007690",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/security-mtls/028-image-identities.log": {
+        "sha256": "a06f08ac73381bce08070d326e2e863b193077f0e483b456fb2c09b78ffc80da",
+        "size": 2934
+      },
+      "docs/assets/interactive/evidence/security-mtls/commands.jsonl": {
+        "sha256": "294c71d8c2a90aa39459bca2c688e782bcd1a2be54c66144e3d5a9e7ef043059",
+        "size": 15246
+      },
+      "docs/assets/interactive/evidence/security-mtls/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-authority-removed.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-authority-removed.headers": {
+        "sha256": "0a3575d4eefec9b263db01d643862ad3e4b974a42e11f7d1078d41c50d0e1124",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-authority-removed.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-authority-removed.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-disabled.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-disabled.headers": {
+        "sha256": "1d2f6cf0415d654247a6220bf13f5f2a91fff2ea055ac2bcf22c852f4b5190eb",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-disabled.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-disabled.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-new-authority.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-new-authority.headers": {
+        "sha256": "e53b104139992b2f3fb168a71cd60eb0c7312b01a2703fa8478a7921ad90d723",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-new-authority.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-new-authority.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-no-client.body": {
+        "sha256": "9fd634792ddcfd0b5e0f19a395ba2072ef3d56671d611b0965088196938114ca",
+        "size": 237
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-no-client.headers": {
+        "sha256": "001db7a1084cb3f0df3a705836d2b898fa80236a42dcecba6e56147cc7121610",
+        "size": 120
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-no-client.status": {
+        "sha256": "e4df891c484d7abb985dadf539fa1883a646dab6337af5cae4159c587b7050cc",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-no-client.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-old-client-rejected.body": {
+        "sha256": "77b0e8d9d9902ff94ca91202b904b81561ef4a6320ab66d19e03dc41456243a2",
+        "size": 215
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-old-client-rejected.headers": {
+        "sha256": "923f89a08435dfa55034eb4cc4937b31ab4f0b0a29c43ac045e7d36fe24643d9",
+        "size": 120
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-old-client-rejected.status": {
+        "sha256": "e4df891c484d7abb985dadf539fa1883a646dab6337af5cae4159c587b7050cc",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-old-client-rejected.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-prior-authority-rejected.body": {
+        "sha256": "77b0e8d9d9902ff94ca91202b904b81561ef4a6320ab66d19e03dc41456243a2",
+        "size": 215
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-prior-authority-rejected.headers": {
+        "sha256": "eeaefa6045010514e6aa0263341f9f00f349e63417fbf0ce5e5a883eeaa167a2",
+        "size": 120
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-prior-authority-rejected.status": {
+        "sha256": "e4df891c484d7abb985dadf539fa1883a646dab6337af5cae4159c587b7050cc",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-prior-authority-rejected.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-replacement-client.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-replacement-client.headers": {
+        "sha256": "8ef5479c7e9ec66b04324919bf54f5d871ebc793e9d4430ee476540670d33fc7",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-replacement-client.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-replacement-client.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-revoked-client.body": {
+        "sha256": "77b0e8d9d9902ff94ca91202b904b81561ef4a6320ab66d19e03dc41456243a2",
+        "size": 215
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-revoked-client.headers": {
+        "sha256": "6b1068e508e714b9a0d57d1b5c89e7ad315fda35b8db00d1bee1ba005a50d455",
+        "size": 120
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-revoked-client.status": {
+        "sha256": "e4df891c484d7abb985dadf539fa1883a646dab6337af5cae4159c587b7050cc",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-revoked-client.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-valid-client.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-valid-client.headers": {
+        "sha256": "c009eeb8ce80c8404c9e861a6f1395a54692d2c7bbbab5e6c46e1c10b2ce0794",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-valid-client.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-mtls/mtls-valid-client.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-add-backend-client-cert.events.jsonl": {
+        "sha256": "88fd4aad74c27fd45fd3880d807d3cb51cd451530c148f837fcd35ad11144bcb",
+        "size": 19159
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-add-backend-client-cert.pty.log": {
+        "sha256": "ec009a4ae5167fcc0984a5a510d6451c28e3b41e5946e78180fca5575bf35961",
+        "size": 86312
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-disable-backend-mtls.events.jsonl": {
+        "sha256": "9f94e85ba258a8934b5fb78a3be65d00afe159d457b7013614ffc5b1b53e32db",
+        "size": 16858
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-disable-backend-mtls.pty.log": {
+        "sha256": "85453eb8bbcb77cf80f44b1e71665b420ec30757ef6bff5649899523a47927f7",
+        "size": 86630
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-list-backend-cas.events.jsonl": {
+        "sha256": "cad6439e0c65453ddb2c010e72cdeb30e665cdce849c1182e56662c8cd5d1cdb",
+        "size": 12738
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-list-backend-cas.pty.log": {
+        "sha256": "cc574dab98adae1c25c0c168490982b719131f1e36d82ce234e30c7806fddf43",
+        "size": 86426
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-list-backend-client-certs.events.jsonl": {
+        "sha256": "09270db493b045796962e1d1c22b11d0bf1375e15f48a1a08546906c29eeb192",
+        "size": 16662
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-list-backend-client-certs.pty.log": {
+        "sha256": "ecb03e489029785c14e7fda3ab50a29ea13df479716f03aee71a8f2efbf076d4",
+        "size": 89224
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority-review.events.jsonl": {
+        "sha256": "ee9e7431d0c29d2a0479e24141537802c2b1e09cb20e8ce7c7bf9ae1a2339fa6",
+        "size": 16034
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority-review.pty.log": {
+        "sha256": "ff685242daac2b34ef1c709c81c0b3319ba7437129ae747331ae0080f06afa95",
+        "size": 91815
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority.events.jsonl": {
+        "sha256": "f1c3cf4b0518eb224a89a7fb36d29428685ef87694d08054857771c8293e2687",
+        "size": 15724
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-authority.pty.log": {
+        "sha256": "5d232811cbea1801f20a7ed65924c1e4f6c4e1b446bb69907055a1d75313a457",
+        "size": 91900
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-clients.events.jsonl": {
+        "sha256": "798c839e04d21d16e260c9b68f693d3596302e99009eb9697a7e117e86c79ca8",
+        "size": 16682
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-clients.pty.log": {
+        "sha256": "6ade2e4b7c74f08a0cf0064ff208b7be6ea4e7bf631c0d57c7f834781adb847b",
+        "size": 96628
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-config.events.jsonl": {
+        "sha256": "665b82e6f0c3d2ff9ec1577c9d83b35642345c344a4b5a0bec5d59e7150fbfde",
+        "size": 8814
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-config.pty.log": {
+        "sha256": "74ebcb62cbf9e1817618ccfa8e1a8e8f5d34fc6b3c1f0266f6a0b780779f19e2",
+        "size": 16141
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-export.events.jsonl": {
+        "sha256": "c144d5a6e19dc9e4991b474527c256263f0b25e8d7370ba1b0933bf042a50eca",
+        "size": 18257
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-export.pty.log": {
+        "sha256": "6dc04413219b5a59a4bb25006450d163a9ee81e83df0843fd487630345b0de3d",
+        "size": 78688
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-new-authority-client.events.jsonl": {
+        "sha256": "a6ec9e0ef5f1d2983d2a06464fc29beeb15aa4acfe36407119c99270864fa2c1",
+        "size": 19444
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-new-authority-client.pty.log": {
+        "sha256": "9842ab12e80810d603727f554d74f4c8756ade6118fcb7130b868efafe428ee2",
+        "size": 86339
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-reenable.events.jsonl": {
+        "sha256": "b109446563415309d9a768abaaf16ba52c31bf2771a18a1776fa49c508dbe350",
+        "size": 16696
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-reenable.pty.log": {
+        "sha256": "557a853193f28d8442d87066e3ce3dd2f3b35f2503fa08a02bb16e14b91fc2dc",
+        "size": 96549
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-rotation.events.jsonl": {
+        "sha256": "ace16016ba666bf5fdb2cff562adb7de2cc1ead5958fefcf6d459a19bd74f4b4",
+        "size": 18630
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-rotation.pty.log": {
+        "sha256": "8c1f9675c638ea3c65ea1d2271f1eb4c774359e11cc50ebf5096e05153a91bce",
+        "size": 94877
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-verified.events.jsonl": {
+        "sha256": "c7ee4dfcf8c6e5db131923180b827a1eb631af2f992a09a9c7414c172392cd3d",
+        "size": 1557
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-mtls-verified.pty.log": {
+        "sha256": "b0ce5e50c3f64567b5e1bb68ddde3201c1fd23eda108381dfc4285561dc52373",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-pkcs12-inspection.events.jsonl": {
+        "sha256": "0f2866b69b6980adf4623abe84a6c09357bc8098e077b023cdf2ec03b71946ef",
+        "size": 1105
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-pkcs12-inspection.pty.log": {
+        "sha256": "3096db01d4b9109fa41f96c044347451590097a23a6365aefff73cab03f68f67",
+        "size": 425
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-ca.events.jsonl": {
+        "sha256": "4facca3c388e726250a855d895bd7719a594b288bb73bfd92e6174c0df8320bf",
+        "size": 16740
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-ca.pty.log": {
+        "sha256": "dcb42a6437fbef73da58142ffdab773b311081e7570c5b2f0a64f76f7680e8c5",
+        "size": 111259
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-client-cert.events.jsonl": {
+        "sha256": "cf33f2ef5e788486d611d8e117ceb2ee492be70b1244d14a4a7a29d92f28dc94",
+        "size": 21457
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-remove-backend-client-cert.pty.log": {
+        "sha256": "54e636185cb41398922ba7b0a35b026a8c3b722e3bd3f34ffef7ff1efe07d5b2",
+        "size": 115192
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-revoke-backend-client-cert.events.jsonl": {
+        "sha256": "ef13e96adc1db563de72291ff55796e576eb4e522ccdc58e95f528bbc79fd30b",
+        "size": 21573
+      },
+      "docs/assets/interactive/evidence/security-mtls/security-mtls-revoke-backend-client-cert.pty.log": {
+        "sha256": "8046fb95f6b2b65a0deb6f04ae016a6a12531e24c09cd21e43c8ce365a84b079",
+        "size": 88791
+      }
+    }
+  }
+}

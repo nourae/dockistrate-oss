@@ -13,7 +13,7 @@ if [ -f "${ACCESS_LOG_MODULE_DIR}/common.sh" ]; then
 fi
 
 for access_log_file in "${ACCESS_LOG_MODULE_DIR}"/*.sh; do
-  access_log_basename="$(basename "${access_log_file}")"
+  access_log_basename="${access_log_file##*/}"
   if [ "${access_log_basename}" = "common.sh" ]; then
     continue
   fi

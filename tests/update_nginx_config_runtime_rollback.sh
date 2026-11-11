@@ -90,10 +90,14 @@ function _build_header_files() { :; }
 function list_domain_aliases() { :; }
 function get_backend_http_version() { printf '%s\n' "http1"; }
 function _backend_header_identity_directives() { :; }
+# Identity enforcement has its own regressions; this fixture isolates rollback.
+function _sr_identity_directives() { :; }
 function _render_backend_upstream_for_domain() { printf '%s\n' "10.0.0.5:8000"; }
 function get_backend_client_ip_header() { :; }
 function get_backend_proxy_ip_header() { :; }
 function get_proxy_http_version() { printf '%s\n' "1.1"; }
+function get_port_tls_protocols() { printf '%s\n' "TLSv1.2"; }
+function get_port_tls_ciphers() { printf '%s\n' "HIGH"; }
 
 function create_nginx_config() {
   mkdir -p "$NGINX_CONFIG_DIR"
@@ -167,6 +171,11 @@ function recreate_nginx_container() {
   STUB_CONTAINER_EXISTS="true"
   STUB_CONTAINER_RUNNING="$running_after"
   STUB_PUBLISHED_BINDINGS="$bindings"
+  if [ "$#" -ge 3 ]; then
+    STUB_CERTIFICATE_PROJECTION="$3"
+  else
+    _nginx_prepare_certificate_projection STUB_CERTIFICATE_PROJECTION || return 1
+  fi
 }
 
 function add_nginx_networks() {
@@ -190,12 +199,26 @@ function docker() {
     inspect)
       if [ "${1:-}" = "-f" ] && [ -n "${2:-}" ]; then
         case "${2:-}" in
+          *'mount:%x:%t'*)
+            printf 'mount:'
+            printf '%s' "$STUB_CERTIFICATE_PROJECTION" | _projection_hex
+            printf ':false\ncomplete\n'
+            return 0
+            ;;
           *".Config.Labels"*)
             case "${2:-}" in
               *"com.dockistrate.managed"*) printf 'true\n' ;;
               *"com.dockistrate.role"*) printf 'proxy\n' ;;
               *"com.dockistrate.state-dir"*) printf '%s\n' "$STATE_DIR" ;;
             esac
+            return 0
+            ;;
+          '{{json .Mounts}}')
+            python3 - "$NGINX_CONFIG_DIR" "$NGINX_CONTAINER_CONF_ROOT" "$STUB_CERTIFICATE_PROJECTION" "$ACME_WEBROOT_DIR" <<'PY'
+import json, sys
+print(json.dumps([dict(Type='bind', Source=source, Destination=target, RW=False)
+    for source, target in [(sys.argv[1], sys.argv[2]), (sys.argv[3], '/etc/letsencrypt'), (sys.argv[4], '/var/www/certbot')]]))
+PY
             return 0
             ;;
           *".Mounts"*)
@@ -241,6 +264,8 @@ function reset_update_state() {
   : >"$TRACE_FILE"
 
   create_nginx_config
+  # Rollback reloads the saved configuration before recovering the runtime.
+  _save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
   printf '%s\n' "$STATE_BACKEND_PORTS_HEADER" >"$BACKEND_PORTS_FILE"
   printf '%s\n' "$STATE_BACKEND_ALIASES_HEADER" >"$BACKEND_ALIASES_FILE"
   printf 'old\n' >"$CONFIG_DIR/marker.txt"
@@ -261,6 +286,9 @@ function reset_update_state() {
   unset DOCKISTRATE_SECURITY_NGINX_READY_CHECK
   unset DOCKISTRATE_DEFERRED_SECURITY_NGINX_RECREATE
   unset DOCKISTRATE_SECURITY_NGINX_READY_ATTEMPTS
+  # These existing rollback cases start from an already-converged proxy.
+  # Legacy-mount upgrades have dedicated production-path coverage separately.
+  _nginx_prepare_certificate_projection STUB_CERTIFICATE_PROJECTION || return 1
 }
 
 # Scenario A: unsafe persisted mTLS state fails closed before config is rendered without client auth.
@@ -287,7 +315,43 @@ fi
 assert_equals "old" "$(cat "$CONFIG_DIR/marker.txt")" "config rollback should restore the previous marker after mTLS render failure"
 assert_equals "0" "$(count_trace "recreate_nginx_container")" "mTLS render failure should happen before nginx runtime recreation"
 
-# Scenario B: recreate failure restores the previous nginx runtime.
+# Scenario B: missing required CRL fails closed and preserves the previous config before runtime recreation.
+reset_update_state
+mkdir -p "$CERTS_DIR/letsencrypt/live/example.com_443" "$CERTS_DIR/mtls/example.com"
+printf 'old backends config\n' >"$NGINX_HTTP_CONF_DIR/backends.conf"
+printf 'ca\n' >"$CERTS_DIR/mtls/example.com/ca.crt"
+cat >"$BACKEND_PORTS_FILE" <<'EOF_PORTS'
+record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location
+backend,example.com,10.0.0.5:8000,dockistrate-net,,,,,,,,,,,,,,,,,
+port,example.com,,,,,443,8000,https,letsencrypt/live/example.com_443,no,off,,off,auto,,,,,,
+EOF_PORTS
+cat >"$BACKEND_MTLS_FILE" <<EOF_MTLS
+domain,mtls_directory
+example.com,$CERTS_DIR/mtls/example.com
+EOF_MTLS
+function _generate_backend_crl() {
+  _trace_append "generate_backend_crl"
+  return 1
+}
+set +e
+(update_nginx_config) >"$TMP_ROOT/missing-crl.out" 2>&1
+status=$?
+set -e
+# shellcheck source=../lib/mtls/_generate_backend_crl.sh
+source "$ROOT_DIR/lib/mtls/_generate_backend_crl.sh"
+if [ "$status" -eq 0 ]; then
+  fail_test "update_nginx_config should fail when the required mTLS CRL cannot be generated"
+fi
+if ! grep -Fq "Failed to generate required mTLS CRL for 'example.com'" "$TMP_ROOT/missing-crl.out"; then
+  cat "$TMP_ROOT/missing-crl.out" >&2
+  fail_test "missing-CRL render failure did not report the required CRL diagnostic"
+fi
+assert_equals "old backends config" "$(cat "$NGINX_HTTP_CONF_DIR/backends.conf")" "missing-CRL rollback should restore the previous backend config"
+assert_equals "old" "$(cat "$CONFIG_DIR/marker.txt")" "missing-CRL rollback should restore the previous marker"
+assert_equals "1" "$(count_trace "generate_backend_crl")" "missing-CRL render should attempt regeneration once"
+assert_equals "0" "$(count_trace "recreate_nginx_container")" "missing-CRL render failure should happen before nginx runtime recreation"
+
+# Scenario C: recreate failure restores the previous nginx runtime.
 reset_update_state
 STUB_RECREATE_FAIL_ON_CALL="1"
 set +e
@@ -301,7 +365,7 @@ assert_equals "old" "$(cat "$CONFIG_DIR/marker.txt")" "config rollback should re
 assert_equals "2" "$(count_trace "recreate_nginx_container")" "rollback should attempt a second recreate after recreate failure"
 assert_trace_contains "recreate_nginx_container:2:${NGINX_IMAGE}:80/tcp"
 
-# Scenario C: post-recreate running check failure restores the previous nginx runtime.
+# Scenario D: post-recreate running check failure restores the previous nginx runtime.
 reset_update_state
 STUB_RECREATE_RUNNING_AFTER_CALL_1="false"
 set +e
@@ -316,7 +380,7 @@ assert_equals "2" "$(count_trace "recreate_nginx_container")" "rollback should r
 assert_equals "1" "$(count_trace "remove_container_and_anonymous_volumes")" "rollback should remove the failed recreated container"
 assert_trace_contains "recreate_nginx_container:2:${NGINX_IMAGE}:80/tcp"
 
-# Scenario D: security readiness failure after forced recreate restores previous nginx runtime.
+# Scenario E: security readiness failure after forced recreate restores previous nginx runtime.
 reset_update_state
 DOCKISTRATE_FORCE_NGINX_RECREATE=true
 DOCKISTRATE_SECURITY_NGINX_READY_CHECK=true

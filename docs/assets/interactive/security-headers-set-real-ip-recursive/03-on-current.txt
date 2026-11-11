@@ -1,0 +1,8 @@
+Enable or disable the setting.
+On or off (on|off)
+Example: on:
+> 1) on (current)
+  2) off
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

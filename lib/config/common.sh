@@ -36,10 +36,10 @@ DEFAULT_REAL_IP_RECURSIVE="on"
 DEFAULT_NGINX_DIRECTIVE_STRICT="on"
 DEFAULT_NGINX_DOCKER_OPTS=""
 DEFAULT_VISIBILITY_POLICY="full"
-# Default Nginx image used when starting the proxy container
-DEFAULT_NGINX_IMAGE="nginx:1.31.1"
-# Default Certbot image used for ACME flows
-DEFAULT_CERTBOT_IMAGE="certbot/certbot:v5.2.1"
+# Reviewed multi-platform image digests; refresh via docs/security/image-maintenance.md.
+# Tags identify the release; Docker resolves and verifies the immutable digest.
+DEFAULT_NGINX_IMAGE="nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47"
+DEFAULT_CERTBOT_IMAGE="certbot/certbot:v5.8.0@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20"
 # Default packet capture image used by start-capture.
 CAPTURE_IMAGE_DEFAULT="nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61"
 CAPTURE_IMAGE="${CAPTURE_IMAGE_DEFAULT}"

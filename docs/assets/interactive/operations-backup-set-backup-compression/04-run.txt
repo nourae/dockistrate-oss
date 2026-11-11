@@ -1,0 +1,14 @@
+Review command
+  Command: Set Backup Compression (set-backup-compression)
+  Description: Toggle compression for automatic backups
+
+Arguments:
+  true or false: true
+
+CLI equivalent:
+  ./dockistrate.sh set-backup-compression true
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -130,15 +130,20 @@ expected_mtls_dir="${CERTS_DIR%/}/mtls/example.com"
 mkdir -p "$outside_state/example.com"
 swap_marker="$TMP_ROOT/swap-state"
 
-function mkdir() {
-  if [ "$#" -eq 2 ] && [ "${1:-}" = "-p" ] && [ "${2:-}" = "$expected_mtls_dir" ] && [ ! -e "$swap_marker" ]; then
-    command mkdir "$@"
-    rm -rf "${CERTS_DIR%/}/mtls"
+# Reach the post-validation boundary with real reusable material. Swap the
+# authority root immediately after read-only validation, before derived writes.
+unset -f openssl
+_generate_backend_ca "$expected_mtls_dir" example.com >/dev/null 2>&1
+_init_backend_mtls_state "$expected_mtls_dir" fresh
+_generate_backend_crl "$expected_mtls_dir" >/dev/null 2>&1
+eval "$(declare -f _mtls_validate_authority_state | sed '1s/_mtls_validate_authority_state/_test_validate_authority_state/')"
+function _mtls_validate_authority_state() {
+  _test_validate_authority_state "$@" || return 1
+  if [ ! -e "$swap_marker" ]; then
+    mv "${CERTS_DIR%/}/mtls" "$TMP_ROOT/pinned-state"
     ln -s "$outside_state" "${CERTS_DIR%/}/mtls"
     : >"$swap_marker"
-    return 0
   fi
-  command mkdir "$@"
 }
 
 set +e
@@ -150,9 +155,11 @@ set -e
 [ "$state_status" -ne 0 ] || fail_test "_init_backend_mtls_state succeeded after mTLS root swap"
 [ ! -e "$outside_state/example.com/index.txt" ] || fail_test "_init_backend_mtls_state wrote outside index.txt after mTLS root swap"
 [ ! -e "$outside_state/example.com/serial" ] || fail_test "_init_backend_mtls_state wrote outside serial after mTLS root swap"
+[ ! -e "$outside_state/example.com/newcerts" ] || fail_test "_init_backend_mtls_state created outside derived output directory after mTLS root swap"
 [ ! -e "$outside_state/example.com/openssl.cnf" ] || fail_test "_init_backend_mtls_state wrote outside openssl.cnf after mTLS root swap"
 
-unset -f mkdir
+# shellcheck source=../lib/mtls/authority_state.sh
+source "$ROOT_DIR/lib/mtls/authority_state.sh"
 
 reset_runtime_tree
 sibling_mtls_dir="${CERTS_DIR%/}/mtls/other.com"

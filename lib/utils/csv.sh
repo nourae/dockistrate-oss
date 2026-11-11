@@ -33,16 +33,24 @@ function csv_escape_field() {
 }
 
 function csv_join_row() {
-  local out="" field escaped=""
+  local out="" field escaped="" first_field=true
   if [ "$#" -eq 0 ]; then
     printf '\n'
     return 0
   fi
 
   for field in "$@"; do
-    escaped="$(csv_escape_field "$field")"
-    if [ -z "$out" ]; then
+    # Keep the public field formatter's quote rules without forking per field.
+    escaped="$field"
+    case "$escaped" in
+    *","* | *"\""* | *$'\n'* | *$'\r'* | " "* | *" " | $'\t'* | *$'\t')
+      escaped="${escaped//\"/\"\"}"
+      escaped="\"$escaped\""
+      ;;
+    esac
+    if [ "$first_field" = true ]; then
       out="$escaped"
+      first_field=false
     else
       out="${out},${escaped}"
     fi
@@ -136,7 +144,13 @@ function _csv_runtime_state_guard_file_and_dir_if_declared() {
   local dir=""
 
   [ -n "$file" ] || return 1
-  dir="$(dirname "$file")"
+  if [[ "$file" == /* && "$file" != */ && "$file" != *//* ]]; then
+    dir="${file%/*}"
+    [ -n "$dir" ] || dir=/
+  else
+    dir="$(dirname "$file" && printf '.')" || return 1
+    dir="${dir%$'\n.'}"
+  fi
   _csv_runtime_state_guard_if_declared "$dir" "${label} directory" || return 1
   _csv_runtime_state_guard_if_declared "$file" "$label" || return 1
 }
@@ -182,7 +196,13 @@ function csv_require_header() {
     return 0
   fi
 
-  file_dir="$(dirname "$file")"
+  if [[ "$file" == /* && "$file" != */ && "$file" != *//* ]]; then
+    file_dir="${file%/*}"
+    [ -n "$file_dir" ] || file_dir=/
+  else
+    file_dir="$(dirname "$file" && printf '.')" || return 1
+    file_dir="${file_dir%$'\n.'}"
+  fi
   _csv_runtime_state_guard_file_and_dir_if_declared "$file" "CSV file" || return 1
   if ! mkdir -p "$file_dir"; then
     echo "[Error] Failed to create CSV directory: ${file_dir}" >&2

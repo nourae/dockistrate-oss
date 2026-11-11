@@ -8,6 +8,10 @@ function _prompt_args_review_or_return() {
   fi
   case "$cmd" in
   add-security-rule)
+    if declare -F _review_domain_config_pending >/dev/null 2>&1; then
+      _review_domain_config_pending "$cmd" "$@"
+      return $?
+    fi
     return 0
     ;;
   esac
@@ -46,6 +50,13 @@ function _prompt_args_review_selected_or_return() {
   fi
 }
 
+# Keep a prompt's initial selection out of later review or nested menus.
+function _prompt_args_choose_initial() {
+  local CLI_CHOICE_INITIAL_INDEX="$1"
+  shift
+  choose_option "$@"
+}
+
 # Prompt for the arguments of the provided command using the same logic as the main picker
 function prompt_args_for_command() {
   local CMD="$1"
@@ -57,6 +68,7 @@ function prompt_args_for_command() {
   PROMPT_ARGS_COLLECTED=()
   local args=()
   local handler_status=0
+  local CLI_CHOICE_CANCEL_REASON="" READ_WITH_EDITING_CANCEL_REASON=""
 
   if declare -F cli_prompt_cache_reset >/dev/null 2>&1; then
     cli_prompt_cache_reset
@@ -194,6 +206,16 @@ function prompt_args_for_command() {
         local name="${CLI_SPEC_NAMES[$spec_idx]}" default="${CLI_SPEC_DEFAULTS[$spec_idx]}" val="" prompt hint opts
         local backtrack_requested=false
 
+        if [ "$CMD" = update-backend ] && [ "$name" = replace_unmanaged_container ]; then
+          if ! declare -F _backend_identity_can_replace_unmanaged >/dev/null 2>&1 ||
+            ! _backend_identity_can_replace_unmanaged "${args[0]:-}" 2>/dev/null; then
+            args+=("")
+            arg_prompted+=("skipped")
+            spec_idx=$((spec_idx + 1))
+            continue
+          fi
+        fi
+
         if [ ${#args[@]} -gt 0 ]; then
           PROMPT_ARGS_CONTEXT=("${args[@]}")
         else
@@ -325,9 +347,36 @@ function prompt_args_for_command() {
           fi
 
           if [ "$INTERACTIVE" = true ]; then
+            # Keep-current sentinels carry intent: an explicit current image
+            # would force update-backend to recreate its container.
+            local initial_idx=0 default_idx preferred_value="$default"
+            case "$CMD:$name" in
+            update-backend:image | update-backend:container_port | update-backend:network | update-backend:docker_opts \
+              | start-nginx:nginx_image | start-nginx:docker_opts | set-nginx-docker-opts:docker_opts)
+              for default_idx in "${!_vals[@]}"; do
+                if [ "${_vals[$default_idx]}" = __DEFAULT__ ]; then
+                  preferred_value=__DEFAULT__
+                  break
+                fi
+              done
+              ;;
+            esac
+            # Other defaults match underlying values, independently of labels.
+            if [ -n "$preferred_value" ]; then
+              for default_idx in "${!_vals[@]}"; do
+                if [ "${_vals[$default_idx]}" = "$preferred_value" ]; then
+                  initial_idx="$default_idx"
+                  break
+                fi
+              done
+            fi
             _vals+=("__BACK__")
             _disp+=("Back")
-            if ! choose_option idx "$prompt:" "${_disp[@]}"; then
+            if ! _prompt_args_choose_initial "$initial_idx" idx "$prompt:" "${_disp[@]}"; then
+              if [ "${CLI_CHOICE_CANCEL_REASON:-}" = eof ]; then
+                _prompt_args_clear_selection
+                return 1
+              fi
               backtrack_requested=true
             elif [ -z "${idx-}" ] || ! [ "$idx" -ge 0 ] 2>/dev/null || [ "$idx" -ge ${#_vals[@]} ] 2>/dev/null; then
               backtrack_requested=true
@@ -346,11 +395,19 @@ function prompt_args_for_command() {
                 fi
               elif [[ "$name" == "docker_opts" && "$val" == "__MANUAL__" ]]; then
                 read_multiline_with_editing "${prompt} (finish with empty line): " val
+                if [ "${READ_WITH_EDITING_CANCEL_REASON:-}" = eof ]; then
+                  _prompt_args_clear_selection
+                  return 1
+                fi
                 if [ "$INTERACTIVE" = true ] && is_back_input "$val"; then
                   backtrack_requested=true
                 fi
               elif [[ "$val" == "__MANUAL__" ]]; then
                 read_with_editing "${prompt}: " val
+                if [ "${READ_WITH_EDITING_CANCEL_REASON:-}" = eof ]; then
+                  _prompt_args_clear_selection
+                  return 1
+                fi
                 if [ "$INTERACTIVE" = true ] && is_back_input "$val"; then
                   backtrack_requested=true
                 fi
@@ -390,6 +447,10 @@ function prompt_args_for_command() {
               read_with_editing "$prompt: " val
             fi
           fi
+          if [ "$INTERACTIVE" = true ] && [ "${READ_WITH_EDITING_CANCEL_REASON:-}" = eof ]; then
+            _prompt_args_clear_selection
+            return 1
+          fi
           [[ -z "$val" ]] && val="$default"
           if [ "$INTERACTIVE" = true ] && is_back_input "$val"; then
             backtrack_requested=true
@@ -418,6 +479,20 @@ function prompt_args_for_command() {
           spec_idx="$previous_idx"
           continue
         fi
+        if [ "$CMD" = update-backend ] && [ "$name" = image ] &&
+          declare -F _backend_identity_can_replace_unmanaged >/dev/null 2>&1 &&
+          _backend_identity_can_replace_unmanaged "${args[0]:-}" 2>/dev/null; then
+          if [ -z "$val" ] || [ "$val" = __DEFAULT__ ] || ! is_valid_image_ref "$val"; then
+            echo "[Error] Select or enter the image for the replacement backend." >&2
+            continue
+          fi
+        fi
+        if [ "$CMD" = update-backend ] && [ "$name" = replace_unmanaged_container ]; then
+          if ! _backend_runtime_is_full_container_id "$val"; then
+            echo "[Error] Enter the full 64-character lowercase hexadecimal container ID, or choose Back." >&2
+            continue
+          fi
+        fi
         args+=("$val")
         arg_prompted+=("prompted")
         spec_idx=$((spec_idx + 1))
@@ -429,6 +504,10 @@ function prompt_args_for_command() {
     local i=1 arg
     while true; do
       read_with_editing "Argument $i for $CMD (leave empty to finish): " arg
+      if [ "$INTERACTIVE" = true ] && [ "${READ_WITH_EDITING_CANCEL_REASON:-}" = eof ]; then
+        _prompt_args_clear_selection
+        return 1
+      fi
       if is_back_input "$arg"; then
         _prompt_args_clear_selection
         return 1

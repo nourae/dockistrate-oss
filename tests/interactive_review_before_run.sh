@@ -21,6 +21,10 @@ source "$ROOT_DIR/lib/cli/command_descriptions.sh"
 source "$ROOT_DIR/lib/cli/is_back_input.sh"
 # shellcheck source=../lib/cli/choose_option.sh
 source "$ROOT_DIR/lib/cli/choose_option.sh"
+# shellcheck source=../lib/utils/operator_visibility.sh
+source "$ROOT_DIR/lib/utils/operator_visibility.sh"
+# shellcheck source=../lib/cli/command_visibility.sh
+source "$ROOT_DIR/lib/cli/command_visibility.sh"
 # shellcheck source=../lib/cli/review_command.sh
 source "$ROOT_DIR/lib/cli/review_command.sh"
 # shellcheck source=../lib/cli/prompt_args_for_command.sh

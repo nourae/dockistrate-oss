@@ -1,0 +1,14 @@
+Search all commands:
+Filter: remove-port
+Press S or / to search, C to clear, Enter to select, ? for help
+> 1) Routing & Ports :: Remove Port — Remove a port mapping for a backend — unavailable:
+    no port mappings
+  2) Routing & Ports :: Remove Port Redirect — Disable HTTP→HTTPS redirect for a port —
+    unavailable: no port mappings
+  3) Port TLS & HTTP/3 :: Remove Port TLS Protocols — Clear TLS protocol override for an
+    HTTPS port — unavailable: no port mappings
+  4) Port TLS & HTTP/3 :: Remove Port TLS Ciphers — Clear TLS cipher override for an
+    HTTPS port — unavailable: no port mappings
+  5) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

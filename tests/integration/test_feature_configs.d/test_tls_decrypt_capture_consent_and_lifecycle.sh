@@ -42,7 +42,7 @@ test_tls_decrypt_capture_consent_and_lifecycle() {
   assertEquals "keylog file mode should be 600 by default" "600" "$(get_mode "$keylog_file")"
 
   local stop_output stop_status
-  stop_output="$(DOCKER_MOCK_PS_NAMES='nginx-capture' run_dockistrate stop-capture)"
+  stop_output="$(run_dockistrate stop-capture)"
   stop_status=$?
   assertEquals "stop-capture should succeed" 0 "$stop_status"
   assertStringContains "stop-capture should confirm tls decrypt disable" \

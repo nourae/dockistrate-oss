@@ -1,0 +1,9 @@
+List all rules or rules owned directly by one hostname. Global rule IDs are preserved; inherited rules are not added to a domain filter.
+Security rule domain
+Example: example.com, an alias, or a dedicated hostname:
+  1) All domains (current)
+> 2) example.com
+  3) Enter a domain manually...
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

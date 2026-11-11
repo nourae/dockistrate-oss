@@ -13,6 +13,8 @@ source "$ROOT_DIR/lib/backups.sh"
 source "$ROOT_DIR/lib/nginx.sh"
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/backends.sh"
+# shellcheck source=tests/lib/backend_identity_fixture.sh
+source "$ROOT_DIR/tests/lib/backend_identity_fixture.sh"
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/tls.sh"
 # shellcheck disable=SC1091
@@ -42,6 +44,7 @@ NGINX_HTTP_CONF_DIR="$NGINX_CONFIG_DIR/conf.d"
 NGINX_STREAM_CONF_DIR="$NGINX_CONFIG_DIR/stream_conf"
 CERTS_DIR="$STATE_DIR/certs"
 BACKEND_PORTS_FILE="$CONFIG_DIR/backend_ports.csv"
+BACKEND_IDENTITY_FILE="$CONFIG_DIR/backend_identity.csv"
 BACKEND_HEADERS_FILE="$CONFIG_DIR/backend_headers.csv"
 BACKEND_HTTP_FILE="$CONFIG_DIR/backend_http_versions.csv"
 BACKEND_MTLS_FILE="$CONFIG_DIR/backend_mtls.csv"
@@ -53,6 +56,7 @@ BACKEND_SECURITY_RULE_STATUS_FILE="$CONFIG_DIR/backend_security_rule_statuses.cs
 SECURITY_RULES_DB="$CONFIG_DIR/security_rules.csv"
 SECURITY_IP_RULES_DB="$CONFIG_DIR/security_ip_rules.csv"
 BACKEND_DOCKER_OPTS_FILE="$CONFIG_DIR/backend_docker_opts.csv"
+GLOBAL_SETTINGS_FILE="$CONFIG_DIR/global_settings.csv"
 LAST_POST_BACKUP_FILE="$BACKUP_DIR/last_post_backup.txt"
 CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha1"
 
@@ -61,6 +65,7 @@ INTERACTIVE=false
 mkdir -p \
   "$CONFIG_DIR" "$LOG_DIR" "$ERROR_LOG_DIR" "$TMP_DIR" "$BACKUP_DIR" \
   "$NGINX_HTTP_CONF_DIR" "$NGINX_STREAM_CONF_DIR" "$CERTS_DIR"
+_save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
 
 cat >"$BACKEND_PORTS_FILE" <<'EOF_PORTS'
 record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location
@@ -100,7 +105,7 @@ domain,security_rule_status_code
 EOF_SEC_STATUS
 
 cat >"$SECURITY_RULES_DB" <<'EOF_SEC_RULES'
-enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location
+enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location,action
 EOF_SEC_RULES
 
 cat >"$SECURITY_IP_RULES_DB" <<'EOF_SEC_IPS'
@@ -108,7 +113,7 @@ enabled,domain,scope,action,ip_value,status_code
 EOF_SEC_IPS
 
 cat >"$BACKEND_DOCKER_OPTS_FILE" <<'EOF_DOCKER_OPTS'
-key,docker_options
+domain,docker_options
 EOF_DOCKER_OPTS
 
 cp "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.orig"
@@ -117,8 +122,8 @@ cp "$BACKEND_DOCKER_OPTS_FILE" "$BACKEND_DOCKER_OPTS_FILE.orig"
 domain="example.com"
 cname="backend-example.com"
 test_backend_name="$cname"
-original_container_id="original-container-id"
-replacement_runtime_id="replacement-container-id"
+original_container_id="$(printf '%064d' 1)"
+replacement_runtime_id="$(printf '%064d' 2)"
 docker_log_file="$TMP_ROOT/docker_update_backend_commit_failure.log"
 backup_files_only_counter_file="$TMP_ROOT/backup_files_only.count"
 active_meta_file="$TMP_ROOT/active.meta"
@@ -158,6 +163,13 @@ write_container_meta "$backup_meta_file" "false" "" "" ""
 
 function container_exists() {
   local candidate="${1:-}"
+  if [ "$candidate" = "$original_container_id" ] || [ "$candidate" = "$replacement_runtime_id" ]; then
+    if [ "$(read_container_meta "$active_meta_file" exists || true)" = true ] &&
+      [ "$(read_container_meta "$active_meta_file" id || true)" = "$candidate" ]; then return 0; fi
+    if [ "$(read_container_meta "$backup_meta_file" exists || true)" = true ] &&
+      [ "$(read_container_meta "$backup_meta_file" id || true)" = "$candidate" ]; then return 0; fi
+    return 1
+  fi
   if [ "$candidate" = "$test_backend_name" ]; then
     [ "$(read_container_meta "$active_meta_file" exists || true)" = "true" ]
     return
@@ -176,7 +188,46 @@ function container_exists() {
 
 function docker() {
   printf 'subcommand=%s %s\n' "$1" "$*" >>"$docker_log_file"
+  local mock_command="${1:-}" mock_target="${@: -1}" resolved_target=""
+  if [ "$mock_command" = rename ]; then mock_target="${2:-}"; fi
+  if [ "$mock_target" = "$original_container_id" ] || [ "$mock_target" = "$replacement_runtime_id" ]; then
+    if [ "$(read_container_meta "$active_meta_file" exists || true)" = true ] &&
+      [ "$(read_container_meta "$active_meta_file" id || true)" = "$mock_target" ]; then
+      resolved_target="$test_backend_name"
+    elif [ "$(read_container_meta "$backup_meta_file" exists || true)" = true ] &&
+      [ "$(read_container_meta "$backup_meta_file" id || true)" = "$mock_target" ]; then
+      resolved_target="$(read_container_meta "$backup_meta_file" name)"
+    else
+      return 1
+    fi
+    case "$mock_command" in
+    rename) set -- rename "$resolved_target" "$3" ;;
+    inspect) set -- inspect "$2" "$3" "$resolved_target" ;;
+    rm) set -- rm "${@:2:$#-2}" "$resolved_target" ;;
+    stop|start) set -- "$mock_command" "$resolved_target" ;;
+    esac
+  fi
   case "${1:-}" in
+  ps)
+    local arg="" wanted="" wanted_id="" current_token=""
+    for arg in "$@"; do
+      case "$arg" in
+      label=com.dockistrate.backend-launch=*) wanted="${arg#label=com.dockistrate.backend-launch=}" ;;
+      id=*) wanted_id="${arg#id=}" ;;
+      esac
+    done
+    if [ -n "$wanted_id" ]; then
+      if container_exists "$wanted_id"; then printf '%s\n' "$wanted_id"; fi
+      return 0
+    fi
+    [ ! -f "$TMP_ROOT/launch.token" ] || current_token="$(cat "$TMP_ROOT/launch.token")"
+    if [ -n "$wanted" ] && [ "$wanted" = "$current_token" ] &&
+      [ "$(read_container_meta "$active_meta_file" exists || true)" = true ] &&
+      [ "$(read_container_meta "$active_meta_file" id || true)" = "$replacement_runtime_id" ]; then
+      printf '%s\n' "$replacement_runtime_id"
+    fi
+    return 0
+    ;;
   rename)
     local src="${2:-}" dest="${3:-}"
     local active_exists active_status active_id
@@ -208,6 +259,13 @@ function docker() {
     return 1
     ;;
   run)
+    local arg="" previous=""
+    : >"$TMP_ROOT/$replacement_runtime_id.labels"
+    for arg in "$@"; do
+      if [ "$previous" = --label ]; then printf '%s\n' "$arg" >>"$TMP_ROOT/$replacement_runtime_id.labels"; fi
+      previous="$arg"
+      case "$arg" in com.dockistrate.backend-launch=*) printf '%s\n' "${arg#*=}" >"$TMP_ROOT/launch.token" ;; esac
+    done
     local current_backup_exists current_backup_status
     current_backup_exists="$(read_container_meta "$backup_meta_file" exists || true)"
     current_backup_status="$(read_container_meta "$backup_meta_file" status || true)"
@@ -233,6 +291,24 @@ function docker() {
       backup_id="$(read_container_meta "$backup_meta_file" id || true)"
 
       case "$format" in
+      *'}}verified{{else}}unverified{{end}}'*)
+        if [ "$target" = "$test_backend_name" ] && [ "$active_exists" = true ]; then
+          backend_fixture_snapshot "$format" "$active_id" "$active_status" "$TMP_ROOT/$active_id.labels"
+          return 0
+        fi
+        if [ "$target" = "$backup_name" ] && [ "$backup_exists" = true ]; then
+          backend_fixture_snapshot "$format" "$backup_id" "$backup_status" "$TMP_ROOT/$backup_id.labels"
+          return 0
+        fi
+        return 1
+        ;;
+      *'.Config.Labels'*)
+        if [ "$target" = "$test_backend_name" ] && [ "$active_exists" = true ]; then
+          printf '%s %s\n' "$active_id" "$(cat "$TMP_ROOT/launch.token")"
+          return 0
+        fi
+        return 1
+        ;;
       *'.Config.Image'*)
         if [ "$target" = "$test_backend_name" ] && [ "$active_exists" = "true" ]; then
           printf '%s\n' 'nginx:alpine'
@@ -343,6 +419,11 @@ function create_backup() { :; }
 function capture_docker_logs() { :; }
 function log_msg() { :; }
 
+original_token=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+backend_fixture_seed_labels "$TMP_ROOT/$original_container_id.labels" "$original_token" "$domain" "$STATE_DIR"
+_backend_identity_store "$domain" "$original_container_id" "$original_token"
+cp "$BACKEND_IDENTITY_FILE" "$TMP_ROOT/identity.before"
+
 set +e
 output="$(update_backend "$domain" --image hashicorp/http-echo 2>&1)"
 status=$?
@@ -358,40 +439,40 @@ if ! printf '%s' "$output" | grep -Fq "failed. Rolled back."; then
   exit 1
 fi
 
-rollback_name="$(sed -n "s/^subcommand=rename rename ${cname} \\(${cname}-rollback-[0-9-][0-9-]*\\)$/\\1/p" "$docker_log_file" | head -n 1)"
+rollback_name="$(sed -n "s/^subcommand=rename rename ${original_container_id} \\(${cname}-rollback-[0-9-][0-9-]*\\)$/\\1/p" "$docker_log_file" | head -n 1)"
 if [ -z "$rollback_name" ]; then
   echo "[Error] Failed to discover the staged rollback container name from the docker log." >&2
   exit 1
 fi
 
-if ! grep -Fq "subcommand=stop stop $rollback_name" "$docker_log_file"; then
+if ! grep -Fq "subcommand=stop stop $original_container_id" "$docker_log_file"; then
   echo "[Error] update_backend did not stop the staged rollback container before replacement launch." >&2
   exit 1
 fi
 
-if ! grep -Fq "subcommand=start start $cname" "$docker_log_file"; then
+if ! grep -Fq "subcommand=start start $original_container_id" "$docker_log_file"; then
   echo "[Error] update_backend rollback did not restart the restored original container." >&2
   exit 1
 fi
 
-if ! grep -Fq "subcommand=rename rename $rollback_name $cname" "$docker_log_file"; then
+if ! grep -Fq "subcommand=rename rename $original_container_id $cname" "$docker_log_file"; then
   echo "[Error] update_backend rollback did not restore the original container name." >&2
   exit 1
 fi
 
-if ! grep -Fq "subcommand=rm rm -f -v $cname" "$docker_log_file"; then
+if ! grep -Fq "subcommand=rm rm -f -v $replacement_runtime_id" "$docker_log_file"; then
   echo "[Error] update_backend rollback did not remove the failed replacement container." >&2
   exit 1
 fi
 
-stop_line="$(grep -n "subcommand=stop stop $rollback_name" "$docker_log_file" | head -n 1 | cut -d: -f1 || true)"
+stop_line="$(grep -n "subcommand=stop stop $original_container_id" "$docker_log_file" | head -n 1 | cut -d: -f1 || true)"
 run_line="$(grep -n "subcommand=run run -d --name $cname" "$docker_log_file" | head -n 1 | cut -d: -f1 || true)"
 if [ -z "$stop_line" ] || [ -z "$run_line" ] || [ "$stop_line" -ge "$run_line" ]; then
   echo "[Error] update_backend did not stop the staged rollback container before running the replacement." >&2
   exit 1
 fi
 
-if grep -Fq "subcommand=rm rm -f $rollback_name" "$docker_log_file"; then
+if grep -Fq "subcommand=rm rm -f $original_container_id" "$docker_log_file"; then
   echo "[Error] update_backend removed the rollback container before commit finalization completed." >&2
   exit 1
 fi
@@ -407,3 +488,8 @@ if ! cmp -s "$BACKEND_DOCKER_OPTS_FILE" "$BACKEND_DOCKER_OPTS_FILE.orig"; then
 fi
 
 echo "update_backend preserves runtime rollback state until transaction commit succeeds."
+
+if ! cmp -s "$BACKEND_IDENTITY_FILE" "$TMP_ROOT/identity.before"; then
+  echo '[Error] Commit failure did not restore the original saved ownership identity.' >&2
+  exit 1
+fi

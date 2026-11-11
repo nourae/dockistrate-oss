@@ -1,0 +1,16 @@
+Review command
+  Command: Clean All (clean-all)
+  Description: Remove all references for a single domain
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh clean-all example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

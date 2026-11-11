@@ -1,0 +1,1044 @@
+{
+  "schema_version": 1,
+  "scenario": "security-acl",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:35.667224+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "security",
+  "group": "acl",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:41:05.397720+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "security-acl-acl-rules",
+      "journey_family": "security-acl-acl-rules",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-rules/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-rules/03-example-com.txt",
+      "image_sha256": "ac407cad684f685f5376a3a786a36e3ee2c444aabb4dbfe1c8f5388bda8bd1a5",
+      "transcript_sha256": "78ccd10d28cbf05856d44203340eb12572b5c6e5e84331d74fd888567e5af9de",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-rules.pty.log",
+      "pty_byte_offset": 70792,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-acl-acl-rules",
+      "journey_family": "security-acl-acl-rules",
+      "session_index": 1,
+      "step": 4,
+      "title": "Apply to L7 and L3 (TCP uses client IP)",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-rules/04-apply-to-l7-and-l3-tcp-uses-client-ip.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-rules/04-apply-to-l7-and-l3-tcp-uses-client-ip.txt",
+      "image_sha256": "51ab8d0715336113641ca71127a5412eb1179757fd3eaef72247ea6edcd59ca4",
+      "transcript_sha256": "a2dcf7b3ff891c819fdd5d5ad0fea2c71099ae0bbe17b32c61b6540736c4260c",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-rules.pty.log",
+      "pty_byte_offset": 71860,
+      "selected": "Apply to L7 and L3 (TCP uses client IP)"
+    },
+    {
+      "journey": "security-acl-acl-rules",
+      "journey_family": "security-acl-acl-rules",
+      "session_index": 1,
+      "step": 5,
+      "title": "allow",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-rules/05-allow.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-rules/05-allow.txt",
+      "image_sha256": "3ddd6fe5df2c2bc46413e328d1deb7556aef0e90db43b96eb7e2f1e170c26c3e",
+      "transcript_sha256": "1e166a9fc5731b28d0951c3842d990bde3ae78bc24e86653f46593b69118dcf1",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-rules.pty.log",
+      "pty_byte_offset": 71989,
+      "selected": "allow"
+    },
+    {
+      "journey": "security-acl-acl-rules",
+      "journey_family": "security-acl-acl-rules",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-rules/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-rules/06-enter-value.txt",
+      "image_sha256": "c5c7bc4448dce3ba44b7c9f7915ac3b0e69eda2ca79a730e13b1ef3c5ec4391a",
+      "transcript_sha256": "c6120e3e71cd32044a4cefc5b1903c57e8991dd16dd10cef26d4b9814e215814",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-rules.pty.log",
+      "pty_byte_offset": 72034,
+      "value": "203.0.113.8"
+    },
+    {
+      "journey": "security-acl-acl-rules",
+      "journey_family": "security-acl-acl-rules",
+      "session_index": 1,
+      "step": 7,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-rules/07-run.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-rules/07-run.txt",
+      "image_sha256": "e9b1f63b069e3ae9905d1fc906ea18269ef08a35698177b092321a1b35538599",
+      "transcript_sha256": "b447b6868b69882ee4b23d2e36e8f14f5926cf6d099e0cf39e501f1dee6801d7",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-rules.pty.log",
+      "pty_byte_offset": 72462,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-acl-rules",
+      "journey_family": "security-acl-acl-rules",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-rules/08-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-rules/08-command-result.txt",
+      "image_sha256": "5a2e6f769864b1fec34533cf4b4a3322f91f885c5b85839174bcee72f2ab0127",
+      "transcript_sha256": "c7f53aeaa133bde7356cb8af46b23bcaebda9e441e774d78ca3485aa4de5222d",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-rules.pty.log",
+      "pty_byte_offset": 73975,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-list-acl",
+      "journey_family": "security-acl-list-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-acl",
+      "image": "docs/assets/interactive/security-acl-list-acl/03-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-list-acl/03-command-result.txt",
+      "image_sha256": "2f17cd1493d56f69b289941866a16026c02088cda8b9b7f76282a9504a1ac846",
+      "transcript_sha256": "f854037e12abfe1d2fff29e3910eb3b6dfcf6e55e974f015a2f69f8a28c4daa6",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-list-acl.pty.log",
+      "pty_byte_offset": 73699,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-update-acl",
+      "journey_family": "security-acl-update-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com both allow 203.0.113.8",
+      "kind": "menu",
+      "command": "update-acl",
+      "image": "docs/assets/interactive/security-acl-update-acl/03-example-com-both-allow-203-0-113-8.png",
+      "transcript": "docs/assets/interactive/security-acl-update-acl/03-example-com-both-allow-203-0-113-8.txt",
+      "image_sha256": "8d680fc1b8e436ae9a31ee8e4cf6dd8990b3e973103505e8bd1b79291549244e",
+      "transcript_sha256": "7e265b933b61935f79dbc973bf6486307c855eb562a6c7998ad3842f053541ee",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log",
+      "pty_byte_offset": 66645,
+      "selected": "example.com both allow 203.0.113.8"
+    },
+    {
+      "journey": "security-acl-update-acl",
+      "journey_family": "security-acl-update-acl",
+      "session_index": 1,
+      "step": 4,
+      "title": "Keep current: example.com",
+      "kind": "menu",
+      "command": "update-acl",
+      "image": "docs/assets/interactive/security-acl-update-acl/04-keep-current-example-com.png",
+      "transcript": "docs/assets/interactive/security-acl-update-acl/04-keep-current-example-com.txt",
+      "image_sha256": "953aa443f64094992875d5a64d6b3e81988fd5be14a2379e9409fca4d80929fd",
+      "transcript_sha256": "28d2194e40e3b21bc4adb151ced91d14907b57cbd7859c0d4941f9233821c0d8",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log",
+      "pty_byte_offset": 66781,
+      "selected": "Keep current: example.com"
+    },
+    {
+      "journey": "security-acl-update-acl",
+      "journey_family": "security-acl-update-acl",
+      "session_index": 1,
+      "step": 5,
+      "title": "Layer 7 (client IP; CIDR supported)",
+      "kind": "menu",
+      "command": "update-acl",
+      "image": "docs/assets/interactive/security-acl-update-acl/05-layer-7-client-ip-cidr-supported.png",
+      "transcript": "docs/assets/interactive/security-acl-update-acl/05-layer-7-client-ip-cidr-supported.txt",
+      "image_sha256": "c14efbcc296124d871315025070f6e4f7d0e6683749d705c4ca91e3d9ba0e0d1",
+      "transcript_sha256": "0717909a9acb0c8f001a95166afd16fb25c54d7c6d267459c3fa0285f8d5ae33",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log",
+      "pty_byte_offset": 67243,
+      "selected": "Layer 7 (client IP; CIDR supported)"
+    },
+    {
+      "journey": "security-acl-update-acl",
+      "journey_family": "security-acl-update-acl",
+      "session_index": 1,
+      "step": 6,
+      "title": "Deny",
+      "kind": "menu",
+      "command": "update-acl",
+      "image": "docs/assets/interactive/security-acl-update-acl/06-deny.png",
+      "transcript": "docs/assets/interactive/security-acl-update-acl/06-deny.txt",
+      "image_sha256": "aa3fd4dbbc5fdd752ac87c2a430b5ced6c603ccbe6c34c4449ee5875446a6109",
+      "transcript_sha256": "6de8fef1aac68d38263c816648e4f173f33021bdf903539587e616f51f81cd95",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log",
+      "pty_byte_offset": 67648,
+      "selected": "Deny"
+    },
+    {
+      "journey": "security-acl-update-acl",
+      "journey_family": "security-acl-update-acl",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-acl",
+      "image": "docs/assets/interactive/security-acl-update-acl/07-enter-value.png",
+      "transcript": "docs/assets/interactive/security-acl-update-acl/07-enter-value.txt",
+      "image_sha256": "27093591205e2789ccbee35cfbb7b6282afcd5f4e36ad7649b50cb80697080a7",
+      "transcript_sha256": "819e3f98d652243b5cabfa588ec261d43939165e36afa8eebf91308db7519683",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log",
+      "pty_byte_offset": 67697,
+      "value": "203.0.113.0/24"
+    },
+    {
+      "journey": "security-acl-update-acl",
+      "journey_family": "security-acl-update-acl",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-acl",
+      "image": "docs/assets/interactive/security-acl-update-acl/08-enter-value.png",
+      "transcript": "docs/assets/interactive/security-acl-update-acl/08-enter-value.txt",
+      "image_sha256": "0cc44bf18da589f74a5e70562d6645b7e21ef7698e76a1c08cf6172b85407c84",
+      "transcript_sha256": "a9d730318ccb94ac8e3cd0ea9c634f819ee90cd0244a60b9e586ec049908b4ff",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log",
+      "pty_byte_offset": 67777,
+      "value": "403"
+    },
+    {
+      "journey": "security-acl-update-acl",
+      "journey_family": "security-acl-update-acl",
+      "session_index": 1,
+      "step": 9,
+      "title": "Run",
+      "kind": "menu",
+      "command": "update-acl",
+      "image": "docs/assets/interactive/security-acl-update-acl/09-run.png",
+      "transcript": "docs/assets/interactive/security-acl-update-acl/09-run.txt",
+      "image_sha256": "76c6fd6d843d88f7c5a206f484e72c119c8cc660e0643377348c79e3865b4074",
+      "transcript_sha256": "3d2d82938230331a186e32b470e3de107ae6477cfe3036ef742cbae66c1be83f",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log",
+      "pty_byte_offset": 68250,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-update-acl",
+      "journey_family": "security-acl-update-acl",
+      "session_index": 1,
+      "step": 10,
+      "title": "Command result",
+      "kind": "result",
+      "command": "update-acl",
+      "image": "docs/assets/interactive/security-acl-update-acl/10-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-update-acl/10-command-result.txt",
+      "image_sha256": "6efa79782cf553cc97be3a9c0a575d145fb33b202459640209981de9ef05a850",
+      "transcript_sha256": "bb1acfb47b7374f4606de9b7d05f92d13dfa9573933c22c0af8b2756df32bfe3",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log",
+      "pty_byte_offset": 69733,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-disable-acl",
+      "journey_family": "security-acl-disable-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com l7 deny 203.0.113.0/24",
+      "kind": "menu",
+      "command": "disable-acl",
+      "image": "docs/assets/interactive/security-acl-disable-acl/03-example-com-l7-deny-203-0-113-0-24.png",
+      "transcript": "docs/assets/interactive/security-acl-disable-acl/03-example-com-l7-deny-203-0-113-0-24.txt",
+      "image_sha256": "3dada3f5e956b36b6a691dd8776c55a9bdb98a7a7e95274a8fd24dad3db98055",
+      "transcript_sha256": "712a89a886b8b6946f2d4401291110bcb2087113ed99b6a90a1abead5c881373",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-disable-acl.pty.log",
+      "pty_byte_offset": 74294,
+      "selected": "example.com l7 deny 203.0.113.0/24"
+    },
+    {
+      "journey": "security-acl-disable-acl",
+      "journey_family": "security-acl-disable-acl",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "disable-acl",
+      "image": "docs/assets/interactive/security-acl-disable-acl/04-run.png",
+      "transcript": "docs/assets/interactive/security-acl-disable-acl/04-run.txt",
+      "image_sha256": "caf8977f1942be43cc9bb587619166d29617ce520b1dd4f2f1035432fcca3127",
+      "transcript_sha256": "d264bb3aac0c62e73a9a2a7fd81b46552fef3bd487f23748bf323642d62cf84f",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-disable-acl.pty.log",
+      "pty_byte_offset": 74577,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-disable-acl",
+      "journey_family": "security-acl-disable-acl",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "disable-acl",
+      "image": "docs/assets/interactive/security-acl-disable-acl/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-disable-acl/05-command-result.txt",
+      "image_sha256": "565084f4f18fbf5b3766389403d04d48bfa608edc942387d6d1b54c823629690",
+      "transcript_sha256": "2d6d43731cb746c9ba4e935f353f6c4422c559b7f66e0a8b5a58623276ef529d",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-disable-acl.pty.log",
+      "pty_byte_offset": 76061,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-enable-acl",
+      "journey_family": "security-acl-enable-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com l7 deny 203.0.113.0/24 [disabled]",
+      "kind": "menu",
+      "command": "enable-acl",
+      "image": "docs/assets/interactive/security-acl-enable-acl/03-example-com-l7-deny-203-0-113-0-24-disabled.png",
+      "transcript": "docs/assets/interactive/security-acl-enable-acl/03-example-com-l7-deny-203-0-113-0-24-disabled.txt",
+      "image_sha256": "086fb94517355d110cbe6487c8c843a0306fcad6fa0c6ae6dec3dffa56c6ea1b",
+      "transcript_sha256": "8c7386664796a145b0e57444e6c3b54e3f27991aa6b43b1b60aff95916927b88",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-enable-acl.pty.log",
+      "pty_byte_offset": 82163,
+      "selected": "example.com l7 deny 203.0.113.0/24 [disabled]"
+    },
+    {
+      "journey": "security-acl-enable-acl",
+      "journey_family": "security-acl-enable-acl",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "enable-acl",
+      "image": "docs/assets/interactive/security-acl-enable-acl/04-run.png",
+      "transcript": "docs/assets/interactive/security-acl-enable-acl/04-run.txt",
+      "image_sha256": "0b205cc87a1b0ea5897223ceec7cbfe0da4fcbc96710b648088777240f79ca7d",
+      "transcript_sha256": "38e96d9a49208a7269a943189947d9f561b3e347ba7b313356f3c49f5be4b119",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-enable-acl.pty.log",
+      "pty_byte_offset": 82442,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-enable-acl",
+      "journey_family": "security-acl-enable-acl",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "enable-acl",
+      "image": "docs/assets/interactive/security-acl-enable-acl/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-enable-acl/05-command-result.txt",
+      "image_sha256": "9f2e5153109d78ac02f41e42b22ccfa223ebe5a05aec44269b7d3fd2a4bc433d",
+      "transcript_sha256": "2480ed6cd21d1ba4ef869a6adff2e2a5d230323ea0ecd7746846ad744379f0f4",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-enable-acl.pty.log",
+      "pty_byte_offset": 83925,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-acl-second-rule",
+      "journey_family": "security-acl-acl-second-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-second-rule/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-second-rule/03-example-com.txt",
+      "image_sha256": "9375d90bb2fb5ef1d5fa4d9c3bae8a9db3b4dce32d496ff34006ecef23b27eca",
+      "transcript_sha256": "78ccd10d28cbf05856d44203340eb12572b5c6e5e84331d74fd888567e5af9de",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-second-rule.pty.log",
+      "pty_byte_offset": 69908,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-acl-acl-second-rule",
+      "journey_family": "security-acl-acl-second-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Layer 7 ($remote_addr, also used for TCP streams)",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-second-rule/04-layer-7-remote-addr-also-used-for-tcp-streams.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-second-rule/04-layer-7-remote-addr-also-used-for-tcp-streams.txt",
+      "image_sha256": "ffefe6a0411443519b93ca70091c09f838e204401647a8a9c36cf20bba9dfdcb",
+      "transcript_sha256": "44c2781ff0c324a762b6c3531593c7bd21aa9fc706e366b842ce310484bbbdda",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-second-rule.pty.log",
+      "pty_byte_offset": 70264,
+      "selected": "Layer 7 ($remote_addr, also used for TCP streams)"
+    },
+    {
+      "journey": "security-acl-acl-second-rule",
+      "journey_family": "security-acl-acl-second-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "allow",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-second-rule/05-allow.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-second-rule/05-allow.txt",
+      "image_sha256": "94c7e53dd67e4ec54f39d7324ced6145fd8a06c775e7704095a005c00f1a5989",
+      "transcript_sha256": "1e166a9fc5731b28d0951c3842d990bde3ae78bc24e86653f46593b69118dcf1",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-second-rule.pty.log",
+      "pty_byte_offset": 70393,
+      "selected": "allow"
+    },
+    {
+      "journey": "security-acl-acl-second-rule",
+      "journey_family": "security-acl-acl-second-rule",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-second-rule/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-second-rule/06-enter-value.txt",
+      "image_sha256": "ffe9e3df5e18085d99d286aee9c22e48876676b9aa40ac2893e8db0803fa0d94",
+      "transcript_sha256": "6216d730ca38cc4f8c131af2e81486d4093c52329d7ddaa56df9f41f46ff8306",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-second-rule.pty.log",
+      "pty_byte_offset": 70440,
+      "value": "198.51.100.10"
+    },
+    {
+      "journey": "security-acl-acl-second-rule",
+      "journey_family": "security-acl-acl-second-rule",
+      "session_index": 1,
+      "step": 7,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-second-rule/07-run.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-second-rule/07-run.txt",
+      "image_sha256": "a343b34bb6a4009543068db273ed91512021996b1f290c9dd86eea159769693d",
+      "transcript_sha256": "37386883c5124031ebd34b74b3ede1e1d16bdabaced6efa4f7cdeb0f8e70aad9",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-second-rule.pty.log",
+      "pty_byte_offset": 70868,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-acl-second-rule",
+      "journey_family": "security-acl-acl-second-rule",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-acl-acl-second-rule/08-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-second-rule/08-command-result.txt",
+      "image_sha256": "37d3f061fba6dba8966cd3a27a64423be8a15558e9e099640abefd5ef852cd7c",
+      "transcript_sha256": "fd52051ff01aaee2a96ba2e2ad3ef3d27a612ba407bffc208c9218cb1007a298",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-second-rule.pty.log",
+      "pty_byte_offset": 72381,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-move-acl-rule",
+      "journey_family": "security-acl-move-acl-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "move-acl-rule",
+      "image": "docs/assets/interactive/security-acl-move-acl-rule/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-acl-move-acl-rule/03-enter-value.txt",
+      "image_sha256": "ef54dc1411bc67fd67e75c3deb05d226cf2fc9a93c9a76f4902556fbb4df50f0",
+      "transcript_sha256": "7fc61a1f7e5c5efcb7e1a6132b415651a625a9db2a5535314759181e178d5726",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-move-acl-rule.pty.log",
+      "pty_byte_offset": 73921,
+      "value": "2"
+    },
+    {
+      "journey": "security-acl-move-acl-rule",
+      "journey_family": "security-acl-move-acl-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "move-acl-rule",
+      "image": "docs/assets/interactive/security-acl-move-acl-rule/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-acl-move-acl-rule/04-enter-value.txt",
+      "image_sha256": "1d14109a5fb3b71b93b01cb4984e3a3a1cca72cb150aa2b0d91ef807210a1936",
+      "transcript_sha256": "801054aa363dfe03b90d5034a43154963842e53c2de42ecdab54bdfbb727c4dc",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-move-acl-rule.pty.log",
+      "pty_byte_offset": 73955,
+      "value": "1"
+    },
+    {
+      "journey": "security-acl-move-acl-rule",
+      "journey_family": "security-acl-move-acl-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "move-acl-rule",
+      "image": "docs/assets/interactive/security-acl-move-acl-rule/05-run.png",
+      "transcript": "docs/assets/interactive/security-acl-move-acl-rule/05-run.txt",
+      "image_sha256": "bd06e3aa5479825a46ffe00adc724039ea8316c2e46e010749c89c61db12080a",
+      "transcript_sha256": "c130ae223e5459db207a60a60fafa991bd53ed1aac9c837b4771feb81ae76e72",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-move-acl-rule.pty.log",
+      "pty_byte_offset": 74284,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-move-acl-rule",
+      "journey_family": "security-acl-move-acl-rule",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "move-acl-rule",
+      "image": "docs/assets/interactive/security-acl-move-acl-rule/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-move-acl-rule/06-command-result.txt",
+      "image_sha256": "e8429b56e6a37a9ffa6ff95e60cacde1db75c7758a89fe9e76ca1bc021eb2ee8",
+      "transcript_sha256": "4553afc9c6d34839e24fd1c8bb5fdb228ffcba13b71ea5ba61d6115d3b20284a",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-move-acl-rule.pty.log",
+      "pty_byte_offset": 75770,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-disable-all-acl",
+      "journey_family": "security-acl-disable-all-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "disable-all-acl",
+      "image": "docs/assets/interactive/security-acl-disable-all-acl/03-run.png",
+      "transcript": "docs/assets/interactive/security-acl-disable-all-acl/03-run.txt",
+      "image_sha256": "838fb138ad5e6fc0a640ac7ae4717cfa4ee60a4213445a31beebd69b52276edf",
+      "transcript_sha256": "f5acb9e050603c9a5bb28b32ad4223dbef452622bf0787c1710828af1e143995",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-disable-all-acl.pty.log",
+      "pty_byte_offset": 75889,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-disable-all-acl",
+      "journey_family": "security-acl-disable-all-acl",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "disable-all-acl",
+      "image": "docs/assets/interactive/security-acl-disable-all-acl/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-disable-all-acl/04-command-result.txt",
+      "image_sha256": "2c57716f8a0f96797608695d12e884843165022ae6cba1385ac577f98049289d",
+      "transcript_sha256": "be0a1d9e7b32cea99337ce9313a538d6bc85f7807799f7d2ec1e71c082947ed3",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-disable-all-acl.pty.log",
+      "pty_byte_offset": 77377,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-enable-all-acl",
+      "journey_family": "security-acl-enable-all-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "enable-all-acl",
+      "image": "docs/assets/interactive/security-acl-enable-all-acl/03-run.png",
+      "transcript": "docs/assets/interactive/security-acl-enable-all-acl/03-run.txt",
+      "image_sha256": "64cc992c0973f865e0dd88121515b9ad4ea96be919b70b6c95683444a57bf52c",
+      "transcript_sha256": "6c308268b7eb8f5a708a437f7cbe5a65f5c9090f157c8c7aaf8c70eeb3863b6c",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-enable-all-acl.pty.log",
+      "pty_byte_offset": 83725,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-enable-all-acl",
+      "journey_family": "security-acl-enable-all-acl",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "enable-all-acl",
+      "image": "docs/assets/interactive/security-acl-enable-all-acl/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-enable-all-acl/04-command-result.txt",
+      "image_sha256": "5cbdb47c7410efcf3f5782422506e855a34cb05122298516d342509a12938a58",
+      "transcript_sha256": "782c7272930f142670d00865a8ec3475a3add53e4a2cd681cb37694d2af46b41",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-enable-all-acl.pty.log",
+      "pty_byte_offset": 85212,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-remove-acl",
+      "journey_family": "security-acl-remove-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com l7 allow 198.51.100.10",
+      "kind": "menu",
+      "command": "remove-acl",
+      "image": "docs/assets/interactive/security-acl-remove-acl/03-example-com-l7-allow-198-51-100-10.png",
+      "transcript": "docs/assets/interactive/security-acl-remove-acl/03-example-com-l7-allow-198-51-100-10.txt",
+      "image_sha256": "6b07bbe503b9c0f00324d7123397d251a0a36d20a940ef0f53900dd56b214782",
+      "transcript_sha256": "a910c957d3dbc486b310e71e1f7476472367ff32e24e7d8fa6ff1911ebdb5911",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-remove-acl.pty.log",
+      "pty_byte_offset": 91789,
+      "selected": "example.com l7 allow 198.51.100.10"
+    },
+    {
+      "journey": "security-acl-remove-acl",
+      "journey_family": "security-acl-remove-acl",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-acl",
+      "image": "docs/assets/interactive/security-acl-remove-acl/04-run.png",
+      "transcript": "docs/assets/interactive/security-acl-remove-acl/04-run.txt",
+      "image_sha256": "db7e30e054034638ca15cafde48d046af1d70ac9c71358d8f6ee631015d6c285",
+      "transcript_sha256": "3c75960194b99fc303f66fb52d3c912c590e296309ba35f0ae04efe0518f574e",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-remove-acl.pty.log",
+      "pty_byte_offset": 92134,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-remove-acl",
+      "journey_family": "security-acl-remove-acl",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-acl",
+      "image": "docs/assets/interactive/security-acl-remove-acl/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-acl-remove-acl/05-enter-value.txt",
+      "image_sha256": "12e46dacbaee621cb6c3c31f9ec3e267bd710479a1fa5bad0f9b598b08bba755",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-remove-acl.pty.log",
+      "pty_byte_offset": 92188,
+      "value": "YES"
+    },
+    {
+      "journey": "security-acl-remove-acl",
+      "journey_family": "security-acl-remove-acl",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-acl",
+      "image": "docs/assets/interactive/security-acl-remove-acl/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-remove-acl/06-command-result.txt",
+      "image_sha256": "bfbcbafb1a17e251cfc0a0d6db7e52f5def0b1bccd3c24fddf380d3f5cda99ea",
+      "transcript_sha256": "05156d60130a237c289ebf7620f631332509054f67a6335e48ce3ba76946ec0e",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-remove-acl.pty.log",
+      "pty_byte_offset": 93682,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-acl-remove-all-cancel",
+      "journey_family": "security-acl-acl-remove-all-cancel",
+      "session_index": 1,
+      "step": 3,
+      "title": "Cancel",
+      "kind": "menu",
+      "command": "remove-all-acl",
+      "image": "docs/assets/interactive/security-acl-acl-remove-all-cancel/03-cancel.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-remove-all-cancel/03-cancel.txt",
+      "image_sha256": "365d2afe542fb422911131646f8ef9c04c9ef826103c2c44533fa11298a4bd70",
+      "transcript_sha256": "7a39a46f78d0b60d4e9e82ea3594bf7076ac07c1f923c829f93a5694d36da65a",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-remove-all-cancel.pty.log",
+      "pty_byte_offset": 95759,
+      "selected": "Cancel"
+    },
+    {
+      "journey": "security-acl-acl-remove-all-cancel",
+      "journey_family": "security-acl-acl-remove-all-cancel",
+      "session_index": 1,
+      "step": 4,
+      "title": "Return without running",
+      "kind": "menu",
+      "command": "remove-all-acl",
+      "image": "docs/assets/interactive/security-acl-acl-remove-all-cancel/04-return-without-running.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-remove-all-cancel/04-return-without-running.txt",
+      "image_sha256": "ae9a781e726dc5daddb02c51bbd0d6cfff5c6ce14b71a94d368a2b2f94e748b4",
+      "transcript_sha256": "fe8a5d300ec3f38bb9eb93a87ed4339470a265439aa64c5ed5b8de55f8684076",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-remove-all-cancel.pty.log",
+      "pty_byte_offset": 96317,
+      "selected": "Back"
+    },
+    {
+      "journey": "security-acl-remove-all-acl",
+      "journey_family": "security-acl-remove-all-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-all-acl",
+      "image": "docs/assets/interactive/security-acl-remove-all-acl/03-run.png",
+      "transcript": "docs/assets/interactive/security-acl-remove-all-acl/03-run.txt",
+      "image_sha256": "06a6b2ba8b6e888ca1ef9904cad7eec39d359ee9082c9da7b2b2e2880e4d128a",
+      "transcript_sha256": "ad281478274e6ab2bfc9e4412538feb6f728c0ba1e489fb3432bd655ff8c3a97",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-remove-all-acl.pty.log",
+      "pty_byte_offset": 95055,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-acl-remove-all-acl",
+      "journey_family": "security-acl-remove-all-acl",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-all-acl",
+      "image": "docs/assets/interactive/security-acl-remove-all-acl/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-acl-remove-all-acl/04-enter-value.txt",
+      "image_sha256": "33dc187a68d0ba5f2074d8272616caf5b8dbde4043d7941630cc9a2ee8ff3e64",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-remove-all-acl.pty.log",
+      "pty_byte_offset": 95109,
+      "value": "YES"
+    },
+    {
+      "journey": "security-acl-remove-all-acl",
+      "journey_family": "security-acl-remove-all-acl",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-all-acl",
+      "image": "docs/assets/interactive/security-acl-remove-all-acl/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-remove-all-acl/05-command-result.txt",
+      "image_sha256": "7739a91dcefe0bdb480b0aa87bf772299f88259e9ab0223b722758151e020945",
+      "transcript_sha256": "47d9113bdb8842ef55a0f8cb41f6408c7918dc65faf15e34405efa55f6df8b76",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-remove-all-acl.pty.log",
+      "pty_byte_offset": 96607,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-acl-cleanup-result",
+      "journey_family": "security-acl-acl-cleanup-result",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-acl",
+      "image": "docs/assets/interactive/security-acl-acl-cleanup-result/03-command-result.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-cleanup-result/03-command-result.txt",
+      "image_sha256": "2e8ed476f9d06eff576f2814ece745904d196012357ce353f1f00d4bc0cafcf8",
+      "transcript_sha256": "17148641a4704a65f0a4ef3dac61c15359c20f067f6949f5691c8fe6ce77977f",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-cleanup-result.pty.log",
+      "pty_byte_offset": 74519,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-acl-acl-config",
+      "journey_family": "security-acl-acl-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/security-acl-acl-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/security-acl-acl-config/03-configuration-test-passed.txt",
+      "image_sha256": "0456fab4dec8e93ac67a36c98c1d8af0054d9c18f8f4477e96147d1fb618c3e8",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/security-acl/security-acl-acl-config.pty.log",
+      "pty_byte_offset": 8031,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "acl-demo-baseline",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-acl/acl-demo-baseline.headers"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "security"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "fa2c0cf9f0664dd7fddf983d2e0085f22c07b467834f9841ee77d8d41dffa394",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 46
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/security-acl-recordings.tar.gz",
+    "sha256": "36cff62de0192f2b58806ac43b7b55ae702d92ed282ad82d07a90d27a200f9b7",
+    "size": 114780,
+    "members": {
+      "docs/assets/interactive/evidence/security-acl/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/security-acl/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-acl/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/security-acl/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/security-acl/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/security-acl/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/security-acl/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-acl/008-fixture-image.log": {
+        "sha256": "dd746a66d318529aa82c4ebd8e8aaaf3aec390113559dde65c652b544727d6cc",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/security-acl/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/security-acl/010-fixture-backend.log": {
+        "sha256": "018e11432467c2825e73f93a18622737b341d555b341b8fc81e2f291730f1098",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/security-acl/011-fixture-public-demo.log": {
+        "sha256": "8a12c136d922884c37a132f41e213608337c9a026fc04d63d306ebb577a1182a",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/security-acl/012-fixture-https.log": {
+        "sha256": "f863fe82cfd775f4d34d0c961633ca993c9f2b0f90269dd855e9afe76be79816",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/security-acl/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/security-acl/014-command-alias.log": {
+        "sha256": "824c74ebe93c9eeb8dd05584eba94213c47cb7e54d3996fabae8b7d0ea374700",
+        "size": 8
+      },
+      "docs/assets/interactive/evidence/security-acl/015-command-alias.log": {
+        "sha256": "1a0a0e1a6a5453d124c18934dbd3331f71e9dc65347f904df282d357291d6e4a",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/security-acl/016-command-alias.log": {
+        "sha256": "0a84758514df4418e3b6fc8ce263deb2633deec4d4a5ea02d01a1ae3c6d5692a",
+        "size": 11
+      },
+      "docs/assets/interactive/evidence/security-acl/017-command-alias.log": {
+        "sha256": "b7b3ff0bfed96aba6ea88eb6d72c1c818cbd04d1c752122577f690d369518de1",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/security-acl/018-command-alias.log": {
+        "sha256": "bd254ba2eca976d1682f3cd293bf1424fadcce21ae647c18e0f361a7e145fbb4",
+        "size": 11
+      },
+      "docs/assets/interactive/evidence/security-acl/019-command-alias.log": {
+        "sha256": "824c74ebe93c9eeb8dd05584eba94213c47cb7e54d3996fabae8b7d0ea374700",
+        "size": 8
+      },
+      "docs/assets/interactive/evidence/security-acl/020-command-alias.log": {
+        "sha256": "ce24131eb0ede178ff09e89d6c25ee64963941fedcd4a939c0a076f2384a4da6",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/security-acl/021-command-alias.log": {
+        "sha256": "21cd2530df57b37d8400ed1a0123adfb194a3ad62a9ae7c6dc5d9d0c287423af",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/security-acl/022-command-alias.log": {
+        "sha256": "aa1ca4e85605a86e653bd497f75d58d1c473b7520e0f6f8f6da6eebb9da99f78",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-acl/023-command-alias.log": {
+        "sha256": "b595b1c3f313fb9bf2f8aa6294bc65f0cea0ee115e7d340a47d8a921ebe3ae89",
+        "size": 11
+      },
+      "docs/assets/interactive/evidence/security-acl/024-command-alias.log": {
+        "sha256": "f8a70fa75ad2754630a09fc1fd4c9eed5aa89d7c09b4fbc73436b49640e70434",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-acl/025-command-alias.log": {
+        "sha256": "f8a70fa75ad2754630a09fc1fd4c9eed5aa89d7c09b4fbc73436b49640e70434",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-acl/026-command-alias.log": {
+        "sha256": "1a0a0e1a6a5453d124c18934dbd3331f71e9dc65347f904df282d357291d6e4a",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/security-acl/027-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/security-acl/acl-demo-baseline.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-acl/acl-demo-baseline.headers": {
+        "sha256": "41bcd2a69a0a0921e7278b931fdb95e3cca4b6708cc2aa6ff17be77dc53ed266",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-acl/acl-demo-baseline.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-acl/acl-demo-baseline.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-acl/commands.jsonl": {
+        "sha256": "95f45f72366cbfdc94e481e0c795bd247771f0aee0bb03a8a243c5357ed363a5",
+        "size": 10176
+      },
+      "docs/assets/interactive/evidence/security-acl/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-cleanup-result.events.jsonl": {
+        "sha256": "5981c126c465cd07f3539419b739bd0e9adc9605ec6e233821ad31f173192151",
+        "size": 10499
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-cleanup-result.pty.log": {
+        "sha256": "ea9018e62edc3693715a871962f14048e421d020b477a9b1960be0d493a4081d",
+        "size": 82633
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-config.events.jsonl": {
+        "sha256": "8fd846aaaea1c0e8ec6ef773dbf7edf198a4d824aaef8eb495a381089f8d3b33",
+        "size": 8682
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-config.pty.log": {
+        "sha256": "b98911c6338d87371f3da8afba7ab0ba1c219c279854927f5cc2335fa3508d7d",
+        "size": 16145
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-remove-all-cancel.events.jsonl": {
+        "sha256": "266b074e01816facdd74d0f04633df6203dd9ec4385f62587de269c45452e9b3",
+        "size": 14038
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-remove-all-cancel.pty.log": {
+        "sha256": "a18803425ffd140a729d2b13cf84ccf57b0bbce96ff0105ade2fa51983c930e9",
+        "size": 104429
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-rules.events.jsonl": {
+        "sha256": "a495cd344c0a7f3f723553e8745467fd9f0eeacb839c33777ebe80004fc500fb",
+        "size": 14804
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-rules.pty.log": {
+        "sha256": "283e57a0ecb10d2b7119678fda256daae5081913357a2b6a703ddd01452b7ecf",
+        "size": 82076
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-second-rule.events.jsonl": {
+        "sha256": "506be2903572b4c4e1f1d7bddfb5a6586b45d78be2201ba523fb0e795147774c",
+        "size": 15070
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-acl-second-rule.pty.log": {
+        "sha256": "c9e496b03233cf09434143967dee3df78f20af526ed5ffd587a0e1b36263e412",
+        "size": 80495
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-disable-acl.events.jsonl": {
+        "sha256": "503e38edf9db1ab7ca1f46e35a021041dae0f8c0f75991149315db7701c0d226",
+        "size": 13351
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-disable-acl.pty.log": {
+        "sha256": "381e953c352caac5690c4912cc22ba3f0c7d6a853b40b41379eb71a8dead22dc",
+        "size": 84175
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-disable-all-acl.events.jsonl": {
+        "sha256": "f5802eaef2657492aafa890888ed867e84c2a64cfed5977c746614ca93b1976f",
+        "size": 14154
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-disable-all-acl.pty.log": {
+        "sha256": "1a6d9afc286152003d6e7a5b1395eee82f68ddfede7fc7fdf5ae0cf5c822951d",
+        "size": 85491
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-enable-acl.events.jsonl": {
+        "sha256": "caca784f1ea73db40d7d14af40aab29bb4ab2931ae9f64435cf58ee7a5e1c473",
+        "size": 13026
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-enable-acl.pty.log": {
+        "sha256": "bbd896363f341deedee4120f835eade35721aa596acff15a5e4defdb4809eed5",
+        "size": 92043
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-enable-all-acl.events.jsonl": {
+        "sha256": "1488716471d91da7b6bd2aeeaf4785220184f6d4fb534d93121985325d448eec",
+        "size": 13789
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-enable-all-acl.pty.log": {
+        "sha256": "9e99f2f68b0bcb5b18be3bdc40d5505a2bdbb03f3be7b6e3d22bf1e3ef03c987",
+        "size": 93330
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-list-acl.events.jsonl": {
+        "sha256": "799183da48a96fe089876f79c4e411ec9b4b8bcea20db56fc8cffd7449a98d78",
+        "size": 9696
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-list-acl.pty.log": {
+        "sha256": "b4d2b2e9525222cee7b3bbdbb8a2871a41c21c5c43532a32fae61c49b4984aa2",
+        "size": 81804
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-move-acl-rule.events.jsonl": {
+        "sha256": "5973527cc74148e78243cf0a74a76052817737d04c17099f454698f1cedeb582",
+        "size": 15117
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-move-acl-rule.pty.log": {
+        "sha256": "8fbb6eb913c12757ad70ea7bb4e28e0c726df3e112b33f2e04b67e52bd27536c",
+        "size": 83884
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-remove-acl.events.jsonl": {
+        "sha256": "f2d7163c024e213d313170246e17313b6ef2026c5679e84fb12d9699a380666f",
+        "size": 13957
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-remove-acl.pty.log": {
+        "sha256": "68bc04fd676fc1a144d847879d54039c47828bafab82d973e71a9ff403c37ce6",
+        "size": 101796
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-remove-all-acl.events.jsonl": {
+        "sha256": "70e43e7fbee9363b6c24dfd3c9c506e74fb41f05ba5d1184419dc488ce2c0a7c",
+        "size": 14736
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-remove-all-acl.pty.log": {
+        "sha256": "7e4c655063c5c100aba3fd0db8993135f85ee94d183bc4d1315b5ac099dd8a8b",
+        "size": 104725
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.events.jsonl": {
+        "sha256": "165b3cc3872ffc2d61ca6bfd85678c869ab39492dda6b929c68128b1d014570e",
+        "size": 17213
+      },
+      "docs/assets/interactive/evidence/security-acl/security-acl-update-acl.pty.log": {
+        "sha256": "aeb6da6eebe83f1e11dca05d235d4bc9d545c50a0351ddc63e269f8ec027e44d",
+        "size": 77847
+      }
+    }
+  }
+}

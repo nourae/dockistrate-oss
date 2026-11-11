@@ -1,0 +1,2 @@
+$ curl --noproxy \* --tlsv1.2 --tls-max 1.2 --silent --show-error --max-time 15 --cacert /opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem --resolve example.com:443:127.0.0.1 https://example.com/
+curl: (35) TLS connect error: error:0A00042E:SSL routines::tlsv1 alert protocol version

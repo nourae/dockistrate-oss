@@ -11,6 +11,8 @@ function _sanitize_path_for_id() {
 
 function _stream_listen_in_use() {
   local port="${1:-}" protocol="${2:-tcp}" skip_domain="${3:-}" skip_port="${4:-}"
+  port="$(normalize_port "$port")" || return 1
+  [ -z "$skip_port" ] || skip_port="$(normalize_port "$skip_port")" || return 1
   case "$protocol" in
   tcp | udp) ;;
   *)
@@ -54,6 +56,8 @@ function _stream_listen_in_use() {
 
 function _udp_mapping_listen_in_use() {
   local port="${1:-}" skip_domain="${2:-}" skip_port="${3:-}"
+  port="$(normalize_port "$port")" || return 1
+  [ -z "$skip_port" ] || skip_port="$(normalize_port "$skip_port")" || return 1
   [ -f "$BACKEND_PORTS_FILE" ] || return 1
   local line="" line_no=0
   while IFS= read -r line || [ -n "$line" ]; do
@@ -180,7 +184,7 @@ function _parse_path_priority() {
     echo "[Error] Path priority must be a positive integer." >&2
     return 1
   fi
-  PATH_PRIORITY="$raw"
+  PATH_PRIORITY="$(normalize_positive_decimal "$raw")" || return 1
   return 0
 }
 
@@ -190,7 +194,7 @@ function _parse_path_target() {
     echo "[Error] Invalid path target '${raw}'. Use an upstream port or host:port." >&2
     return 1
   fi
-  PATH_TARGET="$raw"
+  PATH_TARGET="$(normalize_path_target "$raw")" || return 1
   return 0
 }
 
@@ -267,7 +271,7 @@ function get_port_http3_state() {
 
   require_valid_var_name "$out_http3" || return 1
   require_valid_var_name "$out_alt_svc" || return 1
-  is_valid_port "$listen_port" || return 1
+  listen_port="$(normalize_port "$listen_port")" || return 1
   [ -f "$BACKEND_PORTS_FILE" ] || {
     printf -v "$out_http3" '%s' "$http3_value"
     printf -v "$out_alt_svc" '%s' "$alt_svc_value"
@@ -295,6 +299,7 @@ function get_port_http3_state() {
 
 function _require_port_mapping_for_path() {
   local domain="$1" port="$2"
+  port="$(normalize_port "$port")" || return 1
   resolve_backend_domain domain "$domain"
   if ! backend_exists "$domain"; then
     echo "[Error] Backend domain '$domain' not found." >&2
@@ -329,6 +334,7 @@ function _require_port_mapping_for_path() {
 
 function get_backend_ws_flag() {
   local domain="${1:-}" port="${2:-}"
+  port="$(normalize_port "$port")" || return 1
   resolve_backend_domain domain "$domain" true
   if ! backend_exists "$domain"; then
     echo "[Error] Backend domain '$domain' not found." >&2
@@ -383,6 +389,7 @@ function _set_ws_flag() {
   fi
   resolve_backend_domain domain "$domain" true
   require_valid_port "$port"
+  port="$(normalize_port "$port")" || return 1
   if ! is_yes_no "$flag"; then
     echo "[Error] Invalid ws flag: $flag" >&2
     exit 1

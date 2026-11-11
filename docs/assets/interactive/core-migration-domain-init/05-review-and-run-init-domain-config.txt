@@ -1,0 +1,15 @@
+Review command
+  Command: Init Domain Config (init-domain-config)
+  Description: Create editable CSV templates for a backend, alias, dedicated hostname, or certificates
+
+Arguments:
+  Domain: draft.example.com
+  Domain kind: certificate-only
+
+CLI equivalent:
+  ./dockistrate.sh init-domain-config draft.example.com --kind certificate-only
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

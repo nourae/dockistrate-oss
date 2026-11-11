@@ -1,0 +1,516 @@
+{
+  "schema_version": 1,
+  "scenario": "core-migration",
+  "source_commit": "3d2ee0b58e2f729255105b30e5715990696f107b",
+  "started_at": "2026-11-07T16:16:28.884934+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42390384054",
+  "github_run_attempt": "1",
+  "scenario_module": "core",
+  "group": "migration",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1016-aws x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"44 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T16:17:29.530553+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "core-migration-domain-init",
+      "journey_family": "core-migration-domain-init",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "init-domain-config",
+      "image": "docs/assets/interactive/core-migration-domain-init/03-enter-value.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-init/03-enter-value.txt",
+      "image_sha256": "33c926b250b64a0c7be460c68f48c5256cae9a0e86afb44d9b46806a4caaabba",
+      "transcript_sha256": "de30a323bfec41bcd3b9bcf42b4bd6e0ad70541d4650144ef4ae464234954f2a",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-init.pty.log",
+      "pty_byte_offset": 76601,
+      "value": "draft.example.com"
+    },
+    {
+      "journey": "core-migration-domain-init",
+      "journey_family": "core-migration-domain-init",
+      "session_index": 1,
+      "step": 4,
+      "title": "Certificates without a backend container",
+      "kind": "menu",
+      "command": "init-domain-config",
+      "image": "docs/assets/interactive/core-migration-domain-init/04-certificates-without-a-backend-container.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-init/04-certificates-without-a-backend-container.txt",
+      "image_sha256": "b55730c020c1f29d7497aabb2fa08d27c346a6ffec761a1ced3ee293d1f3eae8",
+      "transcript_sha256": "d51dc64ec0625b0c91ce6cddcff78021a42031b64c39d28558063a22108eb10a",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-init.pty.log",
+      "pty_byte_offset": 78084,
+      "selected": "Certificates without a backend container"
+    },
+    {
+      "journey": "core-migration-domain-init",
+      "journey_family": "core-migration-domain-init",
+      "session_index": 1,
+      "step": 5,
+      "title": "Review and run init-domain-config",
+      "kind": "menu",
+      "command": "init-domain-config",
+      "image": "docs/assets/interactive/core-migration-domain-init/05-review-and-run-init-domain-config.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-init/05-review-and-run-init-domain-config.txt",
+      "image_sha256": "aaa37745d7def446c10dccbe5193bbde6ac68b857b43d05e4efb38a713576bab",
+      "transcript_sha256": "9899a16fb9f5b766f3ebe60902cd1c5a68f00d21d78237c43cd375af0bbc03ea",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-init.pty.log",
+      "pty_byte_offset": 78549,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-migration-domain-init",
+      "journey_family": "core-migration-domain-init",
+      "session_index": 1,
+      "step": 6,
+      "title": "init-domain-config result",
+      "kind": "result",
+      "command": "init-domain-config",
+      "image": "docs/assets/interactive/core-migration-domain-init/06-init-domain-config-result.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-init/06-init-domain-config-result.txt",
+      "image_sha256": "5d7bf84661d564f8dd470971b9a536882e2551f3e16d9494cea76bbffca7f64c",
+      "transcript_sha256": "ca1d16d29ba9e76e738f7c82e162969e610d66d044e218921a2ab292b70284c1",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-init.pty.log",
+      "pty_byte_offset": 78770,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-migration-domain-migrate-preview",
+      "journey_family": "core-migration-domain-migrate-preview",
+      "session_index": 1,
+      "step": 3,
+      "title": "Review changes without applying them (current)",
+      "kind": "menu",
+      "command": "migrate-state",
+      "image": "docs/assets/interactive/core-migration-domain-migrate-preview/03-review-changes-without-applying-them-current.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-migrate-preview/03-review-changes-without-applying-them-current.txt",
+      "image_sha256": "ea1c31df33944b5658da6e6d72d8951e240d214ea201e7c37405e8ad1ef0586b",
+      "transcript_sha256": "9ee6d764be8cb80b2a5f97253b3c3058663d7d22c4a72e777546002348ef6a15",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-preview.pty.log",
+      "pty_byte_offset": 58700,
+      "selected": "Review changes without applying them (current)"
+    },
+    {
+      "journey": "core-migration-domain-migrate-preview",
+      "journey_family": "core-migration-domain-migrate-preview",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "migrate-state",
+      "image": "docs/assets/interactive/core-migration-domain-migrate-preview/04-enter-value.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-migrate-preview/04-enter-value.txt",
+      "image_sha256": "d5a27397670631edacd854087f26fed40d006271f0c112cf6996907d2f8e3a77",
+      "transcript_sha256": "3e39b4cc2a702c7b18ffb200118b3350f29cca76bebbc777d7ba2484608108e8",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-preview.pty.log",
+      "pty_byte_offset": 59017,
+      "value": "/opt/dockistrate-demo-fixtures/migration/backend-details.csv"
+    },
+    {
+      "journey": "core-migration-domain-migrate-preview",
+      "journey_family": "core-migration-domain-migrate-preview",
+      "session_index": 1,
+      "step": 5,
+      "title": "migrate-state result",
+      "kind": "result",
+      "command": "migrate-state",
+      "image": "docs/assets/interactive/core-migration-domain-migrate-preview/05-migrate-state-result.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-migrate-preview/05-migrate-state-result.txt",
+      "image_sha256": "4589573cef95fa2e7c568d285d50372f0d1164c3a2485ed3d65103e96e071117",
+      "transcript_sha256": "1cfca7cd0cc21284a21f0eb111c84e99224b3190d7177772f7aa918a8c0f3249",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-preview.pty.log",
+      "pty_byte_offset": 59374,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-migration-domain-migrate-apply",
+      "journey_family": "core-migration-domain-migrate-apply",
+      "session_index": 1,
+      "step": 3,
+      "title": "Apply changes",
+      "kind": "menu",
+      "command": "migrate-state",
+      "image": "docs/assets/interactive/core-migration-domain-migrate-apply/03-apply-changes.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-migrate-apply/03-apply-changes.txt",
+      "image_sha256": "813a9774f2bd47e4e5631b3fc29acde1e520daa8e3863df4cc374c3098672b60",
+      "transcript_sha256": "c4bb9a0b9792a9d1a015d13b007a67ca37de0bc0ca975214e7ce0e445b18a5de",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-apply.pty.log",
+      "pty_byte_offset": 58948,
+      "selected": "Apply changes"
+    },
+    {
+      "journey": "core-migration-domain-migrate-apply",
+      "journey_family": "core-migration-domain-migrate-apply",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "migrate-state",
+      "image": "docs/assets/interactive/core-migration-domain-migrate-apply/04-enter-value.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-migrate-apply/04-enter-value.txt",
+      "image_sha256": "15b2d1435788b65dc88b2ed62e80cbe7bb242c06443924bfe621c42ebee0ed0e",
+      "transcript_sha256": "3e39b4cc2a702c7b18ffb200118b3350f29cca76bebbc777d7ba2484608108e8",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-apply.pty.log",
+      "pty_byte_offset": 59265,
+      "value": "/opt/dockistrate-demo-fixtures/migration/backend-details.csv"
+    },
+    {
+      "journey": "core-migration-domain-migrate-apply",
+      "journey_family": "core-migration-domain-migrate-apply",
+      "session_index": 1,
+      "step": 5,
+      "title": "Review and run migrate-state",
+      "kind": "menu",
+      "command": "migrate-state",
+      "image": "docs/assets/interactive/core-migration-domain-migrate-apply/05-review-and-run-migrate-state.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-migrate-apply/05-review-and-run-migrate-state.txt",
+      "image_sha256": "9ea9737d53704e973be4a035d766ab9415b4f3ee10c21d64cf0fb2239557f14c",
+      "transcript_sha256": "45f4ef9ff62aa5a709e07701a4acedce85efaea8ab2c3edbf5a413d279a6784d",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-apply.pty.log",
+      "pty_byte_offset": 60089,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-migration-domain-migrate-apply",
+      "journey_family": "core-migration-domain-migrate-apply",
+      "session_index": 1,
+      "step": 6,
+      "title": "migrate-state result",
+      "kind": "result",
+      "command": "migrate-state",
+      "image": "docs/assets/interactive/core-migration-domain-migrate-apply/06-migrate-state-result.png",
+      "transcript": "docs/assets/interactive/core-migration-domain-migrate-apply/06-migrate-state-result.txt",
+      "image_sha256": "a88aa3c6d83ccd2c85057203c2edf47f9a7495e94736aac384e39b14ba4e8422",
+      "transcript_sha256": "c7c9d2ad2d47df2581ef260b6f9ee6fea6d66c233fcc6a455413b47c3fe560f5",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-apply.pty.log",
+      "pty_byte_offset": 60214,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-migration-migration-converted-files",
+      "journey_family": "core-migration-migration-converted-files",
+      "session_index": 1,
+      "step": 1,
+      "title": "Editable and applied configuration after migration",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-migration-migration-converted-files/01-editable-and-applied-configuration-after-migration.png",
+      "transcript": "docs/assets/interactive/core-migration-migration-converted-files/01-editable-and-applied-configuration-after-migration.txt",
+      "image_sha256": "322aaee578b538775a487c8e97be1e5964e003f0dad93f19cee27c01be01c061",
+      "transcript_sha256": "49b2ff4c25c454145538f504fe56a4c18222af685a97f69f979d7fb956adf4aa",
+      "pty_log": "docs/assets/interactive/evidence/core-migration/core-migration-migration-converted-files.pty.log",
+      "pty_byte_offset": 671,
+      "viewport": "bottom",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "label": "domain-template-only",
+      "status": "passed",
+      "domain": "draft.example.com",
+      "container_started": false
+    },
+    {
+      "label": "migration-current-state-noop",
+      "status": "passed",
+      "schema": 5,
+      "limitation": "Does not demonstrate conversion of a legacy state directory"
+    },
+    {
+      "label": "migration-unchanged-source-copy",
+      "status": "passed",
+      "source_commit": "3d2ee0b58e2f729255105b30e5715990696f107b",
+      "compared_source_files": 436,
+      "checkout": "/opt/dockistrate-demo-fixtures/migration"
+    },
+    {
+      "label": "legacy-migration-preview-preserves-state",
+      "status": "passed",
+      "source_schema": 1,
+      "configuration_sha256": {
+        "backend_acl_policies.csv": "907d583030d91afb0688748c170c92127d917ea20e829524bb5e54b61a6aa732",
+        "backend_aliases.csv": "5e63d1eb1f72e8f4c406e00bb0f86d57a2e80bc1cd9db6a0683ae1a95e2a23f1",
+        "backend_security_rule_statuses.csv": "1e789973b4f2361067eaed55c35e70c7270568df07ad8753ad1e43174e0cc45b",
+        "custom_headers.csv": "0f857cac5fe5f157801e9b2ed3eb2430e320b1d2cd43ef3e9a8dcc066ecd1989",
+        "backend_mtls.csv": "66b9d07eff97180519411ef61ed3c03046f49530e7a503a5526fa897eadbbc28",
+        "backend_acl_statuses.csv": "a0562d85321d5dd39a3fa2728793c68608ee4e1e3f3f0d367111050854e7b74c",
+        "backend_identity.csv": "a3ae2062def7fbc7156fb5ffdb81948384e2f58ae1ac719f6faeec4011cdad4e",
+        "backend_headers.csv": "8769dbedbea0c416f8cfeae7509662897b54fc095f6531af5b9b273f5574e988",
+        "state_schema_version": "4355a46b19d348dc2f57c046f8ef63d4538ebb936000f3c9ee954a27460dd865",
+        "backend_client_ip_headers.csv": "90176a5de8c39a68a65d3d41e89bed0affbac16503e41566d43675dea9fc8c03",
+        "nginx_directives.csv": "531b58bb1fcb45b1b4d6dd37dd24fd8018e35e69f8e76ebaf64f38d959efe1fa",
+        "backend_proxy_ip_headers.csv": "41f50e42fd1a0caf4fbb726e91f98fbd925c5bd5661263eea16d43bc353ac572",
+        "access_log_fields.csv": "20458f3df45c44180eb889a587a9c1bbcdecc78b7c0cbf59f34d93f0f6a283af",
+        "dedicated_host_inheritance.csv": "ff9d435e017d0fed7141b5eed17f671d80e01168d7cd844ad2dda141e4c27d10",
+        "port_tls_protocols.csv": "f36b66088906abf1360bc399292cb52c3b57c605c7547189c64787691a1dafdb",
+        "backend_docker_opts.csv": "9d4dfce57bc9553a04e27c040841ec219a8e080a8cefcefc2fd5a0d7912055f5",
+        "security_ip_rules.csv": "bc1b0eef81f19fdd64aca92372662c842d73536f73cc5cbb54b459757d0caf80",
+        "backend_http_versions.csv": "fa9cb5fda9cfd1acacfcfcc090627f1d0bf2d94aa72e24fba60c7502e8b2824c",
+        "backend_ports.csv": "257578506c81cb5a28fccd76221763d4c59b839884c5f6a5c2fba720db5dbe1d",
+        "global_settings.csv": "833c3ec867be10e6fe9a3cbb67052a99996040a8e58991f5833182d9787b8bc4",
+        "security_rules.csv": "c4f3b5c5a504101b63cf4668ea1abd6e792872ab215bfa381b20296d8a2847a5",
+        "port_tls_ciphers.csv": "c9d67f77c2edb9627c47f62a0a23418b41bad87ee3c3969cb26d2865b91aef7e",
+        "nginx_conf/conf.d/backends.conf": "8bfc2c9afe64681bb130fb3004d88696c0757d8f29b0b318e5047ca46183b969"
+      },
+      "docker_inventory": {
+        "containers": [
+          "338347796b4ef642dab5d168a48dea27a573280683aa13066f0d85e58a083864|/nginx-proxy|running|2026-11-07T16:16:50.803321591Z|0001-01-01T00:00:00Z|0",
+          "586bd1cb9766c1b552b330084dc4bc106ed60a355632632a80c5f871f3a275c6|/backend-example.com|running|2026-11-07T16:16:34.785952943Z|0001-01-01T00:00:00Z|0"
+        ],
+        "networks": [
+          "00631ba7e0832413f71bce8bc4fe5fc6e5a5ea04c38387ad63ccc76f84bef72a|dockistrate-net",
+          "38dd718b57db0c74fa0953a5b5d88afde67bff81a406eb8c25028749a56ca869|none",
+          "3e17fc815fcf4a8c67f7f54eb1e38561add34274515404b0b37ed31dc1d04d83|bridge",
+          "ee217549b4585c0619df7d6e6dc0c9215eccddcdd716e15646faba13e0458af8|host"
+        ]
+      }
+    },
+    {
+      "label": "legacy-applied-backend",
+      "status": "passed",
+      "file": "state/domains/legacy.example.com/runtime/applied/backend.csv",
+      "rows": [
+        {
+          "image": "nginx:alpine",
+          "container_port": "80",
+          "network": "dockistrate-net",
+          "state": "stopped"
+        }
+      ]
+    },
+    {
+      "label": "migration-converted-files",
+      "status": "passed",
+      "argv": [
+        "cat",
+        "/opt/dockistrate-demo-fixtures/migration/state/domains/legacy.example.com/config/domain.csv",
+        "/opt/dockistrate-demo-fixtures/migration/state/domains/legacy.example.com/config/backend.csv",
+        "/opt/dockistrate-demo-fixtures/migration/state/domains/legacy.example.com/runtime/applied/backend.csv",
+        "/opt/dockistrate-demo-fixtures/migration/state/domains/legacy.example.com/config/headers.csv"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "legacy-state-migrated",
+      "status": "passed",
+      "from_schema": 1,
+      "to_schema": 5,
+      "editable_and_applied_match": true,
+      "source_unchanged": true,
+      "proxy_configuration_unchanged": true,
+      "docker_inventory_unchanged": true
+    },
+    {
+      "label": "core-group-complete",
+      "status": "passed",
+      "group": "migration"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "core"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "89975dc28212416b76b6bafcee7277987490f9a4fd5137ba2a82760ce90d6a41",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 12
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/core-migration-recordings.tar.gz",
+    "sha256": "c76c8e6c89b036c86b2c2a08e26a260c03660996c7ea77aebc5da8771cf61121",
+    "size": 59297,
+    "members": {
+      "docs/assets/interactive/evidence/core-migration/001-source-commit.log": {
+        "sha256": "5987ca8d9204d09d800b36d6b5bfb8553cd73f23aea59309eb0ed38d6961afa5",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/core-migration/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-migration/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/core-migration/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/core-migration/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/core-migration/006-kernel-version.log": {
+        "sha256": "858aad262bf1f1e848c00747d19e51058b24cf497f7541adf93cd8d9f6f04187",
+        "size": 38
+      },
+      "docs/assets/interactive/evidence/core-migration/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/core-migration/008-fixture-image.log": {
+        "sha256": "9fd2bfc29e30486af8055c34d8215612ef05235d59cadc6307e2232179e39951",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/core-migration/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/core-migration/010-fixture-backend.log": {
+        "sha256": "587b5a12bd26f96884aebe235af05c582eb30fd0f6838508e62e162ba70597a2",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/core-migration/011-fixture-public-demo.log": {
+        "sha256": "022e36baa37315ca4e7431b9a813edf6418adcd98cebb3b650ad7696a4210c43",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/core-migration/012-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/core-migration/013-command-alias.log": {
+        "sha256": "3eb27ff5fd56a42e5913d9324545d19b7cb94aca13f6e9596a4c2dc41ff7d05a",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/core-migration/014-command-alias.log": {
+        "sha256": "806c5ce750b5432dd6405d9b48cd62f271e99ec5b4aacffa566cb63e242d82ed",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/core-migration/015-legacy-migration-fixture.log": {
+        "sha256": "90480b9c3c4169bf47704bcd0a15613d8eefea23da1dd11744a265b167f8fbf4",
+        "size": 83
+      },
+      "docs/assets/interactive/evidence/core-migration/016-migration-container-ids.log": {
+        "sha256": "22e0f97546054fe8f0cef7e404d76c33dd9810a7dfd31843b995d18510df6d5a",
+        "size": 130
+      },
+      "docs/assets/interactive/evidence/core-migration/017-migration-container-lifecycle.log": {
+        "sha256": "8cf764a2465cf3b0dcadcd8d5c7ff7a0d76db9eb4236317f89eae750f9a8526d",
+        "size": 288
+      },
+      "docs/assets/interactive/evidence/core-migration/018-migration-network-inventory.log": {
+        "sha256": "597094a9a28742e041cb8079c5f74ee503894f11afcad37daa98ea35736023cc",
+        "size": 293
+      },
+      "docs/assets/interactive/evidence/core-migration/019-command-alias.log": {
+        "sha256": "806c5ce750b5432dd6405d9b48cd62f271e99ec5b4aacffa566cb63e242d82ed",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/core-migration/020-migration-container-ids.log": {
+        "sha256": "22e0f97546054fe8f0cef7e404d76c33dd9810a7dfd31843b995d18510df6d5a",
+        "size": 130
+      },
+      "docs/assets/interactive/evidence/core-migration/021-migration-container-lifecycle.log": {
+        "sha256": "8cf764a2465cf3b0dcadcd8d5c7ff7a0d76db9eb4236317f89eae750f9a8526d",
+        "size": 288
+      },
+      "docs/assets/interactive/evidence/core-migration/022-migration-network-inventory.log": {
+        "sha256": "597094a9a28742e041cb8079c5f74ee503894f11afcad37daa98ea35736023cc",
+        "size": 293
+      },
+      "docs/assets/interactive/evidence/core-migration/023-command-alias.log": {
+        "sha256": "806c5ce750b5432dd6405d9b48cd62f271e99ec5b4aacffa566cb63e242d82ed",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/core-migration/024-migration-container-ids.log": {
+        "sha256": "22e0f97546054fe8f0cef7e404d76c33dd9810a7dfd31843b995d18510df6d5a",
+        "size": 130
+      },
+      "docs/assets/interactive/evidence/core-migration/025-migration-container-lifecycle.log": {
+        "sha256": "8cf764a2465cf3b0dcadcd8d5c7ff7a0d76db9eb4236317f89eae750f9a8526d",
+        "size": 288
+      },
+      "docs/assets/interactive/evidence/core-migration/026-migration-network-inventory.log": {
+        "sha256": "597094a9a28742e041cb8079c5f74ee503894f11afcad37daa98ea35736023cc",
+        "size": 293
+      },
+      "docs/assets/interactive/evidence/core-migration/027-image-identities.log": {
+        "sha256": "a06f08ac73381bce08070d326e2e863b193077f0e483b456fb2c09b78ffc80da",
+        "size": 2934
+      },
+      "docs/assets/interactive/evidence/core-migration/commands.jsonl": {
+        "sha256": "e80252eb420bd333297e816c05cae89f15fe2c8506745d88815381ee13cc092d",
+        "size": 11334
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-domain-init.events.jsonl": {
+        "sha256": "12b3c54201b4ca2633552404509653613efebe29eaaca5941c7ebd7b2cb98481",
+        "size": 16203
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-domain-init.pty.log": {
+        "sha256": "a5f8f20f44a323240793768782eb9c048f356722aab2c3c0670f01fcbc7eca32",
+        "size": 86866
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-apply.events.jsonl": {
+        "sha256": "ab54dd32742297ab18d623b180ddad02e9149f634f0eaa840ee66c7dbcb8098f",
+        "size": 15422
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-apply.pty.log": {
+        "sha256": "bf72ccc3c061623b8304f51819f618b7bd00f13b5f46aab7682e9362769db9f5",
+        "size": 68302
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-current.events.jsonl": {
+        "sha256": "c77c7e5350eb02c78701d4d1c53f717ad79baa081d30474f0a57ea3b2355d47c",
+        "size": 14305
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-current.pty.log": {
+        "sha256": "d374c347039ccda88c219d30de023f829e035241b8ee05cd24e6ba96f41c6c2f",
+        "size": 67358
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-preview.events.jsonl": {
+        "sha256": "1ca56ee1649444f75727410b4ac71f5a084c452ae32ac1624e98aa16da825ced",
+        "size": 14785
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-domain-migrate-preview.pty.log": {
+        "sha256": "ccd246dfc46e8790059b0f86ad64dbeb5322358bac41d3ad6a8636a556397209",
+        "size": 67462
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-migration-converted-files.events.jsonl": {
+        "sha256": "f49c5793533be1be386316a791119100c703866a4988aebcc161127c1aa35525",
+        "size": 1629
+      },
+      "docs/assets/interactive/evidence/core-migration/core-migration-migration-converted-files.pty.log": {
+        "sha256": "b97680900ddeaa2f5607ed9d8040095fcb1d534d10e595229f2e24dde77188ca",
+        "size": 671
+      },
+      "docs/assets/interactive/evidence/core-migration/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-migration/legacy-applied-backend.json": {
+        "sha256": "71d1c21bc0b87f1a6ae8f8fb49b5d39d72cbbdce3781fa0d06f8c73acbdaad6a",
+        "size": 126
+      },
+      "docs/assets/interactive/evidence/core-migration/migration-source-hashes.json": {
+        "sha256": "553513921601169a56181c82c6b39a87eb9d9f6785b98e11a05b5997d7cabf53",
+        "size": 46844
+      }
+    }
+  }
+}

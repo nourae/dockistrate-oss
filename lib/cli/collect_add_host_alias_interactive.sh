@@ -44,6 +44,7 @@ function collect_add_host_alias_interactive() {
         continue
       fi
       read_with_editing "Alias (blank=Back): " alias
+      [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
       if is_back_input "$alias" || [ -z "$alias" ]; then
         step=0
         continue

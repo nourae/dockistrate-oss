@@ -1,0 +1,14 @@
+Review command
+  Command: Fix Permissions (fix-permissions)
+  Description: Repair permissions within a selected directory, or prepare Darwin Certbot mounts for sudo user mapping
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh fix-permissions
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

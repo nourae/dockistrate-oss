@@ -96,21 +96,14 @@ mkdir -p "$TEST_CERT_DIR"
 printf 'fixture fullchain\n' >"$TEST_CERT_DIR/fullchain.pem"
 printf 'fixture privkey\n' >"$TEST_CERT_DIR/privkey.pem"
 
-cat >"$GLOBAL_SETTINGS_FILE" <<EOF_SETTINGS
-ENABLE_AUTO_BACKUPS,false
-BACKUP_RETENTION,0
-ENABLE_BACKUP_COMPRESSION,false
-HTTP_VERSION,$HTTP_VERSION
-CLIENT_IP_HEADER,$CLIENT_IP_HEADER
-PROXY_IP_HEADER,$PROXY_IP_HEADER
-TLS_PROTOCOLS,$TLS_PROTOCOLS
-TLS_CIPHERS,$TLS_CIPHERS
-SECURITY_RULE_STATUS,$SECURITY_RULE_STATUS
-ACL_STATUS,$ACL_STATUS
-ACL_POLICY,$ACL_POLICY
-TRUSTED_PROXY_RANGES,$TRUSTED_PROXY_RANGES
-REAL_IP_RECURSIVE,$REAL_IP_RECURSIVE
-EOF_SETTINGS
+# shellcheck source=helpers/global_csv.sh
+source "$ROOT_DIR/tests/helpers/global_csv.sh"
+test_global_csv_seed "$GLOBAL_SETTINGS_FILE" \
+  ENABLE_AUTO_BACKUPS false BACKUP_RETENTION 0 ENABLE_BACKUP_COMPRESSION false \
+  HTTP_VERSION "$HTTP_VERSION" CLIENT_IP_HEADER "$CLIENT_IP_HEADER" PROXY_IP_HEADER "$PROXY_IP_HEADER" \
+  TLS_PROTOCOLS "$TLS_PROTOCOLS" TLS_CIPHERS "$TLS_CIPHERS" SECURITY_RULE_STATUS "$SECURITY_RULE_STATUS" \
+  ACL_STATUS "$ACL_STATUS" ACL_POLICY "$ACL_POLICY" TRUSTED_PROXY_RANGES "$TRUSTED_PROXY_RANGES" \
+  REAL_IP_RECURSIVE "$REAL_IP_RECURSIVE"
 
 cat >"$BACKEND_PORTS_FILE" <<'EOF_PORTS'
 record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location
@@ -182,7 +175,7 @@ enabled,domain,scope,action,ip_value,status_code
 1,other.com,l7,allow,192.168.1.0/24,200
 EOF_SEC_IP
 
-printf '%s\n' "enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location" >"$SECURITY_RULES_DB"
+printf '%s\n' "enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location,action" >"$SECURITY_RULES_DB"
 _sr_write_db_line 1 "Example.COM" "single" "429" "1" "header" "X-Test" "contains" "bad" >>"$SECURITY_RULES_DB"
 _sr_write_db_line 0 "Example.COM" "single" "429" "1" "uri" "/allow" "contains" "ok" >>"$SECURITY_RULES_DB"
 _sr_write_db_line 1 "other.com" "single" "429" "1" "query" "q" "contains" "safe" >>"$SECURITY_RULES_DB"
@@ -207,9 +200,9 @@ listen_port,tls_ciphers
 EOF_TLS_CIPHERS
 
 cat >"$BACKEND_DOCKER_OPTS_FILE" <<'EOF_DOCKER_OPTS'
-key,docker_options
-backend:example.com,--restart=always
-backend:other.com,--cpus=1
+domain,docker_options
+example.com,--restart=always
+other.com,--cpus=1
 EOF_DOCKER_OPTS
 
 cat >"$PATH_HEADER_DIR/customset.conf" <<'EOF_CUSTOM'
@@ -306,7 +299,7 @@ if grep -q '^8443' "$PORT_TLS_CIPHERS_FILE" 2>/dev/null; then
   exit 1
 fi
 
-if grep -q 'backend:example.com' "$BACKEND_DOCKER_OPTS_FILE" 2>/dev/null; then
+if grep -q 'example.com' "$BACKEND_DOCKER_OPTS_FILE" 2>/dev/null; then
   echo "[Error] Backend Docker opts not cleared" >&2
   exit 1
 fi

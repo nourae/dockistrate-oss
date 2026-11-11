@@ -25,6 +25,11 @@ if [ ! -f "$AUDIT_LOG_FILE" ]; then
   echo "Expected audit log to be created." >&2
   exit 1
 fi
+audit_mode="$(stat -c '%a' "$AUDIT_LOG_FILE" 2>/dev/null || stat -f '%Lp' "$AUDIT_LOG_FILE")"
+if [ "$audit_mode" != 600 ]; then
+  echo "Expected normalized audit entries to be stored with mode 600." >&2
+  exit 1
+fi
 
 line_count="$(wc -l <"$AUDIT_LOG_FILE" 2>/dev/null || echo 0)"
 line_count="${line_count//[[:space:]]/}"

@@ -202,6 +202,19 @@ function _parse_docker_opts_to_lines() {
 
   local token_value
   for token_value in "${tokens[@]}"; do
+    if [[ "$token_value" =~ [[:cntrl:]] ]]; then
+      echo "[Error] Failed to parse ${context}: control characters are not allowed in docker options" >&2
+      return 1
+    fi
     printf '%s\n' "$token_value"
   done
+}
+
+# Preserve every record terminator, including an empty final argument. Read the
+# result through printf, not a here-string, which would add another empty row.
+function _parse_docker_opts_capture_lines() {
+  local _docl_destination="${1:-}" _docl_captured=""
+  [[ "$_docl_destination" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]] || return 1
+  _docl_captured="$(_parse_docker_opts_to_lines "${2:-}" "${3:-docker options}" && printf '.')" || return 1
+  printf -v "$_docl_destination" '%s' "${_docl_captured%.}"
 }

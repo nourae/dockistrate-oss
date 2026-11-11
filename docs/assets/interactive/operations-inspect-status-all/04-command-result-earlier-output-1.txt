@@ -1,0 +1,98 @@
+
+=== Domain Configuration ===
+example.com: applied
+  Configuration: /opt/dockistrate-demo/state/domains/example.com/config
+
+=== Nginx Proxy Container ===
+nginx-proxy status: running
+Running image: nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                                                                          NAMES
+c5dee752cf02   nginx:1.31.7   "/docker-entrypoint.…"   23 seconds ago   Up 22 seconds   0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp   nginx-proxy
+Configured Nginx image: nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47 [digest-pinned; explicit pull skipped; local: nginx@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47 (registry digest sha256:6c3fee1d7a46) (created 2026-10-14)]
+Certbot image: certbot/certbot:v5.8.0@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20 [digest-pinned; explicit pull skipped; local: missing]
+
+=== Global Settings ===
+HTTP Version: http2
+TLS Protocols: TLSv1.2 TLSv1.3
+TLS Ciphers: ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305
+Client IP Header: X-Forwarded-For
+Proxy IP Header: X-Real-IP
+Nginx Docker Opts: [None]
+Trusted Proxies: [None]
+ACL Policy: deny (status 403)
+Security Rule Status: 403
+Server Tokens: off
+Packet Capture: inactive
+TLS Decrypt Capture: off
+Auto Backups: off
+Backup Retention: forever
+Backup Compression: on
+Latest Full Backup: [None]
+Latest Post-Change Backup: 20261107_161656_post_command_add-port_tGTqyJ.tar.gz
+
+=== Host Aliases ===
+Alias                     | Backend
+---------------------------------------------
+[Info] No host aliases configured.
+
+=== Dedicated Hosts ===
+Dedicated Host            | Backend
+---------------------------------------------
+[Info] No dedicated hosts configured.
+Request Headers:
+  [None]
+Response Headers:
+  [None]
+
+=== Backend Header Overrides ===
+[None]
+
+=== Access Log Fields ===
+1:  $realip_remote_addr
+2:  $remote_addr
+3:  $host
+4:  "$request"
+5:  $status
+6:  $body_bytes_sent
+7: [request] "$http_referer"
+8: [request] "$http_user_agent"
+
+=== HTTPS Port TLS Overrides ===
+[None]
+
+=== Nginx Directive Overrides ===
+Strict Mode: on
+[None]
+
+=== Backend Summary ===
+Domain               | State      | Aliases              | Config Image             | Running Image            | Network         | HTTP Ver   | mTLS  | Client IP       | Proxy IP        | ACL   | ACL St    | Sec St    | Ports
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+example.com          | running    | -                    | nginx:alpine             | nginx@sha256:713fc2ebfd92 | dockistrate-net | http2      | no    | X-Forwarded-For | X-Real-IP       | allow | 403       | 403       | 80:http; 443:tls
+
+=== Backend Docker Opts ===
+Backend                    | Docker Opts
+------------------------------------------------------------------------
+[None]
+
+=== Port Mappings (HTTP/HTTPS/TCP) ===
+1: example.com 80 -> 80 proto=http ws=no cert=none redirect=off http3=- alt-svc=-
+2: example.com 443 -> 80 proto=https ws=no cert=example.com/selfsigned-443 redirect=off http3=off alt-svc=auto
+
+=== Path Options ===
+[Info] No path overrides configured.
+
+=== Certificates ===
+[Info] Listing certificates:
+Reference                        | Domain               | Type            | Ports   | Created             | Expires             | InUse  | State
+example.com/selfsigned-443       | example.com          | Self-Signed     | 443     | 2026-11-07          | Nov  7 16:16:47 2027 GMT | Yes    | declared
+=== ACL Rules (Order) ===
+[None]
+=== Security Rules (Order) ===
+[None]
+=== Detailed Containers ===
+[Info] Showing all Docker containers on this host (not only Dockistrate-managed containers).
+Container Name                 | Image                | State/Uptime         | CPU (%)  | Mem Usage  | Bound Ports               | IP(s)           | Network(s)      | Storage
+nginx-proxy                    | nginx:1.31.7         | Up 25 seconds        | 0.00%    | 3.062MiB / 7.593GiB | 0.0.0.0:80->80/tcp, [::]:80->80/tcp, 0.0.0.0:443->443/tcp, [::]:443->443/tcp | 172.18.0.3      | dockistrate-net | 98.3kB (virtual 177MB)
+backend-example.com            | nginx:alpine         | Up 54 seconds        | 0.00%    | 3.363MiB / 7.593GiB | 80/tcp                    | 172.18.0.2      | dockistrate-net | 81.9kB (virtual 67.4MB)
+
+Press R to refresh or Enter to continue...

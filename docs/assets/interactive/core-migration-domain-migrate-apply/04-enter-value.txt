@@ -1,0 +1,5 @@
+
+Optional CSV containing backend details that cannot be recovered from existing state and managed containers.
+Backend details CSV path (optional)
+Example: /path/to/backend-details.csv
+Blank: use existing state and managed container details only: /opt/dockistrate-demo-fixtures/migration/backend-details.csv

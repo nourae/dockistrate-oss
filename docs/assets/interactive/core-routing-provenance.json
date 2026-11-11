@@ -1,0 +1,1976 @@
+{
+  "schema_version": 1,
+  "scenario": "core-routing",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:34:11.407521+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "core",
+  "group": "routing",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:40:52.591923+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/03-example-com.txt",
+      "image_sha256": "f60d86d7650ee9b6b5dd346e1fae8550a65c464fba5283351bff8be837d9f474",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 71194,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/04-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/04-enter-manually.txt",
+      "image_sha256": "ea4b4359b961df2403fc6e46187d8aa37d475d9f0e1aaf6a005ebfca8124f14e",
+      "transcript_sha256": "5de30eb221a07edf8b04add21f0fae812d5469d52d3118376c46019bff426c6d",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 72566,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/05-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/05-enter-value.txt",
+      "image_sha256": "d22a972f2db8fd866b7c2c60ee14b71a21df2dcd25a5f18322c8332e94c56d59",
+      "transcript_sha256": "7c10070d4e8446289f1e1e04e5f4c0dd0c0743b30113d0662b72a8a030744d3a",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 72652,
+      "value": "8080"
+    },
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/06-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/06-enter-manually.txt",
+      "image_sha256": "8ed83618e15450c2ce69919e75e16dc229492ed50f1c1d4399d3509614a41e59",
+      "transcript_sha256": "873bcfc39a307165b7cc83de0f78113d0a7890fee166c45c7e68905998f905ff",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 74511,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/07-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/07-enter-value.txt",
+      "image_sha256": "e1bf89d39e2af9c3393fa4a9a26320fec17f6defd430d02288b9b0044464a733",
+      "transcript_sha256": "0cfc0cc4161ddecab53bbba09b50549f395a867f0cd42d45e7182c4185f67036",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 74620,
+      "value": "80"
+    },
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 8,
+      "title": "HTTP (current)",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/08-http-current.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/08-http-current.txt",
+      "image_sha256": "a840798d8ab987639408e6432968ab0dd8557f2f0894cdb6f08b38c5ebf15cd5",
+      "transcript_sha256": "3c899443655106e7ec1e6a59967894c609ccd20b36a9f632d434bcf772613ade",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 74862,
+      "selected": "HTTP (current)"
+    },
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 9,
+      "title": "no (current)",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/09-no-current.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/09-no-current.txt",
+      "image_sha256": "1dc5fd6281a445fc71b73b5b264e84d43575cc2d4279bb09c7a8e27c6ada5563",
+      "transcript_sha256": "4c809a996d9655427c9bafdb01aa42865c1e1e13fb9e66581ecce795993a1506",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 75038,
+      "selected": "no (current)"
+    },
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 10,
+      "title": "Review and run add-port",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/10-review-and-run-add-port.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/10-review-and-run-add-port.txt",
+      "image_sha256": "33671ad5ed6d4fe54bfb163e0eaa1df2258a18ad6394d72de5d565779eec495e",
+      "transcript_sha256": "21106e31566c2847ccd40b991a89572d816c675448069e1cc99d8e276064ac5c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 75499,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-ports-http",
+      "journey_family": "core-routing-ports-http",
+      "session_index": 1,
+      "step": 11,
+      "title": "add-port result",
+      "kind": "result",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-routing-ports-http/11-add-port-result.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-http/11-add-port-result.txt",
+      "image_sha256": "d7cc2d231076d6040df01946285d8f299eaa5c06757babd41236a3fb10a00378",
+      "transcript_sha256": "f8902c5e97c7267b338bf3ee15b7c5785631a4ddbac1274c8ec085286ddb98b7",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log",
+      "pty_byte_offset": 77030,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-http-extra-port",
+      "journey_family": "core-routing-http-extra-port",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-routing-http-extra-port/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-routing-http-extra-port/01-verify-the-application-response.txt",
+      "image_sha256": "c0988555e67920de07770889bb48d0cd6f6860d1c389801d6acddf7c8f5ac505",
+      "transcript_sha256": "890e79c86f2f6f57593e01300a522a2ec776f88b1e798f64e305f147b99bdcc8",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-http-extra-port.pty.log",
+      "pty_byte_offset": 1330,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/03-example-com.txt",
+      "image_sha256": "0b8800bdb9afb7e62123ab3f7df7d06571ce072efd62e4035359f50c1fbc20a5",
+      "transcript_sha256": "635e71699095a64ab258cb0cb0fccaad402743d1c7aefae23a5bc64c32ee81aa",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 68095,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 4,
+      "title": "8080 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/04-8080-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/04-8080-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "eb3e792ae3ceec1ee3af1da9564bc7720ce4bc0baa94792c186a96b3c61e0a1f",
+      "transcript_sha256": "cdae8421ca4984aef63e468e73f3580a113bd361e1ace50e6714592e113e7083",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 68861,
+      "selected": "8080 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/05-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/05-enter-manually.txt",
+      "image_sha256": "c3d3e21471a509a2b6183fa3fc6c6be1f8165b6e71055c4184695e3d456f90a5",
+      "transcript_sha256": "84bb06439a8accedab1b31a6fe110aba4eba14c921d876017c4747a216e0a46a",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 70240,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/06-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/06-enter-value.txt",
+      "image_sha256": "b40bc9b7d543606780c3e1594b1260e319617c318f0a2ba7ef5b5f0c2206f786",
+      "transcript_sha256": "b9e635b6360f7573d0586e33fd1e1a51b4bf6a0d166465415bf4f729ef93c48a",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 70270,
+      "value": "8081"
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 7,
+      "title": "Keep current: 80",
+      "kind": "menu",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/07-keep-current-80.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/07-keep-current-80.txt",
+      "image_sha256": "f463b06101391de5047507095841c060b222c414a18ab81b10f070b1e8afe3cf",
+      "transcript_sha256": "23dbf968213b08d9f51e9358c00cca43a711eb7c59e08a5085c5b012ee36adf8",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 70504,
+      "selected": "Keep current: 80"
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 8,
+      "title": "Keep current: http",
+      "kind": "menu",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/08-keep-current-http.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/08-keep-current-http.txt",
+      "image_sha256": "b1d8f256bd74a0b09f35261f66972374b0276dfe9bf82696a5aeec24d79c32ad",
+      "transcript_sha256": "3c832851fb2dc17edeef66c877f4955da0fb8e05268a7b04639eefdc1d46c863",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 70660,
+      "selected": "Keep current: http"
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 9,
+      "title": "Keep current: no",
+      "kind": "menu",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/09-keep-current-no.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/09-keep-current-no.txt",
+      "image_sha256": "69588d0e21c333866007b44dd5ca63911c8d4c89a00674a68b7cf53c43b2ae1c",
+      "transcript_sha256": "3f9800cf115d1c2b084a466dc6bb294e9296c1ce3f45b38ae2ef307830107777",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 70791,
+      "selected": "Keep current: no"
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 10,
+      "title": "Review and run update-port",
+      "kind": "menu",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/10-review-and-run-update-port.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/10-review-and-run-update-port.txt",
+      "image_sha256": "33230f5928034d662a55a6f07c3526dce9e25fc907b5a348b0a79262022c547b",
+      "transcript_sha256": "e0fd8329e9bfeb872f4c59110f7d17a9543592b9ff674a42f49ec531ed3feccb",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 71339,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-ports-update",
+      "journey_family": "core-routing-ports-update",
+      "session_index": 1,
+      "step": 11,
+      "title": "update-port result",
+      "kind": "result",
+      "command": "update-port",
+      "image": "docs/assets/interactive/core-routing-ports-update/11-update-port-result.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-update/11-update-port-result.txt",
+      "image_sha256": "c2fc9dfe350999b2fc034220a336fea49157272af0c9cb56fa66979716be0c40",
+      "transcript_sha256": "101433a03ba3910357e234f2b79409e866c0344512d207cf20b5c52b91925541",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log",
+      "pty_byte_offset": 72850,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-http-moved-port",
+      "journey_family": "core-routing-http-moved-port",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-routing-http-moved-port/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-routing-http-moved-port/01-verify-the-application-response.txt",
+      "image_sha256": "50583a5fa946d4b1007f3a1199e055e2c8771309f20f103caaee270b9c3e0065",
+      "transcript_sha256": "1922d07ed299505c4796f5fe8eb6350415ca21a394fd454c49ba476b28584802",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-http-moved-port.pty.log",
+      "pty_byte_offset": 1330,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-routing-ports-remove",
+      "journey_family": "core-routing-ports-remove",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-port",
+      "image": "docs/assets/interactive/core-routing-ports-remove/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-remove/03-example-com.txt",
+      "image_sha256": "7f2b8413bed4003d7035e34dc47f5be25b20b5674218361c174a1c13d4aa0f58",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-remove.pty.log",
+      "pty_byte_offset": 94212,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-ports-remove",
+      "journey_family": "core-routing-ports-remove",
+      "session_index": 1,
+      "step": 4,
+      "title": "8081 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "remove-port",
+      "image": "docs/assets/interactive/core-routing-ports-remove/04-8081-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-remove/04-8081-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "d5a532e587bb4bc05168604c3aacdcd11de6a7ae8b3a39b0de357659b027f034",
+      "transcript_sha256": "ea632cd6b7379bdefb1948424b2ddb35a5adb21e87be01baa13d9b7b856bb68a",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-remove.pty.log",
+      "pty_byte_offset": 95121,
+      "selected": "8081 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "core-routing-ports-remove",
+      "journey_family": "core-routing-ports-remove",
+      "session_index": 1,
+      "step": 5,
+      "title": "Review and run remove-port",
+      "kind": "menu",
+      "command": "remove-port",
+      "image": "docs/assets/interactive/core-routing-ports-remove/05-review-and-run-remove-port.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-remove/05-review-and-run-remove-port.txt",
+      "image_sha256": "96992be901013604e692b2f7cab1879b973fa4b8b39c72495ff3f5b4d02c8163",
+      "transcript_sha256": "985c800294c80fe2ef77031efc5e1733645757f34dd73eadbd312ee79cce6988",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-remove.pty.log",
+      "pty_byte_offset": 95530,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-ports-remove",
+      "journey_family": "core-routing-ports-remove",
+      "session_index": 1,
+      "step": 6,
+      "title": "Confirm removal",
+      "kind": "input",
+      "command": "remove-port",
+      "image": "docs/assets/interactive/core-routing-ports-remove/06-confirm-removal.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-remove/06-confirm-removal.txt",
+      "image_sha256": "063c9393e5e46fc65c58e155a219b5b4cd35121ed082ca1dd5b9e84f554fbbc1",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-remove.pty.log",
+      "pty_byte_offset": 95584,
+      "value": "YES"
+    },
+    {
+      "journey": "core-routing-ports-remove",
+      "journey_family": "core-routing-ports-remove",
+      "session_index": 1,
+      "step": 7,
+      "title": "remove-port result",
+      "kind": "result",
+      "command": "remove-port",
+      "image": "docs/assets/interactive/core-routing-ports-remove/07-remove-port-result.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-remove/07-remove-port-result.txt",
+      "image_sha256": "909ca411977251440a0041fa98e3ad315249d65864b9bfbaacc41ee3419ad624",
+      "transcript_sha256": "99d8cd0d096dfc86be196d441995643c647d0dbce9239db4ac4f16a58697ec3e",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-remove.pty.log",
+      "pty_byte_offset": 97109,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-ports-redirect",
+      "journey_family": "core-routing-ports-redirect",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect/03-example-com.txt",
+      "image_sha256": "a18afef9b7f802eb6fea9a611602a6faa81274512b81fcc8341c2f378674f353",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect.pty.log",
+      "pty_byte_offset": 84803,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-ports-redirect",
+      "journey_family": "core-routing-ports-redirect",
+      "session_index": 1,
+      "step": 4,
+      "title": "80 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "set-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect/04-80-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect/04-80-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "dee57128c747d7fd48c662e4904ea725d029cca34d04c53fb3c86c732dcbd009",
+      "transcript_sha256": "62e703a7a3b92504e484aaebf07d09eca8b012c10261cc5e8e64cbd181e4cdc3",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect.pty.log",
+      "pty_byte_offset": 85062,
+      "selected": "80 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "core-routing-ports-redirect",
+      "journey_family": "core-routing-ports-redirect",
+      "session_index": 1,
+      "step": 5,
+      "title": "on",
+      "kind": "menu",
+      "command": "set-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect/05-on.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect/05-on.txt",
+      "image_sha256": "52723077292793f4d0fce58398441d50d22cb623fa9292da7599fe5e6493e089",
+      "transcript_sha256": "04bf7a2334adb0f4cf14ee6061f377a0027b34956f0af11e48bdb3acfec662d9",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect.pty.log",
+      "pty_byte_offset": 85406,
+      "selected": "on"
+    },
+    {
+      "journey": "core-routing-ports-redirect",
+      "journey_family": "core-routing-ports-redirect",
+      "session_index": 1,
+      "step": 6,
+      "title": "Moved Permanently (current)",
+      "kind": "menu",
+      "command": "set-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect/06-moved-permanently-current.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect/06-moved-permanently-current.txt",
+      "image_sha256": "a8ed1588e2788a70287c225248fde7ea06c46dd985d16e901acb7e56ba053b55",
+      "transcript_sha256": "6db0659c31d43015083063eb8f0e0a39d9b1a91fc1a112f7a5aab877c61cb6b4",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect.pty.log",
+      "pty_byte_offset": 85660,
+      "selected": "Moved Permanently (current)"
+    },
+    {
+      "journey": "core-routing-ports-redirect",
+      "journey_family": "core-routing-ports-redirect",
+      "session_index": 1,
+      "step": 7,
+      "title": "Review and run set-port-redirect",
+      "kind": "menu",
+      "command": "set-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect/07-review-and-run-set-port-redirect.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect/07-review-and-run-set-port-redirect.txt",
+      "image_sha256": "03ac43548a88794cff62e8cc60cf86bfdc95ac850a92b2dc73c9f12f5d6112d7",
+      "transcript_sha256": "c51b70028e3890bc691dbfed8d57fc8a6c157dba506be30c15cfc0e9ec484aa1",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect.pty.log",
+      "pty_byte_offset": 86100,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-ports-redirect",
+      "journey_family": "core-routing-ports-redirect",
+      "session_index": 1,
+      "step": 8,
+      "title": "set-port-redirect result",
+      "kind": "result",
+      "command": "set-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect/08-set-port-redirect-result.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect/08-set-port-redirect-result.txt",
+      "image_sha256": "ee0b366c46a32949c3e5d97e4aa75622b2e84f8f4cc41820c7718e59fb9ce34e",
+      "transcript_sha256": "965210b53899c3844dc393bd25dc36e546da8637a95df6e6482702e2eb2e3c83",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect.pty.log",
+      "pty_byte_offset": 87321,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-http-redirect",
+      "journey_family": "core-routing-http-redirect",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-routing-http-redirect/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-routing-http-redirect/01-verify-the-application-response.txt",
+      "image_sha256": "f5da6e2846f7b633f02c1b29c898f45b2fe50ce639c4b613377471fef3524b68",
+      "transcript_sha256": "a1cd0893fbf2d99c0f241ab780e31aad9862e7a36ee083efa7c0b51f115200fd",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-http-redirect.pty.log",
+      "pty_byte_offset": 554,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-routing-ports-redirect-remove",
+      "journey_family": "core-routing-ports-redirect-remove",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect-remove/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect-remove/03-example-com.txt",
+      "image_sha256": "4efd9cd4100d64a4dbc041e6723ad1ffefd0ef0995b847adec1606c979dda757",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect-remove.pty.log",
+      "pty_byte_offset": 96732,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-ports-redirect-remove",
+      "journey_family": "core-routing-ports-redirect-remove",
+      "session_index": 1,
+      "step": 4,
+      "title": "80 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "remove-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect-remove/04-80-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect-remove/04-80-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "4c990ce24204a9b163af7cb9d9d7063c5a320cfb0580f2205b59cfafc038caa6",
+      "transcript_sha256": "62e703a7a3b92504e484aaebf07d09eca8b012c10261cc5e8e64cbd181e4cdc3",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect-remove.pty.log",
+      "pty_byte_offset": 96991,
+      "selected": "80 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "core-routing-ports-redirect-remove",
+      "journey_family": "core-routing-ports-redirect-remove",
+      "session_index": 1,
+      "step": 5,
+      "title": "Review and run remove-port-redirect",
+      "kind": "menu",
+      "command": "remove-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect-remove/05-review-and-run-remove-port-redirect.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect-remove/05-review-and-run-remove-port-redirect.txt",
+      "image_sha256": "55a543149a5415250f272717fe841c5747e09d24f5571c5151a5f3f0692a115b",
+      "transcript_sha256": "10f1ab7a675dff543b2efaee399cd4d01cdca8e3ed35656aa5a382ca769c2f73",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect-remove.pty.log",
+      "pty_byte_offset": 97428,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-ports-redirect-remove",
+      "journey_family": "core-routing-ports-redirect-remove",
+      "session_index": 1,
+      "step": 6,
+      "title": "Confirm removal",
+      "kind": "input",
+      "command": "remove-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect-remove/06-confirm-removal.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect-remove/06-confirm-removal.txt",
+      "image_sha256": "1a727462d046f6dd3f4a6f39a1cd9bb49bc10439261c6ed331c9845cf6afddd0",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect-remove.pty.log",
+      "pty_byte_offset": 97482,
+      "value": "YES"
+    },
+    {
+      "journey": "core-routing-ports-redirect-remove",
+      "journey_family": "core-routing-ports-redirect-remove",
+      "session_index": 1,
+      "step": 7,
+      "title": "remove-port-redirect result",
+      "kind": "result",
+      "command": "remove-port-redirect",
+      "image": "docs/assets/interactive/core-routing-ports-redirect-remove/07-remove-port-redirect-result.png",
+      "transcript": "docs/assets/interactive/core-routing-ports-redirect-remove/07-remove-port-redirect-result.txt",
+      "image_sha256": "847b4d055ac0f761f331fa1dee2308b33bfc6be903348e3bd897b2c973e027d5",
+      "transcript_sha256": "26a9cd0894545c46eabb6ea1b4b40caa6a25c73b9b5c8d943bb1c04258ae3536",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect-remove.pty.log",
+      "pty_byte_offset": 98714,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-http-redirect-removed",
+      "journey_family": "core-routing-http-redirect-removed",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-routing-http-redirect-removed/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-routing-http-redirect-removed/01-verify-the-application-response.txt",
+      "image_sha256": "2a5cceb0a789cfc2e78f16d1b9ed5016a7f5345b2bd11cb3ae438a2caf18ea98",
+      "transcript_sha256": "362c63096aa9d9e2f2b2a65e00729dd0f898a144e0759506f04fae28205fb7c2",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-http-redirect-removed.pty.log",
+      "pty_byte_offset": 1328,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/03-example-com.txt",
+      "image_sha256": "beb49a6102dba6bf796e3eecfc7934264fd745c7593d7e886307f8bdf83b863c",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 73661,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 4,
+      "title": "80 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/04-80-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/04-80-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "09c6e93da4764344e45a5cee72517aabf4caaa3bbd0a69e9658b361edb5cabe4",
+      "transcript_sha256": "62e703a7a3b92504e484aaebf07d09eca8b012c10261cc5e8e64cbd181e4cdc3",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 73920,
+      "selected": "80 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/05-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/05-enter-value.txt",
+      "image_sha256": "1f0cfd97d56fd77ad942fa537fa0d5afb07e40952f04315187e6d6f62e886c37",
+      "transcript_sha256": "a39af4d08721e62014dc785b04211b7f2c7448d1881bf22d0db5d57c4fe15aaf",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 74015,
+      "value": "/api"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 6,
+      "title": "inherit (current)",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/06-inherit-current.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/06-inherit-current.txt",
+      "image_sha256": "296c028fad0f82bc9ab73f9b5e7f1986391625f2a98be1a994d11179f92dda46",
+      "transcript_sha256": "f0190bbfe09da5871359503174cd0946d346f21d7b94d5a2485eb58dfc8bc238",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 74216,
+      "selected": "inherit (current)"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/07-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/07-enter-value.txt",
+      "image_sha256": "8c3af0c742c3d3130e4dbf6ca71d8ddbcb6e388ce53f79916792286c370a9708",
+      "transcript_sha256": "7e4b1c3ebf37b9faf70b1fac122b80b9980de6bfc4b0ea6fe9af4cbf6db12100",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 74278,
+      "value": "inherit"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/08-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/08-enter-value.txt",
+      "image_sha256": "9505c1df8df19a8c720742916622538a890b117743caef64b8dddf1f799d16e7",
+      "transcript_sha256": "0753eda556b21abdec1eccb7356192f3e17411b0d1c876570f8d774c901a4031",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 74349,
+      "value": "none"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 9,
+      "title": "Prefix (current)",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/09-prefix-current.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/09-prefix-current.txt",
+      "image_sha256": "7a8b6268e0ac802516af87fc8b20a96415b676b5f9a6adc4f52fc08918b005e3",
+      "transcript_sha256": "241abb1f2b5693b8cc87b50b3d167b19fa99c90b4562f1eef55ba55f75941cba",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 74523,
+      "selected": "Prefix (current)"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 10,
+      "title": "10",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/10-10.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/10-10.txt",
+      "image_sha256": "a29d7d6d5f3e3ce6329cef0af04880f1b35860c17fbdc01d7c6bca0710170bea",
+      "transcript_sha256": "b31de52ded96465f6360b2654f9a9d3e3f6b895e4b5a309fd755fa211a502ae2",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 75036,
+      "selected": "10"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 11,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/11-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/11-enter-manually.txt",
+      "image_sha256": "77ae664ae00d27eab911b122c912b8fbb9adec9de7cf01e071f6d8dc2cff2a72",
+      "transcript_sha256": "92e76a659fb7fd5bf08009aad1e9dd6c4e5e6006ad14d5431920f206d16e0a70",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 75516,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 12,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/12-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/12-enter-value.txt",
+      "image_sha256": "afbcd212e5585c67c4c770023b8bd53f414183518d11f9cff84af4281c3c5d6b",
+      "transcript_sha256": "6460dde598dec160989a92bb778b9b8718c4015263768820d0f9aef405e91424",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 75654,
+      "value": "80"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 13,
+      "title": "Strip prefix",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/13-strip-prefix.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/13-strip-prefix.txt",
+      "image_sha256": "ea609e1dcb1a304b02016e5e9e76dd25a5b3fc8f2d6b04480e8ba09e6107ab3e",
+      "transcript_sha256": "9d816aee2cfed7c5051b9f6ae660662ebe897178b3d752bdd8da004326894640",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 76237,
+      "selected": "Strip prefix"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 14,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/14-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/14-enter-manually.txt",
+      "image_sha256": "0359d10159ad78f4b52b27add1f1bd1f7c91894fe7e4a2862554c6d1e71fffe6",
+      "transcript_sha256": "3981444a457a54d69e526d22dcf6a7ae06f0269cea789fb98a4d5e40aa2140f3",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 76565,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 15,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/15-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/15-enter-value.txt",
+      "image_sha256": "be4eeb27a66306ce7cf99dd6710af0c70a0b41d10854629af758b53614fca57d",
+      "transcript_sha256": "518f9ce1ead9a9a11b7c93b833eaaf9806b968669a1f6af32911f43fc3027e4a",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 76618,
+      "value": "API demo"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 16,
+      "title": "auto (current)",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/16-auto-current.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/16-auto-current.txt",
+      "image_sha256": "bcbf5733ed3ed4fa55e862e2d43cafd99d6b5d3e68d4df6f53d80de7332973f8",
+      "transcript_sha256": "b6d657450a6b537abdd6eec73b819ece56c47663ed1973ce070961cd850f8ca8",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 76804,
+      "selected": "auto (current)"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 17,
+      "title": "Review and run add-path-option",
+      "kind": "menu",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/17-review-and-run-add-path-option.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/17-review-and-run-add-path-option.txt",
+      "image_sha256": "a09a5423bd7736f5502b67bdc16d93a6edefab4a112d957015a463632877218a",
+      "transcript_sha256": "beefc3ea8c1b013960848edafa905878830585d7b1aad38128c618a171a64b21",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 77391,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-path-routing",
+      "journey_family": "core-routing-path-routing",
+      "session_index": 1,
+      "step": 18,
+      "title": "add-path-option result",
+      "kind": "result",
+      "command": "add-path-option",
+      "image": "docs/assets/interactive/core-routing-path-routing/18-add-path-option-result.png",
+      "transcript": "docs/assets/interactive/core-routing-path-routing/18-add-path-option-result.txt",
+      "image_sha256": "e18aa8c8b72b801caca4bb9dc201c658e23c2a7a82b264f2c334feb8c4612b34",
+      "transcript_sha256": "eb7e39c05e7b5fa2aae3e97d58d40bd330f9b2057125610d874e75013771fdfc",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log",
+      "pty_byte_offset": 78607,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-list-path-options",
+      "journey_family": "core-routing-list-path-options",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "list-path-options",
+      "image": "docs/assets/interactive/core-routing-list-path-options/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-list-path-options/03-example-com.txt",
+      "image_sha256": "bd5d24b5497a2198d3ec8eecca7acb3219b010f03eb6547c3e5397c4fac07a03",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-list-path-options.pty.log",
+      "pty_byte_offset": 77644,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-list-path-options",
+      "journey_family": "core-routing-list-path-options",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "list-path-options",
+      "image": "docs/assets/interactive/core-routing-list-path-options/04-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-list-path-options/04-enter-value.txt",
+      "image_sha256": "fce61c47129246bd6aa093780a49afa8d96a3975e221dcffcb3028ae8e481413",
+      "transcript_sha256": "3ee523e013e43af7bddc9cc0544ac5890b2559698a1c658835ca9682b6c54872",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-list-path-options.pty.log",
+      "pty_byte_offset": 77728,
+      "value": "80"
+    },
+    {
+      "journey": "core-routing-list-path-options",
+      "journey_family": "core-routing-list-path-options",
+      "session_index": 1,
+      "step": 5,
+      "title": "list-path-options result",
+      "kind": "result",
+      "command": "list-path-options",
+      "image": "docs/assets/interactive/core-routing-list-path-options/05-list-path-options-result.png",
+      "transcript": "docs/assets/interactive/core-routing-list-path-options/05-list-path-options-result.txt",
+      "image_sha256": "d180f4b6e9a0fd8269a69803a5a76fdac39f8cc45d5c21efddd3edd46c175a71",
+      "transcript_sha256": "5c40015274ced4d91aff3b1ff5c34a6539092fe1007f4e97268e82d72c22a4e1",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-list-path-options.pty.log",
+      "pty_byte_offset": 77910,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-path-prefix-rewrite",
+      "journey_family": "core-routing-path-prefix-rewrite",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-routing-path-prefix-rewrite/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-routing-path-prefix-rewrite/01-verify-the-application-response.txt",
+      "image_sha256": "08467f3a662b93b9fd1388e924d1d5262734a57444bcc3dcc30b92e8029042fc",
+      "transcript_sha256": "bb59dfb508d65de8a2088d3a2e1646a21015548ccb2a39d188f63ba8e3c20473",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-prefix-rewrite.pty.log",
+      "pty_byte_offset": 1332,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/03-example-com.txt",
+      "image_sha256": "ebb2a15cffd5f5ae5aa2bcf347decd215ad9c37796043e0452df2de68e8a9a26",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 70291,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 4,
+      "title": "80 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/04-80-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/04-80-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "47cf47ffc80aabb9480c3cca32e0002d968e29b8725dfeae32208949536d3de4",
+      "transcript_sha256": "62e703a7a3b92504e484aaebf07d09eca8b012c10261cc5e8e64cbd181e4cdc3",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 70550,
+      "selected": "80 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 5,
+      "title": "/api",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/05-api.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/05-api.txt",
+      "image_sha256": "568178e37bfd8f8e0f268c1e6c758e1648e5f00a225fe897b7416f2bb2df2092",
+      "transcript_sha256": "fba6d4cbfefcbdee210b4a50b88c2caf0c4314176bb54540643d38418b2c135e",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 70721,
+      "selected": "/api"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/06-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/06-enter-value.txt",
+      "image_sha256": "27ab356c9a5b977a5a75d8b174036f100e2d8fc8db9f6940a102fc29d4cabf0e",
+      "transcript_sha256": "a524875e42996876a713608fed2d24264f0b0a2645d15b4cb42f115132432ce9",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 70820,
+      "value": "/service"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/07-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/07-enter-value.txt",
+      "image_sha256": "868d6ed16133e4ee06830f9ba7c4e9a977a7e77f1baf6a39cff4644985fed1a1",
+      "transcript_sha256": "97970f4fc2221c2bdb6550c8ebd8e9fc10740c4d3c7bf1a2692acab6fb52f542",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 70855,
+      "value": ""
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 8,
+      "title": "inherit",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/08-inherit.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/08-inherit.txt",
+      "image_sha256": "ce07da3bc552b2389cfcd19486bb0d06a3afbbb184d0cf64adf42aba9dec3f96",
+      "transcript_sha256": "74c0975c084dc27f3508996cd23e6342eda63ee97b6bec683ba1ad7c2b51491f",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 71283,
+      "selected": "inherit"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 9,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/09-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/09-enter-value.txt",
+      "image_sha256": "9d898fce31e8bbe6ab1e8655196580632cf670fc87407150262d9cb1e0bfa4e9",
+      "transcript_sha256": "352df6a2c15c56864f831d4224b206735fc6f4ef358ad67e5892ba0cdfa49408",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 71335,
+      "value": "inherit"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 10,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/10-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/10-enter-value.txt",
+      "image_sha256": "51c4ead6ccecafde68ee2cf8c5d0e659027ec5ddf85d8b0cda4aa42243210a09",
+      "transcript_sha256": "0c1181e5b98c038bda677ab5d6a7ae9a7a5f272f9d3df42f3673517d22fbec10",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 71399,
+      "value": "none"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 11,
+      "title": "Prefix",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/11-prefix.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/11-prefix.txt",
+      "image_sha256": "f33f3e7402e962f9b2c57d50fcc517236368e05d6446ca1e870cbed92fef7a2e",
+      "transcript_sha256": "b655cdb53fc4bc054f04199a5febb787aee06a48a29f072f9ae9d2bb4841e8c7",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 71563,
+      "selected": "Prefix"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 12,
+      "title": "50",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/12-50.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/12-50.txt",
+      "image_sha256": "fc4940d98ecb1562d6dee84ca37ddaad2db3223dda36a5812a4ce5d39e7591f4",
+      "transcript_sha256": "40667a8bf4ba0f95e3910bde854bcf5e32693ac4342ff9fe6b74b3ce242aff45",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 71885,
+      "selected": "50"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 13,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/13-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/13-enter-manually.txt",
+      "image_sha256": "98f24aa955f8a2460e91e2f73dcc121bdf174bfe7a5bc677f6f0799927d878bd",
+      "transcript_sha256": "92e76a659fb7fd5bf08009aad1e9dd6c4e5e6006ad14d5431920f206d16e0a70",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 72365,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 14,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/14-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/14-enter-value.txt",
+      "image_sha256": "95f5faf117bf7c5c7353cf4f98d506ed26010d1ce49bc7f707f27e58afe44405",
+      "transcript_sha256": "6460dde598dec160989a92bb778b9b8718c4015263768820d0f9aef405e91424",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 72503,
+      "value": "80"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 15,
+      "title": "Strip prefix",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/15-strip-prefix.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/15-strip-prefix.txt",
+      "image_sha256": "6d5c03bab0e05aa0778e71dc58c37d88c8c66b6aa21b1a9b826658444e23e1da",
+      "transcript_sha256": "eee8ad07791e603361b5b9c2c17deb49589e7c978a45f188206a101364fe4fc2",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 73066,
+      "selected": "Strip prefix"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 16,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/16-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/16-enter-manually.txt",
+      "image_sha256": "5c57d39a2f42705f3b487808c4c06dbea9dea9899c2b14a3ed2ddf0e74a681af",
+      "transcript_sha256": "801e315db82990a57357c3d84542ecafd382e8eccb9d5c0cb8e405f226a82e8c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 73374,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 17,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/17-enter-value.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/17-enter-value.txt",
+      "image_sha256": "d3f91c444de4446b015991c1c9cefa71f0b3db28b4a07048c30c6a30c845cf58",
+      "transcript_sha256": "e5d614ae63e0be6eac070db441fd528d26488365ca138372151101b7b48bbebf",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 73431,
+      "value": "Service demo"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 18,
+      "title": "auto",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/18-auto.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/18-auto.txt",
+      "image_sha256": "559701c9b7bb9462c3a37015c1bc80d70fa4d04e1bbf3416036ed6d2cc98cfae",
+      "transcript_sha256": "f010c588833e241829074549a0102021001e44f56a305d46e585c9d89c742d52",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 73607,
+      "selected": "auto"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 19,
+      "title": "Review and run update-path-option",
+      "kind": "menu",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/19-review-and-run-update-path-option.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/19-review-and-run-update-path-option.txt",
+      "image_sha256": "795f89db7877af2356c9382f17ed933599cb62ec99840321fd984b14fba4fd8b",
+      "transcript_sha256": "6521648be9bbb099e0c6b1d9fa2ac964820069f05d59c9171480480e736d55d0",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 74439,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-path-update",
+      "journey_family": "core-routing-path-update",
+      "session_index": 1,
+      "step": 20,
+      "title": "update-path-option result",
+      "kind": "result",
+      "command": "update-path-option",
+      "image": "docs/assets/interactive/core-routing-path-update/20-update-path-option-result.png",
+      "transcript": "docs/assets/interactive/core-routing-path-update/20-update-path-option-result.txt",
+      "image_sha256": "4cdadaa4870c70f293e7ba955748f142cdd58fd09f933d6df07cf1b240730565",
+      "transcript_sha256": "7fca28da04b01f167927916ca6260fc03577df770d64f641af19031f658c442e",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log",
+      "pty_byte_offset": 75660,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-updated-prefix-rewrite",
+      "journey_family": "core-routing-updated-prefix-rewrite",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-routing-updated-prefix-rewrite/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-routing-updated-prefix-rewrite/01-verify-the-application-response.txt",
+      "image_sha256": "9de6f2c4e627d602c85c238f47d04ae83d4259e4a4785e2b7bdc009dbb9e55bb",
+      "transcript_sha256": "8e43cb7bda0de9777c3039d3b65e20ad3b494359bf2bbf211bfb1481a8d7c8c7",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-updated-prefix-rewrite.pty.log",
+      "pty_byte_offset": 1336,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-routing-path-remove",
+      "journey_family": "core-routing-path-remove",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-path-option",
+      "image": "docs/assets/interactive/core-routing-path-remove/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove/03-example-com.txt",
+      "image_sha256": "d249ee24a1b48d002a8a8baa16b05e315789ac25b74ef82147ba63d30f4cf9d6",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove.pty.log",
+      "pty_byte_offset": 95004,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-path-remove",
+      "journey_family": "core-routing-path-remove",
+      "session_index": 1,
+      "step": 4,
+      "title": "80 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "remove-path-option",
+      "image": "docs/assets/interactive/core-routing-path-remove/04-80-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove/04-80-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "baa8bcb163ff1d3f10dce2e2437f1a9caeabca78c41b4a1d33ea9de77550d477",
+      "transcript_sha256": "62e703a7a3b92504e484aaebf07d09eca8b012c10261cc5e8e64cbd181e4cdc3",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove.pty.log",
+      "pty_byte_offset": 95263,
+      "selected": "80 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "core-routing-path-remove",
+      "journey_family": "core-routing-path-remove",
+      "session_index": 1,
+      "step": 5,
+      "title": "/service",
+      "kind": "menu",
+      "command": "remove-path-option",
+      "image": "docs/assets/interactive/core-routing-path-remove/05-service.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove/05-service.txt",
+      "image_sha256": "b5e6facebad8291dad58afebc7955b1736febbb00fb89d256bd2aaa8828f203c",
+      "transcript_sha256": "eae2bddbb8dd55709f268437c73be9764fe94a508c4bcee13c13b62ea137eef5",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove.pty.log",
+      "pty_byte_offset": 95438,
+      "selected": "/service"
+    },
+    {
+      "journey": "core-routing-path-remove",
+      "journey_family": "core-routing-path-remove",
+      "session_index": 1,
+      "step": 6,
+      "title": "Review and run remove-path-option",
+      "kind": "menu",
+      "command": "remove-path-option",
+      "image": "docs/assets/interactive/core-routing-path-remove/06-review-and-run-remove-path-option.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove/06-review-and-run-remove-path-option.txt",
+      "image_sha256": "b79b367cfebe75092b6aa2476b5ce52bfd766647e3d97c671b86f3236ae6ce14",
+      "transcript_sha256": "95d464b9e57f7ace39b786b8eeea1cb83909fb5cca088d71947c7eaf68415593",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove.pty.log",
+      "pty_byte_offset": 95894,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-path-remove",
+      "journey_family": "core-routing-path-remove",
+      "session_index": 1,
+      "step": 7,
+      "title": "Confirm removal",
+      "kind": "input",
+      "command": "remove-path-option",
+      "image": "docs/assets/interactive/core-routing-path-remove/07-confirm-removal.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove/07-confirm-removal.txt",
+      "image_sha256": "d843fb4da2e5ab73f408cabc111c561975939d80f437b5a150103f9bf502ad48",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove.pty.log",
+      "pty_byte_offset": 95948,
+      "value": "YES"
+    },
+    {
+      "journey": "core-routing-path-remove",
+      "journey_family": "core-routing-path-remove",
+      "session_index": 1,
+      "step": 8,
+      "title": "remove-path-option result",
+      "kind": "result",
+      "command": "remove-path-option",
+      "image": "docs/assets/interactive/core-routing-path-remove/08-remove-path-option-result.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove/08-remove-path-option-result.txt",
+      "image_sha256": "a325a641546e7ca4be554f61a37b4e84b19d4bc741ff95c7dbf0919d4123025d",
+      "transcript_sha256": "ea8a38f4d21cc8e07e76234df1f5b59b8a75b4f636fc30accaae782b6dba0352",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove.pty.log",
+      "pty_byte_offset": 97180,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-routing-path-remove-all",
+      "journey_family": "core-routing-path-remove-all",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-all-path-options",
+      "image": "docs/assets/interactive/core-routing-path-remove-all/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove-all/03-example-com.txt",
+      "image_sha256": "f563746a0d655f903ec7e7dbab47b050b1a625e8643f6f62e18a0e3ee88bfe39",
+      "transcript_sha256": "032d1248bdc0541f478a0f719674df45c8b990ff9b30876818e6fb305d4eb237",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove-all.pty.log",
+      "pty_byte_offset": 99519,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-routing-path-remove-all",
+      "journey_family": "core-routing-path-remove-all",
+      "session_index": 1,
+      "step": 4,
+      "title": "Review and run remove-all-path-options",
+      "kind": "menu",
+      "command": "remove-all-path-options",
+      "image": "docs/assets/interactive/core-routing-path-remove-all/04-review-and-run-remove-all-path-options.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove-all/04-review-and-run-remove-all-path-options.txt",
+      "image_sha256": "4019cb2bf77fd1a259015bf43871a8d69dcab46d11947a166960785966e3e829",
+      "transcript_sha256": "64663349e386cc0188ced979a89e5664e44cff6319ebb4f0f7c5a372bd47c3fd",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove-all.pty.log",
+      "pty_byte_offset": 99945,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-routing-path-remove-all",
+      "journey_family": "core-routing-path-remove-all",
+      "session_index": 1,
+      "step": 5,
+      "title": "Confirm removal",
+      "kind": "input",
+      "command": "remove-all-path-options",
+      "image": "docs/assets/interactive/core-routing-path-remove-all/05-confirm-removal.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove-all/05-confirm-removal.txt",
+      "image_sha256": "4adf96ac3eaacdcd27ff59b26067b1e4e2208c4de0d7785d6bb31f5831fe2c17",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove-all.pty.log",
+      "pty_byte_offset": 99999,
+      "value": "YES"
+    },
+    {
+      "journey": "core-routing-path-remove-all",
+      "journey_family": "core-routing-path-remove-all",
+      "session_index": 1,
+      "step": 6,
+      "title": "remove-all-path-options result",
+      "kind": "result",
+      "command": "remove-all-path-options",
+      "image": "docs/assets/interactive/core-routing-path-remove-all/06-remove-all-path-options-result.png",
+      "transcript": "docs/assets/interactive/core-routing-path-remove-all/06-remove-all-path-options-result.txt",
+      "image_sha256": "cbb20f3685d1385e5acebb6f7d2e67cfb4be2c37a4ea08bcc2e085de044efd3b",
+      "transcript_sha256": "58df34e25af80b3f2d111804307a18d9df8a14eeff4274cdd3cd5d4201ff58a8",
+      "pty_log": "docs/assets/interactive/evidence/core-routing/core-routing-path-remove-all.pty.log",
+      "pty_byte_offset": 101225,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "http-extra-port",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1:8080/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "http-extra-port",
+      "status": "passed",
+      "http_status": 200,
+      "port": 8080,
+      "domain": "example.com"
+    },
+    {
+      "label": "http-port-moved",
+      "status": "passed",
+      "file": "state/domains/example.com/runtime/applied/ports.csv",
+      "rows": [
+        {
+          "listen_port": "80",
+          "upstream_port": "80",
+          "protocol": "http",
+          "certificate_owner": "",
+          "certificate_id": "",
+          "websocket": "no",
+          "redirect_enabled": "off",
+          "redirect_code": "",
+          "http3_enabled": "off",
+          "alt_svc": "auto"
+        },
+        {
+          "listen_port": "443",
+          "upstream_port": "80",
+          "protocol": "https",
+          "certificate_owner": "example.com",
+          "certificate_id": "selfsigned-443",
+          "websocket": "no",
+          "redirect_enabled": "off",
+          "redirect_code": "",
+          "http3_enabled": "off",
+          "alt_svc": "auto"
+        },
+        {
+          "listen_port": "8081",
+          "upstream_port": "80",
+          "protocol": "http",
+          "certificate_owner": "",
+          "certificate_id": "",
+          "websocket": "no",
+          "redirect_enabled": "off",
+          "redirect_code": "",
+          "http3_enabled": "off",
+          "alt_svc": "auto"
+        }
+      ]
+    },
+    {
+      "label": "http-moved-port",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1:8081/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "http-moved-port",
+      "status": "passed",
+      "http_status": 200,
+      "port": 8081,
+      "domain": "example.com"
+    },
+    {
+      "label": "http-port-removed",
+      "status": "passed",
+      "file": "state/domains/example.com/runtime/applied/ports.csv",
+      "rows": [
+        {
+          "listen_port": "80",
+          "upstream_port": "80",
+          "protocol": "http",
+          "certificate_owner": "",
+          "certificate_id": "",
+          "websocket": "no",
+          "redirect_enabled": "off",
+          "redirect_code": "",
+          "http3_enabled": "off",
+          "alt_svc": "auto"
+        },
+        {
+          "listen_port": "443",
+          "upstream_port": "80",
+          "protocol": "https",
+          "certificate_owner": "example.com",
+          "certificate_id": "selfsigned-443",
+          "websocket": "no",
+          "redirect_enabled": "off",
+          "redirect_code": "",
+          "http3_enabled": "off",
+          "alt_svc": "auto"
+        }
+      ]
+    },
+    {
+      "label": "http-redirect",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1:80/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "http-redirect",
+      "status": "passed",
+      "http_status": 301,
+      "port": 80,
+      "domain": "example.com"
+    },
+    {
+      "label": "http-redirect-removed",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1:80/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "http-redirect-removed",
+      "status": "passed",
+      "http_status": 200,
+      "port": 80,
+      "domain": "example.com"
+    },
+    {
+      "label": "path-prefix-rewrite",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1:80/api/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "path-prefix-rewrite",
+      "status": "passed",
+      "http_status": 200,
+      "port": 80,
+      "domain": "example.com"
+    },
+    {
+      "label": "updated-prefix-rewrite",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1:80/service/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "updated-prefix-rewrite",
+      "status": "passed",
+      "http_status": 200,
+      "port": 80,
+      "domain": "example.com"
+    },
+    {
+      "label": "path-updated",
+      "status": "passed",
+      "file": "state/domains/example.com/runtime/applied/paths.csv",
+      "rows": [
+        {
+          "path_id": "path-1",
+          "listen_port": "80",
+          "path_prefix": "/service",
+          "match": "prefix",
+          "priority": "50",
+          "target": "80",
+          "rewrite": "strip-prefix",
+          "header_set": ""
+        }
+      ]
+    },
+    {
+      "label": "path-removed",
+      "status": "passed",
+      "file": "state/domains/example.com/runtime/applied/paths.csv",
+      "rows": []
+    },
+    {
+      "label": "all-paths-removed",
+      "status": "passed",
+      "file": "state/domains/example.com/runtime/applied/paths.csv",
+      "rows": []
+    },
+    {
+      "label": "core-group-complete",
+      "status": "passed",
+      "group": "routing"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "core"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "bce9d7b4896a7809952e87e3b8c14abe98628db7f3e2b2a5a221680fea35890b",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 87
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/core-routing-recordings.tar.gz",
+    "sha256": "5db2b2738ddc659de875f092b25d317b7215b8fbfea3e7e637b0aa6ea99ff42e",
+    "size": 99939,
+    "members": {
+      "docs/assets/interactive/evidence/core-routing/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/core-routing/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-routing/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/core-routing/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/core-routing/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/core-routing/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/core-routing/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/core-routing/008-fixture-image.log": {
+        "sha256": "468a4bfb10a54f14cbd365d3f293c11c2eb2c83b7ee79c62461fa6609f0334f4",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/core-routing/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/core-routing/010-fixture-backend.log": {
+        "sha256": "225c5553b041457fafee7b4d11b8dc7c912a32910c74d71564a3a5160c0cb39c",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/core-routing/011-fixture-public-demo.log": {
+        "sha256": "9c8abf7116e19cf713551cd3da5cfcbeb33b3e919e0cf03e71fdfa06efb96ad0",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/core-routing/012-fixture-https.log": {
+        "sha256": "4315fe0df4203a69941e5c667c3365988481ab725598d17f3c2be9525e720305",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/core-routing/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/core-routing/014-command-alias.log": {
+        "sha256": "f8d5adf6aeb15c0d7ee88e12b02ba6eb115bd017526d536f2d149da3ab38fc8e",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/core-routing/015-command-alias.log": {
+        "sha256": "7d6fe7a0a750ea7aaf04ec055e4fac421f44ce9bb676adea1c98f39d4da02280",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/core-routing/016-command-alias.log": {
+        "sha256": "9f1f4f08d28a052e5d1076d98e2bf2f4393a9aa8efa9c3f1e9355a6a0ebd654d",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/core-routing/017-command-alias.log": {
+        "sha256": "283f048db275c0b3b0b57b63d45d163fbef730f5a30158557c34018f0d402f4d",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/core-routing/018-command-alias.log": {
+        "sha256": "ac8f8a0ed649824fde2de8a95683163e0f96a1b30d18ab24953ea2b7a0e06ec1",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/core-routing/019-command-alias.log": {
+        "sha256": "02c97c56dfc8638af24b3be67f3de4675f916b65e301f178e2e79eccc45ad1f5",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/core-routing/020-command-alias.log": {
+        "sha256": "00b9dfb1b220317550da23ac3477d9f472f3c3ab009ab709ddcade6feeb7100c",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/core-routing/021-command-alias.log": {
+        "sha256": "aad25f34c2615dcd2a8ce434a9ce345c755bcf46df19c4d74cf7b56563492e55",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/core-routing/022-command-alias.log": {
+        "sha256": "7946f152741f678cf5dea32bfe1d9db228dbd880f620a5691014b60a30a6e9ac",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/core-routing/023-fixture-path-one.log": {
+        "sha256": "320f4bb3eb1d20225ffa6dbc3d762cd18c8c377f9c101b387b0dbf85789238ac",
+        "size": 1173
+      },
+      "docs/assets/interactive/evidence/core-routing/024-fixture-path-two.log": {
+        "sha256": "3d855f88929ac5f98d75e7b0b5dd3a97769bd2e6097cb42b9ec2e8df82295586",
+        "size": 1174
+      },
+      "docs/assets/interactive/evidence/core-routing/025-command-alias.log": {
+        "sha256": "510af370eca2956e2dc1f63f1d8dff887b97473717f5aedbca01959055d0b0a7",
+        "size": 24
+      },
+      "docs/assets/interactive/evidence/core-routing/026-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/core-routing/all-paths-removed.json": {
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "size": 3
+      },
+      "docs/assets/interactive/evidence/core-routing/commands.jsonl": {
+        "sha256": "7593c16949f465bf3a07bcf4ba0350b657e3bf6c1cfb9a2ed3873e5c29572bb0",
+        "size": 9471
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-http-extra-port.events.jsonl": {
+        "sha256": "92794d7ef06d19f283101a0d2715f43fb2e87ad085ea28875c13cca156f636ab",
+        "size": 984
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-http-extra-port.pty.log": {
+        "sha256": "be0215449f83fd6e046a807769c39fbeffad75bdebc719d602cafbd21308250c",
+        "size": 1330
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-http-moved-port.events.jsonl": {
+        "sha256": "8c2caa3efcd2916e16f3598199c7b8734dd442835c2fc1bcf849f9113637cd69",
+        "size": 984
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-http-moved-port.pty.log": {
+        "sha256": "286212a1033d833e0e6f95959047adcb2158fe361f5c6a052da1c5c5d8537c55",
+        "size": 1330
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-http-redirect-removed.events.jsonl": {
+        "sha256": "67dc5ddb8873411371c794cb42e4f1b682fc7ffa53572a256cd3092cbf7e4efb",
+        "size": 1016
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-http-redirect-removed.pty.log": {
+        "sha256": "6e084191284a99987f704d3ea7aee578434b21034c29e73171da52299345f984",
+        "size": 1328
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-http-redirect.events.jsonl": {
+        "sha256": "eec3dae4b892a43c6c2caf01005e78b4decaca3803b36edf234c025d35165a7a",
+        "size": 967
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-http-redirect.pty.log": {
+        "sha256": "7be2e73c6137c3d84f58aedba7c3250b7e607e686325d3a21df08141ca3d5dd5",
+        "size": 554
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-list-path-options.events.jsonl": {
+        "sha256": "3ce9fee00d87146035081a36e9f5b554e06eacf6177bf8f2861cffa43ed7472f",
+        "size": 14448
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-list-path-options.pty.log": {
+        "sha256": "e5b14697ed79d0a15a5d5f9ff0e34192439e0f05292abbbc596a4fa17eca108c",
+        "size": 86028
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-prefix-rewrite.events.jsonl": {
+        "sha256": "be62e1f3fcdf9da5a0892b75b9be069c079b26db114992d833dce9b0582eb09d",
+        "size": 1012
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-prefix-rewrite.pty.log": {
+        "sha256": "e270162d33627ed06f07aac343cc4f547c285911b7422e448b2ee7f4185a7651",
+        "size": 1332
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-remove-all.events.jsonl": {
+        "sha256": "dfec2e2b8f17700dbf0821c02637c5fcb28dca9998d41c2f9f08e7d107a0bcc2",
+        "size": 17989
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-remove-all.pty.log": {
+        "sha256": "e5d4046c92e84db782933b351a7940fb1d0e7d84800161e95d2f2ad0d97484fa",
+        "size": 109339
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-remove.events.jsonl": {
+        "sha256": "6fbe19903f3ddcb1ae82e026c354fefbbcf748931434bb466f98f759e2a8c8a1",
+        "size": 17190
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-remove.pty.log": {
+        "sha256": "32bdbe22c081af96fdd4b51ce71b018cbfc5d66661defbd5eb5580ec95afb92a",
+        "size": 105294
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.events.jsonl": {
+        "sha256": "9e316aa7bccfb3955615153d4110bca1b118b9d2c1e351b12e747137057effca",
+        "size": 25046
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-routing.pty.log": {
+        "sha256": "b2751096c5137d835ac2080d163bd7f80a58947741f79935e52f8c2b41ead78a",
+        "size": 86721
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-update.events.jsonl": {
+        "sha256": "946880392d9061e95fa891f87fd232c65d89b7aaf1f40468a14d2181be34eb44",
+        "size": 27330
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-path-update.pty.log": {
+        "sha256": "49252ec648b2641b482b1f5d04273c83a1e78605a951fb53f7908f543b47e675",
+        "size": 83774
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.events.jsonl": {
+        "sha256": "0ddab5cb4a5e712f3529193bae85c3518084207799fb05a46510fdca765e9525",
+        "size": 19142
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-http.pty.log": {
+        "sha256": "19edeb0c6dec0616da4fb99f5b49ed31067c1bee3b9ae97cd934fa89541b56ed",
+        "size": 85135
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect-remove.events.jsonl": {
+        "sha256": "121aa855890100f0348a8842a7836399e4c68cfc9791010e9de35b3a43c68dfe",
+        "size": 18415
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect-remove.pty.log": {
+        "sha256": "5a213f0cf55580dcc658a2c56f9c1dcde03c4a3a4b0070370046d5379fbd707b",
+        "size": 106832
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect.events.jsonl": {
+        "sha256": "550b59e684a97df378947106c73b633a7ec3efbc16b2b2f46be49c0a6e15e20a",
+        "size": 17338
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-redirect.pty.log": {
+        "sha256": "016c9d7a383c7596cd77437266a9f5da06baff82b185b2fe871507c05ee03ccf",
+        "size": 95435
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-remove.events.jsonl": {
+        "sha256": "5bdf417f242f01cd1a0c695c29f2d4e873199c24627cec35ed761f953d34c4b8",
+        "size": 15907
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-remove.pty.log": {
+        "sha256": "486279cfedee2a07105d42a40ceef3f9c2d26ea2003e42af20b51b3c8dcea4ba",
+        "size": 105231
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.events.jsonl": {
+        "sha256": "77292c00552cd75c2d2f8a233cfd27f4215d901f6731bcc7d13676cfc98bdd12",
+        "size": 19203
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-ports-update.pty.log": {
+        "sha256": "d58f4c39ccfcdb3c11d794706bac0aa17667a56caea81b84190dcc818fc00a42",
+        "size": 80964
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-routing-final-config.events.jsonl": {
+        "sha256": "98f23d35a79e211019655c038cf97cc1d047765c071213ab93bd60213127aa4a",
+        "size": 9342
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-routing-final-config.pty.log": {
+        "sha256": "318c64071963a07c1b83027fc583d035c46cb079d09f5cdabebd687612c0d424",
+        "size": 16149
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-updated-prefix-rewrite.events.jsonl": {
+        "sha256": "2b53f1f48e3cc6bfd2d5b12f33913334912a10076e8275f911d4cde43ef37889",
+        "size": 1038
+      },
+      "docs/assets/interactive/evidence/core-routing/core-routing-updated-prefix-rewrite.pty.log": {
+        "sha256": "447d112ce4db2f510cf619ba8161dfb4831b7e5424e1c127b50d8db1574b482e",
+        "size": 1336
+      },
+      "docs/assets/interactive/evidence/core-routing/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-routing/http-port-moved.json": {
+        "sha256": "e080fc65bcdf9c6303e742b5d0a932029feefce1605b14960c7a462faacf97b1",
+        "size": 839
+      },
+      "docs/assets/interactive/evidence/core-routing/http-port-removed.json": {
+        "sha256": "9cdc2bbe9aa973c067581fc598fd43ff4c40a5df0940269cf0bffc70292558c2",
+        "size": 568
+      },
+      "docs/assets/interactive/evidence/core-routing/path-removed.json": {
+        "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+        "size": 3
+      },
+      "docs/assets/interactive/evidence/core-routing/path-updated.json": {
+        "sha256": "24445fa9654b2b2fd26511d46ef1e80c99c0890b3cab6aee68e26bd93822cb9b",
+        "size": 210
+      }
+    }
+  }
+}

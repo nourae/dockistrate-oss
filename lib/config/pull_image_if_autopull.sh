@@ -2,9 +2,7 @@
 
 function pull_image_if_autopull() {
   local image="${1:-}" label="${2:-Image}"
-  if [ -z "$image" ]; then
-    return 0
-  fi
+  require_valid_image_ref "$image" "$label" || return 1
 
   if [ "${SKIP_DOCKER_CHECKS:-}" = "true" ]; then
     echo "[Info] SKIP_DOCKER_CHECKS=true: skipping image pull for $label ($image)."
@@ -19,7 +17,7 @@ function pull_image_if_autopull() {
   fi
 
   if ! image_uses_latest_tag "$image"; then
-    echo "[Info] $label image pinned to $image (auto-pull skipped)."
+    echo "[Info] $label image $image ($(image_reference_kind "$image"); explicit pull skipped)."
     return 0
   fi
 
@@ -30,7 +28,7 @@ function pull_image_if_autopull() {
 
   case "$mode" in
   never)
-    echo "[Info] $label image set to latest but pull policy is 'never'; using local copy if available."
+    echo "[Info] $label image uses :latest with policy 'never'; skipping explicit pull. Docker may fetch it if missing locally."
     return 0
     ;;
   if-missing)

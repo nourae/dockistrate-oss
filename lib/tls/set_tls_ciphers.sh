@@ -6,6 +6,7 @@ function set_tls_ciphers() {
     echo "[Usage] set-tls-ciphers <cipher_string>" >&2
     return 1
   }
+  _validate_tls_cipher_string_for_render "$ciphers" "TLS ciphers" 0 || return 1
   _validate_tls_ciphers "$ciphers" || return 1
   begin_transaction_return "set_tls_ciphers" "$CONFIG_DIR" || return 1
   TLS_CIPHERS="$ciphers"

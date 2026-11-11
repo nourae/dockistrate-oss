@@ -1,14 +1,50 @@
 # shellcheck shell=bash
 
+function __arg_choices_acl_domains() {
+  local aliases_file line="" line_no=0
+  aliases_file="$(backend_aliases_file)"
+  {
+    __arg_choices_backend_domains_all
+    if [ -f "$aliases_file" ] && csv_require_header "$aliases_file" "$STATE_BACKEND_ALIASES_HEADER"; then
+      while IFS= read -r line || [ -n "$line" ]; do
+        line_no=$((line_no + 1))
+        [ "$line_no" -eq 1 ] && continue
+        csv_parse_line "$line" || continue
+        [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_ALIASES_COLS" ] || continue
+        case "${CSV_FIELDS[0]-}" in
+        alias | dedicated) printf '%s\n' "$(normalize_domain "${CSV_FIELDS[1]-}")" ;;
+        esac
+      done <"$aliases_file"
+    fi
+  } | LC_ALL=C sort -u
+}
+
+function __arg_choices_security_rule_domain() {
+  printf '%s\n' '__ALL__|All domains'
+  __arg_choices_acl_domains
+  printf '%s\n' '__MANUAL__|Enter a domain manually...'
+}
+
 function __arg_choices_mode() {
   local cmd="${1:-}"
   case "$cmd" in
   fix-permissions)
     echo "__DEFAULT__|Normalize repository permissions"
     echo "--certbot-darwin-user|Prepare Darwin Certbot mounts for sudo user mapping"
+    echo "__MANUAL__|Repair a different directory..."
     ;;
   *)
     echo -e "and\nor"
+    ;;
+  esac
+}
+
+function __arg_choices_action() {
+  case "${1:-}" in
+  add-security-rule | update-security-rule)
+    csv_join_row block 'Block when conditions match (recommended for new rules)'
+    csv_join_row require 'Require conditions to match'
+    csv_join_row allow 'Allow past later Block rules'
     ;;
   esac
 }

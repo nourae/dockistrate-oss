@@ -98,3 +98,12 @@ $nets"
     echo "__MANUAL__|Enter manually..."
   fi
 }
+
+function __arg_choices_replace_unmanaged_container() {
+  [ "${1:-}" = update-backend ] || return 0
+  declare -F _backend_identity_can_replace_unmanaged >/dev/null 2>&1 || return 0
+  _backend_identity_can_replace_unmanaged "${CURRENT_ARGS[0]:-}" 2>/dev/null || return 0
+  # Choosing this action still requires manual proof. Never suggest an ID
+  # discovered from the mutable backend name.
+  echo "__MANUAL__|Replace unmanaged container (enter full ID)"
+}

@@ -45,6 +45,6 @@ test_security_and_acl_rules_emit_expected_includes() {
     "grep -Fq 'allow 10.0.0.0/8;' \"${CONFIG_DIR}/nginx_conf/stream_conf/security_ip/policy.test.inc\""
   assertFileContainsSubstring 'deny 192.168.0.10;' "${CONFIG_DIR}/nginx_conf/stream_conf/security_ip/policy.test.inc"
   assertFileContainsSubstring 'deny all;' "${CONFIG_DIR}/nginx_conf/stream_conf/security_ip/policy.test.inc"
-  assertFileContainsSubstring '$host = policy.test' "${CONFIG_DIR}/nginx_conf/conf.d/security_rules.inc"
+  assertFileContainsSubstring '$dockistrate_security_identity = policy.test' "${CONFIG_DIR}/nginx_conf/conf.d/security_rules.inc"
   assertFileContainsSubstring 'return 429;' "${CONFIG_DIR}/nginx_conf/conf.d/security_rules.inc"
 }

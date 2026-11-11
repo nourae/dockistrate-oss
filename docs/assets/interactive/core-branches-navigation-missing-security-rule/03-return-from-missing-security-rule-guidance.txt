@@ -1,0 +1,9 @@
+=== Missing setup ===
+Disable Security Rule needs an existing security rule, but no security rules are configured.
+
+Suggested next action:
+  1) Add security rule now
+> 2) Return to previous menu
+  3) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

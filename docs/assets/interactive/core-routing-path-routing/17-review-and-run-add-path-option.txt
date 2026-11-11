@@ -1,0 +1,20 @@
+Review command
+  Command: Add Path Option (add-path-option)
+  Description: Add advanced path routing overrides (match/priority/target/rewrite/metadata)
+
+Arguments:
+  Domain: example.com
+  Listen port: 80
+  Path prefix: /api
+  Path priority: 10
+  Upstream target: 80
+  Path rewrite: strip-prefix
+  Reason: API demo
+
+CLI equivalent:
+  ./dockistrate.sh add-path-option example.com 80 /api --priority 10 --target 80 --rewrite strip-prefix --reason 'API demo'
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

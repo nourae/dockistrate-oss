@@ -54,17 +54,36 @@ function _clean_all_require_quiet_success() {
 
 function clean_all() {
   local domain="${1:-}"
-  local -a dedicated_hosts_for_backend=()
-  local dedicated_hosts_output="" dedicated_host_name=""
+  local -a dedicated_hosts_for_backend=() host_aliases_for_backend=()
+  local dedicated_hosts_output="" dedicated_host_name="" host_aliases_output="" host_alias_name=""
+  local backend_configured=false backend_container_id="" backend_owner_token=""
   [ -z "$domain" ] && {
     echo "[Usage] clean-all <domain>"
     exit 1
   }
   domain="$(normalize_domain "$domain")"
 
+  local prep_lock_started=false
+  if ! _config_begin_runtime_prep_lock_if_needed prep_lock_started; then
+    return 1
+  fi
+
+  if ! host_aliases_output="$(list_domain_aliases "$domain")"; then
+    echo "[Error] Failed to list host aliases for backend '${domain}'." >&2
+    _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+    return 1
+  fi
+  if [ -n "$host_aliases_output" ]; then
+    while IFS= read -r host_alias_name; do
+      [ -n "$host_alias_name" ] || continue
+      host_aliases_for_backend+=("$host_alias_name")
+    done <<<"$host_aliases_output"
+  fi
+
   if declare -F list_dedicated_hosts_for_backend >/dev/null 2>&1; then
     if ! dedicated_hosts_output="$(list_dedicated_hosts_for_backend "$domain")"; then
       echo "[Error] Failed to list dedicated hosts for backend '${domain}'." >&2
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
       return 1
     fi
     if [ -n "$dedicated_hosts_output" ]; then
@@ -75,12 +94,84 @@ function clean_all() {
     fi
   fi
 
+  local mtls_dir="" cleanup_domain="" cleanup_index=0
+  local -a cleanup_domains=("$domain") cleanup_mtls_dirs=()
+  if [ "${#host_aliases_for_backend[@]}" -gt 0 ]; then
+    cleanup_domains+=("${host_aliases_for_backend[@]}")
+  fi
+  if [ "${#dedicated_hosts_for_backend[@]}" -gt 0 ]; then
+    cleanup_domains+=("${dedicated_hosts_for_backend[@]}")
+  fi
+  if [ -f "$BACKEND_MTLS_FILE" ]; then
+    if ! validate_backend_mtls_state_for_cleanup; then
+      echo "[Error] Refusing to clean backend '${domain}' while persisted mTLS owner mappings are invalid." >&2
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+      return 1
+    fi
+  fi
+
+  # Reject unsafe persisted names before a rollback archive or state mutation.
+  if [ -f "$BACKEND_PORTS_FILE" ]; then
+    local preflight_line="" preflight_line_no=0 preflight_header=""
+    while IFS= read -r preflight_line || [ -n "$preflight_line" ]; do
+      preflight_line_no=$((preflight_line_no + 1))
+      [ "$preflight_line_no" -eq 1 ] && continue
+      state_backend_ports_parse_line "$preflight_line" || continue
+      [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_PORTS_COLS" ] || continue
+      if [ "${STATE_BP_RECORD_TYPE:-}" = backend ] && [ "${STATE_BP_DOMAIN:-}" = "$domain" ]; then
+        backend_configured=true
+      fi
+      [ "${STATE_BP_RECORD_TYPE:-}" = "path" ] || continue
+      preflight_header="${STATE_BP_HEADER_SET:-}"
+      [ -n "$preflight_header" ] || continue
+      if ! is_valid_header_set_name "$preflight_header"; then
+        echo "[Error] Invalid persisted path header set at line ${preflight_line_no} in ${BACKEND_PORTS_FILE}." >&2
+        _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+        return 1
+      fi
+    done <"$BACKEND_PORTS_FILE"
+  fi
+
+  # A valid sidecar can outlive its backend row. Resolve that proof before
+  # deleting it, so repairing partial state cannot orphan a managed container.
+  if [ "${SKIP_DOCKER_CHECKS:-false}" != true ]; then
+    if ! _backend_identity_read "$domain" true; then
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+      return 1
+    fi
+    if [ "$backend_configured" = true ] || [ "$BACKEND_IDENTITY_FOUND" -eq 1 ]; then
+      if ! _backend_cleanup_snapshot "$domain"; then
+        _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+        return 1
+      fi
+      backend_container_id="${BACKEND_CONTAINER_ID:-}"
+      backend_owner_token="${BACKEND_CONTAINER_TOKEN:-}"
+    fi
+  fi
+
+  local -a rollback_targets=("$CONFIG_DIR" "$CERTS_DIR")
+  for cleanup_domain in "${cleanup_domains[@]}"; do
+    if ! _removed_identity_mtls_target mtls_dir "$cleanup_domain"; then
+      echo "[Error] Refusing to remove mTLS material for '${cleanup_domain}' because its ownership is invalid." >&2
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
+      return 1
+    fi
+    cleanup_mtls_dirs+=("$mtls_dir")
+    rollback_targets+=("$mtls_dir")
+    if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+      rollback_targets+=("${DOMAINS_DIR:-${STATE_DIR}/domains}/$cleanup_domain/generated")
+    fi
+  done
   local started_txn=false
   if ! transaction_is_active; then
-    if ! begin_transaction "clean_all_${domain}" "$CONFIG_DIR" "$CERTS_DIR"; then
+    if ! begin_transaction "clean_all_${domain}" "${rollback_targets[@]}"; then
+      _config_end_runtime_prep_lock_if_started "$prep_lock_started" || true
       return 1
     fi
     started_txn=true
+  fi
+  if declare -F _domain_runtime_prepare_cleanup_proxy >/dev/null 2>&1; then
+    _domain_runtime_prepare_cleanup_proxy || return 1
   fi
 
   local escaped_domain
@@ -104,6 +195,10 @@ function clean_all() {
       entry_header="${STATE_BP_HEADER_SET:-}"
       [ "$entry_type" = "path" ] || continue
       [ -n "$entry_header" ] || continue
+      if ! is_valid_header_set_name "$entry_header"; then
+        echo "[Error] Invalid persisted path header set at line ${entry_line_no} in ${BACKEND_PORTS_FILE}." >&2
+        return 1
+      fi
       if [ "$entry_domain" = "$domain" ]; then
         local seen="false" existing_header
         if [ "${#domain_path_headers[@]}" -gt 0 ]; then
@@ -227,11 +322,6 @@ function clean_all() {
     fi
   fi
 
-  local mtls_dir=""
-  if [ -f "$BACKEND_MTLS_FILE" ]; then
-    mtls_dir="$(state_csv_get_two_col_value "$BACKEND_MTLS_FILE" "$STATE_BACKEND_MTLS_HEADER" "$domain" "" 2>/dev/null || true)"
-  fi
-
   if [ -f "$BACKEND_PORTS_FILE" ]; then
     local had_path="false"
     if grep -Fq "path,${domain}," "$BACKEND_PORTS_FILE"; then
@@ -250,15 +340,6 @@ function clean_all() {
     _clean_all_require_quiet_success \
       "remove persisted nginx directives for '${domain}'" \
       nginx_directives_state_remove_for_domain "$domain" || return 1
-    if [ "${#dedicated_hosts_for_backend[@]}" -gt 0 ]; then
-      local dedicated_host_domain
-      for dedicated_host_domain in "${dedicated_hosts_for_backend[@]}"; do
-        [ -n "$dedicated_host_domain" ] || continue
-        _clean_all_require_quiet_success \
-          "remove persisted nginx directives for dedicated host '${dedicated_host_domain}'" \
-          nginx_directives_state_remove_for_domain "$dedicated_host_domain" || return 1
-      done
-    fi
   fi
 
   if [ "${#domain_path_headers[@]}" -gt 0 ]; then
@@ -275,8 +356,10 @@ function clean_all() {
       fi
       if [ "$shared" != "true" ]; then
         local include_file="${PATH_HEADER_DIR}/${header_set}.conf"
-        if [ -f "$include_file" ]; then
-          safe_rm_f "$include_file" "$PATH_HEADER_DIR"
+        if [ -f "$include_file" ] || [ -L "$include_file" ]; then
+          if ! _clean_all_require_success "remove path header include '${include_file}'" safe_rm_f "$include_file" "$PATH_HEADER_DIR"; then
+            return 1
+          fi
           echo "[Info] Removed path header include '$include_file'."
         fi
       fi
@@ -388,11 +471,21 @@ function clean_all() {
       "remove persisted aliases for '${domain}'" \
       csv_rewrite_rows "$aliases_file" "$STATE_BACKEND_ALIASES_HEADER" "$STATE_BACKEND_ALIASES_COLS" _clean_all_drop_alias_row || return 1
   fi
+  if [ "${#host_aliases_for_backend[@]}" -gt 0 ]; then
+    for host_alias_name in "${host_aliases_for_backend[@]}"; do
+      if backend_exists "$host_alias_name" || alias_exists "$host_alias_name" || dedicated_host_exists "$host_alias_name"; then
+        continue
+      fi
+      _clean_all_require_quiet_success \
+        "remove host alias keyed overrides for '${host_alias_name}'" \
+        remove_domain_keyed_render_state "$host_alias_name" || return 1
+    done
+  fi
   if [ "${#dedicated_hosts_for_backend[@]}" -gt 0 ]; then
     local dedicated_host_domain
     for dedicated_host_domain in "${dedicated_hosts_for_backend[@]}"; do
       [ -n "$dedicated_host_domain" ] || continue
-      if dedicated_host_exists "$dedicated_host_domain"; then
+      if backend_exists "$dedicated_host_domain" || alias_exists "$dedicated_host_domain" || dedicated_host_exists "$dedicated_host_domain"; then
         continue
       fi
       _clean_all_require_quiet_success \
@@ -409,7 +502,12 @@ function clean_all() {
   fi
 
   if [ -f "$BACKEND_MTLS_FILE" ]; then
-    state_csv_delete_two_col_key "$BACKEND_MTLS_FILE" "$STATE_BACKEND_MTLS_HEADER" "$domain"
+    if ! _clean_all_require_success \
+      "remove backend mTLS state for '${domain}'" \
+      state_csv_delete_two_col_key "$BACKEND_MTLS_FILE" "$STATE_BACKEND_MTLS_HEADER" "$domain"; then
+      transaction_return_failure || true
+      return 1
+    fi
   fi
 
   if [ -f "$BACKEND_HTTP_FILE" ]; then
@@ -442,16 +540,14 @@ function clean_all() {
     unset SKIP_UPDATE_NGINX_CONFIG
   fi
 
-  if [ -n "$mtls_dir" ] && [ -d "$mtls_dir" ]; then
-    local normalized_mtls_dir=""
-    if ! normalize_mtls_dir normalized_mtls_dir "$mtls_dir"; then
-      echo "[Error] Refusing to remove mTLS material outside certs root: $mtls_dir" >&2
+  for ((cleanup_index = 0; cleanup_index < ${#cleanup_domains[@]}; cleanup_index++)); do
+    if ! _clean_all_require_success \
+      "remove owned artifacts for '${cleanup_domains[cleanup_index]}'" \
+      _removed_identity_cleanup_artifacts "${cleanup_domains[cleanup_index]}" "${cleanup_mtls_dirs[cleanup_index]}"; then
+      transaction_return_failure || true
       return 1
     fi
-    mtls_dir="$normalized_mtls_dir"
-    safe_rm_rf "$mtls_dir" "${CERTS_DIR}/mtls"
-    echo "[Info] Removed mTLS material for $domain at $mtls_dir."
-  fi
+  done
 
   set_backend_docker_opts "backend:${domain}" ""
 
@@ -535,25 +631,35 @@ function clean_all() {
     [ "$had_nullglob" -eq 1 ] || shopt -u nullglob
   fi
 
-  create_backup "" "CleanAll_${domain}"
-  update_nginx_config
+  _backend_identity_remove "$domain" || return 1
+  if [ -n "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ]; then
+    domain_config_clean_owned_material "$domain" || return 1
+  fi
+  create_backup "" "CleanAll_${domain}" || return 1
+  update_nginx_config || return 1
 
   local cname="backend-$(sanitize_domain_name "$domain")"
-  if [ "$started_txn" = true ]; then
-    if ! _cleanup_runtime_stage_container_delete "$cname"; then
-      echo "[Error] Failed to stage deletion for backend container '$cname'." >&2
-      return 1
+  if [ -n "$backend_container_id" ]; then
+    if [ -n "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ]; then
+      _domain_runtime_record remove "$domain" old_id "$backend_container_id" old_token "$backend_owner_token" || return 1
+      _domain_runtime_finish_operation
+    elif [ "$started_txn" = true ]; then
+      if ! _cleanup_runtime_stage_container_delete "$cname" "$domain" "$backend_container_id" "$backend_owner_token"; then
+        echo "[Error] Failed to stage deletion for backend container '$cname'." >&2
+        return 1
+      fi
+    else
+      _backend_identity_inspect "$domain" "$backend_container_id" "$backend_owner_token" || return 1
+      if ! remove_container_and_anonymous_volumes "$backend_container_id"; then
+        echo "[Error] Failed to remove backend container '$cname'." >&2
+        return 1
+      fi
+      echo "[Info] Removed container '$cname'."
     fi
-  elif container_exists "$cname"; then
-    if ! remove_container_and_anonymous_volumes "$cname"; then
-      echo "[Error] Failed to remove backend container '$cname'." >&2
-      return 1
-    fi
-    echo "[Info] Removed container '$cname'."
   fi
 
   if [ "$started_txn" = true ]; then
-    end_transaction_success
+    end_transaction_success || return 1
     if ! _cleanup_runtime_finalize_staged_deletes; then
       return 1
     fi

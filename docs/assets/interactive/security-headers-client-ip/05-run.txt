@@ -1,0 +1,15 @@
+Review command
+  Command: Set Backend Client IP Header (set-backend-client-ip-header)
+  Description: Override the client IP header for one backend
+
+Arguments:
+  Domain: example.com
+  Header name or off: X-Real-IP
+
+CLI equivalent:
+  ./dockistrate.sh set-backend-client-ip-header example.com X-Real-IP
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

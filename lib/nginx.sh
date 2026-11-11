@@ -9,7 +9,7 @@ if [ -f "${NGINX_MODULE_DIR}/common.sh" ]; then
 fi
 
 for nginx_file in "${NGINX_MODULE_DIR}"/*.sh; do
-  nginx_basename="$(basename "${nginx_file}")"
+  nginx_basename="${nginx_file##*/}"
   if [ "${nginx_basename}" = "common.sh" ]; then
     continue
   fi

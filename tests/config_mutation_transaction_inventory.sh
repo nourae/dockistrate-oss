@@ -14,6 +14,10 @@ allowlist=(
   "lib/backends/start_all_backends.sh"
   "lib/certs/_renew_letsencrypt_cert.sh"
   "lib/cli/run_command.sh"
+  # Source publication runs inside the dispatch/apply transaction. Recovery
+  # re-renders under its durable journal instead of opening a nested operation.
+  "lib/domain_config/publication.sh"
+  "lib/domain_config/runtime_preflight.sh"
   # Shared update helper; callers must remain transaction-wrapped.
   "lib/global_settings/common.sh"
   "lib/security_rules/common.sh"

@@ -10,6 +10,8 @@ source "$ROOT_DIR/lib/utils.sh"
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/backups.sh"
 # shellcheck disable=SC1091
+source "$ROOT_DIR/lib/backends.sh"
+# shellcheck disable=SC1091
 source "$ROOT_DIR/lib/clean_uninstall.sh"
 # shellcheck disable=SC1091
 source "$ROOT_DIR/tests/helpers/stubs.sh"
@@ -23,6 +25,7 @@ eval "$ORIG_BACKUP_FILES_ONLY_DEF"
 BASE_DIR="$TMP_ROOT"
 STATE_DIR="$BASE_DIR/state"
 CONFIG_DIR="$STATE_DIR/config"
+GLOBAL_SETTINGS_FILE="$CONFIG_DIR/global_settings.csv"
 LOG_DIR="$STATE_DIR/logs"
 ERROR_LOG_DIR="$LOG_DIR/errors"
 TMP_DIR="$STATE_DIR/tmp"
@@ -37,6 +40,7 @@ PATH_HEADER_DIR="$NGINX_HTTP_CONF_DIR/path_headers"
 SECURITY_IP_DIR="$NGINX_HTTP_CONF_DIR/security_ip"
 SECURITY_IP_STREAM_DIR="$NGINX_STREAM_CONF_DIR/security_ip"
 BACKEND_PORTS_FILE="$CONFIG_DIR/backend_ports.csv"
+BACKEND_IDENTITY_FILE="$CONFIG_DIR/backend_identity.csv"
 BACKEND_ALIASES_FILE="$CONFIG_DIR/backend_aliases.csv"
 BACKEND_HEADERS_FILE="$CONFIG_DIR/backend_headers.csv"
 BACKEND_HTTP_FILE="$CONFIG_DIR/backend_http_versions.csv"
@@ -55,6 +59,7 @@ SECURITY_IP_RULES_DB="$CONFIG_DIR/security_ip_rules.csv"
 LAST_POST_BACKUP_FILE="$BACKUP_DIR/last_post_backup.txt"
 CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha256"
 
+SKIP_DOCKER_CHECKS=false
 INTERACTIVE=true
 ENABLE_AUTO_BACKUPS=false
 
@@ -69,6 +74,9 @@ mkdir -p \
   "$CAPTURE_DIR" "$ACME_WEBROOT_DIR" "$CERTS_DIR" \
   "$NGINX_HTTP_CONF_DIR" "$NGINX_STREAM_CONF_DIR" "$PATH_HEADER_DIR" \
   "$SECURITY_IP_DIR" "$SECURITY_IP_STREAM_DIR"
+
+# Recovery reloads persisted settings before restoring runtime containers.
+_save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
 
 cat >"$BACKEND_PORTS_FILE" <<'EOF_PORTS'
 record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location
@@ -226,12 +234,50 @@ function remove_container_and_anonymous_volumes() {
   return 1
 }
 
+# This transaction unit fixture binds one modeled backend to an immutable ID
+# and token. The production sidecar loader remains active; Docker lifecycle
+# stubs below resolve that ID to its current modeled name after each rename.
+test_backend_id="$(printf '%064d' 1)"
+test_backend_token="$(printf '%032d' 2)"
+printf 'domain,container_id,ownership_token\nexample.com,%s,%s\n' "$test_backend_id" "$test_backend_token" >"$BACKEND_IDENTITY_FILE"
+cp "$BACKEND_IDENTITY_FILE" "$BACKEND_IDENTITY_FILE.orig"
+
+function _fixture_backend_current_name() {
+  if [ "$(read_container_meta "$backend_meta_file" exists || true)" = true ]; then
+    printf '%s\n' "$backend_name"
+  elif [ "$(read_container_meta "$backend_backup_meta_file" exists || true)" = true ]; then
+    read_container_meta "$backend_backup_meta_file" name
+  else
+    return 1
+  fi
+}
+
+function _backend_identity_inspect() {
+  [ "${1:-}" = example.com ] && [ "${2:-}" = "$test_backend_id" ] && [ "${3:-}" = "$test_backend_token" ] || return 1
+  local fixture_meta="$backend_meta_file"
+  if [ "$(read_container_meta "$fixture_meta" exists || true)" != true ]; then
+    fixture_meta="$backend_backup_meta_file"
+  fi
+  [ "$(read_container_meta "$fixture_meta" exists || true)" = true ] || return 2
+  _backend_identity_parse_snapshot "$1" "$2" "$3" "$(printf 'verified\n%s\n%s\nnginx:alpine\nsha256:fixture\ndockistrate-net|10.0.0.5\n' "$test_backend_id" "$(read_container_meta "$fixture_meta" status)")"
+}
+
 function docker() {
   if [ "$#" -gt 1 ]; then
     printf 'subcommand=%s %s\n' "$1" "${*:2}" >>"$docker_log_file"
   else
     printf 'subcommand=%s\n' "$1" >>"$docker_log_file"
   fi
+  # Log the actual immutable target, then apply it to this fixture model.
+  case "${1:-}" in
+  rename | stop | start)
+    if [ "${2:-}" = "$test_backend_id" ]; then
+      local fixture_target=""
+      fixture_target="$(_fixture_backend_current_name)" || return 1
+      set -- "$1" "$fixture_target" "${@:3}"
+    fi
+    ;;
+  esac
   case "${1:-}" in
   rename)
     local src="${2:-}" dest="${3:-}" original="" active_meta="" backup_meta=""
@@ -316,6 +362,11 @@ if [ "$status" -eq 0 ]; then
   exit 1
 fi
 
+if ! cmp -s "$BACKEND_IDENTITY_FILE" "$BACKEND_IDENTITY_FILE.orig"; then
+  echo "[Error] Backend identity state was not restored after runtime rollback." >&2
+  exit 1
+fi
+
 if ! cmp -s "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.orig"; then
   echo "[Error] BACKEND_PORTS_FILE was not restored after uninstall_all rollback." >&2
   exit 1
@@ -350,7 +401,7 @@ for file in "$nginx_backup_meta_file" "$backend_backup_meta_file"; do
 done
 
 nginx_rollback_name="$(sed -n "s/^subcommand=rename ${NGINX_CONTAINER_NAME} \\(${NGINX_CONTAINER_NAME}-rollback-[0-9-][0-9-]*\\)$/\\1/p" "$docker_log_file" | head -n 1)"
-backend_rollback_name="$(sed -n "s/^subcommand=rename ${backend_name} \\(${backend_name}-rollback-[0-9-][0-9-]*\\)$/\\1/p" "$docker_log_file" | head -n 1)"
+backend_rollback_name="$(sed -n "s/^subcommand=rename ${test_backend_id} \\(${backend_name}-rollback-[0-9-][0-9-]*\\)$/\\1/p" "$docker_log_file" | head -n 1)"
 
 if [ -z "$nginx_rollback_name" ] || [ -z "$backend_rollback_name" ]; then
   echo "[Error] Failed to discover staged rollback container names for uninstall_all." >&2
@@ -359,11 +410,11 @@ fi
 
 for expected in \
   "subcommand=stop $nginx_rollback_name" \
-  "subcommand=stop $backend_rollback_name" \
+  "subcommand=stop $test_backend_id" \
   "subcommand=rename $nginx_rollback_name $NGINX_CONTAINER_NAME" \
-  "subcommand=rename $backend_rollback_name $backend_name" \
+  "subcommand=rename $test_backend_id $backend_name" \
   "subcommand=start $NGINX_CONTAINER_NAME" \
-  "subcommand=start $backend_name"; do
+  "subcommand=start $test_backend_id"; do
   if ! grep -Fq "$expected" "$docker_log_file"; then
     echo "[Error] Missing expected runtime rollback operation: $expected" >&2
     exit 1
@@ -371,7 +422,7 @@ for expected in \
 done
 
 if grep -Fq "subcommand=rm -f -v $nginx_rollback_name" "$docker_log_file" || \
-  grep -Fq "subcommand=rm -f -v $backend_rollback_name" "$docker_log_file"; then
+  grep -Fq "subcommand=rm -f -v $test_backend_id" "$docker_log_file"; then
   echo "[Error] uninstall_all should not permanently remove staged rollback containers before commit succeeds." >&2
   exit 1
 fi

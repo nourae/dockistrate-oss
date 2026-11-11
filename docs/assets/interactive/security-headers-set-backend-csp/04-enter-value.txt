@@ -1,0 +1,3 @@
+
+[Info] Current CSP for example.com: default-src 'self'
+default-src 'none'CSP for example.com (Off to remove) [default-src 'self']: default-src 'none'

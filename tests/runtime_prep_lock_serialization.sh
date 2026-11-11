@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT_DIR/tests/helpers/global_csv.sh"
 
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/config.sh"
@@ -93,11 +94,12 @@ REAL_IP_RECURSIVE,on
 NGINX_IMAGE,nginx
 CERTBOT_IMAGE,certbot/certbot
 EOF_CONFIG
+  test_global_csv_from_legacy "$GLOBAL_SETTINGS_FILE"
 }
 
 function assert_acl_policy() {
   local expected="${1:-}"
-  grep -qx "ACL_POLICY,${expected}" "$GLOBAL_SETTINGS_FILE" ||
+  [ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" ACL_POLICY)" = "${expected}" ] ||
     fail_test "Expected ACL_POLICY=${expected}"
 }
 
@@ -172,19 +174,7 @@ source "$COMMON_FILE" "$ROOT_DIR" "$TMP_ROOT"
 
 begin_transaction_return "runtime_prep_lock_test" "$CONFIG_DIR" || exit 1
 
-tmp_file=""
-make_temp_for_file tmp_file "$GLOBAL_SETTINGS_FILE" || {
-  transaction_return_failure
-  exit 1
-}
-while IFS= read -r line || [ -n "$line" ]; do
-  case "$line" in
-  ACL_POLICY,*) printf '%s\n' "ACL_POLICY,allow" ;;
-  *) printf '%s\n' "$line" ;;
-  esac
-done <"$GLOBAL_SETTINGS_FILE" >"$tmp_file"
-finalize_temp_file "$GLOBAL_SETTINGS_FILE" "$tmp_file" || {
-  rm -f "$tmp_file"
+csv_record_put "$GLOBAL_SETTINGS_FILE" "$STATE_GLOBAL_SETTINGS_HEADER" acl_policy allow || {
   transaction_return_failure
   exit 1
 }
@@ -201,11 +191,21 @@ chmod +x "$TMP_ROOT/hold_transaction.sh"
 "$TMP_ROOT/hold_transaction.sh" "$TMP_ROOT/worker_common.sh" "$ROOT_DIR" "$TMP_ROOT" &
 HOLDER_PID=$!
 
-for _attempt in 1 2 3 4 5 6 7 8 9 10; do
+_attempt=0
+while [ "$_attempt" -lt 100 ]; do
   [ -f "$TMP_ROOT/transaction-held" ] && break
+  if ! kill -0 "$HOLDER_PID" 2>/dev/null; then
+    set +e
+    wait "$HOLDER_PID"
+    holder_status=$?
+    set -e
+    HOLDER_PID=""
+    fail_test "transaction holder exited before acquiring lock with status $holder_status"
+  fi
+  _attempt=$((_attempt + 1))
   sleep 0.1
 done
-[ -f "$TMP_ROOT/transaction-held" ] || fail_test "transaction holder did not start"
+[ -f "$TMP_ROOT/transaction-held" ] || fail_test "transaction holder did not start within 10s"
 assert_acl_policy "allow"
 
 set +e
@@ -222,7 +222,7 @@ set -e
 grep -Fq "Another mutating operation is in progress" "$TMP_ROOT/bootstrap_locked.err" ||
   fail_test "bootstrap_config_runtime did not report the live transaction lock"
 assert_acl_policy "allow"
-! grep -qx 'NGINX_PULL_MODE,if-missing' "$GLOBAL_SETTINGS_FILE" ||
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" NGINX_IMAGE)" = nginx ] ||
   fail_test "locked runtime prep should not migrate settings"
 
 touch "$TMP_ROOT/release-transaction"
@@ -235,13 +235,13 @@ rm -f "$BACKUP_DIR"/*.tar.gz "$LAST_POST_BACKUP_FILE" \
 
 bootstrap_config_runtime || fail_test "bootstrap_config_runtime should repair state after the lock is released"
 assert_acl_policy "allow"
-grep -qx 'NGINX_IMAGE,nginx:latest' "$GLOBAL_SETTINGS_FILE" ||
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" NGINX_IMAGE)" = "nginx:latest" ] ||
   fail_test "bootstrap_config_runtime did not normalize NGINX_IMAGE"
-grep -qx 'CERTBOT_IMAGE,certbot/certbot:latest' "$GLOBAL_SETTINGS_FILE" ||
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" CERTBOT_IMAGE)" = "certbot/certbot:latest" ] ||
   fail_test "bootstrap_config_runtime did not normalize CERTBOT_IMAGE"
-grep -qx 'NGINX_PULL_MODE,if-missing' "$GLOBAL_SETTINGS_FILE" ||
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" NGINX_PULL_MODE)" = "if-missing" ] ||
   fail_test "bootstrap_config_runtime did not restore NGINX_PULL_MODE"
-grep -qx 'CERTBOT_PULL_MODE,if-missing' "$GLOBAL_SETTINGS_FILE" ||
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" CERTBOT_PULL_MODE)" = "if-missing" ] ||
   fail_test "bootstrap_config_runtime did not restore CERTBOT_PULL_MODE"
 assert_no_runtime_prep_backups
 
@@ -267,6 +267,24 @@ set -e
   fail_test "transaction lock marker should remain set when release_transaction_lock fails"
 eval "$saved_release_transaction_lock"
 unset CONFIG_RUNTIME_PREP_LOCK_HELD CONFIG_RUNTIME_PREP_LOCK_OWNER_PID TRANSACTION_LOCK_HELD
+
+reset_runtime_state
+write_legacy_settings "deny"
+PROMOTION_LOCK_STARTED=false
+_config_begin_runtime_prep_lock_if_needed PROMOTION_LOCK_STARTED ||
+  fail_test "failed to acquire runtime-prep lock for promotion check"
+[ "$PROMOTION_LOCK_STARTED" = "true" ] ||
+  fail_test "runtime-prep promotion check did not acquire a new lock"
+PROMOTION_LOCK_DIR="$(_transaction_lock_dir)"
+[ -d "$PROMOTION_LOCK_DIR" ] || fail_test "runtime-prep lock directory is missing before promotion"
+begin_transaction_return "runtime_prep_promotion" "$CONFIG_DIR" ||
+  fail_test "failed to promote runtime-prep lock into a transaction"
+transaction_is_active || fail_test "promoted runtime-prep lock did not become an active transaction"
+[ -z "${CONFIG_RUNTIME_PREP_LOCK_HELD:-}" ] ||
+  fail_test "runtime-prep marker remained set after transaction promotion"
+[ -d "$PROMOTION_LOCK_DIR" ] || fail_test "transaction promotion released the shared lock"
+end_transaction_success || fail_test "failed to finish promoted transaction"
+[ ! -d "$PROMOTION_LOCK_DIR" ] || fail_test "promoted transaction did not release its lock"
 
 reset_runtime_state
 printf '%s\n' "bad_header" >"$GLOBAL_SETTINGS_FILE"

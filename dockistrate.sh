@@ -31,6 +31,8 @@ CURRENT_CMD=""
 CURRENT_ARGS=()
 DOCKISTRATE_INTERACTIVE_XTRACE_STATE=""
 DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED=false
+DOCKISTRATE_VERBOSE_LOGGING_ACTIVE=false
+DOCKISTRATE_VERBOSE_TRACE_ROUTE=""
 
 # Loader for module sourcing
 source "${SCRIPT_DIR}/lib/loader.sh"
@@ -38,7 +40,8 @@ source "${SCRIPT_DIR}/lib/loader.sh"
 # Source initialization dependencies first
 _source_modules \
   "${SCRIPT_DIR}/lib/logging.sh" \
-  "${SCRIPT_DIR}/lib/utils.sh"
+  "${SCRIPT_DIR}/lib/utils.sh" \
+  "${SCRIPT_DIR}/lib/domain_config.sh"
 
 # Source eager modules required for command dispatch and deferred prep.
 _source_modules \
@@ -104,9 +107,74 @@ function dockistrate_run_selected_command() {
   fi
 }
 
-function dockistrate_disable_interactive_xtrace_if_needed() {
+function dockistrate_start_verbose_logging() {
   if [ "${VERBOSE:-false}" != true ] ||
-    [ "${DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED:-false}" = true ]; then
+    [ "${DOCKISTRATE_VERBOSE_LOGGING_ACTIVE:-false}" = true ]; then
+    return 0
+  fi
+
+  local log_ready=true
+  if command -v ensure_log_writable >/dev/null 2>&1; then
+    ensure_log_writable "$LOG_FILE" || log_ready=false
+  fi
+  if [ "$log_ready" = true ] && { touch "$LOG_FILE" 2>/dev/null && [ -w "$LOG_FILE" ]; }; then
+    if ((BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 1))); then
+      exec 3>>"$LOG_FILE"
+      export BASH_XTRACEFD=3
+      DOCKISTRATE_VERBOSE_TRACE_ROUTE=xtracefd
+    else
+      # Bash 3 ignores BASH_XTRACEFD. Keep the original stderr available so
+      # a later pre-runtime command can run without appending to this log.
+      exec 3>&2
+      exec 2> >(tee -a "$LOG_FILE" >&3)
+      DOCKISTRATE_VERBOSE_TRACE_ROUTE=stderr
+    fi
+  else
+    echo "[Warn] Cannot write to $LOG_FILE; verbose output will not be logged."
+  fi
+  DOCKISTRATE_VERBOSE_LOGGING_ACTIVE=true
+  xtrace_start
+  log_msg "Verbose mode enabled"
+}
+
+function dockistrate_stop_verbose_logging() {
+  local trace_state=""
+  xtrace_disable trace_state
+  case "${DOCKISTRATE_VERBOSE_TRACE_ROUTE:-}" in
+  xtracefd)
+    # Unsetting BASH_XTRACEFD closes its descriptor without redirecting stderr.
+    unset BASH_XTRACEFD
+    ;;
+  stderr)
+    exec 2>&3
+    exec 3>&-
+    ;;
+  esac
+  DOCKISTRATE_VERBOSE_TRACE_ROUTE=""
+  DOCKISTRATE_VERBOSE_LOGGING_ACTIVE=false
+  DOCKISTRATE_INTERACTIVE_XTRACE_STATE=""
+  DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED=false
+}
+
+function dockistrate_disable_interactive_xtrace_if_needed() {
+  if [ "${VERBOSE:-false}" != true ]; then
+    return 0
+  fi
+
+  if [ -n "${1:-}" ]; then
+    if dockistrate_command_skips_runtime_prep "$@"; then
+      dockistrate_stop_verbose_logging
+      return 0
+    fi
+    if [ "${DOCKISTRATE_VERBOSE_LOGGING_ACTIVE:-false}" != true ]; then
+      dockistrate_start_verbose_logging
+      DOCKISTRATE_INTERACTIVE_XTRACE_STATE=""
+      DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED=false
+    fi
+  elif [ "${DOCKISTRATE_VERBOSE_LOGGING_ACTIVE:-false}" != true ]; then
+    return 0
+  fi
+  if [ "${DOCKISTRATE_INTERACTIVE_XTRACE_SUPPRESSED:-false}" = true ]; then
     return 0
   fi
 
@@ -148,7 +216,11 @@ function dockistrate_redacted_xtrace_needed() {
     return 0
   fi
   if [ -s "${GLOBAL_SETTINGS_FILE:-}" ] && declare -F load_config >/dev/null 2>&1; then
-    load_config >/dev/null 2>&1 || true
+    # An atomic load can reject settings before publishing their visibility
+    # policy. Keep tracing suppressed until that policy is known to be valid.
+    if ! load_config >/dev/null 2>&1; then
+      return 0
+    fi
   fi
   if declare -F operator_visibility_is_redacted >/dev/null 2>&1 &&
     operator_visibility_is_redacted; then
@@ -213,25 +285,6 @@ while [[ $# -gt 0 && "$1" == -* ]]; do
   esac
 done
 
-if [ "$VERBOSE" = true ] && [ "$DOCKISTRATE_PRE_RUNTIME_COMMAND" != true ]; then
-  # Log command traces to the main log file and echo them to the console
-  # Prepare log file for tracing; gracefully degrade if not writable
-  _verbose_log_ready=true
-  if command -v ensure_log_writable >/dev/null 2>&1; then
-    ensure_log_writable "$LOG_FILE" || _verbose_log_ready=false
-  fi
-  if [ "$_verbose_log_ready" = true ] && { touch "$LOG_FILE" 2>/dev/null && [ -w "$LOG_FILE" ]; }; then
-    exec 3>>"$LOG_FILE"
-    export BASH_XTRACEFD=3
-  else
-    echo "[Warn] Cannot write to $LOG_FILE; verbose output will not be logged."
-  fi
-  unset _verbose_log_ready
-  PS4='+ $(date "+%Y-%m-%d %H:%M:%S") [CMD] '
-  set -x
-  log_msg "Verbose mode enabled"
-fi
-
 if [ "$INTERACTIVE" = true ] && [ "$#" -eq 0 ]; then
   while true; do
     DOCKISTRATE_INTERACTIVE_XTRACE_STATE=""
@@ -239,14 +292,17 @@ if [ "$INTERACTIVE" = true ] && [ "$#" -eq 0 ]; then
     dockistrate_disable_interactive_xtrace_if_needed
     if ! interactive_picker; then
       dockistrate_restore_interactive_xtrace_if_needed
+      dockistrate_stop_verbose_logging
       break
     fi
     if ! dockistrate_run_selected_command; then
       :
     else
       if declare -F interactive_record_recent_command >/dev/null 2>&1 &&
-        ! { declare -F dockistrate_command_skips_runtime_prep >/dev/null 2>&1 &&
-          dockistrate_command_skips_runtime_prep "${SELECTED_CMD:-}"; }; then
+        { ! { declare -F dockistrate_command_skips_runtime_prep >/dev/null 2>&1 &&
+            dockistrate_command_skips_runtime_prep "${SELECTED_CMD:-}"; } ||
+          dockistrate_command_repairs_headers "${SELECTED_CMD:-}" ||
+          { [ "${SELECTED_CMD:-}" = restore-backup ] && [ "${DOCKISTRATE_RESTORE_COMPLETED:-false}" = true ]; }; }; then
         if [ "${#SELECTED_ARGS[@]}" -gt 0 ]; then
           interactive_record_recent_command "$SELECTED_CMD" "${SELECTED_ARGS[@]}" || true
         else
@@ -255,6 +311,7 @@ if [ "$INTERACTIVE" = true ] && [ "$#" -eq 0 ]; then
       fi
     fi
     dockistrate_restore_interactive_xtrace_if_needed
+    dockistrate_stop_verbose_logging
     if [ "${SELECTED_CMD:-}" != "status" ] && [ "${SELECTED_CMD:-}" != "status-all" ]; then
       echo
       read -rp "Press Enter to continue..." _
@@ -269,6 +326,9 @@ if [[ -z "$CMD" ]]; then
   exit 1
 fi
 shift || true
+if [ "$VERBOSE" = true ] && [ "$DOCKISTRATE_PRE_RUNTIME_COMMAND" != true ]; then
+  dockistrate_start_verbose_logging
+fi
 _dockistrate_xtrace_state=""
 _dockistrate_suppress_sensitive_xtrace=false
 if [ "$VERBOSE" = true ]; then

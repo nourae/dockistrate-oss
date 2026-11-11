@@ -1,0 +1,17 @@
+Review command
+  Command: Remove Port Redirect (remove-port-redirect)
+  Description: Disable HTTP→HTTPS redirect for a port
+
+Arguments:
+  Domain: example.com
+  Listen port: 80
+
+CLI equivalent:
+  ./dockistrate.sh remove-port-redirect example.com 80
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

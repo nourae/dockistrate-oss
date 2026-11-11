@@ -1,0 +1,15 @@
+Review command
+  Command: Start Nginx (start-nginx)
+  Description: Start or recreate the Nginx proxy container (refreshes backend IPs)
+
+Arguments:
+  nginx image: docs-nginx:review
+  Extra Docker run options: --memory 256m
+
+CLI equivalent:
+  ./dockistrate.sh start-nginx --nginx-image docs-nginx:review --docker-opts '--memory 256m'
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

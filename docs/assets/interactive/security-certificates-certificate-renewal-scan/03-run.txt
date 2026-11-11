@@ -1,0 +1,14 @@
+Review command
+  Command: Renew Certs (renew-certs)
+  Description: Renew expiring Let's Encrypt certificates and refresh config
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh renew-certs
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

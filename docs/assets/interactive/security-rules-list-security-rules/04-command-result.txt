@@ -1,0 +1,7 @@
+
+1: AND example.com (n=2, mode=AND) action=block status=403 reason=- loc=auto
+  1. header:User-Agent contains BadBot
+  2. method equals GET
+[Info] Require rules must all pass. Then the first matching Block/Allow rule wins in global ID order; Allow never bypasses Require, ACLs, or mTLS.
+
+Press Enter to continue...

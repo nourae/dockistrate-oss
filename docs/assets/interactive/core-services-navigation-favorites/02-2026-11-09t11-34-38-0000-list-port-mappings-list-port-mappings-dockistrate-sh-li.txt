@@ -1,0 +1,6 @@
+Recent commands
+> 1) 2026-11-09T11:34:38+0000 :: List Port Mappings (list-port-mappings) - ./dockistrate.sh list-port-mappings
+  2) Back
+  3) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

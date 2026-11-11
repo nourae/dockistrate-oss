@@ -1,0 +1,17 @@
+Review command
+  Command: Remove Cert (remove-cert)
+  Description: Delete a certificate directory for a domain or port suffix
+
+Arguments:
+  Domain: example.com
+  Certificate port suffix: 9443
+
+CLI equivalent:
+  ./dockistrate.sh remove-cert example.com 9443
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

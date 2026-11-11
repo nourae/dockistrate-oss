@@ -1,0 +1,4 @@
+
+[Info] State migrated to schema 5. Running containers and proxy configuration were not changed.
+
+Press Enter to continue...

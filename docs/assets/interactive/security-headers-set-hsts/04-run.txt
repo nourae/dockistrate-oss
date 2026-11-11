@@ -1,0 +1,14 @@
+Review command
+  Command: Set HSTS (set-hsts)
+  Description: Set or disable global HSTS
+
+Arguments:
+  hsts value: max-age=300
+
+CLI equivalent:
+  ./dockistrate.sh set-hsts max-age=300
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -372,49 +372,106 @@ function dedicated_host_inheritance_file() {
   state_dedicated_host_inheritance_file
 }
 
+# Load only declarations when a library consumer sources utilities directly.
+function _require_persisted_settings_validation() {
+  if ! declare -F validate_persisted_setting >/dev/null 2>&1; then
+    # shellcheck source=../config/persisted_settings.sh
+    source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../config" && pwd)/persisted_settings.sh" || return 1
+  fi
+}
+
+# Standalone callers validate the complete file, including rows after a match.
+# Render callers reuse only the wrapper's validated snapshot and normalized rows.
+function get_validated_backend_setting_override() {
+  local file="${1:-}" header="${2:-}" setting="${3:-}" domain="${4:-}"
+  local lookup_rows="" cache_status=0
+  _require_persisted_settings_validation || return 1
+  _persisted_settings_cache_get "$file" "$header" "$setting" lookup_rows || cache_status=$?
+  case "$cache_status" in
+  0) ;;
+  2) validate_backend_setting_file "$file" "$header" "$setting" lookup_rows || return 1 ;;
+  *) return 1 ;;
+  esac
+  domain="$(normalize_domain "$domain")" || return 1
+  _persisted_settings_lookup_row "$lookup_rows" "$domain"
+}
+
+function validate_dedicated_host_inheritance_state() {
+  local output_name="${1:-}" file="" line="" line_no=0 hostname="" field="" header="" seen=$'\n'
+  local snapshot="" contents="" rows=""
+  _require_persisted_settings_validation || return 1
+  file="$(dedicated_host_inheritance_file)"
+  if [ -L "$file" ]; then
+    echo "[Error] Dedicated host inheritance state is not a regular file: ${file}" >&2
+    return 1
+  fi
+  snapshot="$(_persisted_settings_read_snapshot "$file")" || return 1
+  if [ "$snapshot" != missing. ]; then
+    contents="${snapshot#*$'\n'}"
+    contents="${contents%.}"
+    header="${contents%%$'\n'*}"
+    if [ "${header%$'\r'}" != "$STATE_DEDICATED_HOST_INHERITANCE_HEADER" ]; then
+      echo "[Error] Invalid dedicated host inheritance header in ${file}." >&2
+      return 1
+    fi
+    while IFS= read -r line || [ -n "$line" ]; do
+      line_no=$((line_no + 1))
+      [ "$line_no" -eq 1 ] && continue
+      if ! csv_parse_line "$line" || [ "$CSV_FIELD_COUNT" -ne "$STATE_DEDICATED_HOST_INHERITANCE_COLS" ]; then
+        echo "[Error] Invalid dedicated host inheritance row at line ${line_no}: expected six CSV columns." >&2
+        return 1
+      fi
+      hostname="$(normalize_domain "${CSV_FIELDS[0]}")"
+      if ! is_valid_domain "$hostname"; then
+        echo "[Error] Invalid dedicated host inheritance hostname at line ${line_no}." >&2
+        return 1
+      fi
+      case "$seen" in
+      *$'\n'"$hostname"$'\n'*)
+        echo "[Error] Duplicate dedicated host inheritance hostname at line ${line_no}." >&2
+        return 1
+        ;;
+      esac
+      seen="${seen}${hostname}"$'\n'
+      for field in 1 2 3 4 5; do
+        if ! is_yes_no "${CSV_FIELDS[$field]}"; then
+          echo "[Error] Invalid dedicated host inheritance flag at line ${line_no}: expected yes or no." >&2
+          return 1
+        fi
+      done
+      rows+="${hostname},${CSV_FIELDS[1]},${CSV_FIELDS[2]},${CSV_FIELDS[3]},${CSV_FIELDS[4]},${CSV_FIELDS[5]}"$'\n'
+    done < <(printf '%s' "$contents")
+  fi
+  _persisted_settings_cache_store "$file" "$STATE_DEDICATED_HOST_INHERITANCE_HEADER" inheritance "$snapshot" "$rows"
+  if [ -n "$output_name" ]; then printf -v "$output_name" '%s' "$rows"; fi
+}
+
 function get_dedicated_host_inheritance() {
-  local hostname="${1:-}" field="${2:-}"
-  local file line line_no=0
+  local hostname="${1:-}" field="${2:-}" file="" lookup_rows="" row="" cache_status=0
+  _require_persisted_settings_validation || return 1
   hostname="$(normalize_domain "$hostname")"
   file="$(dedicated_host_inheritance_file)"
-
-  # Default is to inherit everything.
-  local default="yes"
-
-  [ -f "$file" ] || {
-    echo "$default"
+  _persisted_settings_cache_get "$file" "$STATE_DEDICATED_HOST_INHERITANCE_HEADER" inheritance lookup_rows || cache_status=$?
+  case "$cache_status" in
+  0) ;;
+  2) validate_dedicated_host_inheritance_state lookup_rows || return 1 ;;
+  *) return 1 ;;
+  esac
+  row="$(_persisted_settings_lookup_row "$lookup_rows" "$hostname")" || return 1
+  if [ -n "$row" ]; then
+    csv_parse_line "$row" || return 1
+    case "$field" in
+    mtls) printf '%s\n' "${CSV_FIELDS[0]}" ;;
+    acl) printf '%s\n' "${CSV_FIELDS[1]}" ;;
+    security_rules) printf '%s\n' "${CSV_FIELDS[2]}" ;;
+    headers) printf '%s\n' "${CSV_FIELDS[3]}" ;;
+    paths) printf '%s\n' "${CSV_FIELDS[4]}" ;;
+    *) printf '%s\n' yes ;;
+    esac
     return 0
-  }
-  csv_require_header "$file" "$STATE_DEDICATED_HOST_INHERITANCE_HEADER" || {
-    echo "$default"
-    return 0
-  }
-
-  while IFS= read -r line || [ -n "$line" ]; do
-    line_no=$((line_no + 1))
-    [ "$line_no" -eq 1 ] && continue
-    csv_parse_line "$line" || {
-      echo "$default"
-      return 0
-    }
-    [ "$CSV_FIELD_COUNT" -eq "$STATE_DEDICATED_HOST_INHERITANCE_COLS" ] || {
-      echo "$default"
-      return 0
-    }
-    if [ "$(normalize_domain "${CSV_FIELDS[0]}")" = "$hostname" ]; then
-      case "$field" in
-      mtls) echo "${CSV_FIELDS[1]}" ;;
-      acl) echo "${CSV_FIELDS[2]}" ;;
-      security_rules) echo "${CSV_FIELDS[3]}" ;;
-      headers) echo "${CSV_FIELDS[4]}" ;;
-      paths) echo "${CSV_FIELDS[5]}" ;;
-      *) echo "$default" ;;
-      esac
-      return 0
-    fi
-  done <"$file"
-
-  echo "$default"
+  fi
+  # Only an absent file or absent host uses the inherit-everything default.
+  printf '%s\n' yes
 }
 
 function set_dedicated_host_inheritance() {
@@ -446,30 +503,30 @@ function remove_dedicated_host_inheritance() {
 
 function should_inherit_mtls() {
   local hostname="${1:-}" val
-  val="$(get_dedicated_host_inheritance "$hostname" "mtls")"
+  val="$(get_dedicated_host_inheritance "$hostname" "mtls")" || return 2
   [ "$val" = "yes" ]
 }
 
 function should_inherit_acl() {
   local hostname="${1:-}" val
-  val="$(get_dedicated_host_inheritance "$hostname" "acl")"
+  val="$(get_dedicated_host_inheritance "$hostname" "acl")" || return 2
   [ "$val" = "yes" ]
 }
 
 function should_inherit_security_rules() {
   local hostname="${1:-}" val
-  val="$(get_dedicated_host_inheritance "$hostname" "security_rules")"
+  val="$(get_dedicated_host_inheritance "$hostname" "security_rules")" || return 2
   [ "$val" = "yes" ]
 }
 
 function should_inherit_headers() {
   local hostname="${1:-}" val
-  val="$(get_dedicated_host_inheritance "$hostname" "headers")"
+  val="$(get_dedicated_host_inheritance "$hostname" "headers")" || return 2
   [ "$val" = "yes" ]
 }
 
 function should_inherit_paths() {
   local hostname="${1:-}" val
-  val="$(get_dedicated_host_inheritance "$hostname" "paths")"
+  val="$(get_dedicated_host_inheritance "$hostname" "paths")" || return 2
   [ "$val" = "yes" ]
 }

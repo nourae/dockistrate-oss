@@ -6,10 +6,10 @@ test_acl_persisted_l3_cidr_rejected() {
   run_dockistrate add-backend acl-persist-l3.test nginx:alpine 18180 http >/dev/null
   assertEquals "add-backend" 0 $?
 
-  rules_file="${CONFIG_DIR}/security_ip_rules.csv"
+  rules_file="${STATE_DIR}/domains/acl-persist-l3.test/runtime/applied/acl.csv"
   cat >"$rules_file" <<EOF_RULE
-enabled,domain,scope,action,ip_value,status_code
-1,acl-persist-l3.test,l3,allow,10.9.0.0/16,
+rule_id,order,enabled,scope,action,ip_value,status_code
+acl-invalid,1,1,l3,allow,10.9.0.0/16,
 EOF_RULE
 
   output="$(run_dockistrate update-nginx-config)"
@@ -25,10 +25,10 @@ test_acl_persisted_both_cidr_rejected() {
   run_dockistrate add-backend acl-persist-both.test nginx:alpine 18180 http >/dev/null
   assertEquals "add-backend" 0 $?
 
-  rules_file="${CONFIG_DIR}/security_ip_rules.csv"
+  rules_file="${STATE_DIR}/domains/acl-persist-both.test/runtime/applied/acl.csv"
   cat >"$rules_file" <<EOF_RULE
-enabled,domain,scope,action,ip_value,status_code
-1,acl-persist-both.test,both,deny,10.9.0.0/16,451
+rule_id,order,enabled,scope,action,ip_value,status_code
+acl-invalid,1,1,both,deny,10.9.0.0/16,451
 EOF_RULE
 
   output="$(run_dockistrate update-nginx-config)"

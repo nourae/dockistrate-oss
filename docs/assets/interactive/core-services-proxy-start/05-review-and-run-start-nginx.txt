@@ -1,0 +1,14 @@
+Review command
+  Command: Start Nginx (start-nginx)
+  Description: Start or recreate the Nginx proxy container (refreshes backend IPs)
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh start-nginx
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

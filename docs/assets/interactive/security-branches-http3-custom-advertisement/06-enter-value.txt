@@ -1,0 +1,4 @@
+
+Use auto for the default HTTP/3 advertisement, off to suppress it, or custom to type one.
+Alt-Svc (auto|off|custom)
+Example: h3=":443"; ma=86400: h3=":443"; ma=60

@@ -1,0 +1,16 @@
+Review command
+  Command: Remove All Security Rules (remove-all-security-rules)
+  Description: Remove all security rules
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh remove-all-security-rules
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

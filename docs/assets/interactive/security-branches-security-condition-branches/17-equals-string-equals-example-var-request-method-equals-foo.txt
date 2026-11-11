@@ -1,0 +1,22 @@
+Condition 3 operator:
+> 1) Equals — string equals. Example: var $request_method equals foo
+  2) Not Equals — string not equal. Example: var $request_method not_equals foo
+  3) Contains — substring present (case-insensitive). Example: var $request_method contains foo
+  4) Not Contains — substring not present. Example: var $request_method not_contains foo
+  5) Starts With — string starts with. Example: var $request_method starts_with foo
+  6) Not Starts With — string does not start with. Example: var $request_method not_starts_with foo
+  7) Ends With — string ends with. Example: var $request_method ends_with foo
+  8) Not Ends With — string does not end with. Example: var $request_method not_ends_with foo
+  9) Matches — regex matches (case-insensitive). Example: var $request_method matches ^[A-Za-z0-9]+$
+  10) Not Matches — regex does not match. Example: var $request_method not_matches ^[A-Za-z0-9]+$
+  11) In — value is in list (comma or pipe separated). Example: var $request_method in 1|2|3
+  12) Not In — value is not in list. Example: var $request_method not_in 1|2|3
+  13) Gt — numeric greater than. Example: var $request_method gt 100000
+  14) Ge — numeric greater or equal. Example: var $request_method ge 100000
+  15) Lt — numeric less than. Example: var $request_method lt 100000
+  16) Le — numeric less or equal. Example: var $request_method le 100000
+  17) Exists — value present / header exists. Example: var $request_method exists -
+  18) Not Exists — value missing / header not present. Example: var $request_method not_exists -
+  19) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

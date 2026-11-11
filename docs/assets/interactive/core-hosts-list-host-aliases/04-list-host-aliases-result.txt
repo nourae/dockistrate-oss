@@ -1,0 +1,6 @@
+
+Alias                     | Backend
+---------------------------------------------
+www.example.com           | example.com
+
+Press Enter to continue...

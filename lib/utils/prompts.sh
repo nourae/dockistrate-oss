@@ -109,9 +109,11 @@ function prompt_input() {
   if [ "$INTERACTIVE" = true ]; then
     if [ -n "$default" ]; then
       read_with_editing "$prompt [$default]: " val "$default"
+      [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
       [ -z "$val" ] && val="$default"
     else
       read_with_editing "$prompt: " val
+      [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     fi
   fi
   printf -v "$__var" '%s' "$val"
@@ -128,9 +130,11 @@ function prompt_input_valid() {
   while true; do
     if [ -n "$default" ]; then
       read_with_editing "$prompt [$default]: " val "$default"
+      [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
       [ -z "$val" ] && val="$default"
     else
       read_with_editing "$prompt: " val
+      [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     fi
     if "$validator" "$val"; then
       val="$(normalize_validated_value "$validator" "$val")"

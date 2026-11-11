@@ -1,0 +1,5 @@
+
+nginx-proxy
+[Info] Stopped Nginx container.
+
+Press Enter to continue...

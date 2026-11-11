@@ -1,0 +1,4 @@
+
+Container image used when Dockistrate starts the backend.
+Container image
+Example: nginx:alpine: nginx:alpine

@@ -1,0 +1,4 @@
+
+[Info] BACKUP_RETENTION set to 7 and saved in /opt/dockistrate-demo/state/config/global_settings.csv.
+
+Press Enter to continue...

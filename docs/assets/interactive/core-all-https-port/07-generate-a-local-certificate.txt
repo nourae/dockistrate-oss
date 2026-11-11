@@ -1,0 +1,12 @@
+Domain: example.com
+Listen port: 443
+Backend container port: 80
+Protocol: https
+Certificate source for HTTPS listeners. Use none for the default self-signed behavior where supported, or an existing cert path.
+Certificate
+Example: example.com/selfsigned-443 or none
+Blank: leave blank to use the default certificate behavior:
+> 1) Generate self-signed certificate (current)
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

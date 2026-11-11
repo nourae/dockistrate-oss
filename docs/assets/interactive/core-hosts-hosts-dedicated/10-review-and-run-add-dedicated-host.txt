@@ -1,0 +1,20 @@
+Review command
+  Command: Add Dedicated Host (add-dedicated-host)
+  Description: Add a dedicated hostname with independent config (mTLS, ACL, headers)
+
+Arguments:
+  Hostname: app.example.com
+  Domain: example.com
+  Inherit mTLS: yes
+  Inherit ACL: yes
+  Inherit security rules: yes
+  Inherit headers: yes
+  Inherit path options: yes
+
+CLI equivalent:
+  ./dockistrate.sh add-dedicated-host app.example.com example.com yes yes yes yes yes
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

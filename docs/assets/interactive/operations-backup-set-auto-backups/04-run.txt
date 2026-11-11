@@ -1,0 +1,14 @@
+Review command
+  Command: Set Auto Backups (set-auto-backups)
+  Description: Enable or disable automatic backups
+
+Arguments:
+  true or false: true
+
+CLI equivalent:
+  ./dockistrate.sh set-auto-backups true
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

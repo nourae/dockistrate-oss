@@ -8,8 +8,8 @@ test_set_nginx_docker_opts_save_show_and_clear() {
   status=$?
   assertEquals "set-nginx-docker-opts should succeed" 0 "$status"
   assertStringContains "set-nginx-docker-opts output" "NGINX_DOCKER_OPTS set" "$output"
-  assertTrue "global settings should persist nginx docker opts" \
-    "grep -Fq 'NGINX_DOCKER_OPTS,--ulimit nofile=65535:65535 --cpus 1.5' '${CONFIG_DIR}/global_settings.csv'"
+  assertEquals "global settings should persist nginx docker opts" "--ulimit nofile=65535:65535 --cpus 1.5" \
+    "$(integration_global_csv_get "$CONFIG_DIR/global_settings.csv" NGINX_DOCKER_OPTS)"
 
   output="$(run_dockistrate show-nginx-docker-opts 2>&1)"
   status=$?
@@ -35,6 +35,6 @@ test_set_nginx_docker_opts_rejects_reserved_proxy_labels() {
   assertNotEquals "set-nginx-docker-opts should reject reserved proxy ownership labels" 0 "$status"
   assertStringContains "set-nginx-docker-opts should explain reserved proxy labels" \
     "reserved for Dockistrate-managed proxy ownership" "$output"
-  assertTrue "global settings should not persist rejected reserved nginx docker opts" \
-    "! grep -Fq 'NGINX_DOCKER_OPTS,--label com.dockistrate.state-dir=/tmp/foreign' '${CONFIG_DIR}/global_settings.csv'"
+  assertEquals "global settings should not persist rejected reserved nginx docker opts" "" \
+    "$(integration_global_csv_get "$CONFIG_DIR/global_settings.csv" NGINX_DOCKER_OPTS)"
 }

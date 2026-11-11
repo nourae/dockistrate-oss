@@ -1,0 +1,7 @@
+HTTP header name.
+Header name
+Example: X-Forwarded-Proto:
+> 1) X-Global-Guide
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -7,6 +7,8 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/lib/config.sh"
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/utils.sh"
+# shellcheck source=helpers/global_csv.sh
+source "$ROOT_DIR/tests/helpers/global_csv.sh"
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/backups.sh"
 # shellcheck disable=SC1091
@@ -56,7 +58,7 @@ REAL_IP_RECURSIVE="on"
 
 save_config
 
-initial_version=$(awk -F',' '$1=="HTTP_VERSION" {print $2}' "$GLOBAL_SETTINGS_FILE")
+initial_version=$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" HTTP_VERSION)
 if [ "$initial_version" != "http1.1" ]; then
   echo "[Error] Initial HTTP version not recorded" >&2
   exit 1
@@ -72,7 +74,7 @@ if [ "$status" -eq 0 ]; then
   exit 1
 fi
 
-post_version=$(awk -F',' '$1=="HTTP_VERSION" {print $2}' "$GLOBAL_SETTINGS_FILE")
+post_version=$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" HTTP_VERSION)
 if [ "$post_version" != "http1.1" ]; then
   echo "[Error] HTTP version was not restored after failure" >&2
   exit 1

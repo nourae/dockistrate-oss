@@ -1,0 +1,3 @@
+$ cat state/domains/example.com/config/headers.csv
+header_type,header_name,header_value
+response,X-Interactive-Draft,activated

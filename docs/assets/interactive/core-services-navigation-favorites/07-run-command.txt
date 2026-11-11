@@ -1,0 +1,8 @@
+Saved command
+List Port Mappings (list-port-mappings) - ./dockistrate.sh list-port-mappings
+> 1) Run command
+  2) Remove from favorites
+  3) Back
+  4) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -49,6 +49,13 @@ test_adjacent_option_parsers_reject_missing_values_without_unbound_failures() {
   assertStringContains "add-security-rule missing value" "--code requires a value" "$output"
   assertTrue "add-security-rule should not hit unbound variable failure" "[[ \"$output\" != *\"unbound variable\"* ]]"
 
+  output="$(run_dockistrate add-security-rule "$domain" 1 --code 403 2>&1)"
+  status=$?
+  assertNotEquals "add-security-rule should reject option-only condition args" 0 "$status"
+  assertStringContains "add-security-rule option-only error" "expected exactly 4 condition args, got 0" "$output"
+  assertTrue "add-security-rule option-only failure should not hit unbound variable" \
+    "[[ \"$output\" != *\"unbound variable\"* ]]"
+
   output="$(run_dockistrate update-acl 1 --ip 2>&1)"
   status=$?
   assertNotEquals "update-acl should reject missing --ip value" 0 "$status"

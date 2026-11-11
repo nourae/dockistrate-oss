@@ -1,0 +1,16 @@
+$ curl --noproxy \* -sS --max-time 10 -i -H Host:\ example.com http://127.0.0.1:80/
+HTTP/1.1 301 Moved Permanently
+Server: nginx/1.31.7
+Date: Mon, 09 Nov 2026 11:37:21 GMT
+Content-Type: text/html
+Content-Length: 169
+Connection: keep-alive
+Location: https://example.com/
+
+<html>
+<head><title>301 Moved Permanently</title></head>
+<body>
+<center><h1>301 Moved Permanently</h1></center>
+<hr><center>nginx/1.31.7</center>
+</body>
+</html>

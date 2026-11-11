@@ -1,0 +1,9 @@
+
+[Info] Packet capture stopped and container removed.
+[Info] Nginx image nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47 (digest-pinned; explicit pull skipped).
+[Info] Creating Nginx container with published ports: 443/tcp 80/tcp
+8c12b9a942e52983a7e7b8c302f470ddc635125be4ca45ab537bce9b7fadba8a
+[Info] TLS decrypt capture mode disabled.
+[Info] TLS key log preserved at: /opt/dockistrate-demo/state/pcaps/tls-keys/tlskeys_20261109_113516.0ysELn
+
+Press Enter to continue...

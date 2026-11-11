@@ -2,7 +2,6 @@
 
 function _issue_backend_client_cert() {
   local mtls_dir="${1:-}" client="${2:-}"
-  _mtls_prepare_dir_for_mutation mtls_dir "$mtls_dir" || return 1
   _init_backend_mtls_state "$mtls_dir" || return 1
   local openssl_conf=""
   if ! openssl_conf="$(_write_backend_openssl_conf "$mtls_dir")"; then
