@@ -35,6 +35,7 @@ function add_cert() {
     ;;
   [Ll] | letsencrypt)
     cert_type="letsencrypt"
+    require_valid_image_ref "${CERTBOT_IMAGE:-}" "Certbot" || return 1
     check_certbot_installed
     ;;
   [Uu] | upload)
@@ -59,6 +60,11 @@ function add_cert() {
     ;;
   esac
 
+  local issuer_root="${CERTS_DIR}/letsencrypt"
+  if declare -F _domain_cert_acme_root >/dev/null 2>&1; then
+    issuer_root="$(_domain_cert_acme_root)" || return 1
+  fi
+
   if ! _config_begin_transaction_if_needed started_txn "add_cert_${domain}_${port_suffix}" "$CERTS_DIR" "$ACME_WEBROOT_DIR"; then
     exit 1
   fi
@@ -66,13 +72,23 @@ function add_cert() {
   case "$cert_choice" in
   [Ss] | selfsigned)
     cert_folder="${CERTS_DIR}/${cert_type}/live/${domain}_${port_suffix}"
+    if declare -F _domain_cert_destination >/dev/null 2>&1; then
+      _domain_cert_destination cert_folder "$domain" "$cert_type" "$port_suffix" || return 1
+    fi
     local old_umask
     old_umask="$(umask)"
     umask 077
     mkdir -p "$cert_folder"
+    local identity_type=DNS
+    if is_valid_ipv4 "$domain"; then identity_type=IP; fi
+    # A config file works with OpenSSL/LibreSSL versions without -addext.
+    # Domain validation above excludes config syntax and line breaks.
     openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
       -keyout "${cert_folder}/privkey.pem" \
       -out "${cert_folder}/fullchain.pem" \
+      -config <(printf '%s\n' '[req]' 'distinguished_name = dn' '[dn]' \
+        '[server_certificate]' "subjectAltName = ${identity_type}:${domain}") \
+      -extensions server_certificate \
       -subj "/CN=${domain}" 2>/dev/null
     local openssl_status=$?
     umask "$old_umask"
@@ -92,6 +108,9 @@ function add_cert() {
     ;;
   [Ll] | letsencrypt)
     cert_folder="${CERTS_DIR}/${cert_type}/live/${domain}_${port_suffix}"
+    if declare -F _domain_cert_destination >/dev/null 2>&1; then
+      _domain_cert_destination cert_folder "$domain" "$cert_type" "$port_suffix" || return 1
+    fi
     echo "[Info] Generating Let’s Encrypt cert for ${domain}..."
 
     local running_state=""
@@ -103,11 +122,11 @@ function add_cert() {
     fi
 
     if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
-      runtime_state_paths_guard_if_declared "${CERTS_DIR}/${cert_type}" "$ACME_WEBROOT_DIR" || return 1
+      runtime_state_paths_guard_if_declared "$issuer_root" "$ACME_WEBROOT_DIR" || return 1
     fi
-    mkdir -p "${CERTS_DIR}/${cert_type}" "$ACME_WEBROOT_DIR"
+    mkdir -p "$issuer_root" "$ACME_WEBROOT_DIR"
     if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
-      runtime_state_paths_guard_if_declared "${CERTS_DIR}/${cert_type}" "$ACME_WEBROOT_DIR" || return 1
+      runtime_state_paths_guard_if_declared "$issuer_root" "$ACME_WEBROOT_DIR" || return 1
     fi
 
     local -a docker_run_tty_args=("-i")
@@ -122,7 +141,7 @@ function add_cert() {
       set +e
       certbot_user_mapping="$(
         trap - ERR EXIT
-        certbot_docker_host_user_mapping "${CERTS_DIR}/${cert_type}" "$ACME_WEBROOT_DIR"
+        certbot_docker_host_user_mapping "$issuer_root" "$ACME_WEBROOT_DIR"
       )"
       certbot_user_status=$?
       set -e
@@ -135,19 +154,26 @@ function add_cert() {
       fi
     fi
 
-    pull_image_if_autopull "$CERTBOT_IMAGE" "Certbot"
+    pull_image_if_autopull "$CERTBOT_IMAGE" "Certbot" || {
+      transaction_return_failure
+      return 1
+    }
 
     local certbot_exit
-    if [ "$running_state" = "true" ]; then
+    if [ "$running_state" = "true" ] && _certbot_proxy_publishes_http; then
       echo "[Info] Using webroot mode for Certbot (no downtime)..."
       # Ensure challenge files can be served
-      update_nginx_config
+      if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+        _domain_config_prepare_acme_challenge || return 1
+      else
+        update_nginx_config || return 1
+      fi
       local -a certbot_cmd=(docker run "${docker_run_tty_args[@]}" --rm)
       if [ ${#certbot_user_args[@]} -gt 0 ]; then
         certbot_cmd+=("${certbot_user_args[@]}")
       fi
       certbot_cmd+=(
-        -v "${CERTS_DIR}/${cert_type}:/etc/letsencrypt"
+        -v "${issuer_root}:/etc/letsencrypt"
         -v "${ACME_WEBROOT_DIR}:/var/www/certbot"
         "${CERTBOT_IMAGE}" certonly
         --webroot --webroot-path /var/www/certbot
@@ -160,7 +186,7 @@ function add_cert() {
       "${certbot_cmd[@]}"
       certbot_exit=$?
     else
-      echo "[Info] Nginx not running, using standalone mode..."
+      echo "[Info] Using standalone mode for the HTTP challenge on port 80..."
       local -a certbot_cmd=(docker run "${docker_run_tty_args[@]}" --rm)
       if [ ${#certbot_user_args[@]} -gt 0 ]; then
         certbot_cmd+=("${certbot_user_args[@]}")
@@ -170,7 +196,7 @@ function add_cert() {
       fi
       certbot_cmd+=(
         -p 80:80
-        -v "${CERTS_DIR}/${cert_type}:/etc/letsencrypt"
+        -v "${issuer_root}:/etc/letsencrypt"
         -v "${ACME_WEBROOT_DIR}:/var/www/certbot"
         "${CERTBOT_IMAGE}" certonly
         --standalone
@@ -185,7 +211,7 @@ function add_cert() {
     fi
 
     if [ $certbot_exit -eq 0 ]; then
-      local default_le_dir="${CERTS_DIR}/${cert_type}/live/${domain}"
+      local default_le_dir="${issuer_root}/live/${domain}"
       if [ -d "$default_le_dir" ]; then
         local old_umask
         old_umask="$(umask)"
@@ -212,6 +238,9 @@ function add_cert() {
     ;;
   [Uu] | upload)
     cert_folder="${CERTS_DIR}/${cert_type}/live/${domain}_${port_suffix}"
+    if declare -F _domain_cert_destination >/dev/null 2>&1; then
+      _domain_cert_destination cert_folder "$domain" "$cert_type" "$port_suffix" || return 1
+    fi
     local old_umask
     old_umask="$(umask)"
     umask 077
@@ -230,6 +259,21 @@ function add_cert() {
   esac
 
   if [ "$created_ok" = true ]; then
+    if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+      _domain_cert_write_metadata "$cert_folder" "$cert_type" "$port_suffix" || return 1
+      _domain_runtime_put "$cert_folder/certificate.csv" declared yes || return 1
+      if [ "$cert_type" = custom ]; then
+        _domain_runtime_put "$cert_folder/certificate.csv" source_fullchain "$upload_fc" || return 1
+        _domain_runtime_put "$cert_folder/certificate.csv" source_privkey "$upload_pk" || return 1
+      else
+        _domain_runtime_put "$cert_folder/certificate.csv" source_fullchain "" || return 1
+        _domain_runtime_put "$cert_folder/certificate.csv" source_privkey "" || return 1
+      fi
+      local saved_source_cert="" saved_source_key="" specification=""
+      if [ "$cert_type" = custom ]; then saved_source_cert="$upload_fc"; saved_source_key="$upload_pk"; fi
+      specification="$(_domain_cert_fingerprint "${cert_folder##*/}" "$cert_type" "$port_suffix" "$saved_source_cert" "$saved_source_key")" || return 1
+      _domain_runtime_put "$cert_folder/certificate.csv" specification "$specification" || return 1
+    fi
     local prev_skip="${SKIP_UPDATE_NGINX_CONFIG:-}"
     SKIP_UPDATE_NGINX_CONFIG=true
 

@@ -17,7 +17,7 @@ function operator_visibility_is_redacted() {
 
 function operator_value_kind_is_redactable() {
   case "${1:-}" in
-  docker_opts | header_value) return 0 ;;
+  docker_opts | header_value | directive_value) return 0 ;;
   *) return 1 ;;
   esac
 }
@@ -28,6 +28,7 @@ function operator_arg_is_redactable() {
   *:docker_opts \
   | add-header:value | update-header:value \
   | add-backend-header:value | update-backend-header:value \
+  | set-nginx-directive:directive_value | set-nginx-directive-raw:directive_value \
   | set-hsts:hsts_value | set-backend-hsts:backend_hsts_value \
   | set-csp:csp_value | set-backend-csp:backend_csp_value)
     return 0

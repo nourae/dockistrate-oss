@@ -8,7 +8,7 @@ test_security_changes_force_nginx_recreate_and_readiness_check() {
   rm -rf "${STATE_DIR}/tmp/.docker_mock"
   rm -f "$docker_log_file"
 
-  run_dockistrate add-backend "$domain" nginx:alpine 18180 http >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend "$domain" nginx:alpine 18180 http >/dev/null
   assertEquals "seed backend" 0 $?
 
   output="$(
@@ -44,7 +44,7 @@ test_security_change_readiness_failure_rolls_back_state() {
   rm -rf "${STATE_DIR}/tmp/.docker_mock"
   rm -f "$docker_log_file"
 
-  run_dockistrate add-backend "$domain" nginx:alpine 18181 http >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend "$domain" nginx:alpine 18181 http >/dev/null
   assertEquals "seed backend" 0 $?
 
   output="$(
@@ -76,7 +76,7 @@ test_security_change_readiness_failure_rolls_back_state() {
   assertNotEquals "set-acl-policy deny should fail when readiness check fails" 0 "$status"
   assertStringContains "readiness failure should be visible" \
     "Nginx did not pass config readiness checks after security config update." "$output"
-  assertFileContainsSubstring "ACL_POLICY,allow" "${CONFIG_DIR}/global_settings.csv"
+  assertEquals "Failed update restores global ACL policy" allow "$(integration_global_csv_get "$CONFIG_DIR/global_settings.csv" ACL_POLICY)"
 }
 
 test_deferred_security_update_recreates_on_final_nginx_update() {
@@ -87,7 +87,7 @@ test_deferred_security_update_recreates_on_final_nginx_update() {
   rm -rf "${STATE_DIR}/tmp/.docker_mock"
   rm -f "$docker_log_file"
 
-  run_dockistrate add-backend "$domain" nginx:alpine 18182 http >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend "$domain" nginx:alpine 18182 http >/dev/null
   assertEquals "seed backend" 0 $?
   run_dockistrate set-backend-acl-policy "$domain" allow >/dev/null
   assertEquals "seed backend ACL policy override" 0 $?

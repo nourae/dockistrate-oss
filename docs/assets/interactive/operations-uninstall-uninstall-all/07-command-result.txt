@@ -1,0 +1,10 @@
+YES
+[Info] Removed directory /opt/dockistrate-demo/state/config.
+[Info] Removed /opt/dockistrate-demo/state/certs.
+[Info] Removed directory /opt/dockistrate-demo/state/pcaps.
+[Info] Removed directory /opt/dockistrate-demo/state/acme-webroot.
+[Info] Full runtime uninstall complete. Logs and backups were retained.
+[Info] Removed Nginx container.
+[Info] Removed backend container 'backend-example.com'.
+
+Press Enter to continue...

@@ -1,0 +1,939 @@
+{
+  "schema_version": 1,
+  "scenario": "core-hosts",
+  "source_commit": "3d2ee0b58e2f729255105b30e5715990696f107b",
+  "started_at": "2026-11-07T16:16:09.683864+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42390384054",
+  "github_run_attempt": "1",
+  "scenario_module": "core",
+  "group": "hosts",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"44 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T16:21:18.479288+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "core-hosts-hosts-alias",
+      "journey_family": "core-hosts-hosts-alias",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-host-alias",
+      "image": "docs/assets/interactive/core-hosts-hosts-alias/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-alias/03-example-com.txt",
+      "image_sha256": "304bffaa94ba5d6bd2b35c26a8f9311c17dd7038bf800da0601b824e2d5c9848",
+      "transcript_sha256": "0407218ab57a364431bef52daafbb52a55da177c255437752a3b87b4331b3434",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-alias.pty.log",
+      "pty_byte_offset": 72369,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-hosts-hosts-alias",
+      "journey_family": "core-hosts-hosts-alias",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter alias",
+      "kind": "menu",
+      "command": "add-host-alias",
+      "image": "docs/assets/interactive/core-hosts-hosts-alias/04-enter-alias.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-alias/04-enter-alias.txt",
+      "image_sha256": "307bbd88520c6a05848db1f194587b4c7a5b66976cf84266479d740dc8859fd4",
+      "transcript_sha256": "4166d059d520f2e1ff6322dd46ac4145bf6ec512e9f7cf4323ebb59d4dcbfda4",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-alias.pty.log",
+      "pty_byte_offset": 72501,
+      "selected": "Enter alias"
+    },
+    {
+      "journey": "core-hosts-hosts-alias",
+      "journey_family": "core-hosts-hosts-alias",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-host-alias",
+      "image": "docs/assets/interactive/core-hosts-hosts-alias/05-enter-value.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-alias/05-enter-value.txt",
+      "image_sha256": "7e87f08c89c8332afcecea0d608e2b0c2395e19d60d1cd09a3a1b894871f8d9a",
+      "transcript_sha256": "8f911378a5ee3abb02cca5ecf4136002f535cfd74c3272ecac1de140d23b7f83",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-alias.pty.log",
+      "pty_byte_offset": 72545,
+      "value": "www.example.com"
+    },
+    {
+      "journey": "core-hosts-hosts-alias",
+      "journey_family": "core-hosts-hosts-alias",
+      "session_index": 1,
+      "step": 6,
+      "title": "Review and run add-host-alias",
+      "kind": "menu",
+      "command": "add-host-alias",
+      "image": "docs/assets/interactive/core-hosts-hosts-alias/06-review-and-run-add-host-alias.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-alias/06-review-and-run-add-host-alias.txt",
+      "image_sha256": "a979171ca31d72ec38ac528be52f5fecf18e1634b57333eb65f28448fb4ad176",
+      "transcript_sha256": "2b28aa9a978e8610b670353883d00bc736e765726108e3d861d614292f819908",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-alias.pty.log",
+      "pty_byte_offset": 72953,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-hosts-hosts-alias",
+      "journey_family": "core-hosts-hosts-alias",
+      "session_index": 1,
+      "step": 7,
+      "title": "add-host-alias result",
+      "kind": "result",
+      "command": "add-host-alias",
+      "image": "docs/assets/interactive/core-hosts-hosts-alias/07-add-host-alias-result.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-alias/07-add-host-alias-result.txt",
+      "image_sha256": "86d1fb2af83200eca85f9ebdc5b8b89cab3e627216f7ffb54317ee554e4c5c01",
+      "transcript_sha256": "fdfb75ab7b799d8062cb04de8a183dc4a40521a9620a7a53c532038baa96ca0a",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-alias.pty.log",
+      "pty_byte_offset": 74181,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-hosts-list-host-aliases",
+      "journey_family": "core-hosts-list-host-aliases",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "list-host-aliases",
+      "image": "docs/assets/interactive/core-hosts-list-host-aliases/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-hosts-list-host-aliases/03-example-com.txt",
+      "image_sha256": "2faadbe818f43634a615e06509dcf7d85e41807d9666beecb837f760ab792e3e",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-list-host-aliases.pty.log",
+      "pty_byte_offset": 76827,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-hosts-list-host-aliases",
+      "journey_family": "core-hosts-list-host-aliases",
+      "session_index": 1,
+      "step": 4,
+      "title": "list-host-aliases result",
+      "kind": "result",
+      "command": "list-host-aliases",
+      "image": "docs/assets/interactive/core-hosts-list-host-aliases/04-list-host-aliases-result.png",
+      "transcript": "docs/assets/interactive/core-hosts-list-host-aliases/04-list-host-aliases-result.txt",
+      "image_sha256": "a54c49a91bf2a13efa42a1e9a70dd6abf3f9d6bd8cd84e5621cd4df627a37c78",
+      "transcript_sha256": "8f3c1ba93efb83c0f916a670cc8da45e6805837b73cd28b845fc8fe7f05a060d",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-list-host-aliases.pty.log",
+      "pty_byte_offset": 76980,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-hosts-alias-request",
+      "journey_family": "core-hosts-alias-request",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-hosts-alias-request/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-hosts-alias-request/01-verify-the-application-response.txt",
+      "image_sha256": "058b24d9ef8a8746334f0ef41677abcc8a6348fa52bfcece80459119d527ab7c",
+      "transcript_sha256": "e5e36f6ededed7ce2b77f616092bdee548b8b1fc3fce84ae46894cd00ecec4d6",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-alias-request.pty.log",
+      "pty_byte_offset": 1332,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-hosts-remove-host-alias",
+      "journey_family": "core-hosts-remove-host-alias",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-host-alias",
+      "image": "docs/assets/interactive/core-hosts-remove-host-alias/03-enter-value.png",
+      "transcript": "docs/assets/interactive/core-hosts-remove-host-alias/03-enter-value.txt",
+      "image_sha256": "0eba018ce25f7ed7b2a2c3aaf09929cf142a1e8896efe8bfecb55d1a80a0629f",
+      "transcript_sha256": "3f5f0edfe18802577b6fb6f6947f5942ef021820c2889728df86c0ad25c71568",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-host-alias.pty.log",
+      "pty_byte_offset": 93683,
+      "value": "www.example.com"
+    },
+    {
+      "journey": "core-hosts-remove-host-alias",
+      "journey_family": "core-hosts-remove-host-alias",
+      "session_index": 1,
+      "step": 4,
+      "title": "Review and run remove-host-alias",
+      "kind": "menu",
+      "command": "remove-host-alias",
+      "image": "docs/assets/interactive/core-hosts-remove-host-alias/04-review-and-run-remove-host-alias.png",
+      "transcript": "docs/assets/interactive/core-hosts-remove-host-alias/04-review-and-run-remove-host-alias.txt",
+      "image_sha256": "2efcb8315879fbcf22f2dc5b3efa61f116c50f317e5b0b7ff2131f4c099df60c",
+      "transcript_sha256": "218ba0bf054eda280df6650e2323d4d6dad5994a325ede6e5ed6318336dd15b7",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-host-alias.pty.log",
+      "pty_byte_offset": 94133,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-hosts-remove-host-alias",
+      "journey_family": "core-hosts-remove-host-alias",
+      "session_index": 1,
+      "step": 5,
+      "title": "Confirm removal",
+      "kind": "input",
+      "command": "remove-host-alias",
+      "image": "docs/assets/interactive/core-hosts-remove-host-alias/05-confirm-removal.png",
+      "transcript": "docs/assets/interactive/core-hosts-remove-host-alias/05-confirm-removal.txt",
+      "image_sha256": "ed53a383bf1248edb8fbac9fc2e534cc80fd9fd0fa006817c296a292873a2e58",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-host-alias.pty.log",
+      "pty_byte_offset": 94187,
+      "value": "YES"
+    },
+    {
+      "journey": "core-hosts-remove-host-alias",
+      "journey_family": "core-hosts-remove-host-alias",
+      "session_index": 1,
+      "step": 6,
+      "title": "remove-host-alias result",
+      "kind": "result",
+      "command": "remove-host-alias",
+      "image": "docs/assets/interactive/core-hosts-remove-host-alias/06-remove-host-alias-result.png",
+      "transcript": "docs/assets/interactive/core-hosts-remove-host-alias/06-remove-host-alias-result.txt",
+      "image_sha256": "3cf8effd3a0f96eb63bd4ebdbb70a395c467a4a8e5b45604245377bd8eb8bb40",
+      "transcript_sha256": "da1146bc3afede22660347b60f4f68d6ce8f48cf8620f2d67e0f41e1685633bf",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-host-alias.pty.log",
+      "pty_byte_offset": 95713,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/03-enter-value.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/03-enter-value.txt",
+      "image_sha256": "16521d77b99dfb383a3199f06e2f01ccbdd90908b7ec92872cb93183bf38007a",
+      "transcript_sha256": "8eada3bda49501dbce14e97aa3e6f7b6af72741c781de8250efe22efa885ea19",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 73635,
+      "value": "app.example.com"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 4,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/04-example-com.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/04-example-com.txt",
+      "image_sha256": "4bce1787826662996661aefc7dd9bb3e020f4eeeb5624abff6779e10170c6887",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 73815,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 5,
+      "title": "Yes (current)",
+      "kind": "menu",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/05-yes-current.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/05-yes-current.txt",
+      "image_sha256": "4374ce741123a4e77dfab67f0f240c54c7f56820bfc6a7795bede86627fc5ba1",
+      "transcript_sha256": "870721d7378b1c124551a3611e3274176aa5c7348a8b012c48ce76e7c3ea4a6a",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 73936,
+      "selected": "Yes (current)"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 6,
+      "title": "Yes (current)",
+      "kind": "menu",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/06-yes-current.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/06-yes-current.txt",
+      "image_sha256": "def92acfb37ae6036b949b0d120a5c560b093594ebe4854900be6e730924709a",
+      "transcript_sha256": "8184f2cfd0a13ef77af2fe64c88d7ae56e02b74e2ae3e913d72846a30dbc7299",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 74056,
+      "selected": "Yes (current)"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 7,
+      "title": "Yes (current)",
+      "kind": "menu",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/07-yes-current.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/07-yes-current.txt",
+      "image_sha256": "20f4d99372064517f0d223086dd11f747ca83a871ab62ed1df6c2d9163b58d29",
+      "transcript_sha256": "ffc54388fa321c5936d74f11e41f228812f744e002d32bba0b7795e25488f9fe",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 74187,
+      "selected": "Yes (current)"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 8,
+      "title": "Yes (current)",
+      "kind": "menu",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/08-yes-current.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/08-yes-current.txt",
+      "image_sha256": "d6d8a91ec4e474321d27f054838075b60778d349d3951bbfcc8cfc37fe8d7083",
+      "transcript_sha256": "0b8c0c12f5ba22003b4e24ba90aca13cfa0bb14492db189d3672076438814809",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 74311,
+      "selected": "Yes (current)"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 9,
+      "title": "Yes (current)",
+      "kind": "menu",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/09-yes-current.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/09-yes-current.txt",
+      "image_sha256": "606495c4364e1c4c5ec1b59db81b3a516134bfe59ea33cf5c53d810414ec3b60",
+      "transcript_sha256": "3a9b46a86b6064ca04f388086c75b8a3beaaa777238f5260e1cdf03daf37d64a",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 74440,
+      "selected": "Yes (current)"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 10,
+      "title": "Review and run add-dedicated-host",
+      "kind": "menu",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/10-review-and-run-add-dedicated-host.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/10-review-and-run-add-dedicated-host.txt",
+      "image_sha256": "5e69d03e1719635ed1a643a6ba1c43097bc855003ea47ed9163ba8e761f65fe7",
+      "transcript_sha256": "d8150d2e08a507ddaa95a367214556f571820e7e4988bd733351ef276f02f6ea",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 75008,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-hosts-hosts-dedicated",
+      "journey_family": "core-hosts-hosts-dedicated",
+      "session_index": 1,
+      "step": 11,
+      "title": "add-dedicated-host result",
+      "kind": "result",
+      "command": "add-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-hosts-dedicated/11-add-dedicated-host-result.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-dedicated/11-add-dedicated-host-result.txt",
+      "image_sha256": "35192e7cda41b750a10bd0f9e0a39ab1d80d47fa5fbcdd48cdfc056e4e556ed7",
+      "transcript_sha256": "ca0635f29c10953bcc50ade57e89ebaec56f16f6f5cc4969621e78f0073691f1",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log",
+      "pty_byte_offset": 76323,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-hosts-list-dedicated-hosts",
+      "journey_family": "core-hosts-list-dedicated-hosts",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "list-dedicated-hosts",
+      "image": "docs/assets/interactive/core-hosts-list-dedicated-hosts/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-hosts-list-dedicated-hosts/03-example-com.txt",
+      "image_sha256": "bbe8a7aba3826487211f9f8f098994608e663ec34f40ab5cb091d03c057f6901",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-list-dedicated-hosts.pty.log",
+      "pty_byte_offset": 77783,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-hosts-list-dedicated-hosts",
+      "journey_family": "core-hosts-list-dedicated-hosts",
+      "session_index": 1,
+      "step": 4,
+      "title": "list-dedicated-hosts result",
+      "kind": "result",
+      "command": "list-dedicated-hosts",
+      "image": "docs/assets/interactive/core-hosts-list-dedicated-hosts/04-list-dedicated-hosts-result.png",
+      "transcript": "docs/assets/interactive/core-hosts-list-dedicated-hosts/04-list-dedicated-hosts-result.txt",
+      "image_sha256": "ab4cceba8092288e463e8dd1e55fc3869d4017b02f544b06931cbc8e2ccf553e",
+      "transcript_sha256": "2713417899c016d59602a0cd97a337ca833c5b5bdcaf987775330b13e8665508",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-list-dedicated-hosts.pty.log",
+      "pty_byte_offset": 77936,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-hosts-show-dedicated-host-inherit",
+      "journey_family": "core-hosts-show-dedicated-host-inherit",
+      "session_index": 1,
+      "step": 3,
+      "title": "app.example.com",
+      "kind": "menu",
+      "command": "show-dedicated-host-inherit",
+      "image": "docs/assets/interactive/core-hosts-show-dedicated-host-inherit/03-app-example-com.png",
+      "transcript": "docs/assets/interactive/core-hosts-show-dedicated-host-inherit/03-app-example-com.txt",
+      "image_sha256": "217d553e17a69b4d977c4470e08a078103f1a1c6198b93d663b4f2c749002566",
+      "transcript_sha256": "6249f442bc33430cc593e1822aa1e88c52610d8efc06de52ab120b806c5dcb77",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-show-dedicated-host-inherit.pty.log",
+      "pty_byte_offset": 72872,
+      "selected": "app.example.com"
+    },
+    {
+      "journey": "core-hosts-show-dedicated-host-inherit",
+      "journey_family": "core-hosts-show-dedicated-host-inherit",
+      "session_index": 1,
+      "step": 4,
+      "title": "show-dedicated-host-inherit result",
+      "kind": "result",
+      "command": "show-dedicated-host-inherit",
+      "image": "docs/assets/interactive/core-hosts-show-dedicated-host-inherit/04-show-dedicated-host-inherit-result.png",
+      "transcript": "docs/assets/interactive/core-hosts-show-dedicated-host-inherit/04-show-dedicated-host-inherit-result.txt",
+      "image_sha256": "ef947a66553a18ba0c01043f88a8a3e4a5fc5cb890a844877e3995bcd77788cf",
+      "transcript_sha256": "6235044909b555b17f1e13c7ab1e71849a81f7daf32595e2bf50067a41192714",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-show-dedicated-host-inherit.pty.log",
+      "pty_byte_offset": 73088,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-hosts-dedicated-host-request",
+      "journey_family": "core-hosts-dedicated-host-request",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the application response",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-hosts-dedicated-host-request/01-verify-the-application-response.png",
+      "transcript": "docs/assets/interactive/core-hosts-dedicated-host-request/01-verify-the-application-response.txt",
+      "image_sha256": "beaace42dd08d688fd386e5123b91a952a4593e20f278e217b4ae15f4a2771c1",
+      "transcript_sha256": "4bf4d8ea665fb18caf5a82fb7e847578f04862f447700223d3d70629abdea507",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-dedicated-host-request.pty.log",
+      "pty_byte_offset": 1373,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-hosts-hosts-inheritance",
+      "journey_family": "core-hosts-hosts-inheritance",
+      "session_index": 1,
+      "step": 3,
+      "title": "app.example.com",
+      "kind": "menu",
+      "command": "set-dedicated-host-inherit",
+      "image": "docs/assets/interactive/core-hosts-hosts-inheritance/03-app-example-com.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-inheritance/03-app-example-com.txt",
+      "image_sha256": "14c98b50f2924a552a7d30a6b74ae430ae28ad32faa48c6f0854124c3b3903b8",
+      "transcript_sha256": "6249f442bc33430cc593e1822aa1e88c52610d8efc06de52ab120b806c5dcb77",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-inheritance.pty.log",
+      "pty_byte_offset": 86003,
+      "selected": "app.example.com"
+    },
+    {
+      "journey": "core-hosts-hosts-inheritance",
+      "journey_family": "core-hosts-hosts-inheritance",
+      "session_index": 1,
+      "step": 4,
+      "title": "headers (current: yes)",
+      "kind": "menu",
+      "command": "set-dedicated-host-inherit",
+      "image": "docs/assets/interactive/core-hosts-hosts-inheritance/04-headers-current-yes.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-inheritance/04-headers-current-yes.txt",
+      "image_sha256": "cf8479e52656a2b9e3e9c4c0784bb6ea7e954eaf08ed653c6ec0025934e8f6df",
+      "transcript_sha256": "28b4a804e89d824f5638ed7969c01822381d34804a6049d387c4ab3d8ffbccf4",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-inheritance.pty.log",
+      "pty_byte_offset": 87079,
+      "selected": "headers (current: yes)"
+    },
+    {
+      "journey": "core-hosts-hosts-inheritance",
+      "journey_family": "core-hosts-hosts-inheritance",
+      "session_index": 1,
+      "step": 5,
+      "title": "no",
+      "kind": "menu",
+      "command": "set-dedicated-host-inherit",
+      "image": "docs/assets/interactive/core-hosts-hosts-inheritance/05-no.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-inheritance/05-no.txt",
+      "image_sha256": "a6695ab359046f629a765b271c8eab0b2d9c9945c667f7eaa44d606062f773d9",
+      "transcript_sha256": "90b351be9f64346dc6e86bf8cc9b0b91f175184000b671b6304d75297fa8557d",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-inheritance.pty.log",
+      "pty_byte_offset": 87635,
+      "selected": "no"
+    },
+    {
+      "journey": "core-hosts-hosts-inheritance",
+      "journey_family": "core-hosts-hosts-inheritance",
+      "session_index": 1,
+      "step": 6,
+      "title": "Review and run set-dedicated-host-inherit",
+      "kind": "menu",
+      "command": "set-dedicated-host-inherit",
+      "image": "docs/assets/interactive/core-hosts-hosts-inheritance/06-review-and-run-set-dedicated-host-inherit.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-inheritance/06-review-and-run-set-dedicated-host-inherit.txt",
+      "image_sha256": "e1e0a89bac03ffdfefe3c9d6799f7622747351e553d46924dca3a70d213451bd",
+      "transcript_sha256": "e7053225b1356de4fa588154a7d5942733983c598e3799b97b5af7bff3bb6e23",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-inheritance.pty.log",
+      "pty_byte_offset": 88114,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-hosts-hosts-inheritance",
+      "journey_family": "core-hosts-hosts-inheritance",
+      "session_index": 1,
+      "step": 7,
+      "title": "set-dedicated-host-inherit result",
+      "kind": "result",
+      "command": "set-dedicated-host-inherit",
+      "image": "docs/assets/interactive/core-hosts-hosts-inheritance/07-set-dedicated-host-inherit-result.png",
+      "transcript": "docs/assets/interactive/core-hosts-hosts-inheritance/07-set-dedicated-host-inherit-result.txt",
+      "image_sha256": "35551e65b4212aed3674a18ccd88952cf21ac466900dca7ea7da324d45bdd3e3",
+      "transcript_sha256": "f9865219270bc3ef64ce9583b8de9769b94e327e55c6e333b4345bbfd9aa074f",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-inheritance.pty.log",
+      "pty_byte_offset": 89711,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-hosts-remove-dedicated-host",
+      "journey_family": "core-hosts-remove-dedicated-host",
+      "session_index": 1,
+      "step": 3,
+      "title": "app.example.com",
+      "kind": "menu",
+      "command": "remove-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-remove-dedicated-host/03-app-example-com.png",
+      "transcript": "docs/assets/interactive/core-hosts-remove-dedicated-host/03-app-example-com.txt",
+      "image_sha256": "40d5d7d85cd0e30be3ee26aa25d6489aef51041be3e987e63593f9043eddc097",
+      "transcript_sha256": "6249f442bc33430cc593e1822aa1e88c52610d8efc06de52ab120b806c5dcb77",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-dedicated-host.pty.log",
+      "pty_byte_offset": 94310,
+      "selected": "app.example.com"
+    },
+    {
+      "journey": "core-hosts-remove-dedicated-host",
+      "journey_family": "core-hosts-remove-dedicated-host",
+      "session_index": 1,
+      "step": 4,
+      "title": "Review and run remove-dedicated-host",
+      "kind": "menu",
+      "command": "remove-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-remove-dedicated-host/04-review-and-run-remove-dedicated-host.png",
+      "transcript": "docs/assets/interactive/core-hosts-remove-dedicated-host/04-review-and-run-remove-dedicated-host.txt",
+      "image_sha256": "8abc05fa9a7e0b594789c1bcbf597888a1b43e1890920977e38b105f42bc950c",
+      "transcript_sha256": "ffd97644117eff1c3265177f5ea5716d7e680595aab3fcc7bb1b4c6373719efe",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-dedicated-host.pty.log",
+      "pty_byte_offset": 94721,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-hosts-remove-dedicated-host",
+      "journey_family": "core-hosts-remove-dedicated-host",
+      "session_index": 1,
+      "step": 5,
+      "title": "Confirm removal",
+      "kind": "input",
+      "command": "remove-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-remove-dedicated-host/05-confirm-removal.png",
+      "transcript": "docs/assets/interactive/core-hosts-remove-dedicated-host/05-confirm-removal.txt",
+      "image_sha256": "b6b0361226db82cb8e7855ac6efbb55b8790f8626446ad01c789b86a620e04a1",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-dedicated-host.pty.log",
+      "pty_byte_offset": 94775,
+      "value": "YES"
+    },
+    {
+      "journey": "core-hosts-remove-dedicated-host",
+      "journey_family": "core-hosts-remove-dedicated-host",
+      "session_index": 1,
+      "step": 6,
+      "title": "remove-dedicated-host result",
+      "kind": "result",
+      "command": "remove-dedicated-host",
+      "image": "docs/assets/interactive/core-hosts-remove-dedicated-host/06-remove-dedicated-host-result.png",
+      "transcript": "docs/assets/interactive/core-hosts-remove-dedicated-host/06-remove-dedicated-host-result.txt",
+      "image_sha256": "b046fc4f1f67f01a21987811164bc7b800c7bb6d2f9e494a76025364dbf8bfa9",
+      "transcript_sha256": "278fa74013c81adda84edc19320775c3ed690cfde24bd2258b8f6b434f24e052",
+      "pty_log": "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-dedicated-host.pty.log",
+      "pty_byte_offset": 96024,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "fixture-inherited-header-present",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/core-hosts/fixture-inherited-header-present.headers"
+    },
+    {
+      "label": "alias-request",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: www.example.com",
+        "http://127.0.0.1:80/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "alias-request",
+      "status": "passed",
+      "http_status": 200,
+      "port": 80,
+      "domain": "www.example.com"
+    },
+    {
+      "label": "alias-removed",
+      "status": "passed"
+    },
+    {
+      "label": "dedicated-host-request",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "--max-time",
+        "10",
+        "-i",
+        "-H",
+        "Host: app.example.com",
+        "http://127.0.0.1:80/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "dedicated-host-request",
+      "status": "passed",
+      "http_status": 200,
+      "port": 80,
+      "domain": "app.example.com"
+    },
+    {
+      "label": "host-inheritance-off",
+      "status": "passed",
+      "file": "state/domains/app.example.com/runtime/applied/inheritance.csv",
+      "rows": [
+        {
+          "mtls": "yes",
+          "acl": "yes",
+          "security_rules": "yes",
+          "headers": "no",
+          "paths": "yes"
+        }
+      ]
+    },
+    {
+      "label": "dedicated-host-no-inherited-headers",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/core-hosts/dedicated-host-no-inherited-headers.headers"
+    },
+    {
+      "label": "dedicated-host-removed",
+      "status": "passed"
+    },
+    {
+      "label": "core-group-complete",
+      "status": "passed",
+      "group": "hosts"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "core"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "75cae30c48b8fee7dbc68758067a6ca179396287920ee974fa1ffc7f042c0051",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 35
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/core-hosts-recordings.tar.gz",
+    "sha256": "f45491bbdb40057f26733f3422389aa13f2c66ca6cf82f4a1772a8742605cfaf",
+    "size": 75202,
+    "members": {
+      "docs/assets/interactive/evidence/core-hosts/001-source-commit.log": {
+        "sha256": "5987ca8d9204d09d800b36d6b5bfb8553cd73f23aea59309eb0ed38d6961afa5",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/core-hosts/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-hosts/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/core-hosts/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/core-hosts/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/core-hosts/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/core-hosts/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/core-hosts/008-fixture-image.log": {
+        "sha256": "5fdb0c1270732fcce90131bb6a9db8a72d849cd618ac9fcfdce7dc0a204998c8",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/core-hosts/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/core-hosts/010-fixture-backend.log": {
+        "sha256": "05f94d9508ac935a654683e4d8a6bde450ee6118980d2b3c14d9376b1c2c53f4",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/core-hosts/011-fixture-public-demo.log": {
+        "sha256": "a8a5a2445a6cfae131e994d656374b789e45d7ecdae0b6e1a7ad5b54f0985c3f",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/core-hosts/012-fixture-https.log": {
+        "sha256": "5019b42709c8cb7a7de31e73d753352ec0a8aa29a07deef1c025ecf8de69ddeb",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/core-hosts/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/core-hosts/014-fixture-inherited-response-header.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/core-hosts/015-command-alias.log": {
+        "sha256": "8c3914c4900c25c41385bb105e61d37a24836a66f2519c720e0b4b143231013c",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/core-hosts/016-command-alias.log": {
+        "sha256": "d92bed45b3add2ede0e6603079d12bf53db5bbc0f29a406decf35478e0a66c93",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/core-hosts/017-command-alias.log": {
+        "sha256": "e3f87367581558ec0eec28cf8fa01b76f8656da5b3cf21c7d26882952fa53a17",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/core-hosts/018-verify-alias-removed.log": {
+        "sha256": "1f3c77c01a87b2026d1e133282030366ac081f2d305566f7ff5fc4105e0debe7",
+        "size": 133
+      },
+      "docs/assets/interactive/evidence/core-hosts/019-command-alias.log": {
+        "sha256": "e9ee7dc6e99aca45eed4442b082d574e43749a78554d86b4d97d3019850ee206",
+        "size": 19
+      },
+      "docs/assets/interactive/evidence/core-hosts/020-command-alias.log": {
+        "sha256": "7dbd6513b6c981a6d0977f8af61d88c40aad5c1b1c53af84f4f61fcc44f4f16c",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/core-hosts/021-command-alias.log": {
+        "sha256": "1f7c2843dd8119c6adfb02c8740bfba4822c9baaebc6ecb46bbcbb4ed1e41d65",
+        "size": 28
+      },
+      "docs/assets/interactive/evidence/core-hosts/022-command-alias.log": {
+        "sha256": "fc7dfaaf2f5e7171cd7d783153c79e0ee94342ecdc3332669352b57e63f35822",
+        "size": 27
+      },
+      "docs/assets/interactive/evidence/core-hosts/023-command-alias.log": {
+        "sha256": "b2e3467eb6b573431156325c6c03c99ff5f874e2061796395754980693a94c3c",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/core-hosts/024-verify-dedicated-removed.log": {
+        "sha256": "4d1f85b1c9b1a17a20edef666b04a97510d930c7115eb957e6f25d582e362284",
+        "size": 136
+      },
+      "docs/assets/interactive/evidence/core-hosts/025-image-identities.log": {
+        "sha256": "a06f08ac73381bce08070d326e2e863b193077f0e483b456fb2c09b78ffc80da",
+        "size": 2934
+      },
+      "docs/assets/interactive/evidence/core-hosts/commands.jsonl": {
+        "sha256": "636ee66a2b979b8f0aefb2e842c417aeac90d50b0a9d6fd840117b4fc927c8d7",
+        "size": 10009
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-alias-request.events.jsonl": {
+        "sha256": "f8a509821562e3072432dd3016a33c01ef63234541865485e885c0993ee46e3d",
+        "size": 964
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-alias-request.pty.log": {
+        "sha256": "3adb3972ff67cdd7c8a5b496b324925ea7452d4fed22f64652a97a3a6f228480",
+        "size": 1332
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-dedicated-host-request.events.jsonl": {
+        "sha256": "d871452b2412ade95c701aa9de399c6bc83da8a509827f6033e86165f000b1b5",
+        "size": 1018
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-dedicated-host-request.pty.log": {
+        "sha256": "c707afeac5c4eee19a08ee03b826b5e4d8abaac2c3a80c3e983e5e30963af560",
+        "size": 1373
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-alias.events.jsonl": {
+        "sha256": "1b6230b887455f08511fbed5bc5ecf546139bd3066e9d65316d129117606d0e7",
+        "size": 15096
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-alias.pty.log": {
+        "sha256": "f813dc1ce9b0215491d963b2c8b50a6a00dd9bf14e04a6bf5166f90cab17a33a",
+        "size": 82303
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.events.jsonl": {
+        "sha256": "3424b21f2f0457c601e561b03f49fb6edd16e090f2771857bad9116113998f12",
+        "size": 19126
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-dedicated.pty.log": {
+        "sha256": "68f728dc6eb5a0057ec6c1ba9ca713e3e224ee48192e1cb5e50af2ca625dfa3a",
+        "size": 84445
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-final-config.events.jsonl": {
+        "sha256": "b0b5c7e37cd6fe8d7d47c93e9563cc8970e94e29b845ef48f4b9da97d92749c9",
+        "size": 9078
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-final-config.pty.log": {
+        "sha256": "5a63e7c0cd3cfc6bb647d29b0388e8a0cfeb16145edfa6bc207d5f6eeeb29317",
+        "size": 16149
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-inheritance.events.jsonl": {
+        "sha256": "3fcdf91b54efaee2d035a6daedf3f32188b5d5518e9cafa7688bd15276f68a53",
+        "size": 20404
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-hosts-inheritance.pty.log": {
+        "sha256": "793b59f244c8551a200f55b2e89e80fb5024b9b6715a118d8c767cf0b5273b2f",
+        "size": 97833
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-list-dedicated-hosts.events.jsonl": {
+        "sha256": "044ddffe530ffa7d38cae3bfd61b35bfb3b692414921f7d1db235cea86b8c40e",
+        "size": 14417
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-list-dedicated-hosts.pty.log": {
+        "sha256": "bd8ab58fd17a9b149e54731c46d7eb7ba306a7c0e3ae6e9338b281f7129b0a9e",
+        "size": 86050
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-list-host-aliases.events.jsonl": {
+        "sha256": "fe567972e12e52120bbb27b29a0406aeb003293e6c8d97883a94f0b93fefbf25",
+        "size": 13285
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-list-host-aliases.pty.log": {
+        "sha256": "c8dd206035a2e57f426342a7c3f518b2710658834e3b8108623fa3d6f8076ba9",
+        "size": 85110
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-dedicated-host.events.jsonl": {
+        "sha256": "d8d441b0eb6a9d866ddd73987ec8641b79157283c82eab31bd7507d3ab8d13e4",
+        "size": 17597
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-dedicated-host.pty.log": {
+        "sha256": "942fce07bb2096384ced2cc2a3fe17024b671924fac20bcb0dc779a8f4e3149e",
+        "size": 104138
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-host-alias.events.jsonl": {
+        "sha256": "54fd9521e1f276957f30e1fe119b06fedd776e8bae0ddf8d6ca28f242ee118b8",
+        "size": 16698
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-remove-host-alias.pty.log": {
+        "sha256": "3d8af2f312bba7abc876b5cadda9cd367165296d3841c3fe99265bf4ddc250aa",
+        "size": 103835
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-show-dedicated-host-inherit.events.jsonl": {
+        "sha256": "63d11069f0f255196c25fcadb2d5ac4ad8f5d9ec31ad511b94d656b1d28fde8d",
+        "size": 17271
+      },
+      "docs/assets/interactive/evidence/core-hosts/core-hosts-show-dedicated-host-inherit.pty.log": {
+        "sha256": "1ccb501f089948412c2aab45093f6b3f2acbf3244386ac565b537299d47f2ab5",
+        "size": 81222
+      },
+      "docs/assets/interactive/evidence/core-hosts/dedicated-host-no-inherited-headers.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/core-hosts/dedicated-host-no-inherited-headers.headers": {
+        "sha256": "bf966e5c9713df02527ffddc5d7ace953d4c63e3e1146a4a2e743b53d1e4850e",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/core-hosts/dedicated-host-no-inherited-headers.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-hosts/dedicated-host-no-inherited-headers.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-hosts/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-hosts/fixture-inherited-header-present.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/core-hosts/fixture-inherited-header-present.headers": {
+        "sha256": "bcfc2226eaa81e57b9cdf63069a1d8590a323c4ab3528373ded9c48bee9b4ff0",
+        "size": 270
+      },
+      "docs/assets/interactive/evidence/core-hosts/fixture-inherited-header-present.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-hosts/fixture-inherited-header-present.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-hosts/host-inheritance-off.json": {
+        "sha256": "a35d61122ebb19c0a197fa1878b17ef6b104c48b49499521b04193ece9840c5f",
+        "size": 118
+      }
+    }
+  }
+}

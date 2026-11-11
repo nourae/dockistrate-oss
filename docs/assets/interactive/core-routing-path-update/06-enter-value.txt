@@ -1,0 +1,4 @@
+
+Absolute request path handled by a path-level route.
+Path prefix
+Example: /api: /service

@@ -1,4 +1,8 @@
 # shellcheck shell=bash
+if ! declare -F _global_settings_update_nginx_config_for_security_change >/dev/null 2>&1; then
+  # shellcheck source=../global_settings/common.sh
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../global_settings" && pwd)/common.sh"
+fi
 
 function set_client_ip_header() {
   local name="${1:-}"
@@ -24,6 +28,6 @@ function set_client_ip_header() {
   CLIENT_IP_HEADER="$new_client_ip_header"
   save_config || { transaction_return_failure; return 1; }
   echo "$message"
-  update_nginx_config || { transaction_return_failure; return 1; }
+  _global_settings_update_nginx_config_for_security_change || { transaction_return_failure; return 1; }
   _config_end_transaction_if_started "$started_txn" || { transaction_return_failure; return 1; }
 }

@@ -1,0 +1,5 @@
+
+[Info] Editable configuration created: /opt/dockistrate-demo/state/domains/draft.example.com/config
+[Info] Complete the required values, validate, then apply-domain-config draft.example.com.
+
+Press Enter to continue...

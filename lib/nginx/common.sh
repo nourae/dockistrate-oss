@@ -51,24 +51,32 @@ function nginx_container_exists_any() {
 function _nginx_container_label_value() {
   local label_key="${1:-}" label_value=""
   [ -n "$label_key" ] || return 1
-  label_value="$(docker inspect -f "{{index .Config.Labels \"${label_key}\"}}" "$NGINX_CONTAINER_NAME" 2>/dev/null || true)"
+  label_value="$(docker inspect -f "{{index .Config.Labels \"${label_key}\"}}" "$NGINX_CONTAINER_NAME" 2>/dev/null && printf '.')" || return 0
+  case "$label_value" in
+  .) return 0 ;;
+  *$'\n.') label_value="${label_value%$'\n.'}" ;;
+  *) return 1 ;;
+  esac
   case "$label_value" in
   "" | "<no value>")
     return 0
     ;;
   esac
-  printf '%s\n' "$label_value"
+  printf '%s' "$label_value"
 }
 
 function _nginx_expected_state_dir_label() {
   if declare -F _realpath_portable >/dev/null 2>&1; then
     _realpath_portable "$STATE_DIR"
   else
-    printf '%s\n' "$STATE_DIR"
+    printf '%s' "$STATE_DIR"
   fi
 }
 
 function _nginx_expected_mount_signatures() {
+  # This historical signature identifies an unlabeled legacy proxy solely for
+  # ownership/adoption. Runtime mount convergence separately replaces its broad
+  # certificate bind with the verified private projection before success.
   printf '%s|%s|false\n' "$NGINX_CONFIG_DIR" "$NGINX_CONTAINER_CONF_ROOT"
   printf '%s|%s|false\n' "$CERTS_DIR" "/etc/letsencrypt"
   printf '%s|%s|false\n' "$ACME_WEBROOT_DIR" "/var/www/certbot"
@@ -132,10 +140,14 @@ function nginx_container_is_managed() {
     return 1
   fi
 
-  managed_label="$(_nginx_container_label_value "$DOCKISTRATE_MANAGED_LABEL_KEY")"
-  role_label="$(_nginx_container_label_value "$DOCKISTRATE_ROLE_LABEL_KEY")"
-  state_dir_label="$(_nginx_container_label_value "$DOCKISTRATE_STATE_DIR_LABEL_KEY")"
-  expected_state_dir="$(_nginx_expected_state_dir_label)"
+  managed_label="$(_nginx_container_label_value "$DOCKISTRATE_MANAGED_LABEL_KEY" && printf '.')" || return 1
+  managed_label="${managed_label%.}"
+  role_label="$(_nginx_container_label_value "$DOCKISTRATE_ROLE_LABEL_KEY" && printf '.')" || return 1
+  role_label="${role_label%.}"
+  state_dir_label="$(_nginx_container_label_value "$DOCKISTRATE_STATE_DIR_LABEL_KEY" && printf '.')" || return 1
+  state_dir_label="${state_dir_label%.}"
+  expected_state_dir="$(_nginx_expected_state_dir_label && printf '.')" || return 1
+  expected_state_dir="${expected_state_dir%.}"
   if [ "$managed_label" = "true" ] && [ "$role_label" = "$DOCKISTRATE_ROLE_PROXY" ]; then
     [ "$state_dir_label" = "$expected_state_dir" ]
     return $?
@@ -206,6 +218,9 @@ function _ensure_path_header_include() {
 
 function _real_ip_directives() {
   local header="${1:-}" range=""
+  _require_persisted_settings_validation || return 1
+  validate_persisted_setting CLIENT_IP_HEADER "$header" || return 1
+  validate_persisted_setting REAL_IP_RECURSIVE "${REAL_IP_RECURSIVE:-}" || return 1
   if [ -n "$header" ]; then
     validate_trusted_proxy_ranges "$TRUSTED_PROXY_RANGES" || return 1
     echo "    real_ip_header ${header};"

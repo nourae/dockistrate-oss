@@ -1,0 +1,7 @@
+
+1: OR example.com (n=2, mode=OR) action=block status=- reason=- loc=auto
+  1. header:User-Agent contains OtherBot
+  2. method equals POST
+[Info] Require rules must all pass. Then the first matching Block/Allow rule wins in global ID order; Allow never bypasses Require, ACLs, or mTLS.
+
+Press Enter to continue...

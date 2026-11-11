@@ -1,0 +1,7 @@
+Enable WebSocket proxy headers for HTTP or HTTPS routes.
+WebSocket:
+  1) yes
+> 2) no (current)
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

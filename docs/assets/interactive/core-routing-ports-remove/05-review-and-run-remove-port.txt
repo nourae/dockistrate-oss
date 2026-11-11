@@ -1,0 +1,17 @@
+Review command
+  Command: Remove Port (remove-port)
+  Description: Remove a port mapping for a backend
+
+Arguments:
+  Domain: example.com
+  Listen port: 8081
+
+CLI equivalent:
+  ./dockistrate.sh remove-port example.com 8081
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

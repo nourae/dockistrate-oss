@@ -86,6 +86,51 @@ if ! grep -Fq "Bulk Backend Operations :: Start All Backends" "$category_output_
   exit 1
 fi
 
+no_match_filter="definitely-no-command-matches-this-filter"
+no_match_choice="kept"
+no_match_output_file="${tmp_dir}/no-match-search.out"
+no_match_error_file="${tmp_dir}/no-match-search.err"
+no_match_probe_file="${tmp_dir}/no-match-search.probe"
+set +e
+(
+  choose_global_command_with_filter no_match_choice no_match_filter "Search all commands:" >"$no_match_output_file"
+  no_match_status=$?
+  printf '%s\n%s\n%s\n' "$no_match_status" "$no_match_choice" "$no_match_filter" >"$no_match_probe_file"
+) 2>"$no_match_error_file"
+no_match_probe_status=$?
+set -e
+if [ "$no_match_probe_status" -ne 0 ] || [ ! -f "$no_match_probe_file" ]; then
+  echo "[Error] A no-match global search crashed: $(cat "$no_match_error_file")" >&2
+  exit 1
+fi
+no_match_status="$(sed -n '1p' "$no_match_probe_file")"
+no_match_choice="$(sed -n '2p' "$no_match_probe_file")"
+no_match_filter="$(sed -n '3p' "$no_match_probe_file")"
+if [ "$no_match_status" -eq 0 ]; then
+  echo "[Error] A no-match global search should select the Back row and return non-zero." >&2
+  exit 1
+fi
+if grep -Fq "unbound variable" "$no_match_error_file"; then
+  echo "[Error] A no-match global search hit a Bash 3 unbound-variable failure." >&2
+  exit 1
+fi
+if [ -n "$no_match_choice" ]; then
+  echo "[Error] A no-match global search should clear the selected command." >&2
+  exit 1
+fi
+if [ "$no_match_filter" != "definitely-no-command-matches-this-filter" ]; then
+  echo "[Error] A no-match global search should preserve the active filter." >&2
+  exit 1
+fi
+if ! grep -Fq "No commands match the filter." "$no_match_output_file"; then
+  echo "[Error] A no-match global search should explain that no commands matched." >&2
+  exit 1
+fi
+if ! grep -Fq "> 1) Back" "$no_match_output_file"; then
+  echo "[Error] A no-match global search should render Back as the only selectable row." >&2
+  exit 1
+fi
+
 INTERACTIVE_PICKER_COMMANDS_DIAG+=("status")
 duplicate_commands=()
 duplicate_categories=()

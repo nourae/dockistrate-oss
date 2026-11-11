@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 test_add_backend_creates_records_and_configs() {
+  run_dockistrate set-auto-backups true >/dev/null
+  assertEquals "enable full automatic backups for backend smoke" 0 $?
   local output
   output="$(run_dockistrate add-backend example.com nginx:alpine 18180 http)"
   assertEquals "add-backend should exit successfully" 0 $?

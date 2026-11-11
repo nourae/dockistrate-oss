@@ -8,7 +8,7 @@ test_backend_mtls_remove_after_revoke_is_idempotent() {
   assertEquals "enable-backend-mtls should succeed" 0 $?
 
   local mtls_dir
-  mtls_dir="${CERTS_DIR}/mtls/revoke-remove.test"
+  mtls_dir="${STATE_DIR}/domains/revoke-remove.test/mtls"
 
   local serial_upper
   serial_upper="$(openssl x509 -in "${mtls_dir}/client1.crt" -serial -noout | cut -d= -f2 | tr '[:lower:]' '[:upper:]')"

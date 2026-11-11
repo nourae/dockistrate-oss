@@ -53,7 +53,8 @@ function create_nginx_config() {
   touch "${NGINX_HTTP_CONF_DIR}/security_rules.inc"
   touch "${NGINX_DIRECTIVES_GLOBAL_INCLUDE_FILE}"
   touch "${NGINX_DIRECTIVES_STREAM_GLOBAL_INCLUDE_FILE}"
-  access_log_fields_dir="$(dirname "$ACCESS_LOG_FIELDS_FILE")"
+  access_log_fields_dir="$(dirname "$ACCESS_LOG_FIELDS_FILE" && printf '.')" || return 1
+  access_log_fields_dir="${access_log_fields_dir%$'\n.'}"
   if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
     runtime_state_path_guard_if_declared "$access_log_fields_dir" "access log fields directory" || return 1
     runtime_state_path_guard_if_declared "$ACCESS_LOG_FIELDS_FILE" "access log fields file" || return 1

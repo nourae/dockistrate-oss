@@ -26,7 +26,7 @@ EOF
   assertTrue "nested path should be created under CAPTURE_DIR during fallback mode" "[ -d '${nested_abs}' ]"
 
   local stop_output stop_status
-  stop_output="$(DOCKER_MOCK_PS_NAMES='nginx-capture' run_dockistrate stop-capture)"
+  stop_output="$(run_dockistrate stop-capture)"
   stop_status=$?
   assertEquals "stop-capture should succeed after fallback-mode capture" 0 "$stop_status"
   assertStringContains "stop-capture message" "Packet capture stopped" "$stop_output"

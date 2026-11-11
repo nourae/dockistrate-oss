@@ -1,0 +1,6 @@
+WebSocket support:
+> 1) Disabled
+  2) Enabled
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

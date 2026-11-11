@@ -1,0 +1,15 @@
+Review command
+  Command: Apply Domain Config (apply-domain-config)
+  Description: Preview or apply edited domain configuration and reconcile managed services
+
+Arguments:
+  Domain: example.com
+  Action: Apply
+
+CLI equivalent:
+  ./dockistrate.sh apply-domain-config example.com
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

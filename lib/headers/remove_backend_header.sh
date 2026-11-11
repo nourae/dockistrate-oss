@@ -16,7 +16,7 @@ function remove_backend_header() {
   if ! _config_begin_transaction_if_needed started_txn "remove_backend_header_${domain}_${type}_${name}"; then
     exit 1
   fi
-  state_csv_delete_by_keys "$BACKEND_HEADERS_FILE" "$STATE_BACKEND_HEADERS_HEADER" "$STATE_BACKEND_HEADERS_COLS" 3 "$domain" "$type" "$name"
+  _header_mutate_file "$BACKEND_HEADERS_FILE" backend remove "$domain" "$type" "$name" || return 1
   echo "[Info] Removed $type header $name for $domain"
   create_backup "" "RemoveBackendHeader_${domain}_${name}"
   update_nginx_config

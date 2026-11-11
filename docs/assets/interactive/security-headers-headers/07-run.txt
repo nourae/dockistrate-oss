@@ -1,0 +1,17 @@
+Review command
+  Command: Add Backend Header (add-backend-header)
+  Description: Add a request or response header override for a backend
+
+Arguments:
+  Domain: example.com
+  Header direction: response
+  Header name: X-Guide
+  Value: preview
+
+CLI equivalent:
+  ./dockistrate.sh add-backend-header example.com response X-Guide preview
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

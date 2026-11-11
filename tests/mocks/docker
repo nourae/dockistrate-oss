@@ -16,32 +16,157 @@ function mock_container_meta_path() {
   printf '%s/%s.meta\n' "$mock_runtime_dir" "$container_name"
 }
 
+function mock_resolve_container_name() {
+  local target="${1:-}" meta_path="" container_id=""
+  [ -n "$target" ] || return 1
+  if [ -f "$(mock_container_meta_path "$target")" ]; then
+    printf '%s\n' "$target"
+    return 0
+  fi
+  [ "${#target}" -eq 64 ] || return 1
+  case "$target" in *[!0-9a-f]*) return 1 ;; esac
+  for meta_path in "$mock_runtime_dir"/*.meta; do
+    [ -f "$meta_path" ] || continue
+    container_id="$(sed -n 's/^id=//p' "$meta_path" | head -n 1)"
+    if [ -n "$container_id" ] && [ "$container_id" = "$target" ]; then
+      basename "$meta_path" .meta
+      return 0
+    fi
+  done
+  return 1
+}
+
 function mock_read_meta_value() {
   local container_name="${1:-}" key="${2:-}" meta_path=""
   meta_path="$(mock_container_meta_path "$container_name")"
+  if [ ! -f "$meta_path" ]; then
+    container_name="$(mock_resolve_container_name "$container_name")" || return 1
+    meta_path="$(mock_container_meta_path "$container_name")"
+  fi
   [ -f "$meta_path" ] || return 1
+  if [ "$key" = mounts ]; then
+    sed -n 's/^mounts=//p' "$meta_path"
+    return 0
+  fi
   sed -n "s/^${key}=//p" "$meta_path" | head -n 1
 }
 
+function mock_container_id() {
+  local container_name="${1:-}" container_id="" meta_path=""
+  container_name="$(mock_resolve_container_name "$container_name")" || return 1
+  container_id="$(mock_read_meta_value "$container_name" id || true)"
+  if [ -z "$container_id" ]; then
+    # Legacy fixtures may write metadata directly. Assign an identity once, just
+    # as Docker does at creation, and preserve it when the name changes.
+    container_id="$(LC_ALL=C od -An -N32 -tx1 /dev/urandom | LC_ALL=C tr -d ' \n')"
+    [ "${#container_id}" -eq 64 ] || return 1
+    meta_path="$(mock_container_meta_path "$container_name")"
+    printf 'id=%s\n' "$container_id" >>"$meta_path"
+  fi
+  printf '%s\n' "$container_id"
+}
+
+function mock_container_label() {
+  local container_name="${1:-}" label_key="${2:-}" labels="" pair="" value=""
+  local label_pairs=()
+  labels="$(mock_read_meta_value "$container_name" labels || true)"
+  IFS=',' read -r -a label_pairs <<<"$labels"
+  for pair in "${label_pairs[@]}"; do
+    if [ "${pair%%=*}" = "$label_key" ]; then
+      value="${pair#*=}"
+    fi
+  done
+  printf '%s' "$value"
+}
+
+# Opt in to Docker's stopped-container behavior without changing legacy test
+# fixtures: an attached network can exist while its assigned IP is empty.
+function mock_container_network_ip_is_empty() {
+  local container_name="${1:-}" status=""
+  [ "${DOCKER_MOCK_EMPTY_STOPPED_IP:-false}" = true ] || return 1
+  status="${DOCKER_MOCK_INSPECT_STATUS:-$(mock_read_meta_value "$container_name" status || true)}"
+  [ -n "$status" ] && [ "$status" != running ]
+}
+
+# Match the complete ownership predicate using actual metadata. A name never
+# grants backend ownership, and an absent immutable ID cannot produce a snapshot.
+function mock_backend_identity_snapshot() {
+  local target="$1" template="$2" name="" id="" key="" value="" escaped="" verdict=verified
+  local status="" networks="" network="" ip="" pair="" image="" code=0 octal="" char="" escaped_char=""
+  name="$(mock_resolve_container_name "$target")" || return 1
+  id="$(mock_container_id "$name")" || return 1
+  [[ "$template" == *"(eq .Id \"$id\")"* ]] || verdict=unverified
+  if [[ "$template" == *'.Name'* ]]; then
+    [[ "$template" == *"(eq .Name \"/$name\")"* ]] || verdict=unverified
+  fi
+  if [[ "$template" == *'.Config.Labels'* ]]; then
+    for key in com.dockistrate.managed com.dockistrate.role com.dockistrate.state-dir com.dockistrate.backend-domain com.dockistrate.backend-launch; do
+    value="$(mock_container_label "$name" "$key")"
+    escaped="${value//\\/\\\\}"
+    escaped="${escaped//\"/\\\"}"
+    for ((code = 1; code < 32; code++)); do
+      printf -v octal '%03o' "$code"
+      printf -v char '%b' "\\$octal"
+      printf -v escaped_char '\\x%02x' "$code"
+      escaped="${escaped//$char/$escaped_char}"
+    done
+    [[ "$template" == *"(eq (index .Config.Labels \"$key\") \"$escaped\")"* ]] || verdict=unverified
+    [ -n "$value" ] || verdict=unverified
+    done
+  fi
+  status="${DOCKER_MOCK_INSPECT_STATUS:-$(mock_read_meta_value "$name" status)}"
+  image="$(mock_read_meta_value "$name" image || true)"
+  printf '%s\n%s\n%s\n%s\nsha256:%064d\n' "$verdict" "$id" "$status" "${image:-nginx:alpine}" 9
+  networks="${DOCKER_MOCK_INSPECT_NETWORK_NAMES:-$(mock_container_networks "$name" || true)}"
+  while IFS= read -r network; do
+    [ -n "$network" ] || continue
+    ip="${DOCKER_MOCK_INSPECT_NETWORK_IP:-172.30.0.2}"
+    local network_pairs=()
+    IFS=',' read -r -a network_pairs <<<"${DOCKER_MOCK_INSPECT_NETWORK_MAP:-}"
+    if [ "${#network_pairs[@]}" -gt 0 ]; then
+      for pair in "${network_pairs[@]}"; do
+        [ "${pair%%=*}" != "$network" ] || ip="${pair#*=}"
+      done
+    fi
+    if mock_container_network_ip_is_empty "$name"; then ip=""; fi
+    printf '%s|%s\n' "$network" "$ip"
+  done <<<"$networks"
+}
+
 function mock_write_container_meta() {
-  local container_name="${1:-}" status="${2:-}" labels="${3:-}" mounts="${4:-}" networks="${5:-}" meta_path=""
+  local container_name="${1:-}" status="${2:-}" labels="${3:-}" mounts="${4:-}" networks="${5:-}" meta_path="" container_id="" image="${6:-}" mount_row=""
   [ -n "$container_name" ] || return 0
   ensure_mock_runtime_dir
+  container_name="$(mock_resolve_container_name "$container_name" || printf '%s' "$container_name")"
   meta_path="$(mock_container_meta_path "$container_name")"
+  if [ -f "$meta_path" ]; then
+    container_id="$(mock_container_id "$container_name")" || return 1
+    [ -n "$image" ] || image="$(mock_read_meta_value "$container_name" image || true)"
+  else
+    container_id="$(LC_ALL=C od -An -N32 -tx1 /dev/urandom | LC_ALL=C tr -d ' \n')"
+    [ "${#container_id}" -eq 64 ] || return 1
+  fi
   if [ -z "$networks" ] && [ -f "$meta_path" ]; then
     networks="$(mock_read_meta_value "$container_name" networks || true)"
   fi
   {
+    printf 'id=%s\n' "$container_id"
     printf 'status=%s\n' "$status"
     printf 'labels=%s\n' "$labels"
-    printf 'mounts=%s\n' "$mounts"
+    # Each mount is a separate keyed record, so status/network rewrites retain
+    # every source instead of silently truncating after the first newline.
+    while IFS= read -r mount_row; do
+      printf 'mounts=%s\n' "$mount_row"
+    done <<<"$mounts"
     printf 'networks=%s\n' "$networks"
+    printf 'image=%s\n' "$image"
   } >"$meta_path"
 }
 
 function mock_remove_container_meta() {
   local container_name="${1:-}" meta_path=""
   [ -n "$container_name" ] || return 0
+  container_name="$(mock_resolve_container_name "$container_name")" || return 0
   meta_path="$(mock_container_meta_path "$container_name")"
   rm -f "$meta_path"
 }
@@ -49,6 +174,9 @@ function mock_remove_container_meta() {
 function mock_update_container_status() {
   local container_name="${1:-}" status="${2:-}" labels="" mounts="" networks=""
   [ -n "$container_name" ] || return 0
+  if [ "${#container_name}" -eq 64 ] && [ ! -f "$(mock_container_meta_path "$container_name")" ]; then
+    container_name="$(mock_resolve_container_name "$container_name")" || return 1
+  fi
   labels="$(mock_read_meta_value "$container_name" labels || true)"
   mounts="$(mock_read_meta_value "$container_name" mounts || true)"
   networks="$(mock_read_meta_value "$container_name" networks || true)"
@@ -162,13 +290,76 @@ fi
 case "$subcommand" in
   ps)
     include_all="false"
+    ps_format="{{.Names}}"
+    ps_no_trunc="false"
+    ps_filters=()
     while [ $# -gt 0 ]; do
       case "$1" in
         -a|--all) include_all="true" ;;
+        -q|--quiet) ps_format="{{.ID}}" ;;
+        -aq|-qa) include_all="true"; ps_format="{{.ID}}" ;;
+        --no-trunc) ps_no_trunc="true" ;;
+        --format)
+          shift
+          ps_format="${1:-}"
+          ;;
+        --filter|-f)
+          shift
+          ps_filters+=("${1:-}")
+          ;;
+        --filter=*) ps_filters+=("${1#*=}") ;;
       esac
       shift || true
     done
-    mock_print_names "$include_all"
+    while IFS= read -r container_name; do
+      [ -n "$container_name" ] || continue
+      matches="true"
+      for ps_filter in "${ps_filters[@]}"; do
+        case "$ps_filter" in
+          label=*)
+            label_filter="${ps_filter#label=}"
+            label_key="${label_filter%%=*}"
+            label_value="$(mock_container_label "$container_name" "$label_key")"
+            if [ "$label_filter" = "$label_key" ]; then
+              [ -n "$label_value" ] || matches="false"
+            else
+              [ "$label_value" = "${label_filter#*=}" ] || matches="false"
+            fi
+            ;;
+          id=*)
+            container_id="$(mock_container_id "$container_name" || true)"
+            case "$container_id" in
+              "${ps_filter#id=}"*) ;;
+              *) matches="false" ;;
+            esac
+            ;;
+          name=*)
+            name_filter="${ps_filter#name=}"
+            case "$name_filter" in
+              '^/'*'$')
+                name_filter="${name_filter#^/}"
+                name_filter="${name_filter%\$}"
+                [ "$container_name" = "$name_filter" ] || matches="false"
+                ;;
+              *)
+                case "$container_name" in *"$name_filter"*) ;; *) matches="false" ;; esac
+                ;;
+            esac
+            ;;
+        esac
+      done
+      [ "$matches" = "true" ] || continue
+      if [ "$ps_format" = '{{.ID}}' ]; then
+        container_id="$(mock_container_id "$container_name" || true)"
+        [ -n "$container_id" ] || continue
+        if [ "$ps_no_trunc" != "true" ]; then
+          container_id="${container_id:0:12}"
+        fi
+        printf '%s\n' "$container_id"
+      else
+        printf '%s\n' "$container_name"
+      fi
+    done <<<"$(mock_print_names "$include_all")"
     exit 0
     ;;
   image)
@@ -220,6 +411,17 @@ case "$subcommand" in
       esac
       shift || true
     done
+    if [[ "$format" == *'}}verified{{else}}unverified{{end}}'* ]]; then
+      mock_backend_identity_snapshot "$container" "$format"
+      exit $?
+    fi
+    # Docker never fabricates network/image metadata for an absent full ID.
+    if [ "${#container}" -eq 64 ]; then
+      case "$container" in
+        *[!0-9a-f]*) ;;
+        *) container="$(mock_resolve_container_name "$container")" || exit 1 ;;
+      esac
+    fi
     if [[ "$format" == *".Config.Labels"* ]]; then
       label_key=""
       label_value=""
@@ -257,10 +459,62 @@ case "$subcommand" in
       if [ -z "$label_value" ] && [ -n "$missing_label_value" ]; then
         label_value="$missing_label_value"
       fi
-      [ -n "$label_value" ] && printf '%s\n' "$label_value"
+      if [[ "$format" == *".Id"* ]]; then
+        container_id="$(mock_container_id "$container")" || exit 1
+        printf '%s %s\n' "$container_id" "$label_value"
+      elif [ -n "$label_value" ]; then
+        printf '%s\n' "$label_value"
+      fi
+      exit 0
+    fi
+    if [ "$format" = '{{.Id}}' ]; then
+      mock_container_id "$container"
+      exit $?
+    fi
+    if [ "$format" = '{{.Name}}' ]; then
+      container_name="$(mock_resolve_container_name "$container")" || exit 1
+      printf '/%s\n' "$container_name"
+      exit 0
+    fi
+    if [ "$format" = '{{.Config.Image}}' ]; then
+      image="$(mock_read_meta_value "$container" image || true)"
+      [ -n "$image" ] || exit 1
+      printf '%s\n' "$image"
       exit 0
     fi
     if [[ "$format" == *".Mounts"* ]]; then
+      mount_rows="${DOCKER_MOCK_INSPECT_MOUNTS:-}"
+      if [ -z "$mount_rows" ]; then
+        mount_rows="$(mock_read_meta_value "$container" mounts || true)"
+      fi
+      if [[ "$format" == *'mount:%x:%t'* ]]; then
+        while IFS= read -r mount_row; do
+          [ -n "$mount_row" ] || continue
+          mount_rw="${mount_row##*|}"
+          mount_pair="${mount_row%|*}"
+          mount_destination="${mount_pair##*|}"
+          mount_source="${mount_pair%|*}"
+          [ "$mount_destination" = /etc/letsencrypt ] || continue
+          printf 'mount:'
+          printf '%s' "$mount_source" | LC_ALL=C od -An -v -tx1 | tr -d ' \n'
+          printf ':%s\n' "$mount_rw"
+        done <<<"$mount_rows"
+        printf 'complete\n'
+        exit 0
+      fi
+      if [ "$format" = '{{json .Mounts}}' ]; then
+        python3 - "$mount_rows" <<'PY'
+import json, sys
+mounts = []
+for line in sys.argv[1].splitlines():
+    if not line:
+        continue
+    source, destination, writable = line.rsplit('|', 2)
+    mounts.append(dict(Type='bind', Source=source, Destination=destination, RW=writable == 'true'))
+print(json.dumps(mounts))
+PY
+        exit $?
+      fi
       if [ -n "${DOCKER_MOCK_INSPECT_MOUNTS:-}" ]; then
         printf '%s\n' "${DOCKER_MOCK_INSPECT_MOUNTS}"
       else
@@ -318,6 +572,7 @@ case "$subcommand" in
           ip="${DOCKER_MOCK_INSPECT_NETWORK_IP:-172.30.0.2}"
         fi
       fi
+      if mock_container_network_ip_is_empty "$container"; then ip=""; fi
       [ -n "$ip" ] && echo "$ip"
       exit 0
     fi
@@ -398,11 +653,21 @@ case "$subcommand" in
     domain=""
     container_name=""
     network_name=""
+    container_image=""
     labels=""
     mounts=""
     arg=""
     while [ $# -gt 0 ]; do
       arg="$1"
+      if [ -n "$container_image" ]; then
+        # Arguments after the image belong to its command, not docker run.
+        if [ "$create_certbot" = true ] && [ "$arg" = -d ]; then
+          shift
+          domain="${1:-}"
+        fi
+        shift || true
+        continue
+      fi
       case "$arg" in
         --name)
           shift
@@ -434,9 +699,6 @@ case "$subcommand" in
           fi
           labels+="${arg#--label=}"
           ;;
-        certbot/certbot*)
-          create_certbot=true
-          ;;
         -v)
           shift
           if [ $# -gt 0 ]; then
@@ -461,13 +723,22 @@ case "$subcommand" in
             fi
           fi
           ;;
-        -d)
-          if [ "$create_certbot" = true ]; then
-            shift
-            if [ $# -gt 0 ]; then
-              domain="$1"
-            fi
-          fi
+        --*=*|-d|-i|-t|-P|--detach|--interactive|--tty|--publish-all|--rm|--privileged|--read-only|--init|--sig-proxy|--disable-content-trust|--oom-kill-disable|--no-healthcheck)
+          ;;
+        --)
+          shift
+          container_image="${1:-}"
+          ;;
+        --*|-e|-p|-u|-w|-h|-m|-c|-a)
+          # Remaining value-taking Docker options used by the fixtures.
+          shift
+          ;;
+        -*)
+          # Short boolean bundles and attached values are self-contained.
+          ;;
+        *)
+          container_image="$arg"
+          case "$container_image" in certbot/certbot*) create_certbot=true ;; esac
           ;;
       esac
       shift || true
@@ -494,8 +765,11 @@ case "$subcommand" in
     fi
 
     if [ -n "$container_name" ]; then
+      # A conflicting create must never overwrite the existing container.
+      [ ! -f "$(mock_container_meta_path "$container_name")" ] || exit 125
       [ -n "$network_name" ] || network_name="bridge"
-      mock_write_container_meta "$container_name" "running" "$labels" "$mounts" "$network_name"
+      mock_write_container_meta "$container_name" "running" "$labels" "$mounts" "$network_name" "$container_image"
+      mock_container_id "$container_name"
     fi
 
     exit 0
@@ -518,6 +792,22 @@ case "$subcommand" in
     if [ "${DOCKER_MOCK_EXEC_FAIL:-}" = "true" ]; then
       exit 1
     fi
+    # Scope readiness faults to the activated proxy's first check, so staged
+    # validation via `docker run` and subsequent recovery checks can succeed.
+    if [ -n "${DOCKER_MOCK_NGINX_TEST_FAIL_ONCE_FILE:-}" ] &&
+      [ "${2:-}" = nginx ] && [ "${3:-}" = -t ] && [ "${4:-}" = -c ] &&
+      [ ! -e "$DOCKER_MOCK_NGINX_TEST_FAIL_ONCE_FILE" ]; then
+      : >"$DOCKER_MOCK_NGINX_TEST_FAIL_ONCE_FILE"
+      exit 1
+    fi
+    # Fail only the attempted activation; recovery must still be able to run
+    # readiness checks and later reloads against the restored configuration.
+    if [ -n "${DOCKER_MOCK_RELOAD_FAIL_ONCE_FILE:-}" ] &&
+      [ "${2:-}" = nginx ] && [ "${3:-}" = -s ] && [ "${4:-}" = reload ] &&
+      [ ! -e "$DOCKER_MOCK_RELOAD_FAIL_ONCE_FILE" ]; then
+      : >"$DOCKER_MOCK_RELOAD_FAIL_ONCE_FILE"
+      exit 1
+    fi
     exit 0
     ;;
   rm)
@@ -536,6 +826,7 @@ case "$subcommand" in
     if [ -z "$old_name" ] || [ -z "$new_name" ]; then
       exit 1
     fi
+    old_name="$(mock_resolve_container_name "$old_name")" || exit 1
     meta_path="$(mock_container_meta_path "$old_name")"
     new_meta_path="$(mock_container_meta_path "$new_name")"
     if [ ! -f "$meta_path" ]; then
@@ -552,7 +843,12 @@ case "$subcommand" in
     while [ $# -gt 0 ]; do
       case "$1" in
         -*) ;;
-        *) mock_update_container_status "$1" "running" ;;
+        *)
+          if [ -n "${DOCKER_MOCK_START_FAIL_FOR:-}" ] && [ "$DOCKER_MOCK_START_FAIL_FOR" = "$1" ]; then
+            exit 1
+          fi
+          mock_update_container_status "$1" "running" || exit 1
+          ;;
       esac
       shift || true
     done
@@ -562,7 +858,7 @@ case "$subcommand" in
     while [ $# -gt 0 ]; do
       case "$1" in
         -*) ;;
-        *) mock_update_container_status "$1" "exited" ;;
+        *) mock_update_container_status "$1" "exited" || exit 1 ;;
       esac
       shift || true
     done

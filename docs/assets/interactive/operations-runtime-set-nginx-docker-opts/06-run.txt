@@ -1,0 +1,14 @@
+Review command
+  Command: Set Nginx Docker Opts (set-nginx-docker-opts)
+  Description: Set persistent docker run options for the Nginx proxy container
+
+Arguments:
+  Extra Docker run options: --label docs-example=true
+
+CLI equivalent:
+  ./dockistrate.sh set-nginx-docker-opts '--label docs-example=true'
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

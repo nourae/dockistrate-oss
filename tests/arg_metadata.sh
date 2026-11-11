@@ -29,8 +29,12 @@ assert_eq "Visibility policy" "$(arg_label visibility_policy)" "visibility_polic
 assert_eq "unknown arg" "$(arg_label unknown_arg)" "fallback label"
 
 docker_help="$(arg_help add-backend docker_opts)"
-if ! grep -Fq "Dockistrate still owns image, name, network, mounts, and published ports" <<<"$docker_help"; then
+if ! grep -Fq "Dockistrate owns the image, name, and network; proxy options also reserve mounts, ports, and entrypoint" <<<"$docker_help"; then
   echo "[Error] docker_opts help should explain Dockistrate-owned Docker flags." >&2
+  exit 1
+fi
+if ! grep -Fq -- "--option=value" <<<"$docker_help"; then
+  echo "[Error] docker_opts help should explain explicit values for unrecognized options." >&2
   exit 1
 fi
 
@@ -99,7 +103,7 @@ for cmd in add-header update-header add-backend-header update-backend-header; do
     exit 1
   fi
 done
-for spec in set-hsts:hsts_value set-backend-hsts:backend_hsts_value set-csp:csp_value set-backend-csp:backend_csp_value; do
+for spec in set-hsts:hsts_value set-backend-hsts:backend_hsts_value set-csp:csp_value set-backend-csp:backend_csp_value set-nginx-directive:directive_value set-nginx-directive-raw:directive_value; do
   cmd="${spec%%:*}"
   arg="${spec#*:}"
   if ! arg_is_sensitive "$cmd" "$arg"; then
@@ -127,5 +131,11 @@ if arg_is_sensitive add-port domain; then
   exit 1
 fi
 VISIBILITY_POLICY=full
+for cmd in set-nginx-directive set-nginx-directive-raw; do
+  if arg_is_sensitive "$cmd" directive_value; then
+    echo "[Error] ${cmd} value should remain visible under explicit full policy." >&2
+    exit 1
+  fi
+done
 
 echo "[tests] arg_metadata.sh: PASS"

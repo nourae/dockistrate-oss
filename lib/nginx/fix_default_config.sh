@@ -69,7 +69,9 @@ server {
         root /var/www/certbot;
         try_files \$uri =444;
     }
-    return 444;
+    location / {
+        return 444;
+    }
 }
 EOF
 

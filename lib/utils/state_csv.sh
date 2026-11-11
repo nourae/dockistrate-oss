@@ -2,8 +2,20 @@
 
 # Canonical CSV schemas for tool-managed state files.
 
+if ! declare -F normalize_decimal_number >/dev/null 2>&1; then
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/numbers.sh"
+fi
+
+if ! declare -F state_csv_contents >/dev/null 2>&1; then
+  # shellcheck source=./state_csv_records.sh
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/state_csv_records.sh"
+fi
+
 STATE_BACKEND_PORTS_HEADER="record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location"
 STATE_BACKEND_PORTS_COLS=21
+
+STATE_BACKEND_IDENTITY_HEADER="domain,container_id,ownership_token"
+STATE_BACKEND_IDENTITY_COLS=3
 
 STATE_BACKEND_ALIASES_HEADER="record_type,hostname,target_domain"
 STATE_BACKEND_ALIASES_COLS=3
@@ -11,8 +23,8 @@ STATE_BACKEND_ALIASES_COLS=3
 STATE_DEDICATED_HOST_INHERITANCE_HEADER="hostname,inherit_mtls,inherit_acl,inherit_security_rules,inherit_headers,inherit_paths"
 STATE_DEDICATED_HOST_INHERITANCE_COLS=6
 
-STATE_GLOBAL_SETTINGS_HEADER="setting_key,setting_value"
-STATE_GLOBAL_SETTINGS_COLS=2
+STATE_GLOBAL_SETTINGS_HEADER="enable_auto_backups,backup_retention,enable_backup_compression,http_version,client_ip_header,proxy_ip_header,tls_protocols,tls_ciphers,security_rule_status,acl_status,acl_policy,trusted_proxy_ranges,real_ip_recursive,nginx_directive_strict,nginx_docker_opts,visibility_policy,nginx_image,certbot_image,nginx_pull_mode,certbot_pull_mode"
+STATE_GLOBAL_SETTINGS_COLS=20
 
 STATE_CUSTOM_HEADERS_HEADER="header_type,header_name,header_value"
 STATE_CUSTOM_HEADERS_COLS=3
@@ -41,7 +53,7 @@ STATE_BACKEND_CLIENT_IP_HEADERS_COLS=2
 STATE_BACKEND_PROXY_IP_HEADERS_HEADER="domain,proxy_ip_header_name"
 STATE_BACKEND_PROXY_IP_HEADERS_COLS=2
 
-STATE_BACKEND_DOCKER_OPTS_HEADER="key,docker_options"
+STATE_BACKEND_DOCKER_OPTS_HEADER="domain,docker_options"
 STATE_BACKEND_DOCKER_OPTS_COLS=2
 
 STATE_BACKEND_ACL_POLICIES_HEADER="domain,acl_policy"
@@ -56,8 +68,9 @@ STATE_BACKEND_SECURITY_RULE_STATUSES_COLS=2
 STATE_SECURITY_IP_RULES_HEADER="enabled,domain,scope,action,ip_value,status_code"
 STATE_SECURITY_IP_RULES_COLS=6
 
-STATE_SECURITY_RULES_HEADER="enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location"
-STATE_SECURITY_RULES_COLS=47
+STATE_SECURITY_RULES_LEGACY_HEADER="enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location"
+STATE_SECURITY_RULES_HEADER="${STATE_SECURITY_RULES_LEGACY_HEADER},action"
+STATE_SECURITY_RULES_COLS=48
 
 STATE_ACCESS_LOG_FIELDS_HEADER="log_field"
 STATE_ACCESS_LOG_FIELDS_COLS=1
@@ -68,8 +81,17 @@ function state_dedicated_host_inheritance_file() {
 
 function state_csv_require_file() {
   local file="${1:-}" header="${2:-}"
+  if [ -e "$file" ] || [ -L "$file" ]; then
+    case "$header" in
+    "$STATE_CUSTOM_HEADERS_HEADER" | "$STATE_PORT_TLS_PROTOCOLS_HEADER" | "$STATE_PORT_TLS_CIPHERS_HEADER")
+      csv_read_records "$file" "$header" _state_csv_record_noop table
+      return $?
+      ;;
+    esac
+  fi
   csv_require_header "$file" "$header"
 }
+
 
 function state_csv_append_row() {
   local file="${1:-}" header="${2:-}" expected_cols="${3:-0}"
@@ -82,6 +104,8 @@ function state_csv_append_row() {
   fi
 
   state_csv_require_file "$file" "$header" || return 1
+  local records=""
+  records="$(state_csv_contents "$file" "$header")" || return 1
   make_temp_for_file tmp_file "$file" || return 1
   if ! printf '%s\n' "$header" >"$tmp_file"; then
     rm -f "$tmp_file" 2>/dev/null || true
@@ -108,7 +132,7 @@ function state_csv_append_row() {
       echo "[Error] Failed to write temporary CSV file for ${file}." >&2
       return 1
     fi
-  done <"$file"
+  done <<<"$records"
 
   if ! csv_join_row "$@" >>"$tmp_file"; then
     rm -f "$tmp_file" 2>/dev/null || true
@@ -137,8 +161,13 @@ function state_csv_ensure_all_state_files() {
   local dedicated_inheritance_file
   dedicated_inheritance_file="$(state_dedicated_host_inheritance_file)"
 
-  state_csv_require_file "$GLOBAL_SETTINGS_FILE" "$STATE_GLOBAL_SETTINGS_HEADER" || return 1
+  if [ ! -e "$GLOBAL_SETTINGS_FILE" ] && [ ! -L "$GLOBAL_SETTINGS_FILE" ]; then
+    _save_config_atomic_write || return 1
+  else
+    (load_config) || return 1
+  fi
   state_csv_require_file "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER" || return 1
+  state_csv_require_file "${CONFIG_DIR}/backend_identity.csv" "$STATE_BACKEND_IDENTITY_HEADER" || return 1
   state_csv_require_file "$BACKEND_ALIASES_FILE" "$STATE_BACKEND_ALIASES_HEADER" || return 1
   state_csv_require_file "$dedicated_inheritance_file" "$STATE_DEDICATED_HOST_INHERITANCE_HEADER" || return 1
   state_csv_require_file "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER" || return 1
@@ -150,7 +179,11 @@ function state_csv_ensure_all_state_files() {
   state_csv_require_file "$BACKEND_MTLS_FILE" "$STATE_BACKEND_MTLS_HEADER" || return 1
   state_csv_require_file "$BACKEND_CLIENT_IP_HEADER_FILE" "$STATE_BACKEND_CLIENT_IP_HEADERS_HEADER" || return 1
   state_csv_require_file "$BACKEND_PROXY_IP_HEADER_FILE" "$STATE_BACKEND_PROXY_IP_HEADERS_HEADER" || return 1
-  state_csv_require_file "$BACKEND_DOCKER_OPTS_FILE" "$STATE_BACKEND_DOCKER_OPTS_HEADER" || return 1
+  if [ ! -e "$BACKEND_DOCKER_OPTS_FILE" ] && [ ! -L "$BACKEND_DOCKER_OPTS_FILE" ]; then
+    state_csv_require_file "$BACKEND_DOCKER_OPTS_FILE" "$STATE_BACKEND_DOCKER_OPTS_HEADER" || return 1
+  else
+    csv_read_records "$BACKEND_DOCKER_OPTS_FILE" "$STATE_BACKEND_DOCKER_OPTS_HEADER" _state_csv_record_noop table || return 1
+  fi
   state_csv_require_file "$BACKEND_ACL_POLICY_FILE" "$STATE_BACKEND_ACL_POLICIES_HEADER" || return 1
   state_csv_require_file "$BACKEND_ACL_STATUS_FILE" "$STATE_BACKEND_ACL_STATUSES_HEADER" || return 1
   state_csv_require_file "$BACKEND_SECURITY_RULE_STATUS_FILE" "$STATE_BACKEND_SECURITY_RULE_STATUSES_HEADER" || return 1
@@ -166,12 +199,17 @@ function state_csv_get_two_col_value() {
   local file="${1:-}" header="${2:-}" key="${3:-}" default_value="${4:-}"
   local line="" line_no=0
   local value="$default_value"
+  case "$header" in
+  "$STATE_PORT_TLS_PROTOCOLS_HEADER" | "$STATE_PORT_TLS_CIPHERS_HEADER") key="$(normalize_port "$key")" || return 1 ;;
+  esac
 
   [ -f "$file" ] || {
     printf '%s\n' "$value"
     return 0
   }
   state_csv_require_file "$file" "$header" || return 1
+  local records=""
+  records="$(state_csv_contents "$file" "$header")" || return 1
 
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
@@ -188,17 +226,39 @@ function state_csv_get_two_col_value() {
       value="${CSV_FIELDS[1]}"
       break
     fi
-  done <"$file"
+  done <<<"$records"
 
   printf '%s\n' "$value"
+}
+
+function _state_csv_has_normalized_domain_key() {
+  # Only these schemas define their first column as a normalized domain key.
+  # Header names, paths, IDs, and other generic CSV keys remain case-sensitive.
+  case "${1:-}" in
+  "$STATE_BACKEND_HTTP_VERSIONS_HEADER" | "$STATE_BACKEND_CLIENT_IP_HEADERS_HEADER" | \
+    "$STATE_BACKEND_PROXY_IP_HEADERS_HEADER" | "$STATE_BACKEND_ACL_POLICIES_HEADER" | \
+    "$STATE_BACKEND_ACL_STATUSES_HEADER" | "$STATE_BACKEND_SECURITY_RULE_STATUSES_HEADER" | \
+    "$STATE_DEDICATED_HOST_INHERITANCE_HEADER") return 0 ;;
+  *) return 1 ;;
+  esac
 }
 
 function state_csv_upsert_two_col_value() {
   local file="${1:-}" header="${2:-}" key="${3:-}" value="${4:-}"
   local line="" line_no=0 replaced=0
-  local tmp_file=""
+  local tmp_file="" domain_key=false stored_key=""
+  case "$header" in
+  "$STATE_PORT_TLS_PROTOCOLS_HEADER" | "$STATE_PORT_TLS_CIPHERS_HEADER") key="$(normalize_port "$key")" || return 1 ;;
+  esac
+
+  if _state_csv_has_normalized_domain_key "$header"; then
+    domain_key=true
+    key="$(normalize_domain "$key")" || return 1
+  fi
 
   state_csv_require_file "$file" "$header" || return 1
+  local records=""
+  records="$(state_csv_contents "$file" "$header")" || return 1
   make_temp_for_file tmp_file "$file" || return 1
   printf '%s\n' "$header" >"$tmp_file"
 
@@ -217,13 +277,19 @@ function state_csv_upsert_two_col_value() {
       return 1
     fi
 
-    if [ "${CSV_FIELDS[0]}" = "$key" ]; then
-      csv_join_row "$key" "$value" >>"$tmp_file"
+    stored_key="${CSV_FIELDS[0]}"
+    if [ "$domain_key" = true ]; then
+      stored_key="$(normalize_domain "$stored_key")" || { rm -f "$tmp_file"; return 1; }
+    fi
+    if [ "$stored_key" = "$key" ]; then
+      if [ "$replaced" -eq 0 ] || [ "$domain_key" = false ]; then
+        csv_join_row "$key" "$value" >>"$tmp_file"
+      fi
       replaced=1
     else
       csv_join_row "${CSV_FIELDS[@]}" >>"$tmp_file"
     fi
-  done <"$file"
+  done <<<"$records"
 
   if [ "$replaced" -eq 0 ]; then
     csv_join_row "$key" "$value" >>"$tmp_file"
@@ -235,9 +301,19 @@ function state_csv_upsert_two_col_value() {
 function state_csv_delete_two_col_key() {
   local file="${1:-}" header="${2:-}" key="${3:-}"
   local line="" line_no=0
-  local tmp_file=""
+  local tmp_file="" domain_key=false stored_key=""
+  case "$header" in
+  "$STATE_PORT_TLS_PROTOCOLS_HEADER" | "$STATE_PORT_TLS_CIPHERS_HEADER") key="$(normalize_port "$key")" || return 1 ;;
+  esac
+
+  if _state_csv_has_normalized_domain_key "$header"; then
+    domain_key=true
+    key="$(normalize_domain "$key")" || return 1
+  fi
 
   state_csv_require_file "$file" "$header" || return 1
+  local records=""
+  records="$(state_csv_contents "$file" "$header")" || return 1
   make_temp_for_file tmp_file "$file" || return 1
   printf '%s\n' "$header" >"$tmp_file"
 
@@ -256,10 +332,14 @@ function state_csv_delete_two_col_key() {
       return 1
     fi
 
-    if [ "${CSV_FIELDS[0]}" != "$key" ]; then
+    stored_key="${CSV_FIELDS[0]}"
+    if [ "$domain_key" = true ]; then
+      stored_key="$(normalize_domain "$stored_key")" || { rm -f "$tmp_file"; return 1; }
+    fi
+    if [ "$stored_key" != "$key" ]; then
       csv_join_row "${CSV_FIELDS[@]}" >>"$tmp_file"
     fi
-  done <"$file"
+  done <<<"$records"
 
   finalize_temp_file "$file" "$tmp_file"
 }
@@ -268,7 +348,7 @@ function state_csv_has_row_by_keys() {
   local file="${1:-}" header="${2:-}" expected_cols="${3:-0}" key_count="${4:-0}"
   local -a keys=()
   local i=0 line="" line_no=0
-  local found=1
+  local found=1 domain_key=false stored_key=""
 
   if [ "$key_count" -lt 1 ]; then
     return 1
@@ -280,8 +360,15 @@ function state_csv_has_row_by_keys() {
     shift || true
   done
 
+  if _state_csv_has_normalized_domain_key "$header"; then
+    domain_key=true
+    keys[0]="$(normalize_domain "${keys[0]}")" || return 1
+  fi
+
   [ -f "$file" ] || return 1
   state_csv_require_file "$file" "$header" || return 1
+  local records=""
+  records="$(state_csv_contents "$file" "$header")" || return 1
 
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
@@ -294,13 +381,17 @@ function state_csv_has_row_by_keys() {
 
     found=0
     for ((i = 0; i < key_count; i++)); do
-      if [ "${CSV_FIELDS[$i]-}" != "${keys[$i]}" ]; then
+      stored_key="${CSV_FIELDS[$i]-}"
+      if [ "$domain_key" = true ] && [ "$i" -eq 0 ]; then
+        stored_key="$(normalize_domain "$stored_key")" || return 1
+      fi
+      if [ "$stored_key" != "${keys[$i]}" ]; then
         found=1
         break
       fi
     done
     [ "$found" -eq 0 ] && return 0
-  done <"$file"
+  done <<<"$records"
 
   return 1
 }
@@ -309,7 +400,7 @@ function state_csv_delete_by_keys() {
   local file="${1:-}" header="${2:-}" expected_cols="${3:-0}" key_count="${4:-0}"
   local -a keys=()
   local i=0 line="" line_no=0
-  local tmp_file="" is_match=0
+  local tmp_file="" is_match=0 domain_key=false stored_key=""
 
   if [ "$key_count" -lt 1 ]; then
     echo "[Error] state_csv_delete_by_keys requires key_count >= 1." >&2
@@ -322,7 +413,14 @@ function state_csv_delete_by_keys() {
     shift || true
   done
 
+  if _state_csv_has_normalized_domain_key "$header"; then
+    domain_key=true
+    keys[0]="$(normalize_domain "${keys[0]}")" || return 1
+  fi
+
   state_csv_require_file "$file" "$header" || return 1
+  local records=""
+  records="$(state_csv_contents "$file" "$header")" || return 1
   make_temp_for_file tmp_file "$file" || return 1
   printf '%s\n' "$header" >"$tmp_file"
 
@@ -343,7 +441,11 @@ function state_csv_delete_by_keys() {
 
     is_match=1
     for ((i = 0; i < key_count; i++)); do
-      if [ "${CSV_FIELDS[$i]-}" != "${keys[$i]}" ]; then
+      stored_key="${CSV_FIELDS[$i]-}"
+      if [ "$domain_key" = true ] && [ "$i" -eq 0 ]; then
+        stored_key="$(normalize_domain "$stored_key")" || { rm -f "$tmp_file"; return 1; }
+      fi
+      if [ "$stored_key" != "${keys[$i]}" ]; then
         is_match=0
         break
       fi
@@ -352,7 +454,7 @@ function state_csv_delete_by_keys() {
     if [ "$is_match" -eq 0 ]; then
       csv_join_row "${CSV_FIELDS[@]}" >>"$tmp_file"
     fi
-  done <"$file"
+  done <<<"$records"
 
   finalize_temp_file "$file" "$tmp_file"
 }
@@ -361,7 +463,7 @@ function state_csv_upsert_row_by_keys() {
   local file="${1:-}" header="${2:-}" expected_cols="${3:-0}" key_count="${4:-0}"
   local -a keys=() new_row=()
   local i=0 line="" line_no=0 replaced=0 is_match=0
-  local tmp_file=""
+  local tmp_file="" domain_key=false stored_key=""
 
   if [ "$key_count" -lt 1 ]; then
     echo "[Error] state_csv_upsert_row_by_keys requires key_count >= 1." >&2
@@ -386,7 +488,15 @@ function state_csv_upsert_row_by_keys() {
     return 1
   fi
 
+  if _state_csv_has_normalized_domain_key "$header"; then
+    domain_key=true
+    keys[0]="$(normalize_domain "${keys[0]}")" || return 1
+    new_row[0]="$(normalize_domain "${new_row[0]}")" || return 1
+  fi
+
   state_csv_require_file "$file" "$header" || return 1
+  local records=""
+  records="$(state_csv_contents "$file" "$header")" || return 1
   make_temp_for_file tmp_file "$file" || return 1
   printf '%s\n' "$header" >"$tmp_file"
 
@@ -407,19 +517,25 @@ function state_csv_upsert_row_by_keys() {
 
     is_match=1
     for ((i = 0; i < key_count; i++)); do
-      if [ "${CSV_FIELDS[$i]-}" != "${keys[$i]}" ]; then
+      stored_key="${CSV_FIELDS[$i]-}"
+      if [ "$domain_key" = true ] && [ "$i" -eq 0 ]; then
+        stored_key="$(normalize_domain "$stored_key")" || { rm -f "$tmp_file"; return 1; }
+      fi
+      if [ "$stored_key" != "${keys[$i]}" ]; then
         is_match=0
         break
       fi
     done
 
     if [ "$is_match" -eq 1 ]; then
-      csv_join_row "${new_row[@]}" >>"$tmp_file"
+      if [ "$replaced" -eq 0 ] || [ "$domain_key" = false ]; then
+        csv_join_row "${new_row[@]}" >>"$tmp_file"
+      fi
       replaced=1
     else
       csv_join_row "${CSV_FIELDS[@]}" >>"$tmp_file"
     fi
-  done <"$file"
+  done <<<"$records"
 
   if [ "$replaced" -eq 0 ]; then
     csv_join_row "${new_row[@]}" >>"$tmp_file"
@@ -433,6 +549,15 @@ function state_backend_ports_assign_from_fields() {
     echo "[Error] backend_ports row must have ${STATE_BACKEND_PORTS_COLS} fields, got ${CSV_FIELD_COUNT}" >&2
     return 1
   fi
+
+  local numeric_index=0 normalized_port=""
+  for numeric_index in 6 7; do
+    case "${CSV_FIELDS[numeric_index]}" in
+    0[0-9]*)
+      if normalized_port="$(normalize_port "${CSV_FIELDS[numeric_index]}")"; then CSV_FIELDS[numeric_index]="$normalized_port"; fi
+      ;;
+    esac
+  done
 
   STATE_BP_RECORD_TYPE="${CSV_FIELDS[0]}"
   STATE_BP_DOMAIN="${CSV_FIELDS[1]}"

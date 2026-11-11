@@ -1,0 +1,806 @@
+{
+  "schema_version": 1,
+  "scenario": "security-access",
+  "source_commit": "3d2ee0b58e2f729255105b30e5715990696f107b",
+  "started_at": "2026-11-07T16:16:06.421519+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42390384054",
+  "github_run_attempt": "1",
+  "scenario_module": "security",
+  "group": "access",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"44 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T16:21:57.771699+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "security-access-set-acl-policy",
+      "journey_family": "security-access-set-acl-policy",
+      "session_index": 1,
+      "step": 3,
+      "title": "deny (current) (current)",
+      "kind": "menu",
+      "command": "set-acl-policy",
+      "image": "docs/assets/interactive/security-access-set-acl-policy/03-deny-current-current.png",
+      "transcript": "docs/assets/interactive/security-access-set-acl-policy/03-deny-current-current.txt",
+      "image_sha256": "b49473418c17f031dd0a6661ed0506cbdfde780daba001324faec00a5c7611d3",
+      "transcript_sha256": "7990948397c3f22f20f20e85004e9dc32648ab5147b2b29f1af5e1d32540ead7",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-acl-policy.pty.log",
+      "pty_byte_offset": 82313,
+      "selected": "deny (current) (current)"
+    },
+    {
+      "journey": "security-access-set-acl-policy",
+      "journey_family": "security-access-set-acl-policy",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-acl-policy",
+      "image": "docs/assets/interactive/security-access-set-acl-policy/04-run.png",
+      "transcript": "docs/assets/interactive/security-access-set-acl-policy/04-run.txt",
+      "image_sha256": "22ca6f5111f853a27eff6e874b0ffd2387b6e409d1ab9bcabb646c058a160fe5",
+      "transcript_sha256": "a3930a069762a229cd2e14bfef72777a552c644062b8af53c56574611c7c38ee",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-acl-policy.pty.log",
+      "pty_byte_offset": 82632,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-set-acl-policy",
+      "journey_family": "security-access-set-acl-policy",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-acl-policy",
+      "image": "docs/assets/interactive/security-access-set-acl-policy/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-set-acl-policy/05-command-result.txt",
+      "image_sha256": "f94dfbde7840316a8c7a33d6bff77ce9a15755584578b646c372cc6b4b631515",
+      "transcript_sha256": "1a48d53b87a712cfcf68da43ba8e5e1ca5b3be096695bc02226576269c9a5916",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-acl-policy.pty.log",
+      "pty_byte_offset": 84111,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-access-set-acl-status",
+      "journey_family": "security-access-set-acl-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-acl-status",
+      "image": "docs/assets/interactive/security-access-set-acl-status/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-access-set-acl-status/03-enter-value.txt",
+      "image_sha256": "92574d0415910e1ae2b9056cce3440de1d55f4051c75537640cc4171a5261aaf",
+      "transcript_sha256": "202edf7e4352e8e0ae1ae4e6a741d703c41d2e6762a8e7ecd1cfc0ca9a81eb8f",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-acl-status.pty.log",
+      "pty_byte_offset": 82278,
+      "value": "403"
+    },
+    {
+      "journey": "security-access-set-acl-status",
+      "journey_family": "security-access-set-acl-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-acl-status",
+      "image": "docs/assets/interactive/security-access-set-acl-status/04-run.png",
+      "transcript": "docs/assets/interactive/security-access-set-acl-status/04-run.txt",
+      "image_sha256": "2e5657b783ae936f9a016288fd65186c285757507da84588710aa7dbbe5bda62",
+      "transcript_sha256": "89732c4a47734354dbfb21512125a6b2be0144bed7fe62ec713ea91fa95ed5e0",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-acl-status.pty.log",
+      "pty_byte_offset": 82617,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-set-acl-status",
+      "journey_family": "security-access-set-acl-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-acl-status",
+      "image": "docs/assets/interactive/security-access-set-acl-status/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-set-acl-status/05-command-result.txt",
+      "image_sha256": "57988cca80aec1ad40a4eaf6642be136b71cb878dece6eb9d47720d05db07e97",
+      "transcript_sha256": "82d6e3ea0dd617d9b2ba6f381c223482b2243d3808b7936d5dd796911f15bfc7",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-acl-status.pty.log",
+      "pty_byte_offset": 84164,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-access-set-security-rule-status",
+      "journey_family": "security-access-set-security-rule-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-security-rule-status",
+      "image": "docs/assets/interactive/security-access-set-security-rule-status/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-access-set-security-rule-status/03-enter-value.txt",
+      "image_sha256": "c2dce687539d36084ccbd185ae431b2a8926042a00c3b65c0d09250518c036fd",
+      "transcript_sha256": "202edf7e4352e8e0ae1ae4e6a741d703c41d2e6762a8e7ecd1cfc0ca9a81eb8f",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-security-rule-status.pty.log",
+      "pty_byte_offset": 87638,
+      "value": "403"
+    },
+    {
+      "journey": "security-access-set-security-rule-status",
+      "journey_family": "security-access-set-security-rule-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-security-rule-status",
+      "image": "docs/assets/interactive/security-access-set-security-rule-status/04-run.png",
+      "transcript": "docs/assets/interactive/security-access-set-security-rule-status/04-run.txt",
+      "image_sha256": "a0c1831695b3cafcf3fa326543f036c9658a3f60da8b080aad30794b629644f5",
+      "transcript_sha256": "e7783098d8527e17de6bad5264f2dc292a33a935d0342a9166fbdf571a08fca1",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-security-rule-status.pty.log",
+      "pty_byte_offset": 88020,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-set-security-rule-status",
+      "journey_family": "security-access-set-security-rule-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-security-rule-status",
+      "image": "docs/assets/interactive/security-access-set-security-rule-status/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-set-security-rule-status/05-command-result.txt",
+      "image_sha256": "4aa5fb9516b77597e259f4ba7d9be1046a084b0bab2d19f7250fd27556a82dbf",
+      "transcript_sha256": "faf34cd1f69eae09ae57f27c543b9053ca027a7b54dd2363789e47951814574a",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-security-rule-status.pty.log",
+      "pty_byte_offset": 89577,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-access-set-backend-acl-status",
+      "journey_family": "security-access-set-backend-acl-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-backend-acl-status",
+      "image": "docs/assets/interactive/security-access-set-backend-acl-status/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-access-set-backend-acl-status/03-example-com.txt",
+      "image_sha256": "74ce0a10eaf29d425059701269a3c76bce420d8e03431d7e28cefa8f0a67faa2",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-backend-acl-status.pty.log",
+      "pty_byte_offset": 92876,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-access-set-backend-acl-status",
+      "journey_family": "security-access-set-backend-acl-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-backend-acl-status",
+      "image": "docs/assets/interactive/security-access-set-backend-acl-status/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-access-set-backend-acl-status/04-enter-value.txt",
+      "image_sha256": "309760443affcd071086200426b1e444e5c0ec41b9f189b4aa3e87454b4e7924",
+      "transcript_sha256": "202edf7e4352e8e0ae1ae4e6a741d703c41d2e6762a8e7ecd1cfc0ca9a81eb8f",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-backend-acl-status.pty.log",
+      "pty_byte_offset": 92970,
+      "value": "403"
+    },
+    {
+      "journey": "security-access-set-backend-acl-status",
+      "journey_family": "security-access-set-backend-acl-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backend-acl-status",
+      "image": "docs/assets/interactive/security-access-set-backend-acl-status/05-run.png",
+      "transcript": "docs/assets/interactive/security-access-set-backend-acl-status/05-run.txt",
+      "image_sha256": "2c5d1675d7d275d6b99e31b54e9b1e09334354fd1eb821210b75fe1eef5ed4e2",
+      "transcript_sha256": "38a950e69e74480774b403ca2abd25a7d6a0f465152a3e14aa6c6ab718c94a81",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-backend-acl-status.pty.log",
+      "pty_byte_offset": 93390,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-set-backend-acl-status",
+      "journey_family": "security-access-set-backend-acl-status",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backend-acl-status",
+      "image": "docs/assets/interactive/security-access-set-backend-acl-status/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-set-backend-acl-status/06-command-result.txt",
+      "image_sha256": "4fe562458358308b6dba81d2dabf94510e703a172696663f1fa48b3cdf4893db",
+      "transcript_sha256": "2ab175f3e2efccb1caf4033d0e30441e6833d1d9417db53355a6c8d02f9202d8",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-backend-acl-status.pty.log",
+      "pty_byte_offset": 94889,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-access-set-backend-security-rule-status",
+      "journey_family": "security-access-set-backend-security-rule-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-backend-security-rule-status",
+      "image": "docs/assets/interactive/security-access-set-backend-security-rule-status/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-access-set-backend-security-rule-status/03-example-com.txt",
+      "image_sha256": "770435799f15a279a2ff58333e94b035a7ec86fa7268f732b21c677e16fd0cc9",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-backend-security-rule-status.pty.log",
+      "pty_byte_offset": 96056,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-access-set-backend-security-rule-status",
+      "journey_family": "security-access-set-backend-security-rule-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-backend-security-rule-status",
+      "image": "docs/assets/interactive/security-access-set-backend-security-rule-status/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-access-set-backend-security-rule-status/04-enter-value.txt",
+      "image_sha256": "a91a3c460fe5dcdf50d65faf50dafbe10db070db1b86da986cce4cbe4fd41d13",
+      "transcript_sha256": "ff799d4570be4c413f75b6ebc0161919cc6a52f83cbedec54aa810a8882b1de5",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-backend-security-rule-status.pty.log",
+      "pty_byte_offset": 96150,
+      "value": "404"
+    },
+    {
+      "journey": "security-access-set-backend-security-rule-status",
+      "journey_family": "security-access-set-backend-security-rule-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backend-security-rule-status",
+      "image": "docs/assets/interactive/security-access-set-backend-security-rule-status/05-run.png",
+      "transcript": "docs/assets/interactive/security-access-set-backend-security-rule-status/05-run.txt",
+      "image_sha256": "8c53520d3713d8e3fbcaebc0be503dbb7b662c8c22a234c98a8a334197853282",
+      "transcript_sha256": "11921b8d8424ffffce8d18c2177fb551ff8b1b3ee0f698b5d3a2bd020d591ec8",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-backend-security-rule-status.pty.log",
+      "pty_byte_offset": 96605,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-set-backend-security-rule-status",
+      "journey_family": "security-access-set-backend-security-rule-status",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backend-security-rule-status",
+      "image": "docs/assets/interactive/security-access-set-backend-security-rule-status/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-set-backend-security-rule-status/06-command-result.txt",
+      "image_sha256": "8b3f0de7f6448fbd841e491418050156b74b13ff8f72dcc19224233e368eca97",
+      "transcript_sha256": "7d77b23dbff398e69755139ebebc68715c42d0bda8a9f81ae65f57e653f9bd78",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-set-backend-security-rule-status.pty.log",
+      "pty_byte_offset": 98109,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-access-access-defaults",
+      "journey_family": "security-access-access-defaults",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-backend-acl-policy",
+      "image": "docs/assets/interactive/security-access-access-defaults/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-access-access-defaults/03-example-com.txt",
+      "image_sha256": "64de1c8761f4db9c3c84ce1a64ff20a6fccd633e71880b9313a4ecc9e87bb991",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-access-defaults.pty.log",
+      "pty_byte_offset": 92923,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-access-access-defaults",
+      "journey_family": "security-access-access-defaults",
+      "session_index": 1,
+      "step": 4,
+      "title": "allow (current) (current)",
+      "kind": "menu",
+      "command": "set-backend-acl-policy",
+      "image": "docs/assets/interactive/security-access-access-defaults/04-allow-current-current.png",
+      "transcript": "docs/assets/interactive/security-access-access-defaults/04-allow-current-current.txt",
+      "image_sha256": "d0b2009adbf10c6d655d381101ef0d0a418857ff87f647e9ae222fcc1243986a",
+      "transcript_sha256": "9c5cc3222efe995758b44e641d5b52ab47ca807afa4978aa9228e8e6426e9307",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-access-defaults.pty.log",
+      "pty_byte_offset": 93136,
+      "selected": "allow (current) (current)"
+    },
+    {
+      "journey": "security-access-access-defaults",
+      "journey_family": "security-access-access-defaults",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-backend-acl-policy",
+      "image": "docs/assets/interactive/security-access-access-defaults/05-run.png",
+      "transcript": "docs/assets/interactive/security-access-access-defaults/05-run.txt",
+      "image_sha256": "616909da9d514c629c1ce032b5aa10e939372b9504b9a2e30dfd250ade962f5a",
+      "transcript_sha256": "1373323b351e2c842d4f828a23fa2c8d6979e685f165d9c7acf9ebb41edd3913",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-access-defaults.pty.log",
+      "pty_byte_offset": 93550,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-access-defaults",
+      "journey_family": "security-access-access-defaults",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-backend-acl-policy",
+      "image": "docs/assets/interactive/security-access-access-defaults/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-access-defaults/06-command-result.txt",
+      "image_sha256": "a824f78155d40e7fa6e6450a3a8a1efffc167689e7e9457597e39a8899d4c161",
+      "transcript_sha256": "2275d0888a5168ce94cda6ee0b90477ca25373e3f552ee00f19f1729c7b768a3",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-access-defaults.pty.log",
+      "pty_byte_offset": 95046,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-access-remove-backend-acl-status",
+      "journey_family": "security-access-remove-backend-acl-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-acl-status",
+      "image": "docs/assets/interactive/security-access-remove-backend-acl-status/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-acl-status/03-example-com.txt",
+      "image_sha256": "99aded9d6e6bfa6bb09524cc268fe15ea19e51db76f394a09daa2109c0a92666",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-status.pty.log",
+      "pty_byte_offset": 106415,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-access-remove-backend-acl-status",
+      "journey_family": "security-access-remove-backend-acl-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-acl-status",
+      "image": "docs/assets/interactive/security-access-remove-backend-acl-status/04-run.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-acl-status/04-run.txt",
+      "image_sha256": "7698df2a25c7dabaad0cbec2950f9b3e8c68b578690919e1b12e54c194dddfdb",
+      "transcript_sha256": "fc728767b9663194f7a456c15e93c0c3644345c5020d56be5aa3f9a32790bdf0",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-status.pty.log",
+      "pty_byte_offset": 106838,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-remove-backend-acl-status",
+      "journey_family": "security-access-remove-backend-acl-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-acl-status",
+      "image": "docs/assets/interactive/security-access-remove-backend-acl-status/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-acl-status/05-enter-value.txt",
+      "image_sha256": "73aacce34b8b055e0744294d29053a26ba31a84ab89d503c04952d14072dd31b",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-status.pty.log",
+      "pty_byte_offset": 106892,
+      "value": "YES"
+    },
+    {
+      "journey": "security-access-remove-backend-acl-status",
+      "journey_family": "security-access-remove-backend-acl-status",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-acl-status",
+      "image": "docs/assets/interactive/security-access-remove-backend-acl-status/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-acl-status/06-command-result.txt",
+      "image_sha256": "6b5da8a420b857322a5a31286297138bca35bd7f961c2371e9f4d2596e5ae709",
+      "transcript_sha256": "2d9f453ccf38bbf706947d12d349487a4b13a4e5c722dbb3391474c04b04b374",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-status.pty.log",
+      "pty_byte_offset": 108403,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-access-remove-backend-security-rule-status",
+      "journey_family": "security-access-remove-backend-security-rule-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-security-rule-status",
+      "image": "docs/assets/interactive/security-access-remove-backend-security-rule-status/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-security-rule-status/03-example-com.txt",
+      "image_sha256": "a4e43e0255ac23149461390eeb9b3bf9766af9c337a8205ea5265dbaa3ccc63b",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-security-rule-status.pty.log",
+      "pty_byte_offset": 109586,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-access-remove-backend-security-rule-status",
+      "journey_family": "security-access-remove-backend-security-rule-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-security-rule-status",
+      "image": "docs/assets/interactive/security-access-remove-backend-security-rule-status/04-run.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-security-rule-status/04-run.txt",
+      "image_sha256": "14910c19ad1d3dfd28da9fa65614e4618a373b4ef447ae289f89a55aee31bea4",
+      "transcript_sha256": "3c3bc4f22e2cf4eefa96af886e64dfcd6c37f044b6a0fd50486260ed70758acb",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-security-rule-status.pty.log",
+      "pty_byte_offset": 110049,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-remove-backend-security-rule-status",
+      "journey_family": "security-access-remove-backend-security-rule-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-security-rule-status",
+      "image": "docs/assets/interactive/security-access-remove-backend-security-rule-status/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-security-rule-status/05-enter-value.txt",
+      "image_sha256": "1542249ec9104d2a66c9583a62436fa7e41aab7e59bc36be3dd6c0198774683e",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-security-rule-status.pty.log",
+      "pty_byte_offset": 110103,
+      "value": "YES"
+    },
+    {
+      "journey": "security-access-remove-backend-security-rule-status",
+      "journey_family": "security-access-remove-backend-security-rule-status",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-security-rule-status",
+      "image": "docs/assets/interactive/security-access-remove-backend-security-rule-status/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-security-rule-status/06-command-result.txt",
+      "image_sha256": "f442ebf3e52a0edc394a3d22d281ab7afd269eee39dad480d6d497163a0623bc",
+      "transcript_sha256": "fd5c27b61b4eec971182921541a07b594085ab5b48b2afa83d3a18facd69ea63",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-security-rule-status.pty.log",
+      "pty_byte_offset": 111624,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-access-remove-backend-acl-policy",
+      "journey_family": "security-access-remove-backend-acl-policy",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-backend-acl-policy",
+      "image": "docs/assets/interactive/security-access-remove-backend-acl-policy/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-acl-policy/03-example-com.txt",
+      "image_sha256": "54f6c1bd03401fa78970f75722449b77fbfaf826b2dbdade7e9f43bfab48c9ab",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-policy.pty.log",
+      "pty_byte_offset": 106416,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-access-remove-backend-acl-policy",
+      "journey_family": "security-access-remove-backend-acl-policy",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-backend-acl-policy",
+      "image": "docs/assets/interactive/security-access-remove-backend-acl-policy/04-run.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-acl-policy/04-run.txt",
+      "image_sha256": "7760345e188008c4742c57eb69cad831abc692fab0189695bd30174f8396b99b",
+      "transcript_sha256": "1d9e5e30d9ca2fa160860aafafa8b0ae962ec7144b3f119ff8255c992c2ee3c9",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-policy.pty.log",
+      "pty_byte_offset": 106839,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-access-remove-backend-acl-policy",
+      "journey_family": "security-access-remove-backend-acl-policy",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-backend-acl-policy",
+      "image": "docs/assets/interactive/security-access-remove-backend-acl-policy/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-acl-policy/05-enter-value.txt",
+      "image_sha256": "bc407f29e7b33e71bb0f1a23f459c66827a2573e5bee2eaf2d46a6d55de81a9c",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-policy.pty.log",
+      "pty_byte_offset": 106893,
+      "value": "YES"
+    },
+    {
+      "journey": "security-access-remove-backend-acl-policy",
+      "journey_family": "security-access-remove-backend-acl-policy",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-backend-acl-policy",
+      "image": "docs/assets/interactive/security-access-remove-backend-acl-policy/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-access-remove-backend-acl-policy/06-command-result.txt",
+      "image_sha256": "3a12ba61945800b16dc70bb6db9e76c4dd139f8cc14527f641014353db3ee5e6",
+      "transcript_sha256": "30672ee94bcf2e5bfbec33068e2a34b7c84fc28792af4f5298433c20c2888c0a",
+      "pty_log": "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-policy.pty.log",
+      "pty_byte_offset": 108404,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "access-override-allow",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-access/access-override-allow.headers"
+    },
+    {
+      "label": "access-inherited-deny",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-access/access-inherited-deny.headers"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "security"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "3c87a033b3df26caf458a3efb95b8d374f1fe0cbe3c34a195f18cfdc2d1f6a0c",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 33
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/security-access-recordings.tar.gz",
+    "sha256": "f2527c8dc92bcf2da060be998e3eb7c043e9729ac4a5ec9bcf3f38d92df5f278",
+    "size": 86712,
+    "members": {
+      "docs/assets/interactive/evidence/security-access/001-source-commit.log": {
+        "sha256": "5987ca8d9204d09d800b36d6b5bfb8553cd73f23aea59309eb0ed38d6961afa5",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/security-access/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-access/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/security-access/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/security-access/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/security-access/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/security-access/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-access/008-fixture-image.log": {
+        "sha256": "7714792c0dcfbf8c34f063892562a2bb2746b57745146857593826f7774f3d57",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/security-access/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/security-access/010-fixture-backend.log": {
+        "sha256": "dfee50361854ecc80bb9fe98a2a08fb39c7ce6daad8dcda2e31911c5d98860c6",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/security-access/011-fixture-public-demo.log": {
+        "sha256": "129b7fc036f2e11f39a86d8260373c2755f8e536b54084f354c2fa08e7b61e9e",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/security-access/012-fixture-https.log": {
+        "sha256": "310359641a0f82af583d190d9facdbdb42991907d9d2ca80a5cc81ae00a369fb",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/security-access/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/security-access/014-command-alias.log": {
+        "sha256": "e4f8b47e44d8feea151b7148f0d951f96acb474d7ab78d7f510659372e93a931",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-access/015-command-alias.log": {
+        "sha256": "cf9bcce9bab112e304adb1905d220d1e67ada06c40e32f0984b2bca57d44f23c",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-access/016-command-alias.log": {
+        "sha256": "5146091cbaa086549dd804e1ba35b67deaa44e1363050f9b15ccd061973699e6",
+        "size": 25
+      },
+      "docs/assets/interactive/evidence/security-access/017-command-alias.log": {
+        "sha256": "be92640f5234132598400dbf88422a3779cf242c09cd91f3e6e76754d64864e5",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/security-access/018-command-alias.log": {
+        "sha256": "787d2e0578fc7031818e5914b59baa2bdba7b19f47a0127e4060db32a1ca2e41",
+        "size": 33
+      },
+      "docs/assets/interactive/evidence/security-access/019-command-alias.log": {
+        "sha256": "c26fa34e283496b0845be3f9d5118f234f5226132b888c31614186bbbb7d84f0",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/security-access/020-command-alias.log": {
+        "sha256": "9f7314e97cc6a7ceff033d6b937cf7defe167f411b1be540c1a2b4822ef46c34",
+        "size": 26
+      },
+      "docs/assets/interactive/evidence/security-access/021-command-alias.log": {
+        "sha256": "7de71e26e581024896fdea85ed892dd8569ade57b0549c6b328a4958599976f5",
+        "size": 36
+      },
+      "docs/assets/interactive/evidence/security-access/022-command-alias.log": {
+        "sha256": "24a7e0e0a60f18e615b7801a3bae29d99aaefe093178a39a27b5ea0e14685aa6",
+        "size": 26
+      },
+      "docs/assets/interactive/evidence/security-access/023-restore-demo-allow.log": {
+        "sha256": "9420429a4c9ef964ebec72350e16eea82a0e3d6631884dcabb83640ddcca3b13",
+        "size": 1450
+      },
+      "docs/assets/interactive/evidence/security-access/024-image-identities.log": {
+        "sha256": "a06f08ac73381bce08070d326e2e863b193077f0e483b456fb2c09b78ffc80da",
+        "size": 2934
+      },
+      "docs/assets/interactive/evidence/security-access/access-inherited-deny.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-access/access-inherited-deny.headers": {
+        "sha256": "d425409595f7dd20e49c0bd9f7d62942fd0d227a246addaa102217d07aa8f005",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-access/access-inherited-deny.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-access/access-inherited-deny.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-access/access-override-allow.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-access/access-override-allow.headers": {
+        "sha256": "f7e366ef1e26765bf9961281f8af0d551c0118bb58d825829ae8fd71e2173476",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-access/access-override-allow.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-access/access-override-allow.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-access/commands.jsonl": {
+        "sha256": "a33ed3b61042014ccab99a106965f804f193439eb032a69f8c1c62dca2827b3f",
+        "size": 9705
+      },
+      "docs/assets/interactive/evidence/security-access/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-access-defaults.events.jsonl": {
+        "sha256": "5a8386c76efd7de58b5cda0c84d5219c83d2ffe8671aac2f866203cd3dfa1948",
+        "size": 17867
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-access-defaults.pty.log": {
+        "sha256": "c50823c46b7dbd15e19ce8e8fcb79de33c1e2b175beb5c365506845476bbecb9",
+        "size": 103164
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-policy.events.jsonl": {
+        "sha256": "eb1535d75bdbbb6320c95b9fc764bbaad7987fb6a3db0ace31599c7ae23529f2",
+        "size": 20333
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-policy.pty.log": {
+        "sha256": "46429e983209356161915181663664beb76d1ddca9fe3988ff2f510a5d3e4619",
+        "size": 116522
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-status.events.jsonl": {
+        "sha256": "0a1a3d6c25730d8a8e77f774b3f32b95dffe5de7a42543111b7ad0114ce14e55",
+        "size": 20333
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-remove-backend-acl-status.pty.log": {
+        "sha256": "4204b1b5221f1a9abc89b39be5ea7887cfa46a2881a60d85aac6c5eb78cc2223",
+        "size": 116521
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-remove-backend-security-rule-status.events.jsonl": {
+        "sha256": "f953527dcc370bb3395de495644d8e2ea3d99349b97a241d8188aa260a69fe1f",
+        "size": 25142
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-remove-backend-security-rule-status.pty.log": {
+        "sha256": "fb044b1fbd925929151e97deb55ae669b0027038c0d25a789b5163516b28820f",
+        "size": 119746
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-acl-policy.events.jsonl": {
+        "sha256": "abdf543c55e07580d4a3545da52704c42ddff4cd8fda16b64cbf108a154b86cb",
+        "size": 14797
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-acl-policy.pty.log": {
+        "sha256": "efe2dce93892179fd237a5b0b509fcce3eb88cc34c52742ae9aeeec025efed20",
+        "size": 92224
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-acl-status.events.jsonl": {
+        "sha256": "b286e9b2c4f2aa923e440fabed273b19c777036396614a47c781d4bdb59f5b98",
+        "size": 15163
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-acl-status.pty.log": {
+        "sha256": "05f3ec670e707355dd11fd86354e29d346201cf61d85273519a419bf890d18f5",
+        "size": 92282
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-backend-acl-status.events.jsonl": {
+        "sha256": "d5682c19223bf12b368b0817e6ef3db724c912918c8772feb1187fbe46393beb",
+        "size": 19052
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-backend-acl-status.pty.log": {
+        "sha256": "66e3cc9920a2f3a75e2054f00714d1250a8a4c4f71df2d94a120d152228af49a",
+        "size": 103007
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-backend-security-rule-status.events.jsonl": {
+        "sha256": "0bfb85021328a5c8503839b94efa7404fbfd4c8333ce8b1f44495e453753a100",
+        "size": 23659
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-backend-security-rule-status.pty.log": {
+        "sha256": "e2ad381469782d79cf54cfc7fddd234062793bf34e32054863dbf2536d8091c6",
+        "size": 106227
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-security-rule-status.events.jsonl": {
+        "sha256": "772b8610ebfa5e13a7dee85c5dc89430747fbd6e547d0fcf7c7fab10afe5cda6",
+        "size": 19256
+      },
+      "docs/assets/interactive/evidence/security-access/security-access-set-security-rule-status.pty.log": {
+        "sha256": "c0e0fbc7dabdf5749295985d64fcd71a795dad7042e9bd6f4c77a76c54c3a86d",
+        "size": 97695
+      }
+    }
+  }
+}

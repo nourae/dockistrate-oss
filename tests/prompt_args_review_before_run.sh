@@ -21,10 +21,16 @@ source "$ROOT_DIR/lib/cli/command_descriptions.sh"
 source "$ROOT_DIR/lib/cli/is_back_input.sh"
 # shellcheck source=../lib/cli/choose_option.sh
 source "$ROOT_DIR/lib/cli/choose_option.sh"
+# shellcheck source=../lib/utils/operator_visibility.sh
+source "$ROOT_DIR/lib/utils/operator_visibility.sh"
+# shellcheck source=../lib/cli/command_visibility.sh
+source "$ROOT_DIR/lib/cli/command_visibility.sh"
 # shellcheck source=../lib/cli/review_command.sh
 source "$ROOT_DIR/lib/cli/review_command.sh"
 # shellcheck source=../lib/cli/prompt_args_for_command.sh
 source "$ROOT_DIR/lib/cli/prompt_args_for_command.sh"
+# shellcheck source=../lib/cli/prompt_args_handlers_postprocess.sh
+source "$ROOT_DIR/lib/cli/prompt_args_handlers_postprocess.sh"
 
 INTERACTIVE=true
 PROMPT_ARGS_COLLECTED=()
@@ -59,7 +65,7 @@ function get_arg_spec() {
   upgrade-preflight)
     printf '%s' 'target_tag,;require_backup,no'
     ;;
-  status)
+  status | stop-all-backends | remove-all-backends)
     printf '%s' ''
     ;;
   help-update)
@@ -80,11 +86,11 @@ function no_header_overrides_message() { return 1; }
 function no_port_tls_overrides_message() { return 1; }
 function prompt_args_handle_headers() { return 2; }
 function prompt_args_handle_security_specials() { return 2; }
-function prompt_args_postprocess() { return 0; }
 function prompt_args_compute_default() { printf '%s' "${3:-}"; }
 
 function choose_option() {
   local __idx_var="${1:-}"
+  LAST_REVIEW_PROMPT="${2:-}"
   if [ "$CHOICE_CURSOR" -ge "${#CHOICE_QUEUE[@]}" ]; then
     echo "[Error] choose_option queue exhausted." >&2
     exit 1
@@ -107,6 +113,39 @@ function read_with_editing() {
 function read_multiline_with_editing() {
   read_with_editing "$@"
 }
+
+reset_prompt_review_test
+CHOICE_QUEUE=(0)
+if ! prompt_args_for_command stop-all-backends >/dev/null; then
+  echo '[Error] Zero-argument collection should reach Run.' >&2
+  exit 1
+fi
+if [ "$SELECTED_CMD" != stop-all-backends ] || [ "${#SELECTED_ARGS[@]}" -ne 0 ] ||
+  [[ "$LAST_REVIEW_PROMPT" != *'  (none)'* ]] || [[ "$LAST_REVIEW_PROMPT" == *'Argument 1'* ]] ||
+  [[ "$LAST_REVIEW_PROMPT" == *"stop-all-backends ''"* ]]; then
+  echo '[Error] Postprocessing injected an empty argument into review/execution.' >&2
+  exit 1
+fi
+
+for review_choice in 1 2; do
+  reset_prompt_review_test
+  CHOICE_QUEUE=("$review_choice")
+  status=0
+  prompt_args_for_command stop-all-backends >/dev/null || status=$?
+  if [ "$status" -eq 0 ] || [ -n "$SELECTED_CMD" ] || [ "${#SELECTED_ARGS[@]}" -ne 0 ]; then
+    echo '[Error] Edit/Cancel should clear the zero-argument selection.' >&2
+    exit 1
+  fi
+done
+
+reset_prompt_review_test
+CHOICE_QUEUE=(0)
+READ_QUEUE=(YES)
+if ! prompt_args_for_command remove-all-backends >/dev/null ||
+  [ "$SELECTED_CMD" != remove-all-backends ] || [ "${#SELECTED_ARGS[@]}" -ne 0 ]; then
+  echo '[Error] Destructive confirmation should preserve zero arguments.' >&2
+  exit 1
+fi
 
 reset_prompt_review_test
 READ_QUEUE=("one" "two")

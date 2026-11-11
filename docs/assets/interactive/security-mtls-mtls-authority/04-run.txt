@@ -1,0 +1,14 @@
+Review command
+  Command: Replace Backend Ca (replace-backend-ca)
+  Description: Recreate a backend mTLS CA and remove existing client certificates
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh replace-backend-ca example.com
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

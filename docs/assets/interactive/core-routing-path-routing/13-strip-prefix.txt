@@ -1,0 +1,10 @@
+Optional rewrite behavior for this path route.
+Path rewrite (none|strip-prefix|replace:/new/path)
+Example: strip-prefix:
+  1) None (current)
+> 2) Strip prefix
+  3) Replace with /
+  4) Enter manually...
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

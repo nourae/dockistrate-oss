@@ -2,8 +2,12 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../lib/utils/validators.sh
+source "$ROOT_DIR/lib/utils/validators.sh"
 # shellcheck source=../lib/nginx/recreate_nginx_container.sh
 source "$ROOT_DIR/lib/nginx/recreate_nginx_container.sh"
+# shellcheck source=lib/empty_proxy_certificate_fixture.sh
+source "$ROOT_DIR/tests/lib/empty_proxy_certificate_fixture.sh"
 
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/dockistrate_recreate_post_launch.XXXXXX")"
 trap 'rm -rf "$tmp_dir"' EXIT
@@ -36,7 +40,7 @@ function nginx_container_is_managed() { return 0; }
 function container_running() { return 1; }
 function pull_image_if_autopull() { return 0; }
 function _nginx_mark_runtime_rollback_needed() { return 0; }
-function _nginx_expected_state_dir_label() { printf '%s\n' "$tmp_dir"; }
+function _nginx_expected_state_dir_label() { printf '%s' "$tmp_dir"; }
 function remove_container_and_anonymous_volumes() { return 0; }
 function add_nginx_networks() {
   add_network_calls=$((add_network_calls + 1))

@@ -3,6 +3,7 @@
 test_update_port_nginx_directive_reconciliation() {
   local directives_file="${CONFIG_DIR}/nginx_directives.csv"
   local output status
+  local scenario_seed
 
   run_dockistrate add-backend remap-http.test nginx:alpine 9301 http >/dev/null
   assertEquals "seed http remap backend" 0 $?
@@ -30,6 +31,19 @@ test_update_port_nginx_directive_reconciliation() {
     fail "Expected no dedicated-host http port directive rows to remain on :80 after remap"
   fi
 
+  # Keep the completed backend/dedicated-host remap as an unrelated sentinel.
+  # Restore this same-run private fixture between independent protocol cases so
+  # old scenarios do not make every subsequent command render more backends.
+  # The original CLI commands and rollback comparisons below remain unchanged.
+  scenario_seed="$(mktemp -d "${SHUNIT_TMPDIR}/port-remap-baseline.XXXXXX")" || {
+    fail "create port reconciliation seed directory"
+    return
+  }
+  if ! cp -pR "$STATE_DIR" "${scenario_seed}/state"; then
+    fail "copy validated port reconciliation seed"
+    return
+  fi
+
   run_dockistrate add-backend switch-http-tcp.test nginx:alpine 9302 http >/dev/null
   assertEquals "seed http->tcp backend" 0 $?
   run_dockistrate add-dedicated-host admin.switch-http-tcp.test switch-http-tcp.test >/dev/null
@@ -50,6 +64,12 @@ test_update_port_nginx_directive_reconciliation() {
     fail "Expected dedicated-host http port directive rows to be purged after switching protocol to tcp"
   fi
 
+  _port_reconciliation_assert_baseline_unchanged "${scenario_seed}/state" || return
+  if ! integration_reset_workdir || ! cp -pR "${scenario_seed}/state/." "$STATE_DIR"; then
+    fail "restore validated port reconciliation seed"
+    return
+  fi
+
   run_dockistrate add-backend remap-stream.test nginx:alpine 9303 tcp >/dev/null
   assertEquals "seed tcp remap backend" 0 $?
   run_dockistrate set-nginx-directive stream-port remap-stream.test 9303 proxy_timeout 41s >/dev/null
@@ -66,6 +86,12 @@ test_update_port_nginx_directive_reconciliation() {
     fail "Expected no stream-port directive rows to remain on :9303 after tcp remap"
   fi
 
+  _port_reconciliation_assert_baseline_unchanged "${scenario_seed}/state" || return
+  if ! integration_reset_workdir || ! cp -pR "${scenario_seed}/state/." "$STATE_DIR"; then
+    fail "restore validated port reconciliation seed"
+    return
+  fi
+
   run_dockistrate add-backend switch-tcp-http.test nginx:alpine 9305 tcp >/dev/null
   assertEquals "seed tcp->http backend" 0 $?
   run_dockistrate set-nginx-directive stream-port switch-tcp-http.test 9305 proxy_connect_timeout 42s >/dev/null
@@ -79,6 +105,12 @@ test_update_port_nginx_directive_reconciliation() {
     fail "Expected stream-port directive rows to be purged after switching protocol to http"
   fi
 
+  _port_reconciliation_assert_baseline_unchanged "${scenario_seed}/state" || return
+  if ! integration_reset_workdir || ! cp -pR "${scenario_seed}/state/." "$STATE_DIR"; then
+    fail "restore validated port reconciliation seed"
+    return
+  fi
+
   run_dockistrate add-backend rollback-update-port.test nginx:alpine 9306 http >/dev/null
   assertEquals "seed rollback backend" 0 $?
   run_dockistrate set-nginx-directive port rollback-update-port.test 80 proxy_read_timeout 50s >/dev/null
@@ -88,7 +120,7 @@ test_update_port_nginx_directive_reconciliation() {
 
   local before_ports before_directives after_ports after_directives
   before_ports="$(cat "${CONFIG_DIR}/backend_ports.csv")"
-  before_directives="$(cat "$directives_file")"
+  before_directives="$(_port_reconciliation_directives_by_domain "$directives_file")"
 
   output="$(run_dockistrate update-port rollback-update-port.test 80 --nginx-port 81 --protocol http)"
   status=$?
@@ -96,11 +128,39 @@ test_update_port_nginx_directive_reconciliation() {
   assertStringContains "update-port rollback output should mention rollback" "Rolled back" "$output"
 
   after_ports="$(cat "${CONFIG_DIR}/backend_ports.csv")"
-  after_directives="$(cat "$directives_file")"
+  after_directives="$(_port_reconciliation_directives_by_domain "$directives_file")"
   if [ "$before_ports" != "$after_ports" ]; then
+    diff -u <(printf '%s\n' "$before_ports") <(printf '%s\n' "$after_ports") || true
     fail "Expected backend_ports.csv to roll back to pre-update-port content on failure"
   fi
   if [ "$before_directives" != "$after_directives" ]; then
+    diff -u <(printf '%s\n' "$before_directives") <(printf '%s\n' "$after_directives") || true
     fail "Expected nginx_directives.csv to roll back to pre-update-port content on failure"
   fi
+  _port_reconciliation_assert_baseline_unchanged "${scenario_seed}/state" || return
+}
+
+# Editing the shared global directive invalidates the derived aggregate cache.
+# Startup rebuilds it with global rows first and domains grouped alphabetically,
+# before the command transaction starts. Compare that grouping while preserving
+# every exact row and its relative order within the same domain.
+function _port_reconciliation_directives_by_domain() {
+  head -n 1 "$1" || return 1
+  tail -n +2 "$1" | LC_ALL=C sort -s -t, -k2,2
+}
+
+# Inspect the sentinel before resetting, including its dedicated-host directive,
+# so an overbroad reconciliation cannot be hidden by fixture restoration.
+function _port_reconciliation_assert_baseline_unchanged() {
+  local seed_state="$1" file field expected actual
+  for file in backend_ports.csv nginx_directives.csv; do
+    field=2
+    expected="$(awk -F, -v field="$field" '$field == "remap-http.test" || $field == "admin.remap-http.test" {print}' "${seed_state}/config/${file}" | LC_ALL=C sort -s -t, -k2,2)" || return 1
+    actual="$(awk -F, -v field="$field" '$field == "remap-http.test" || $field == "admin.remap-http.test" {print}' "${CONFIG_DIR}/${file}" | LC_ALL=C sort -s -t, -k2,2)" || return 1
+    assertNotNull "port reconciliation sentinel must exist in ${file}" "$expected" || return 1
+    if ! assertEquals "port reconciliation must preserve unrelated ${file} rows" "$expected" "$actual"; then
+      diff -u <(printf '%s\n' "$expected") <(printf '%s\n' "$actual") || true
+      return 1
+    fi
+  done
 }

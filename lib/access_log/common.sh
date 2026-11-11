@@ -2,6 +2,10 @@
 #
 # access_log.sh - Manage access log fields
 
+if ! declare -F normalize_decimal_number >/dev/null 2>&1; then
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../utils" && pwd)/numbers.sh"
+fi
+
 function _access_log_require_fields_file() {
   if [ -n "${ACCESS_LOG_FIELDS_FILE:-}" ]; then
     return 0
@@ -103,7 +107,6 @@ function _access_log_load_fields() {
 }
 
 function _access_log_write_fields() {
-  local -a fields=("$@")
   local tmp_file=""
 
   _access_log_require_fields_file || return 1
@@ -112,7 +115,7 @@ function _access_log_write_fields() {
   printf '%s\n' "$STATE_ACCESS_LOG_FIELDS_HEADER" >"$tmp_file"
 
   local field
-  for field in "${fields[@]}"; do
+  for field in "$@"; do
     _access_log_validate_field_or_error "$field" "" "$ACCESS_LOG_FIELDS_FILE" || {
       rm -f "$tmp_file"
       return 1

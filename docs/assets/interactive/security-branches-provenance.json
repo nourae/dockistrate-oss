@@ -1,0 +1,1578 @@
+{
+  "schema_version": 1,
+  "scenario": "security-branches",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:44.067723+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "security",
+  "group": "branches",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:40:04.934303+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "security-branches-http3-custom-advertisement",
+      "journey_family": "security-branches-http3-custom-advertisement",
+      "session_index": 1,
+      "step": 5,
+      "title": "Custom (manual value)",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-custom-advertisement/05-custom-manual-value.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-custom-advertisement/05-custom-manual-value.txt",
+      "image_sha256": "c90a68ec425146327e0e73993d67a1d743e290deb47e09ad0cc2b6733fc87ebe",
+      "transcript_sha256": "08f154e2ac127ca6f93b2d168693e4c8dcc0f2b38cfee9b6cad3a18df8dbca30",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-custom-advertisement.pty.log",
+      "pty_byte_offset": 84809,
+      "selected": "Custom (manual value)"
+    },
+    {
+      "journey": "security-branches-http3-custom-advertisement",
+      "journey_family": "security-branches-http3-custom-advertisement",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-custom-advertisement/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-custom-advertisement/06-enter-value.txt",
+      "image_sha256": "e4c5bd1dfcf7425bde4938d4536aa035052475d00414ac774071441a30bdf012",
+      "transcript_sha256": "4d55f53affa712db41b5f7f535110be99a8a4a6ca40440c3b7be899d27f0b98e",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-custom-advertisement.pty.log",
+      "pty_byte_offset": 84982,
+      "value": "h3=\":443\"; ma=60"
+    },
+    {
+      "journey": "security-branches-http3-custom-advertisement",
+      "journey_family": "security-branches-http3-custom-advertisement",
+      "session_index": 1,
+      "step": 7,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-custom-advertisement/07-run.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-custom-advertisement/07-run.txt",
+      "image_sha256": "4d198529619f6e4f06d0ee0ece769dcc2840a0e61ae2503c0941ec4586507e23",
+      "transcript_sha256": "3de07de228077e345603650961bef71aee4629529a74e9c88f0e7866819dd908",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-custom-advertisement.pty.log",
+      "pty_byte_offset": 85393,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-branches-http3-custom-advertisement",
+      "journey_family": "security-branches-http3-custom-advertisement",
+      "session_index": 1,
+      "step": 8,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-custom-advertisement/08-command-result.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-custom-advertisement/08-command-result.txt",
+      "image_sha256": "09da957ac3f9cc153fe11bbe07c5167a44c71e9faa0b969d265ca71d89dfaa96",
+      "transcript_sha256": "4442a609dcf4ee3c16124594ca50611e15854d34e9621c2fbe574fc4e526457d",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-custom-advertisement.pty.log",
+      "pty_byte_offset": 86927,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-branches-http3-suppress-advertisement",
+      "journey_family": "security-branches-http3-suppress-advertisement",
+      "session_index": 1,
+      "step": 3,
+      "title": "443",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-suppress-advertisement/03-443.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-suppress-advertisement/03-443.txt",
+      "image_sha256": "3c88b4d8c52b7f390c38a05450a83779edd5286cfc19275838395b56308dc8bb",
+      "transcript_sha256": "44cc0590be622b30592b61246d453be9b7312893383e12d6c950913f7e83b27b",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-suppress-advertisement.pty.log",
+      "pty_byte_offset": 83706,
+      "selected": "443"
+    },
+    {
+      "journey": "security-branches-http3-suppress-advertisement",
+      "journey_family": "security-branches-http3-suppress-advertisement",
+      "session_index": 1,
+      "step": 4,
+      "title": "On (current)",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-suppress-advertisement/04-on-current.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-suppress-advertisement/04-on-current.txt",
+      "image_sha256": "7a5f7310eb204714c8fc544dadf72c9ed5934732c3f1067631ad526d972d7db2",
+      "transcript_sha256": "07f5ad6bf095a5e5bc7a25a78d0a04bf757bc80165dc18e07636122f4a9fce29",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-suppress-advertisement.pty.log",
+      "pty_byte_offset": 83830,
+      "selected": "On (current)"
+    },
+    {
+      "journey": "security-branches-http3-suppress-advertisement",
+      "journey_family": "security-branches-http3-suppress-advertisement",
+      "session_index": 1,
+      "step": 5,
+      "title": "Off",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-suppress-advertisement/05-off.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-suppress-advertisement/05-off.txt",
+      "image_sha256": "d3ddc243a8587f05692fad8229e4bf6f7d9be538e28b4df9a0fe6a50f138492d",
+      "transcript_sha256": "90edf414afaa0219bb24607e07a478eb02e92a03b140f6281244a570fa58cd05",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-suppress-advertisement.pty.log",
+      "pty_byte_offset": 84380,
+      "selected": "Off"
+    },
+    {
+      "journey": "security-branches-http3-suppress-advertisement",
+      "journey_family": "security-branches-http3-suppress-advertisement",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-suppress-advertisement/06-run.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-suppress-advertisement/06-run.txt",
+      "image_sha256": "730f779fe8dd87c26e3a6c72a43fa5e8ac9675d38817891c8e07e9569c01b55e",
+      "transcript_sha256": "60692ec1c446495680fa4af647a959d7d7edae5b358502b9f9100df96cc50a81",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-suppress-advertisement.pty.log",
+      "pty_byte_offset": 84752,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-branches-http3-suppress-advertisement",
+      "journey_family": "security-branches-http3-suppress-advertisement",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-branches-http3-suppress-advertisement/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-branches-http3-suppress-advertisement/07-command-result.txt",
+      "image_sha256": "d7080a06f1c103cb96c825ac8402126a5087fa5e82f9d8b71a3aafd0df9d3d3f",
+      "transcript_sha256": "305735b45b588b4d73008a5b332adadea8a4738dbf2789b5e60eaee3be8f087b",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-http3-suppress-advertisement.pty.log",
+      "pty_byte_offset": 85984,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-branches-acl-deny-client",
+      "journey_family": "security-branches-acl-deny-client",
+      "session_index": 1,
+      "step": 4,
+      "title": "Layer 7 ($remote_addr, also used for TCP streams)",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client/04-layer-7-remote-addr-also-used-for-tcp-streams.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client/04-layer-7-remote-addr-also-used-for-tcp-streams.txt",
+      "image_sha256": "c5384f1c280ae166dc55f90a45ff753e16c5f62972c7104df65bf869e834f7e1",
+      "transcript_sha256": "44c2781ff0c324a762b6c3531593c7bd21aa9fc706e366b842ce310484bbbdda",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client.pty.log",
+      "pty_byte_offset": 71160,
+      "selected": "Layer 7 ($remote_addr, also used for TCP streams)"
+    },
+    {
+      "journey": "security-branches-acl-deny-client",
+      "journey_family": "security-branches-acl-deny-client",
+      "session_index": 1,
+      "step": 5,
+      "title": "deny",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client/05-deny.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client/05-deny.txt",
+      "image_sha256": "b288976992b8f4b7f2cc7b0ed3a59892f87dd7e135a32453c2ebdcd36a0f3d6b",
+      "transcript_sha256": "316f374425ee69b04c57ae3086158b2b5f4992ff2260bc16ff92f4be926f6c70",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client.pty.log",
+      "pty_byte_offset": 71418,
+      "selected": "deny"
+    },
+    {
+      "journey": "security-branches-acl-deny-client",
+      "journey_family": "security-branches-acl-deny-client",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client/06-enter-value.txt",
+      "image_sha256": "03ed028ffb4d03b527235f3d68b3f5ca3042cef81e1afdf0d12480933afd2c37",
+      "transcript_sha256": "61aa6a1281848ff170fa135f0b3a8c3fcdf3a84a1d110862837f132598ec688a",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client.pty.log",
+      "pty_byte_offset": 71462,
+      "value": "172.18.0.1"
+    },
+    {
+      "journey": "security-branches-acl-deny-client",
+      "journey_family": "security-branches-acl-deny-client",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client/07-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client/07-enter-value.txt",
+      "image_sha256": "55cfa84a83e9ff466c9fbf0c50a639f9f5d0d4ff77280d45fa64d23b67839c1d",
+      "transcript_sha256": "b84cd3768762780e264d8a3162119e0f0dc14569fb3c6b372bbbf509e02ed101",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client.pty.log",
+      "pty_byte_offset": 71504,
+      "value": "403"
+    },
+    {
+      "journey": "security-branches-acl-deny-client",
+      "journey_family": "security-branches-acl-deny-client",
+      "session_index": 1,
+      "step": 8,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client/08-run.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client/08-run.txt",
+      "image_sha256": "c9baaea60c5d4166525a4b2bfc584d87648b719c118e06b208fef44efeee3d3a",
+      "transcript_sha256": "ac5bf2b43d56a9559fbc80e10f89fdbe39926fae65b79e51ddf83566f45940e3",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client.pty.log",
+      "pty_byte_offset": 71948,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-branches-acl-deny-client",
+      "journey_family": "security-branches-acl-deny-client",
+      "session_index": 1,
+      "step": 9,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client/09-command-result.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client/09-command-result.txt",
+      "image_sha256": "2c407492af746e3f0919a60750115ff2b2bbb2d766ba0f144cb82f70045c0efa",
+      "transcript_sha256": "bb21fb39afb9aae7320e280704e65622310dc870c20c84f9d940069f78594a23",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client.pty.log",
+      "pty_byte_offset": 73457,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-branches-acl-client-block-verified",
+      "journey_family": "security-branches-acl-client-block-verified",
+      "session_index": 1,
+      "step": 1,
+      "title": "The explicit address rule rejects this client",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-branches-acl-client-block-verified/01-the-explicit-address-rule-rejects-this-client.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-client-block-verified/01-the-explicit-address-rule-rejects-this-client.txt",
+      "image_sha256": "03050b55e3b64cd5a16cff164a5a03bf05e49d55ea03c07abfc26ab755d5d727",
+      "transcript_sha256": "7e69db258dd9794d796dfac7eb630c51db01a9c41c22d8a1eedb305c560f8264",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-client-block-verified.pty.log",
+      "pty_byte_offset": 252,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-branches-acl-deny-client-remove",
+      "journey_family": "security-branches-acl-deny-client-remove",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com l7 deny 172.18.0.1",
+      "kind": "menu",
+      "command": "remove-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client-remove/03-example-com-l7-deny-172-18-0-1.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client-remove/03-example-com-l7-deny-172-18-0-1.txt",
+      "image_sha256": "f102f048d5c208206252e10b0bddf3267c47564983c64e23a227af8b30a21755",
+      "transcript_sha256": "1cb2fac4d5768ba0c271cdd6e74bef6e289773211385e476436ece944b8957af",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client-remove.pty.log",
+      "pty_byte_offset": 91742,
+      "selected": "example.com l7 deny 172.18.0.1"
+    },
+    {
+      "journey": "security-branches-acl-deny-client-remove",
+      "journey_family": "security-branches-acl-deny-client-remove",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client-remove/04-run.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client-remove/04-run.txt",
+      "image_sha256": "33b9c4d8154091ab61d57063ef65457ab8d300fd2ad40ee96ed2b211787c01e8",
+      "transcript_sha256": "3c75960194b99fc303f66fb52d3c912c590e296309ba35f0ae04efe0518f574e",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client-remove.pty.log",
+      "pty_byte_offset": 92087,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-branches-acl-deny-client-remove",
+      "journey_family": "security-branches-acl-deny-client-remove",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client-remove/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client-remove/05-enter-value.txt",
+      "image_sha256": "bc8db2befdcc03f66387a44ed5a5931434ef85e78ad40e8b91f145fde0cad38f",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client-remove.pty.log",
+      "pty_byte_offset": 92141,
+      "value": "YES"
+    },
+    {
+      "journey": "security-branches-acl-deny-client-remove",
+      "journey_family": "security-branches-acl-deny-client-remove",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-acl",
+      "image": "docs/assets/interactive/security-branches-acl-deny-client-remove/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-branches-acl-deny-client-remove/06-command-result.txt",
+      "image_sha256": "24106e504b03af1dbf8535f857ad865ac18af7fd6abd74d601b627474405a4c0",
+      "transcript_sha256": "c2edc844058c82426059437c7180dc086468fc40b5981d9b9404177cf9a9db55",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client-remove.pty.log",
+      "pty_byte_offset": 93635,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/05-enter-value.txt",
+      "image_sha256": "363efb74cc106ca3379ddacf4890812d681d90bbe703b3898902e09685eb63a3",
+      "transcript_sha256": "b6f4a5d414048838b7e311e76384809050fe43eccdf1406d831060a5e5b3f1bc",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 74763,
+      "value": "5"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 6,
+      "title": "or",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/06-or.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/06-or.txt",
+      "image_sha256": "63702067106ae78f6f158f056504f626ba61659ecb7f9aa7a3e21757c76e2856",
+      "transcript_sha256": "88987b1b7a95f2017760aabb269d1f7935a8dfcc729ac617475ab538ee1476d9",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 75000,
+      "selected": "or"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/07-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/07-enter-value.txt",
+      "image_sha256": "67291d55fdaaa4252f74fbca5a31e419c6faeaf33b0627a31c643b184dfc04d3",
+      "transcript_sha256": "56d5bbd04bc0376af480505f0da025b5d9b243c9cf5c7b5fad93a8e059bcf6eb",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 75064,
+      "value": "403"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 8,
+      "title": "Cookie \u2014 request cookie (name required)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/08-cookie-request-cookie-name-required.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/08-cookie-request-cookie-name-required.txt",
+      "image_sha256": "4cf9aabcf8121946e54e5ed405a3625b5f137911f32ce565e8f5b64b2da33a35",
+      "transcript_sha256": "31e003680caf86ed2bba0ce81a5145e51d506a7b90a8c03d0280dd396bb6be42",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 76319,
+      "selected": "Cookie \u2014 request cookie (name required)"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 9,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/09-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/09-enter-value.txt",
+      "image_sha256": "4191c651ddbac523918591f4abc2f4fe9b42f0b2d3240acb46ada3b992a8dcde",
+      "transcript_sha256": "a3f37e8fa10602ff68aa2d9456ed60cefc97bb006b3994228a60feef012e1748",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 76352,
+      "value": "session"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 10,
+      "title": "Exists \u2014 value present / header exists. Example: cookie session exists -",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/10-exists-value-present-header-exists-example-cookie-session-exists.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/10-exists-value-present-header-exists-example-cookie-session-exists.txt",
+      "image_sha256": "0480241d4aa96fd7b098e80680db6639684560e0324b50d2ee9b4bfa4bcd7eeb",
+      "transcript_sha256": "a62619d91b7b1db8411bd8cdc22089da2242672c5bc95a008efecdb9d4605469",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 93696,
+      "selected": "Exists \u2014 value present / header exists. Example: cookie session exists -"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 11,
+      "title": "Argument \u2014 query parameter (name required)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/11-argument-query-parameter-name-required.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/11-argument-query-parameter-name-required.txt",
+      "image_sha256": "d59b275ffcb77138c81a79442aa2e9cacc60e8cc1c18ab9c6d5312d3ad3fefcc",
+      "transcript_sha256": "3f61e17be39c38815f3d09e08f7b14eaf0be3119eff9af47f7f9e78344b769e5",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 95611,
+      "selected": "Argument \u2014 query parameter (name required)"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 12,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/12-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/12-enter-value.txt",
+      "image_sha256": "0e18889fec3472554580e4e1e83f44b64e5401cdcd7b265bbd25a525223a6616",
+      "transcript_sha256": "3f20f5b544b4d8740ec4e42d94949d4a5c119bc508ba69328462b0257dfb85b4",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 95639,
+      "value": "token"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 13,
+      "title": "Equals \u2014 string equals. Example: arg token equals prod",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/13-equals-string-equals-example-arg-token-equals-prod.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/13-equals-string-equals-example-arg-token-equals-prod.txt",
+      "image_sha256": "17375bef84657f80dc6705b7c2bcc079ce0766c5c4614fdbb80cd5002e436fa5",
+      "transcript_sha256": "87bad0c52e978cbda9895ac9e4332c9dee8249e35c20bccc981d9501b7d2ac6b",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 96913,
+      "selected": "Equals \u2014 string equals. Example: arg token equals prod"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 14,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/14-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/14-enter-value.txt",
+      "image_sha256": "b85b31dca7447b8031e65bdc7831749e28e06dc926d60626ad89c12b5561bd69",
+      "transcript_sha256": "d7d537dffd07381e660069e5f41be154ce4af652f71365b337c2aeacffa2a4dc",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 96948,
+      "value": "demo"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 15,
+      "title": "Variable \u2014 Nginx variable (name required)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/15-variable-nginx-variable-name-required.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/15-variable-nginx-variable-name-required.txt",
+      "image_sha256": "0133c44487b63401ee85f90195bfa0b00e268d279aad571c94ea7c21bf80302b",
+      "transcript_sha256": "0692d5975b9c61b43d97aa45afc95b9cb663f9ca11b2abf8cba56a24ec19a5d0",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 104466,
+      "selected": "Variable \u2014 Nginx variable (name required)"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 16,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/16-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/16-enter-value.txt",
+      "image_sha256": "74a25eed456bbc93e6158911ae7b292f7390fff97789d6969caf7fb7978ea617",
+      "transcript_sha256": "ec666955f23bb297069bb8e2cb4f148326b0cfb4cec70316f4dfb1de10131b21",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 104504,
+      "value": "$request_method"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 17,
+      "title": "Equals \u2014 string equals. Example: var $request_method equals foo",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/17-equals-string-equals-example-var-request-method-equals-foo.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/17-equals-string-equals-example-var-request-method-equals-foo.txt",
+      "image_sha256": "92c66820e7626da5d6497d443a87e5a51c820d4c60e9b63df1dbff5cc0667913",
+      "transcript_sha256": "78c0fbb98c09fff4e6d6a78fbf81378529db84cdbb72ffbe7aa362d978d8b821",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 106202,
+      "selected": "Equals \u2014 string equals. Example: var $request_method equals foo"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 18,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/18-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/18-enter-value.txt",
+      "image_sha256": "7f1f5fd7ac86f39b3808b72ecec4dbe7840a159a3348a5598bade1cfa57c7fdf",
+      "transcript_sha256": "415a6f69854e4f378f52ff1dbb5eb8ed1099c5d2eb43ef49f09527a6e782108f",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 106237,
+      "value": "POST"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 19,
+      "title": "IP \u2014 client IP address",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/19-ip-client-ip-address.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/19-ip-client-ip-address.txt",
+      "image_sha256": "e088a8ecc8fb1ad493a0859f316bf47a5db4cd22f25d7d0582cea94f0641c7e7",
+      "transcript_sha256": "104c737f39a45ef081f658cd9cd0663bd248a81306126d9551b9901998935cd9",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 111899,
+      "selected": "IP \u2014 client IP address"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 20,
+      "title": "Real IP (realip_remote_addr)",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/20-real-ip-realip-remote-addr.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/20-real-ip-realip-remote-addr.txt",
+      "image_sha256": "a978745f4a2109fa305e61c726c11fd674ffd789ac5a087f006ece6bf1ffea53",
+      "transcript_sha256": "da8560287169cbc9a58c2a50ddc7e1d467a0e7deb2c9733d13c46f6c8c87c5a7",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 112217,
+      "selected": "Real IP (realip_remote_addr)"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 21,
+      "title": "Equals \u2014 string equals. Example: ip l3 equals 192.168.1.10",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/21-equals-string-equals-example-ip-l3-equals-192-168-1-10.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/21-equals-string-equals-example-ip-l3-equals-192-168-1-10.txt",
+      "image_sha256": "6cddf2d5b08ec3bd2cb1f8adebdfd8dae3838a15c75984b421e0cb520a493b1c",
+      "transcript_sha256": "1ab6c4574da104d2b35b2a97c63bb6642b36373be1508b71e2c85fe8eb451d20",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 112642,
+      "selected": "Equals \u2014 string equals. Example: ip l3 equals 192.168.1.10"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 22,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/22-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/22-enter-value.txt",
+      "image_sha256": "101186f982959b39a9dac22dba4253cfde8473735f98af927d3a3da17492e64e",
+      "transcript_sha256": "f45e08670aa27a09bc62bf28b4be32a87ce73297892e9c3e837f1ba2f76ed0b9",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 112683,
+      "value": "203.0.113.8"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 23,
+      "title": "Path \u2014 normalized path",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/23-path-normalized-path.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/23-path-normalized-path.txt",
+      "image_sha256": "b6fe6c53621645e2e81b2c14e913e3d16928716ff4a897b1fd0c978a87015e75",
+      "transcript_sha256": "29f438c073e19b16b80ec757bacf9809eabfb60babeef1add4aab33cfc58e151",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 115850,
+      "selected": "Path \u2014 normalized path"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 24,
+      "title": "Matches \u2014 regex matches (case-insensitive). Example: path matches /health",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/24-matches-regex-matches-case-insensitive-example-path-matches-health.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/24-matches-regex-matches-case-insensitive-example-path-matches-health.txt",
+      "image_sha256": "3e27d6bff0605274c0c559baa4890d546fb3702c4aeeb041a869f7ad202f348b",
+      "transcript_sha256": "13c7f8df0f86ca4caf463212fabdfb9971f03001fab73edb12e03b8749731fa7",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 123756,
+      "selected": "Matches \u2014 regex matches (case-insensitive). Example: path matches /health"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 25,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/25-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/25-enter-value.txt",
+      "image_sha256": "483ba3bc62b8e784a34a8cbbd37ec829a0cfe4ea107e5748804363121c42013e",
+      "transcript_sha256": "14c20e39146346b8edf7e3bbbf59d33e3ed7e9400aec5a15e522e8efd04d0b90",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 123799,
+      "value": "^/private/"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 26,
+      "title": "Confirm",
+      "kind": "menu",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/26-confirm.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/26-confirm.txt",
+      "image_sha256": "647f715354ba3e726bd5c9e31258b9beb6a77ec765dfa658f9a8a2e1597b30f9",
+      "transcript_sha256": "6f00b8a128c09e6a7cf1feb6ffc19a1158ece0845612785b3835676204c422e5",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 124229,
+      "selected": "Confirm"
+    },
+    {
+      "journey": "security-branches-security-condition-branches",
+      "journey_family": "security-branches-security-condition-branches",
+      "session_index": 1,
+      "step": 27,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-condition-branches/27-command-result.png",
+      "transcript": "docs/assets/interactive/security-branches-security-condition-branches/27-command-result.txt",
+      "image_sha256": "f8d8cd78470d05a86527263cc77f0c788547f4eabea20cf2418903d1bc688e98",
+      "transcript_sha256": "a1fff97d7be2c92fa6c3253072baab0d13a14da1cf3440aaa207fb80e9954833",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log",
+      "pty_byte_offset": 125733,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/06-enter-value.txt",
+      "image_sha256": "307176202c5f602700d0a1be7ba12388cd35d48d565eac4f6ae6494b0f8d0d0f",
+      "transcript_sha256": "1e286ff8086a15a819ed2966078962ebc89dba65ef2875c1e4ba60bf9abeba94",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 70296,
+      "value": "-"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 7,
+      "title": "Replace",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/07-replace.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/07-replace.txt",
+      "image_sha256": "fe6df22654801ea6c6da20b88955dd7ef86dbefbd384681ed5bf338bc0eb99f2",
+      "transcript_sha256": "9cb2c2093a77630112cb11368dc4a7916ecc61a1840069a0d11ed101442ea490",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 70549,
+      "selected": "Replace"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/08-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/08-enter-value.txt",
+      "image_sha256": "a9dc8a1418a9281dca7825f1af51e38ca2761283c8972f7842390630f63811af",
+      "transcript_sha256": "28d26631def73036695a4811287c6fe64dd99e1a956d926d55bf2f1462dcce25",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 70592,
+      "value": "2"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 9,
+      "title": "or",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/09-or.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/09-or.txt",
+      "image_sha256": "6a29fb366ed1d6e3491736a9f6236983f0f16e822f34144d36dce2db7196f82f",
+      "transcript_sha256": "88987b1b7a95f2017760aabb269d1f7935a8dfcc729ac617475ab538ee1476d9",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 70829,
+      "selected": "or"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 10,
+      "title": "Header \u2014 request header (name required)",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/10-header-request-header-name-required.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/10-header-request-header-name-required.txt",
+      "image_sha256": "c6eebcfe5799252752cb9264f2b5384eac49ea5dba8a8a9fa41a3471e2fb1560",
+      "transcript_sha256": "f78593c0fcf2140424aa5ba1f8755b986f239b890378a40c00ce974cbbf4ef32",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 71451,
+      "selected": "Header \u2014 request header (name required)"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 11,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/11-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/11-enter-value.txt",
+      "image_sha256": "003ed300715c705f4e9e024bf9c3d868a0844e19b31c1511ec4cdf7c05ffbec0",
+      "transcript_sha256": "47a4f914d2e2a135453d923995da67d770419ff0f92e75c3b638daa8aee61d28",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 71483,
+      "value": "User-Agent"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 12,
+      "title": "Contains \u2014 substring present (case-insensitive). Example: header User-Agent contains debug",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/12-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/12-contains-substring-present-case-insensitive-example-header-user-agent-contains-d.txt",
+      "image_sha256": "fa535d8dc58e833c3064d5f2fecb286497f302f22f674731e5cc799691e4e6a0",
+      "transcript_sha256": "13931a9b86826aa5f3b1b7eab8177d40e4e1a9842684355469be09b443eb0cf7",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 75619,
+      "selected": "Contains \u2014 substring present (case-insensitive). Example: header User-Agent contains debug"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 13,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/13-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/13-enter-value.txt",
+      "image_sha256": "d805664f379c13796763b0341827aba11424fb2c29fc6cf45dd5164a17c28632",
+      "transcript_sha256": "9cc82c04c00a119c340c37582b5c1044134c879ce9e9d8de79a765e18537f0b5",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 75663,
+      "value": "OtherBot"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 14,
+      "title": "Method \u2014 HTTP method (GET/POST/...)",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/14-method-http-method-get-post.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/14-method-http-method-get-post.txt",
+      "image_sha256": "e010d8512f93d16732f96d6bafb4685a6144254a369533c2e6d5407127063e89",
+      "transcript_sha256": "e8128065269797c7f203193cdcd22ff5181d17e49f631c81b08cb7310ff38e13",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 78223,
+      "selected": "Method \u2014 HTTP method (GET/POST/...)"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 15,
+      "title": "Equals \u2014 string equals. Example: method - equals POST",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/15-equals-string-equals-example-method-equals-post.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/15-equals-string-equals-example-method-equals-post.txt",
+      "image_sha256": "8867f66c3927e4f165a087a720ba759cb54e21661d753b35b126828447d60597",
+      "transcript_sha256": "b58f12e97828ce6e385645855e8cf5fe275ba829ae9ae11dd83b56aa11b8be30",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 78614,
+      "selected": "Equals \u2014 string equals. Example: method - equals POST"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 16,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/16-enter-value.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/16-enter-value.txt",
+      "image_sha256": "61c7375efa07ee1d7e7ea81d27a24ee06a447ec4dfa2230a4eab24f1cbb74340",
+      "transcript_sha256": "16d3481912e021eb3175964c6239c64b15d1d063ed69d19d64d07704131180bd",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 78652,
+      "value": "POST"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 17,
+      "title": "Run",
+      "kind": "menu",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/17-run.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/17-run.txt",
+      "image_sha256": "7ce4feb9765a9e2fc8024352d4b0659297987eb5d5dbcefa324b4c175411d427",
+      "transcript_sha256": "5a60ae3e9b09b9941f52c81fb5b586388da2b8c5b128d9f99ae141639a44e0ff",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 79550,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-branches-security-replace-conditions",
+      "journey_family": "security-branches-security-replace-conditions",
+      "session_index": 1,
+      "step": 18,
+      "title": "Command result",
+      "kind": "result",
+      "command": "update-security-rule",
+      "image": "docs/assets/interactive/security-branches-security-replace-conditions/18-command-result.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replace-conditions/18-command-result.txt",
+      "image_sha256": "2eb7c6c497fccbb2453c4ff3220f475245257c58fdaf10df60f6eccb6edba560",
+      "transcript_sha256": "0a8468a7da7a88c60b20e4853b1d393451c33c7d38a029377253a32d47824799",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log",
+      "pty_byte_offset": 81036,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-branches-security-replacement-list",
+      "journey_family": "security-branches-security-replacement-list",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "list-security-rules",
+      "image": "docs/assets/interactive/security-branches-security-replacement-list/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replacement-list/03-example-com.txt",
+      "image_sha256": "b290b79ca3f9e90ab6e2f3a251ad5aa317a06242bab553ad443eac840100d6ee",
+      "transcript_sha256": "0c45d3b3332c4151b7f74452d10225e034b924002754c80a5a8c5ea126b013fd",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replacement-list.pty.log",
+      "pty_byte_offset": 77865,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-branches-security-replacement-list",
+      "journey_family": "security-branches-security-replacement-list",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-security-rules",
+      "image": "docs/assets/interactive/security-branches-security-replacement-list/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-branches-security-replacement-list/04-command-result.txt",
+      "image_sha256": "08ebf1491e229783d39c3d8dc929034b4636bb5bbe6dfffc1ee18adce92c7abd",
+      "transcript_sha256": "2de82b661c489369f14a2e548c7f6e5fad4fb6a070b409dc81d3203f61977212",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-replacement-list.pty.log",
+      "pty_byte_offset": 78182,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-branches-security-branches-config",
+      "journey_family": "security-branches-security-branches-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/security-branches-security-branches-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/security-branches-security-branches-config/03-configuration-test-passed.txt",
+      "image_sha256": "eddf601708f0e4b2a52e406fe83b2b2d368074caffe98df8f86180f1b89c992b",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/security-branches/security-branches-security-branches-config.pty.log",
+      "pty_byte_offset": 8027,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "http3-custom-advertised",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-branches/http3-custom-advertised.headers"
+    },
+    {
+      "label": "http3-custom-advertised-header",
+      "status": "passed",
+      "header": "alt-svc: h3=\":443\"; ma=60"
+    },
+    {
+      "label": "http3-no-advertisement",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-branches/http3-no-advertisement.headers"
+    },
+    {
+      "label": "http3-advertisement-suppressed",
+      "status": "passed"
+    },
+    {
+      "label": "acl-branch-observed-client",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-branches/acl-branch-observed-client.headers"
+    },
+    {
+      "label": "acl-client-blocked",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-branches/acl-client-blocked.headers"
+    },
+    {
+      "label": "acl-client-block-verified",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "http://127.0.0.1",
+        "-H",
+        "Host: example.com"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "acl-client-restored",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-branches/acl-client-restored.headers"
+    },
+    {
+      "label": "condition-branches-nonmatch",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-branches/condition-branches-nonmatch.headers"
+    },
+    {
+      "label": "condition-cookie-exists",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-branches/condition-cookie-exists.headers"
+    },
+    {
+      "label": "condition-argument-matches",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-branches/condition-argument-matches.headers"
+    },
+    {
+      "label": "condition-variable-matches",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-branches/condition-variable-matches.headers"
+    },
+    {
+      "label": "condition-path-regex-matches",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-branches/condition-path-regex-matches.headers"
+    },
+    {
+      "label": "condition-peer-ip-matches",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-branches/condition-peer-ip-matches.headers"
+    },
+    {
+      "label": "condition-peer-ip-restored",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-branches/condition-peer-ip-restored.headers"
+    },
+    {
+      "label": "replacement-old-match-cleared",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-branches/replacement-old-match-cleared.headers"
+    },
+    {
+      "label": "replacement-new-match-blocked",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-branches/replacement-new-match-blocked.headers"
+    },
+    {
+      "label": "replacement-method-blocked",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/security-branches/replacement-method-blocked.headers"
+    },
+    {
+      "label": "security-branches-restored",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-branches/security-branches-restored.headers"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "security"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "4d8596fea6f7c86e0d3880783ea16dfb4cd532468c6b24ef54bfbf0dce838e77",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 59
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/security-branches-recordings.tar.gz",
+    "sha256": "0b931de2f145bc6d27608dce1a31759bfe92f16df93ad2f2120a66c1a32e964b",
+    "size": 79977,
+    "members": {
+      "docs/assets/interactive/evidence/security-branches/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/security-branches/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/security-branches/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/security-branches/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/security-branches/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/security-branches/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-branches/008-fixture-image.log": {
+        "sha256": "3cf91b6f0d63286b5e1289a918092493a11b5fbc956bcf67d124ffef76b69698",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/security-branches/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/security-branches/010-fixture-backend.log": {
+        "sha256": "853aee1bc4441ac893a2916dcdcdca8ae150e549c8cf48fef0517b1362c56030",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/security-branches/011-fixture-public-demo.log": {
+        "sha256": "a93c8afd9dacc6d9b50077dc9d606aca81e70beb14ac4842c3c6757cd113c0d2",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/security-branches/012-fixture-https.log": {
+        "sha256": "1e13d22118004f7a0d75724b2248f38b0b7315dd109a2af4173ef371fe1f1f3b",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/security-branches/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/security-branches/014-command-alias.log": {
+        "sha256": "5ace1eb01f71f808f28411c693133528656802b4f1779db31f3567619574b49b",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-branches/015-command-alias.log": {
+        "sha256": "5ace1eb01f71f808f28411c693133528656802b4f1779db31f3567619574b49b",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-branches/016-restore-http3-off.log": {
+        "sha256": "2991912df7ef2ae035d593d81063390a93fcfd05e1d0cab2a23f07f06c091498",
+        "size": 1469
+      },
+      "docs/assets/interactive/evidence/security-branches/017-observe-acl-client.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/security-branches/018-remove-acl-observation.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/security-branches/019-command-alias.log": {
+        "sha256": "824c74ebe93c9eeb8dd05584eba94213c47cb7e54d3996fabae8b7d0ea374700",
+        "size": 8
+      },
+      "docs/assets/interactive/evidence/security-branches/020-command-alias.log": {
+        "sha256": "b595b1c3f313fb9bf2f8aa6294bc65f0cea0ee115e7d340a47d8a921ebe3ae89",
+        "size": 11
+      },
+      "docs/assets/interactive/evidence/security-branches/021-command-alias.log": {
+        "sha256": "3fcc984da898f7bfcbc7af4e22373f97402205fafe171dbbf58f2d35f143c336",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/security-branches/022-matching-ip-rule.log": {
+        "sha256": "e2b561094d6f2f1f385223a4479e53a776a3aefdb054f3657f5ed5776dae9712",
+        "size": 1457
+      },
+      "docs/assets/interactive/evidence/security-branches/023-remove-matching-ip-rule.log": {
+        "sha256": "0ec8e7b0046ed029a661c2b410b89143b13723c948d8a161d9f61ac1becce278",
+        "size": 1425
+      },
+      "docs/assets/interactive/evidence/security-branches/024-clear-condition-branches.log": {
+        "sha256": "01e6f2503a4e0007f5b52ea10a8250c1471d54c758d57475933075bdc8427039",
+        "size": 1438
+      },
+      "docs/assets/interactive/evidence/security-branches/025-condition-replacement-fixture.log": {
+        "sha256": "2c178438ed73b43fe18125b47b57ef0949bb4d0aea556c693aedc253e9e3cd4e",
+        "size": 1457
+      },
+      "docs/assets/interactive/evidence/security-branches/026-command-alias.log": {
+        "sha256": "159c9984c555525db20ea996fd40c3cb53babf49aa256e0c99e63db2942ba8a0",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/security-branches/027-command-alias.log": {
+        "sha256": "b7bdf9b635e1e8820a69994e101684ff4fd3cf57495602adb0d5b36590a13f2a",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/security-branches/028-remove-replacement-rule.log": {
+        "sha256": "c91771577d1c1899f1d21dd4663e56cdc9bcd3e57420fd460bf282ecd89e99e7",
+        "size": 1438
+      },
+      "docs/assets/interactive/evidence/security-branches/029-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-branch-observed-client.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-branch-observed-client.headers": {
+        "sha256": "14bdb715f2eed719c98e39b3e2bda09ead33e6f7ddec825e3f49c6e48a30cb51",
+        "size": 269
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-branch-observed-client.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-branch-observed-client.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-client-blocked.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-client-blocked.headers": {
+        "sha256": "dca0b1b2a4406d9d05cdfede3b75e0cbd4c34a317056371b8f2e645770e42bb4",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-client-blocked.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-client-blocked.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-client-restored.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-client-restored.headers": {
+        "sha256": "b0ebe04046fb43e14d2449e0c20c53dc736c16c108bbc65ab50a3945295d680f",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-client-restored.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/acl-client-restored.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/commands.jsonl": {
+        "sha256": "855fed228f808a39c625eca2ab3c1435dbba5e445e3279e866b1369a336afa4e",
+        "size": 18216
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-argument-matches.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-argument-matches.headers": {
+        "sha256": "6893e48158d609aa2fb753a2f47eb3caa61232eb9a216c42f633f9092e4aac1b",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-argument-matches.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-argument-matches.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-branches-nonmatch.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-branches-nonmatch.headers": {
+        "sha256": "7eb939629c1b2c6a9fc175089e29e9ee7c470c5db7ca963e195d3d356fd561e0",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-branches-nonmatch.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-branches-nonmatch.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-cookie-exists.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-cookie-exists.headers": {
+        "sha256": "6893e48158d609aa2fb753a2f47eb3caa61232eb9a216c42f633f9092e4aac1b",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-cookie-exists.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-cookie-exists.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-path-regex-matches.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-path-regex-matches.headers": {
+        "sha256": "6893e48158d609aa2fb753a2f47eb3caa61232eb9a216c42f633f9092e4aac1b",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-path-regex-matches.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-path-regex-matches.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-peer-ip-matches.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-peer-ip-matches.headers": {
+        "sha256": "7d986728a6e635cdd7c5f17f4352fd8f4a1b43664e924141670217b0d416c5a9",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-peer-ip-matches.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-peer-ip-matches.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-peer-ip-restored.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-peer-ip-restored.headers": {
+        "sha256": "088d096f4f603774a0dd8cf24deaac1a776f5699d467e66c18137bc409f0b634",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-peer-ip-restored.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-peer-ip-restored.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-variable-matches.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-variable-matches.headers": {
+        "sha256": "6893e48158d609aa2fb753a2f47eb3caa61232eb9a216c42f633f9092e4aac1b",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-variable-matches.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/condition-variable-matches.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/http3-custom-advertised.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-branches/http3-custom-advertised.headers": {
+        "sha256": "c7f47b9233f99da3fa59ebec5290a782e9a2f6fddcfab4d70c625dc58fcad821",
+        "size": 237
+      },
+      "docs/assets/interactive/evidence/security-branches/http3-custom-advertised.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/http3-custom-advertised.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/http3-no-advertisement.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-branches/http3-no-advertisement.headers": {
+        "sha256": "d076bef1a6100a1248937665f67f032fc4728fd74b14bd3ce90ff8e111c5ac28",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/security-branches/http3-no-advertisement.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/http3-no-advertisement.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-method-blocked.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-method-blocked.headers": {
+        "sha256": "9fbbecfb8828a0c4e0227d840e5655b23e5ef90e2724d23d55e9312169183aaf",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-method-blocked.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-method-blocked.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-new-match-blocked.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-new-match-blocked.headers": {
+        "sha256": "9fbbecfb8828a0c4e0227d840e5655b23e5ef90e2724d23d55e9312169183aaf",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-new-match-blocked.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-new-match-blocked.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-old-match-cleared.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-old-match-cleared.headers": {
+        "sha256": "1154e270a4c7daacd6c194b027b103b4c4de3e063d91916108232023eed893b0",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-old-match-cleared.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/replacement-old-match-cleared.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-acl-client-block-verified.events.jsonl": {
+        "sha256": "190c5a44b853214dd73ba8bd2d49835a1b3e4b090515460398315023b0e9284a",
+        "size": 1069
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-acl-client-block-verified.pty.log": {
+        "sha256": "13d450c40579d311c4b6dbf659119d9862a5ac424a62ad71daa21cb6231fdc2e",
+        "size": 252
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client-remove.events.jsonl": {
+        "sha256": "e087872d20ccfad12bbaf8de8844d257f540bbee8e780d1e502a00677e5b32bf",
+        "size": 15676
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client-remove.pty.log": {
+        "sha256": "87da049044cd9694eaf044a1f3088f2947268897fc0b68675289b56b33b3d56f",
+        "size": 101749
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client.events.jsonl": {
+        "sha256": "14351c451af7d31d72ebe981f0d16fc6b9d8d434c818c1d7d55978f3122d16ef",
+        "size": 16701
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-acl-deny-client.pty.log": {
+        "sha256": "2da3341a1dd61b38ee8330aa095e70668a3646dabf94eb009de836936ee59312",
+        "size": 81571
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-http3-custom-advertisement.events.jsonl": {
+        "sha256": "37f37829f5aa78356c68b67afc1a25d17b0b59294d76e631d06377760b37ada9",
+        "size": 19608
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-http3-custom-advertisement.pty.log": {
+        "sha256": "621b98e3f73e62a5d156307c8269201ef3700fb96156494113f6caa763c4f330",
+        "size": 95028
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-http3-suppress-advertisement.events.jsonl": {
+        "sha256": "2a78a68303a825f599a3e1b26d4e3b0d41457fdc2aaceb5d0994449c73c6d72c",
+        "size": 17847
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-http3-suppress-advertisement.pty.log": {
+        "sha256": "aa57ad01e9f7b8bb042e6f68e666c2f0dc481a45fcb8dbd98b8f976fb7e5232b",
+        "size": 94098
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-restored.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-restored.headers": {
+        "sha256": "50e0ba411cc04d265641e7e0736fd58782169581f3952e9839f2f30499c6eeb8",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-restored.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-restored.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-security-branches-config.events.jsonl": {
+        "sha256": "a5a98020d5bf89d0a3d450d07a814da631882a2827517c81da5dbe5ed5a27e8c",
+        "size": 9936
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-security-branches-config.pty.log": {
+        "sha256": "78481c10f336faf938ac9357b126f39e123c041a717dbd9f1987cda7a93a7794",
+        "size": 16141
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.events.jsonl": {
+        "sha256": "0f06d8b9318d3f0511cfa21bfa871ff93e511ea81f6f160d9a4167b6a40352dc",
+        "size": 54982
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-security-condition-branches.pty.log": {
+        "sha256": "104dea255751dc07587c5fc94a8446fc41bc31749e8c84f64b7252f144240c4e",
+        "size": 133847
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.events.jsonl": {
+        "sha256": "a7351ef78eaa0ca6fb4ff74b6ae5ff3298c3f034f7e4af6683e1cb1b8422a946",
+        "size": 34180
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-security-replace-conditions.pty.log": {
+        "sha256": "98a479043d8df60968b5fbe7997c85c2bdb1d3f50e7dafd965414421cd2b5336",
+        "size": 89150
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-security-replacement-list.events.jsonl": {
+        "sha256": "0489c72920d2f5fd7cd913ec0ecb403b245127f94dd4a9cb7081a4b9c31acc13",
+        "size": 16087
+      },
+      "docs/assets/interactive/evidence/security-branches/security-branches-security-replacement-list.pty.log": {
+        "sha256": "93167272610412ad3caed720a6fb3dcfdbe69566f2da94e2caf90b4c7abce1c7",
+        "size": 86296
+      }
+    }
+  }
+}

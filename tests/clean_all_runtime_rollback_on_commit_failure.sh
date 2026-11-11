@@ -39,6 +39,7 @@ eval "$ORIG_BACKUP_FILES_ONLY_DEF"
 BASE_DIR="$TMP_ROOT"
 STATE_DIR="$BASE_DIR/state"
 CONFIG_DIR="$STATE_DIR/config"
+GLOBAL_SETTINGS_FILE="$CONFIG_DIR/global_settings.csv"
 LOG_DIR="$STATE_DIR/logs"
 ERROR_LOG_DIR="$LOG_DIR/errors"
 TMP_DIR="$STATE_DIR/tmp"
@@ -49,6 +50,7 @@ NGINX_HTTP_CONF_DIR="$NGINX_CONFIG_DIR/conf.d"
 NGINX_STREAM_CONF_DIR="$NGINX_CONFIG_DIR/stream_conf"
 PATH_HEADER_DIR="$NGINX_HTTP_CONF_DIR/path_headers"
 BACKEND_PORTS_FILE="$CONFIG_DIR/backend_ports.csv"
+BACKEND_IDENTITY_FILE="$CONFIG_DIR/backend_identity.csv"
 BACKEND_DOCKER_OPTS_FILE="$CONFIG_DIR/backend_docker_opts.csv"
 BACKEND_HEADERS_FILE="$CONFIG_DIR/backend_headers.csv"
 BACKEND_HTTP_FILE="$CONFIG_DIR/backend_http_versions.csv"
@@ -68,11 +70,14 @@ CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha256"
 
 INTERACTIVE=false
 ENABLE_AUTO_BACKUPS=false
-SKIP_DOCKER_CHECKS=true
+SKIP_DOCKER_CHECKS=false
 
 mkdir -p \
   "$CONFIG_DIR" "$LOG_DIR" "$ERROR_LOG_DIR" "$TMP_DIR" "$BACKUP_DIR" \
   "$CERTS_DIR/custom/live/example.com" "$NGINX_HTTP_CONF_DIR" "$NGINX_STREAM_CONF_DIR" "$PATH_HEADER_DIR"
+
+# Recovery reloads persisted settings before restoring runtime containers.
+_save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
 
 cat >"$BACKEND_PORTS_FILE" <<'EOF_PORTS'
 record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location
@@ -81,8 +86,8 @@ port,example.com,,,,,18180,8000,http,none,yes,off,,off,auto,,,,,,
 EOF_PORTS
 
 cat >"$BACKEND_DOCKER_OPTS_FILE" <<'EOF_DOCKER_OPTS'
-key,docker_options
-backend:example.com,--cpus 1
+domain,docker_options
+example.com,--cpus 1
 EOF_DOCKER_OPTS
 
 touch "$CERTS_DIR/custom/live/example.com/fullchain.pem"
@@ -188,12 +193,50 @@ function remove_container_and_anonymous_volumes() {
   return 1
 }
 
+# This transaction unit fixture binds one modeled backend to an immutable ID
+# and token. The production sidecar loader remains active; Docker lifecycle
+# stubs below resolve that ID to its current modeled name after each rename.
+test_backend_id="$(printf '%064d' 1)"
+test_backend_token="$(printf '%032d' 2)"
+printf 'domain,container_id,ownership_token\nexample.com,%s,%s\n' "$test_backend_id" "$test_backend_token" >"$BACKEND_IDENTITY_FILE"
+cp "$BACKEND_IDENTITY_FILE" "$BACKEND_IDENTITY_FILE.orig"
+
+function _fixture_backend_current_name() {
+  if [ "$(read_container_meta "$active_meta_file" exists || true)" = true ]; then
+    printf '%s\n' "$test_backend_name"
+  elif [ "$(read_container_meta "$backup_meta_file" exists || true)" = true ]; then
+    read_container_meta "$backup_meta_file" name
+  else
+    return 1
+  fi
+}
+
+function _backend_identity_inspect() {
+  [ "${1:-}" = example.com ] && [ "${2:-}" = "$test_backend_id" ] && [ "${3:-}" = "$test_backend_token" ] || return 1
+  local fixture_meta="$active_meta_file"
+  if [ "$(read_container_meta "$fixture_meta" exists || true)" != true ]; then
+    fixture_meta="$backup_meta_file"
+  fi
+  [ "$(read_container_meta "$fixture_meta" exists || true)" = true ] || return 2
+  _backend_identity_parse_snapshot "$1" "$2" "$3" "$(printf 'verified\n%s\n%s\nnginx:alpine\nsha256:fixture\ndockistrate-net|10.0.0.5\n' "$test_backend_id" "$(read_container_meta "$fixture_meta" status)")"
+}
+
 function docker() {
   if [ "$#" -gt 1 ]; then
     printf 'subcommand=%s %s\n' "$1" "${*:2}" >>"$docker_log_file"
   else
     printf 'subcommand=%s\n' "$1" >>"$docker_log_file"
   fi
+  # Log the actual immutable target, then apply it to this fixture model.
+  case "${1:-}" in
+  rename | stop | start)
+    if [ "${2:-}" = "$test_backend_id" ]; then
+      local fixture_target=""
+      fixture_target="$(_fixture_backend_current_name)" || return 1
+      set -- "$1" "$fixture_target" "${@:3}"
+    fi
+    ;;
+  esac
   case "${1:-}" in
   rename)
     local src="${2:-}" dest="${3:-}"
@@ -263,6 +306,11 @@ if ! grep -Fq "failed. Rolled back." <<<"$output"; then
   exit 1
 fi
 
+if ! cmp -s "$BACKEND_IDENTITY_FILE" "$BACKEND_IDENTITY_FILE.orig"; then
+  echo "[Error] Backend identity state was not restored after runtime rollback." >&2
+  exit 1
+fi
+
 if ! cmp -s "$BACKEND_PORTS_FILE" "$BACKEND_PORTS_FILE.orig"; then
   echo "[Error] BACKEND_PORTS_FILE was not restored after clean_all rollback." >&2
   exit 1
@@ -288,28 +336,28 @@ if [ "$(read_container_meta "$backup_meta_file" exists || true)" = "true" ]; the
   exit 1
 fi
 
-rollback_name="$(sed -n "s/^subcommand=rename ${test_backend_name} \\(${test_backend_name}-rollback-[0-9-][0-9-]*\\)$/\\1/p" "$docker_log_file" | head -n 1)"
+rollback_name="$(sed -n "s/^subcommand=rename ${test_backend_id} \\(${test_backend_name}-rollback-[0-9-][0-9-]*\\)$/\\1/p" "$docker_log_file" | head -n 1)"
 if [ -z "$rollback_name" ]; then
   echo "[Error] Failed to discover the staged cleanup rollback container name for clean_all." >&2
   exit 1
 fi
 
-if ! grep -Fq "subcommand=stop $rollback_name" "$docker_log_file"; then
+if ! grep -Fq "subcommand=stop $test_backend_id" "$docker_log_file"; then
   echo "[Error] clean_all did not stop the staged rollback container before commit." >&2
   exit 1
 fi
 
-if ! grep -Fq "subcommand=rename $rollback_name $test_backend_name" "$docker_log_file"; then
+if ! grep -Fq "subcommand=rename $test_backend_id $test_backend_name" "$docker_log_file"; then
   echo "[Error] clean_all rollback did not restore the original backend container name." >&2
   exit 1
 fi
 
-if ! grep -Fq "subcommand=start $test_backend_name" "$docker_log_file"; then
+if ! grep -Fq "subcommand=start $test_backend_id" "$docker_log_file"; then
   echo "[Error] clean_all rollback did not restart the restored backend container." >&2
   exit 1
 fi
 
-if grep -Fq "subcommand=rm -f -v $rollback_name" "$docker_log_file"; then
+if grep -Fq "subcommand=rm -f -v " "$docker_log_file"; then
   echo "[Error] clean_all should not permanently remove the staged rollback container before commit succeeds." >&2
   exit 1
 fi

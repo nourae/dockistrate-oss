@@ -144,7 +144,8 @@ function _validate_port_row_for_render() {
       ;;
     esac
     if [ "$redirect" = "on" ]; then
-      if ! is_valid_redirect_code_spec "$redirect_code"; then
+      # Blank selects the renderer's 301 default; explicit codes remain strict.
+      if [ -n "$redirect_code" ] && ! is_valid_redirect_code_spec "$redirect_code"; then
         _render_state_validation_error "$line_no" "redirect code '${redirect_code}' is invalid for HTTP mapping '${domain}:${listen_port}'"
         return 1
       fi
@@ -222,7 +223,8 @@ function _validate_path_row_for_render() {
   esac
 
   if [ "$redirect" = "on" ]; then
-    if ! is_valid_redirect_code_spec "$redirect_code"; then
+    # Resolve blank codes during rendering so paths keep following their listener.
+    if [ -n "$redirect_code" ] && ! is_valid_redirect_code_spec "$redirect_code"; then
       _render_state_validation_error "$line_no" "path redirect code '${redirect_code}' is invalid"
       return 1
     fi
@@ -388,6 +390,22 @@ function update_nginx_config() {
   if [ "${SKIP_UPDATE_NGINX_CONFIG:-}" = "true" ]; then
     return 0
   fi
+  if [ "${DOMAIN_CONFIG_DEFER_RENDER:-false}" = true ]; then
+    DOMAIN_CONFIG_RENDER_REQUESTED=true
+    if [ "${DOCKISTRATE_FORCE_NGINX_RECREATE:-false}" = true ] ||
+      [ "${DOCKISTRATE_SECURITY_NGINX_READY_CHECK:-false}" = true ]; then
+      DOCKISTRATE_DEFERRED_SECURITY_NGINX_RECREATE=true
+    fi
+    return 0
+  fi
+  _with_validated_render_settings _update_nginx_config_from_validated_settings
+}
+
+function _update_nginx_config_from_validated_settings() {
+  if ! _persisted_settings_cache_in_scope || [ "${_persisted_cache_ready:-false}" != true ]; then
+    echo "[Error] Config generation requires validated persisted settings." >&2
+    return 1
+  fi
   local deferred_security_recreate="${DOCKISTRATE_DEFERRED_SECURITY_NGINX_RECREATE:-false}"
   local security_ready_check="${DOCKISTRATE_SECURITY_NGINX_READY_CHECK:-false}"
   unset DOCKISTRATE_DEFERRED_SECURITY_NGINX_RECREATE
@@ -449,14 +467,22 @@ function update_nginx_config() {
   fi
   # Ensure stored networks and IPs match running containers before generating configs
   if [ "${SKIP_DOCKER_CHECKS:-}" != "true" ]; then
-    refresh_backend_networks
-    refresh_backend_ips
+    # Network refresh also refreshes IPs from that same verified snapshot.
+    if ! refresh_backend_networks; then
+      _rollback_handler
+      return 1
+    fi
   fi
   if ! _validate_backend_ports_state_for_render; then
     _rollback_handler
   fi
   if declare -F validate_backend_aliases_state_for_render >/dev/null 2>&1; then
     if ! validate_backend_aliases_state_for_render; then
+      _rollback_handler
+    fi
+  fi
+  if declare -F validate_backend_mtls_state_for_render >/dev/null 2>&1; then
+    if ! validate_backend_mtls_state_for_render; then
       _rollback_handler
     fi
   fi
@@ -498,6 +524,14 @@ function update_nginx_config() {
   echo "# Auto-generated config" >"${config_file}"
   echo "include ${NGINX_CONTAINER_HTTP_CONF_DIR}/backend_header_maps.conf;" >>"${config_file}"
   echo "# Auto-generated stream config" >"$stream_file"
+  if declare -F _domain_config_render_begin >/dev/null 2>&1; then
+    _domain_config_render_begin || return 1
+  fi
+  if declare -F domain_config_active >/dev/null 2>&1 &&
+    { domain_config_active || [ "${DOMAIN_CONFIG_ACTIVE:-false}" = true ]; }; then
+    printf '%s\n' 'upstream dockistrate_unavailable { server 127.0.0.1:1 down; }' >>"$config_file" || return 1
+    printf '%s\n' 'upstream dockistrate_unavailable { server 127.0.0.1:1 down; }' >>"$stream_file" || return 1
+  fi
 
   # Check if any port mappings exist before generating configs
   local has_port_mappings=false
@@ -541,15 +575,22 @@ function update_nginx_config() {
       port_http3="${STATE_BP_HTTP3:-off}"
       port_alt_svc="${STATE_BP_ALT_SVC:-auto}"
       [ -n "$domain" ] || continue
-      local domain_http_ver
-      domain_http_ver="$(get_backend_http_version "$domain")"
-      local server_names
-      server_names="$domain"
-      local alias_names
-      alias_names="$(list_domain_aliases "$domain" | xargs)"
-      [ -n "$alias_names" ] && server_names+=" $alias_names"
-      local header_identity_lines
-      header_identity_lines="$(_backend_header_identity_directives "$domain" "$alias_names")"
+      local alias_names plain_aliases="" explicit_acl_aliases="" alias_name alias_acl_status
+      alias_names="$(list_domain_aliases "$domain")" || { _rollback_handler; return 1; }
+      for alias_name in $alias_names; do
+        if _alias_has_explicit_acl "$alias_name"; then
+          explicit_acl_aliases="${explicit_acl_aliases}${explicit_acl_aliases:+ }${alias_name}"
+        else
+          alias_acl_status=$?
+          if [ "$alias_acl_status" -ne 1 ]; then
+            _rollback_handler
+            return 1
+          fi
+          plain_aliases="${plain_aliases}${plain_aliases:+ }${alias_name}"
+        fi
+      done
+      local server_names="$domain"
+      [ -n "$plain_aliases" ] && server_names+=" $plain_aliases"
 
       local base_upstream
       base_upstream="$(_render_backend_upstream_for_domain "$domain" || true)"
@@ -557,123 +598,22 @@ function update_nginx_config() {
       local container_ip
       container_ip="${base_upstream%%:*}"
       local final_upstream="${container_ip}:${upstream_port}"
+      if declare -F domain_config_backend_stopped >/dev/null 2>&1 && domain_config_backend_stopped "$domain"; then
+        final_upstream=dockistrate_unavailable
+      fi
 
-      cat >>"$config_file" <<EOF
-
-# Additional mapping for $domain:$custom_port => $final_upstream
-EOF
-
-      cip="$(get_backend_client_ip_header "$domain")"
-      pip="$(get_backend_proxy_ip_header "$domain")"
-      if ! realip_lines="$(_real_ip_directives "$cip")"; then
+      if ! _emit_backend_server_block "$config_file" "$domain" "$server_names" "$plain_aliases" "$domain" \
+        "$custom_port" "$final_upstream" "$proto" "$cert_path" "$ws" "$redirect" "$code" "$port_http3" "$port_alt_svc"; then
         _rollback_handler
+        return 1
       fi
-      local proxy_http_version
-      proxy_http_version="$(get_proxy_http_version "$domain")"
-      if [ "$proto" == "https" ]; then
-        local container_cert_path
-        if ! cert_ref_to_container_dir container_cert_path "$cert_path"; then
-          echo "[Error] Failed to resolve certificate directory for domain '${domain}' on port '${custom_port}'." >&2
+      for alias_name in $explicit_acl_aliases; do
+        if ! _emit_backend_server_block "$config_file" "$domain" "$alias_name" "$alias_name" "$alias_name" \
+          "$custom_port" "$final_upstream" "$proto" "$cert_path" "$ws" "$redirect" "$code" "$port_http3" "$port_alt_svc"; then
           _rollback_handler
+          return 1
         fi
-        if [ -z "$container_cert_path" ]; then
-          echo "[Error] Empty certificate directory for domain '${domain}' on port '${custom_port}'." >&2
-          _rollback_handler
-        fi
-        local listen_port="${custom_port}"
-        local tls_protos tls_ciphers
-        tls_protos="$(get_port_tls_protocols "$listen_port")"
-        tls_ciphers="$(get_port_tls_ciphers "$listen_port")"
-        local mtls_directives
-        if ! mtls_directives="$(_backend_mtls_directives "$domain")"; then
-          echo "[Error] Failed to render mTLS directives for domain '${domain}' on port '${custom_port}'." >&2
-          _rollback_handler
-        fi
-        cat >>"$config_file" <<EOF
-server {
-    listen ${custom_port} ssl;
-    server_name ${server_names};
-${header_identity_lines}
-${realip_lines}
-    include ${NGINX_CONTAINER_HTTP_CONF_DIR}/security_ip/$(sanitize_domain_name "$domain").inc;
-    # security_ip include covers both L7 and L3 policies
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-        try_files \$uri =444;
-    }
-$([ "$domain_http_ver" = "http2" ] && echo "    http2 on;")
-$([ "$port_http3" = "on" ] && echo "    listen ${custom_port} quic;")
-$([ "$port_http3" = "on" ] && echo "    http3 on;")
-$([ "$port_http3" = "on" ] && _http3_alt_svc_header_line "$custom_port" "$port_alt_svc")
-
-    ssl_certificate ${container_cert_path}/fullchain.pem;
-    ssl_certificate_key ${container_cert_path}/privkey.pem;
-    ssl_protocols $tls_protos;
-    ssl_ciphers   $tls_ciphers;
-${mtls_directives}
-EOF
-        if declare -F nginx_directives_render_server_directives >/dev/null 2>&1; then
-          if ! nginx_directives_render_server_directives "$config_file" "$domain" "$custom_port" ""; then
-            _rollback_handler
-          fi
-        fi
-        pip_line=""
-        if [ -n "$pip" ]; then
-          if [ -n "$realip_lines" ]; then
-            pip_line="        proxy_set_header ${pip} \$realip_remote_addr;"
-          else
-            pip_line="        proxy_set_header ${pip} \$remote_addr;"
-          fi
-        fi
-        cip_line=""
-        if [ -n "$cip" ]; then
-          cip_val=$(_client_ip_value_var "$cip")
-          cip_line="        proxy_set_header ${cip} ${cip_val};"
-        fi
-        if ! _emit_path_locations "$config_file" "$domain" "$custom_port" "$final_upstream" "$ws" "off" "" "$pip_line" "$cip_line" "$proxy_http_version"; then
-          _rollback_handler
-        fi
-        echo "}" >>"$config_file"
-      else
-        cat >>"$config_file" <<EOF
-server {
-    listen ${custom_port};
-    server_name ${server_names};
-${header_identity_lines}
-${realip_lines}
-    include ${NGINX_CONTAINER_HTTP_CONF_DIR}/security_ip/$(sanitize_domain_name "$domain").inc;
-    # security_ip include covers both L7 and L3 policies
-    location /.well-known/acme-challenge/ {
-        root /var/www/certbot;
-        try_files \$uri =444;
-    }
-EOF
-        if declare -F nginx_directives_render_server_directives >/dev/null 2>&1; then
-          if ! nginx_directives_render_server_directives "$config_file" "$domain" "$custom_port" ""; then
-            _rollback_handler
-          fi
-        fi
-        pip_line=""
-        if [ -n "$pip" ]; then
-          if [ -n "$realip_lines" ]; then
-            pip_line="        proxy_set_header ${pip} \$realip_remote_addr;"
-          else
-            pip_line="        proxy_set_header ${pip} \$remote_addr;"
-          fi
-        fi
-        cip_line=""
-        if [ -n "$cip" ]; then
-          cip_val=$(_client_ip_value_var "$cip")
-          cip_line="        proxy_set_header ${cip} ${cip_val};"
-        fi
-        local redirect_flag redirect_code
-        redirect_flag="${redirect:-off}"
-        redirect_code="$code"
-        if ! _emit_path_locations "$config_file" "$domain" "$custom_port" "$final_upstream" "$ws" "$redirect_flag" "$redirect_code" "$pip_line" "$cip_line" "$proxy_http_version"; then
-          _rollback_handler
-        fi
-        echo "}" >>"$config_file"
-      fi
+      done
 
       # Generate separate server blocks for dedicated hosts
       local dedicated_hosts
@@ -705,6 +645,12 @@ EOF
       base_upstream="$(_render_backend_upstream_for_domain "$domain" || true)"
       [ -z "$base_upstream" ] && continue
       container_ip="${base_upstream%%:*}"
+      local domain_stream_first_line
+      domain_stream_first_line=$(( $(wc -l <"$stream_file") + 1 ))
+      final_upstream="${container_ip}:${target_port}"
+      if declare -F domain_config_backend_stopped >/dev/null 2>&1 && domain_config_backend_stopped "$domain"; then
+        final_upstream=dockistrate_unavailable
+      fi
       cat >>"$stream_file" <<EOF
 server {
     listen ${listen_port}$([ "$proto" = "udp" ] && echo " udp");
@@ -717,9 +663,12 @@ EOF
         fi
       fi
       cat >>"$stream_file" <<EOF
-    proxy_pass ${container_ip}:${target_port};
+    proxy_pass ${final_upstream};
 }
 EOF
+      if declare -F _domain_config_capture_stream >/dev/null 2>&1; then
+        _domain_config_capture_stream "$domain" "$stream_file" "$domain_stream_first_line" || return 1
+      fi
     done <"$BACKEND_PORTS_FILE"
   fi
 
@@ -728,6 +677,20 @@ EOF
 
   local nginx_runtime_rollback_started=false
   if [ "${SKIP_DOCKER_CHECKS:-}" != "true" ]; then
+    local nginx_certificate_projection=""
+    if ! declare -F _nginx_prepare_certificate_projection >/dev/null 2>&1; then
+      # shellcheck source=lib/nginx/certificate_projection.sh
+      source "${BASH_SOURCE[0]%/*}/certificate_projection.sh" || return 1
+    fi
+    if ! _nginx_prepare_certificate_projection nginx_certificate_projection; then
+      _rollback_handler
+      return 1
+    fi
+    if declare -F domain_config_validate_nginx_candidate >/dev/null 2>&1 &&
+      ! domain_config_validate_nginx_candidate "$nginx_certificate_projection"; then
+      _rollback_handler
+      return 1
+    fi
     local new_bindings current_bindings recreated=false
     local force_recreate="${DOCKISTRATE_FORCE_NGINX_RECREATE:-false}"
     if [ "$deferred_security_recreate" = "true" ]; then
@@ -736,30 +699,44 @@ EOF
     fi
     new_bindings="$(get_all_mapped_port_bindings | tr ' ' '\n' | sort -u | xargs)"
     if nginx_container_is_managed; then
+      if ! _nginx_container_has_certificate_projection "$nginx_certificate_projection" 2>/dev/null; then
+        force_recreate=true
+        security_ready_check=true
+      fi
       current_bindings="$(container_published_port_bindings "$NGINX_CONTAINER_NAME" | xargs)"
       if [ "$force_recreate" = "true" ] || [ "$current_bindings" != "$new_bindings" ] || ! container_running "$NGINX_CONTAINER_NAME"; then
         _nginx_prepare_runtime_rollback "$NGINX_IMAGE"
         nginx_runtime_rollback_started=true
-        if ! recreate_nginx_container "$NGINX_IMAGE"; then
+        if ! recreate_nginx_container "$NGINX_IMAGE" "$new_bindings" "$nginx_certificate_projection"; then
           _rollback_handler
         fi
         recreated=true
       fi
     else
+      security_ready_check=true
       _nginx_prepare_runtime_rollback "$NGINX_IMAGE"
       nginx_runtime_rollback_started=true
-      if ! recreate_nginx_container "$NGINX_IMAGE"; then
+      if ! recreate_nginx_container "$NGINX_IMAGE" "$new_bindings" "$nginx_certificate_projection"; then
         _rollback_handler
       fi
       recreated=true
     fi
 
+    if [ "$recreated" != true ]; then
+      _nginx_prepare_runtime_rollback "$NGINX_IMAGE" || return 1
+      nginx_runtime_rollback_started=true
+    fi
+    # Network reconciliation can detach a live upstream before reload. Record
+    # the recovery intent before either runtime mutation can take effect.
+    _nginx_mark_runtime_rollback_needed || return 1
     if ! add_nginx_networks; then
       echo "[Error] Failed to attach Nginx to required backend networks. Rolling back." >&2
       _rollback_handler
     fi
     remove_unused_nginx_networks
     if [ "$recreated" != "true" ]; then
+      # A reload can apply new effective config before an outer commit fails,
+      # even if certificate bytes and their mounted generation are unchanged.
       if ! reload_nginx_if_running; then
         echo "[Error] Nginx reload failed after config update. Rolling back." >&2
         _rollback_handler
@@ -775,10 +752,25 @@ EOF
         _rollback_handler
       fi
     fi
+    # Retire unmounted snapshots only after the replacement is validated. This
+    # remains within the enclosing CONFIG_DIR transaction, so later failures
+    # restore the prior generations before the runtime rollback hook recreates.
+    if ! _nginx_container_has_certificate_projection "$nginx_certificate_projection"; then
+      echo "[Error] Nginx certificate mount changed before projection retirement. Rolling back." >&2
+      _rollback_handler
+      return 1
+    fi
+    if ! _nginx_prune_certificate_projections "$nginx_certificate_projection"; then
+      _rollback_handler
+      return 1
+    fi
   else
     echo "[Info] SKIP_DOCKER_CHECKS=true: generated config files only (no container changes)."
   fi
 
+  if declare -F _domain_config_render_complete >/dev/null 2>&1; then
+    _domain_config_render_complete || return 1
+  fi
   if [ "$started_txn" = true ]; then
     end_transaction_success
   fi

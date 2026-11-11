@@ -9,7 +9,7 @@ if [ -f "${MTLS_MODULE_DIR}/common.sh" ]; then
 fi
 
 for mtls_file in "${MTLS_MODULE_DIR}"/*.sh; do
-  mtls_basename="$(basename "${mtls_file}")"
+  mtls_basename="${mtls_file##*/}"
   if [ "${mtls_basename}" = "common.sh" ]; then
     continue
   fi

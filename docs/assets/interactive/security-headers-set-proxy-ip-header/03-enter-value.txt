@@ -1,0 +1,4 @@
+
+Use an HTTP header name, or off to disable this forwarded-header setting.
+Header name or off
+Example: X-Forwarded-For or off [X-Real-IP]: Proxy-IP

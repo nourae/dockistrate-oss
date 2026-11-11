@@ -19,7 +19,7 @@ test_add_backend_custom_network_attaches_nginx() {
   assertTrue "Nginx should be connected to the custom backend network" \
     "grep -Fq 'subcommand=network connect custom-net nginx-proxy' '$docker_log_file'"
   assertTrue "backend should be created on the selected custom network" \
-    "grep -Fq 'subcommand=run -d --name backend-${domain} --network custom-net nginx:alpine' '$docker_log_file'"
+    "grep -Eq '^subcommand=run -d --name backend-${domain} --network custom-net --label com.dockistrate.managed=true --label com.dockistrate.role=backend --label com.dockistrate.state-dir=.+ --label com.dockistrate.backend-domain=${domain} --label com.dockistrate.backend-launch=[0-9a-f]{32} nginx:alpine$' '$docker_log_file'"
 }
 
 test_add_backend_custom_network_rolls_back_when_nginx_attach_fails() {
@@ -40,7 +40,9 @@ test_add_backend_custom_network_rolls_back_when_nginx_attach_fails() {
   assertStringContains "failure output should report Nginx network attachment" "Failed to connect Nginx container 'nginx-proxy' to network 'custom-net'" "$output"
   assertStringContains "failure output should report rollback" "failed. Rolled back." "$output"
   assertTrue "failed add-backend should remove the newly-created backend container" \
-    "grep -Fq 'subcommand=rm -f -v backend-${domain}' '$docker_log_file'"
+    "grep -Eq '^subcommand=rm -f -v [0-9a-f]{64}$' '$docker_log_file'"
+  assertFalse "failed custom-network attach should leave no attempted backend container" \
+    "[ -f '${STATE_DIR}/tmp/.docker_mock/backend-${domain}.meta' ]"
   if [ -f "${CONFIG_DIR}/backend_ports.csv" ] && grep -Fq "backend,${domain}," "${CONFIG_DIR}/backend_ports.csv"; then
     fail "Backend row for ${domain} should not survive failed custom network attach"
   fi
@@ -53,6 +55,10 @@ test_replace_backend_network_attaches_nginx_to_new_network() {
   SKIP_DOCKER_CHECKS=false run_dockistrate add-backend "$domain" nginx:alpine 18182 http >/dev/null
   assertEquals "seed add-backend should succeed" 0 $?
 
+  local original_id
+  original_id="$(PATH="${MOCK_BIN_DIR}:$PATH" docker inspect -f '{{.Id}}' "backend-${domain}")"
+  assertEquals "managed backend has a full immutable ID" 64 "${#original_id}"
+  assertTrue "managed backend ID is lowercase hexadecimal" "printf '%s\n' '$original_id' | grep -Eq '^[0-9a-f]{64}$'"
   rm -f "$docker_log_file"
   local output status
   output="$(
@@ -66,9 +72,9 @@ test_replace_backend_network_attaches_nginx_to_new_network() {
   assertStringContains "replace-backend-network output" "Backend '${domain}' updated." "$output"
   assertFileContains "backend,${domain},172.30.0.2:18182,custom-net" "${CONFIG_DIR}/backend_ports.csv"
   assertTrue "backend should connect to the new custom network" \
-    "grep -Fq 'subcommand=network connect custom-net backend-${domain}' '$docker_log_file'"
+    "grep -Fq 'subcommand=network connect custom-net ${original_id}' '$docker_log_file'"
   assertTrue "backend should disconnect from the old default network" \
-    "grep -Fq 'subcommand=network disconnect dockistrate-net backend-${domain}' '$docker_log_file'"
+    "grep -Fq 'subcommand=network disconnect dockistrate-net ${original_id}' '$docker_log_file'"
   assertTrue "Nginx should connect to the replacement backend network" \
     "grep -Fq 'subcommand=network connect custom-net nginx-proxy' '$docker_log_file'"
 }

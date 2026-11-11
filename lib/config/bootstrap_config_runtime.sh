@@ -1,5 +1,10 @@
 # shellcheck shell=bash
 
+if ! declare -F __dockistrate_permissions_common_loaded >/dev/null 2>&1; then
+  # shellcheck source=../permissions/common.sh
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")/../permissions" && pwd)/common.sh"
+fi
+
 function _config_migrate_loaded_settings() {
   local updated=false
   local saw_nginx_image="${1:-false}"
@@ -57,6 +62,42 @@ function _config_migrate_loaded_settings() {
 }
 
 function _bootstrap_config_runtime_locked() {
+  if declare -F domain_config_recover_before_mutation >/dev/null 2>&1; then
+    domain_config_recover_before_mutation "${CMD:-}" || return 1
+  fi
+  state_schema_require_runtime_layout || return 1
+  # Shared settings are authoritative; reject them before rebuilding any domain
+  # cache. The full override validation follows refresh so stale caches remain
+  # repairable. Keep this check read-only and preserve empty-file initialization.
+  (
+    config_reset_defaults
+    if { [ -e "$GLOBAL_SETTINGS_FILE" ] || [ -L "$GLOBAL_SETTINGS_FILE" ]; } &&
+      ! { [ -f "$GLOBAL_SETTINGS_FILE" ] && [ ! -L "$GLOBAL_SETTINGS_FILE" ] && [ ! -s "$GLOBAL_SETTINGS_FILE" ]; }; then
+      load_config || return 1
+    fi
+    validate_loaded_settings || return 1
+    if declare -F validate_access_log_fields_state_for_render >/dev/null 2>&1; then
+      validate_access_log_fields_state_for_render || return 1
+    fi
+  ) || return 1
+  if declare -F _domain_config_refresh_cache >/dev/null 2>&1; then
+    _domain_config_refresh_cache || return 1
+  fi
+  # Check existing persisted settings before schema repairs or permission writes.
+  if [ -f "$GLOBAL_SETTINGS_FILE" ] && [ ! -L "$GLOBAL_SETTINGS_FILE" ] && [ ! -s "$GLOBAL_SETTINGS_FILE" ]; then
+    # Startup has always initialized empty regular global settings files. Check
+    # the defaults that will be seeded, plus all existing overrides, without
+    # publishing defaults or relaxing the strict load/restore validation path.
+    (
+      config_reset_defaults
+      validate_settings_for_render
+    ) || return 1
+  else
+    validate_persisted_config_dir "$CONFIG_DIR" || return 1
+  fi
+  # Validate first, then protect existing settings before schema/migration
+  # writes. Retain intentional group read access and any tighter owner policy.
+  _ensure_global_settings_file_permissions_if_exists "$GLOBAL_SETTINGS_FILE" || return 1
   # Runtime prep can run on read-only commands like status/status-all.
   # Keep opportunistic repairs atomic, but do not emit transactional backups
   # here so backup history only reflects operator-driven config changes.

@@ -27,6 +27,8 @@ source "$ROOT_DIR/lib/cli/get_arg_spec.sh"
 source "$ROOT_DIR/lib/cli/prompt_args_handlers_postprocess.sh"
 # shellcheck source=../lib/cli/collect_update_port_interactive.sh
 source "$ROOT_DIR/lib/cli/collect_update_port_interactive.sh"
+# shellcheck source=../lib/cli/command_visibility.sh
+source "$ROOT_DIR/lib/cli/command_visibility.sh"
 # shellcheck source=../lib/cli/review_command.sh
 source "$ROOT_DIR/lib/cli/review_command.sh"
 # shellcheck source=../lib/cli/prompt_args_for_command.sh

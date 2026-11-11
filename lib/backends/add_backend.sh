@@ -1,21 +1,29 @@
 # shellcheck shell=bash
 function _add_backend_set_runtime_rollback_state() {
   ADD_BACKEND_RUNTIME_CNAME="${1:-}"
+  ADD_BACKEND_RUNTIME_TOKEN="${2:-}"
+  ADD_BACKEND_RUNTIME_DOMAIN="${3:-}"
+  if [ -n "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ]; then
+    _domain_runtime_record add "$ADD_BACKEND_RUNTIME_DOMAIN" name "$ADD_BACKEND_RUNTIME_CNAME" new_token "$ADD_BACKEND_RUNTIME_TOKEN" || return 1
+    return 0
+  fi
   rollback_pre_hook_add "_add_backend_runtime_rollback_if_needed"
+  _backend_runtime_install_signal_traps
 }
 
 function _add_backend_clear_runtime_rollback_state() {
+  if declare -F _domain_runtime_finish_operation >/dev/null 2>&1; then
+    _domain_runtime_finish_operation
+  fi
   rollback_pre_hook_remove "_add_backend_runtime_rollback_if_needed"
+  if [ -z "${DOMAIN_CONFIG_RUNTIME_JOURNAL:-}" ]; then _backend_runtime_clear_signal_traps; fi
   unset ADD_BACKEND_RUNTIME_CNAME
+  unset ADD_BACKEND_RUNTIME_TOKEN ADD_BACKEND_RUNTIME_DOMAIN
 }
 
 function _add_backend_runtime_rollback_if_needed() {
-  local cname="${ADD_BACKEND_RUNTIME_CNAME:-}"
-  [ -n "$cname" ] || return 0
-
-  if container_exists "$cname"; then
-    remove_container_and_anonymous_volumes "$cname" >/dev/null 2>&1 || true
-  fi
+  _backend_runtime_quiet_signal_traps
+  _backend_launch_cleanup "${ADD_BACKEND_RUNTIME_TOKEN:-}" "${ADD_BACKEND_RUNTIME_DOMAIN:-}"
 }
 
 function add_backend() {
@@ -90,7 +98,7 @@ function add_backend() {
       shift 2
       ;;
     *)
-      echo "[Error] Unknown option: $1" >&2
+      echo "[Error] Unknown option: $(operator_value_for_display docker_opts "$1")" >&2
       exit 1
       ;;
     esac
@@ -124,7 +132,7 @@ function add_backend() {
 
   # Validate listen port explicitly to avoid eval-related edge cases and -e quirks
   if is_valid_port "$listen_port"; then
-    :
+    listen_port="$(normalize_port "$listen_port")" || return 1
   else
     echo "[Error] Invalid listen_port: $listen_port" >&2
     exit 1
@@ -143,6 +151,13 @@ function add_backend() {
     [ "$protocol" = "udp" ] && host_transport="udp"
     if ! assert_host_port_available_or_fail "$listen_port" "$host_transport"; then
       exit 1
+    fi
+  fi
+
+  # Validate options before certificate work or any persistent/runtime mutation.
+  if [ -n "$docker_opts" ]; then
+    if ! docker_opts="$(normalize_docker_opts_for_storage "$docker_opts" "docker options for backend '$domain'" "backend")"; then
+      return 1
     fi
   fi
 
@@ -242,54 +257,77 @@ function add_backend() {
   echo "[Info] Starting backend container '${container_name}' from image '${image}'..."
   local container_ip=""
 
-  if [ -n "$docker_opts" ]; then
-    if ! docker_opts="$(normalize_docker_opts_for_storage "$docker_opts" "docker options for backend '$domain'" "backend")"; then
-      _rollback_handler
-    fi
-  fi
-
   if [ "${SKIP_DOCKER_CHECKS:-}" != "true" ]; then
-    ensure_network_exists "$network_name"
+    if declare -F _domain_runtime_ensure_network >/dev/null 2>&1; then
+      _domain_runtime_ensure_network "$domain" "$network_name" || _rollback_handler
+    else
+      ensure_network_exists "$network_name" || _rollback_handler
+    fi
     # Parse docker_opts into an array to preserve quoted values
     local docker_args=()
     if [ -n "$docker_opts" ]; then
       local docker_opts_lines=""
-      if ! docker_opts_lines="$(_parse_docker_opts_to_lines "$docker_opts" "docker options for backend '$domain'")"; then
+      if ! _parse_docker_opts_capture_lines docker_opts_lines "$docker_opts" "docker options for backend '$domain'"; then
         _rollback_handler
       fi
       if [ -n "$docker_opts_lines" ]; then
         while IFS= read -r docker_arg_line; do
           docker_args+=("$docker_arg_line")
-        done <<<"$docker_opts_lines"
+        done < <(printf '%s' "$docker_opts_lines")
       fi
     fi
+    local launch_token=""
+    if ! launch_token="$(_backend_launch_new_token)"; then
+      echo "[Error] Failed to prepare backend launch identity." >&2
+      _rollback_handler
+    fi
+    _add_backend_set_runtime_rollback_state "${container_name}" "$launch_token" "$domain" || _rollback_handler
     local xtrace_state="" suppress_docker_xtrace=false
     if [ -n "$docker_opts" ] && operator_visibility_is_redacted; then
       suppress_docker_xtrace=true
       xtrace_disable xtrace_state
     fi
     local -a docker_run_cmd=(docker run -d --name "${container_name}" --network "$network_name")
+    if [ "${DOMAIN_CONFIG_DESIRED_STATE:-running}" = stopped ]; then
+      docker_run_cmd=(docker create --name "${container_name}" --network "$network_name")
+    fi
     # Bash 3 + set -u: avoid expanding empty arrays directly.
     if [ ${#docker_args[@]} -gt 0 ]; then
       docker_run_cmd+=("${docker_args[@]}")
     fi
+    # Put the attempt identity last so operator labels cannot replace it.
+    # Keep --cidfile available for the operator's own Docker workflow.
+    _backend_launch_labels "$domain" "$launch_token" || _rollback_handler
     docker_run_cmd+=("${image}")
-    "${docker_run_cmd[@]}"
-    _add_backend_set_runtime_rollback_state "${container_name}"
+    local container_id=""
+    if container_id="$("${docker_run_cmd[@]}" || exit "$?")"; then
+      :
+    else
+      if [ "$suppress_docker_xtrace" = true ]; then
+        xtrace_restore "$xtrace_state"
+      fi
+      _rollback_handler
+    fi
     if [ "$suppress_docker_xtrace" = true ]; then
       xtrace_restore "$xtrace_state"
     fi
-    container_ip="$(get_container_network_ip "${container_name}" "$network_name")"
-    if [ -z "$container_ip" ]; then
+    if ! _backend_identity_inspect "$domain" "$container_id" "$launch_token"; then
+      _rollback_handler
+    fi
+    container_ip="$(_backend_snapshot_network_ip "$network_name")"
+    if [ -z "$container_ip" ] && [ "${DOMAIN_CONFIG_DESIRED_STATE:-running}" = stopped ]; then
+      container_ip=127.0.0.1
+    elif [ -z "$container_ip" ]; then
       echo "[Error] Failed to get IP for container '${container_name}' on network '${network_name}'." >&2
       _rollback_handler
     fi
+    _backend_identity_store "$domain" "$container_id" "$launch_token" || _rollback_handler
   else
     # Dry-run mode: do not start Docker; use loopback placeholder
     container_ip="127.0.0.1"
   fi
 
-  set_backend_docker_opts "backend:${domain}" "$docker_opts"
+  set_backend_docker_opts "backend:${domain}" "$docker_opts" || _rollback_handler
   state_csv_append_row_line "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER" "$STATE_BACKEND_PORTS_COLS" \
     "$(state_backend_ports_row_backend "${domain}" "${container_ip}:${container_port}" "${network_name}")" || _rollback_handler
 
@@ -369,7 +407,10 @@ function add_backend() {
     fi
   fi
 
-  update_nginx_config
-  end_transaction_success
+  if declare -F domain_config_record_backend >/dev/null 2>&1; then
+    domain_config_record_backend "$domain" "$image" "$container_port" "$network_name" "${DOMAIN_CONFIG_DESIRED_STATE:-running}" || _rollback_handler
+  fi
+  update_nginx_config || _rollback_handler
+  end_transaction_success || _rollback_handler
   _add_backend_clear_runtime_rollback_state
 }

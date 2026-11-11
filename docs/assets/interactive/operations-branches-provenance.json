@@ -1,0 +1,950 @@
+{
+  "schema_version": 1,
+  "scenario": "operations-branches",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:37.401564+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "operations",
+  "group": "branches",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:36:22.648680+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "operations-branches-scoped-directive",
+      "journey_family": "operations-branches-scoped-directive",
+      "session_index": 1,
+      "step": 3,
+      "title": "Path (location)",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive/03-path-location.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive/03-path-location.txt",
+      "image_sha256": "30418443a900d0b769ff8dcbaf00258d1a92cf0a61730e362268987afa3b525e",
+      "transcript_sha256": "45d34e7a9b6e97d105c9175717f836bebb6bcafc9ef3197fe967971bd581be4e",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log",
+      "pty_byte_offset": 90529,
+      "selected": "Path (location)"
+    },
+    {
+      "journey": "operations-branches-scoped-directive",
+      "journey_family": "operations-branches-scoped-directive",
+      "session_index": 1,
+      "step": 4,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive/04-example-com.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive/04-example-com.txt",
+      "image_sha256": "fe01ee14753c2cd7f03a4164cecc2d066dfac345fd4f33a7953af3fd9bf76e69",
+      "transcript_sha256": "e0789f3d110fc90ae4f3a5be5d38d55822fe51a7f3549684244865105efa5f27",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log",
+      "pty_byte_offset": 90657,
+      "selected": "example.com"
+    },
+    {
+      "journey": "operations-branches-scoped-directive",
+      "journey_family": "operations-branches-scoped-directive",
+      "session_index": 1,
+      "step": 5,
+      "title": "80 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive/05-80-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive/05-80-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "39a04224fe4a0f0dbf00043bf7ec55339c95b0890401abfdd57ca3559be58f4d",
+      "transcript_sha256": "8c26115152f22100970ae12c6d19cef8ef28d590b7913a3d81d6186042a8ead0",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log",
+      "pty_byte_offset": 90873,
+      "selected": "80 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "operations-branches-scoped-directive",
+      "journey_family": "operations-branches-scoped-directive",
+      "session_index": 1,
+      "step": 6,
+      "title": "/limited",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive/06-limited.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive/06-limited.txt",
+      "image_sha256": "a2365849906e0c0be8293b56f4592d03b813c7023b703a3379cb6a2d0ef010be",
+      "transcript_sha256": "1267c440e4f23d84483188a02974dce14028bb7abae826c9d17cb140a90c2f5e",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log",
+      "pty_byte_offset": 91003,
+      "selected": "/limited"
+    },
+    {
+      "journey": "operations-branches-scoped-directive",
+      "journey_family": "operations-branches-scoped-directive",
+      "session_index": 1,
+      "step": 7,
+      "title": "client_max_body_size",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive/07-client-max-body-size.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive/07-client-max-body-size.txt",
+      "image_sha256": "c782e776d8e259f2051009cf7cae88b54ba0f1f7181e96d286e8d8847c1b4ea2",
+      "transcript_sha256": "72facbbb11756fd386815414181158b416d7a8d71d8a6d853229ee1fad18a3e5",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log",
+      "pty_byte_offset": 92656,
+      "selected": "client_max_body_size"
+    },
+    {
+      "journey": "operations-branches-scoped-directive",
+      "journey_family": "operations-branches-scoped-directive",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive/08-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive/08-enter-value.txt",
+      "image_sha256": "c3fa7102eb601c45795ebb12069ebcd20de61c8f6f9ddb837803db4b68f14694",
+      "transcript_sha256": "dd2fd05a673b264991483acb449213a061159305a845efeb6e1ecdd095994ffd",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log",
+      "pty_byte_offset": 92684,
+      "value": "1k"
+    },
+    {
+      "journey": "operations-branches-scoped-directive",
+      "journey_family": "operations-branches-scoped-directive",
+      "session_index": 1,
+      "step": 9,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive/09-run.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive/09-run.txt",
+      "image_sha256": "58a2dca2a196f5137027bcf26378ebe16ac29e2cfd6a240b90a91f7c3f29e50c",
+      "transcript_sha256": "f041a986d03031a3a24c6afec78f2503821f248d361291559efa6f12b289f90b",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log",
+      "pty_byte_offset": 93257,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-branches-scoped-directive",
+      "journey_family": "operations-branches-scoped-directive",
+      "session_index": 1,
+      "step": 10,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive/10-command-result.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive/10-command-result.txt",
+      "image_sha256": "ff864fc5fc7e5f570f8100a1d3e4b334a06b40bc6116fe7395f48c892342356b",
+      "transcript_sha256": "90086df4205f976168dc6be7155edbe18eca4646ca0a087bd5bb8d593b21c0dc",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log",
+      "pty_byte_offset": 94518,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-list",
+      "journey_family": "operations-branches-scoped-directive-list",
+      "session_index": 1,
+      "step": 3,
+      "title": "Path (location)",
+      "kind": "menu",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-list/03-path-location.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-list/03-path-location.txt",
+      "image_sha256": "c2b7977ee2dfd46205e481fcfeeaa3d253a073706f9a673cab9fec3138f96ba9",
+      "transcript_sha256": "88a30f707c497e5da7649ddfd2c11d4ed8539296ca77e95bd434bb7366702278",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-list.pty.log",
+      "pty_byte_offset": 81795,
+      "selected": "Path (location)"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-list",
+      "journey_family": "operations-branches-scoped-directive-list",
+      "session_index": 1,
+      "step": 4,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-list/04-example-com.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-list/04-example-com.txt",
+      "image_sha256": "b893c209047cf1d41bcb8cacc08dd46dc622cd9deb266ec30d3fc6e8f2a567d1",
+      "transcript_sha256": "e0789f3d110fc90ae4f3a5be5d38d55822fe51a7f3549684244865105efa5f27",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-list.pty.log",
+      "pty_byte_offset": 81923,
+      "selected": "example.com"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-list",
+      "journey_family": "operations-branches-scoped-directive-list",
+      "session_index": 1,
+      "step": 5,
+      "title": "80 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-list/05-80-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-list/05-80-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "8165bd05a3af2042247dde47f65262c01a43d7f7f37c66c6d0209c51969d52e7",
+      "transcript_sha256": "8c26115152f22100970ae12c6d19cef8ef28d590b7913a3d81d6186042a8ead0",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-list.pty.log",
+      "pty_byte_offset": 82139,
+      "selected": "80 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-list",
+      "journey_family": "operations-branches-scoped-directive-list",
+      "session_index": 1,
+      "step": 6,
+      "title": "/limited",
+      "kind": "menu",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-list/06-limited.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-list/06-limited.txt",
+      "image_sha256": "0c5d21a0fe15111ef1b7d06d384d270b0360e8b1765ce8a57055c24e1085a909",
+      "transcript_sha256": "1267c440e4f23d84483188a02974dce14028bb7abae826c9d17cb140a90c2f5e",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-list.pty.log",
+      "pty_byte_offset": 82269,
+      "selected": "/limited"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-list",
+      "journey_family": "operations-branches-scoped-directive-list",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-nginx-directives",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-list/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-list/07-command-result.txt",
+      "image_sha256": "a9e5d3535fea322e9c5bab4c07248a01753fe5d684199444ea599ad8bcaf3d75",
+      "transcript_sha256": "1814762b52cc8d5c816e4610b1be22d6c131f7675b0e3281af7d3bae4704c2e5",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-list.pty.log",
+      "pty_byte_offset": 82715,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-verified",
+      "journey_family": "operations-branches-scoped-directive-verified",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the path-specific request body limit",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-verified/01-verify-the-path-specific-request-body-limit.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-verified/01-verify-the-path-specific-request-body-limit.txt",
+      "image_sha256": "07b806827824c48aedc53913aabeb2273c51e885e0949bb7d3e166bd391fecab",
+      "transcript_sha256": "26082749a684d33ffeaebba303cba0decba11bfb2d0808dee37ecd7692f8c21d",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-verified.pty.log",
+      "pty_byte_offset": 333,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "operations-branches-scoped-directive-remove",
+      "journey_family": "operations-branches-scoped-directive-remove",
+      "session_index": 1,
+      "step": 3,
+      "title": "Path (location)",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-remove/03-path-location.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-remove/03-path-location.txt",
+      "image_sha256": "da2611b058a91a85fdfe0e1b3c50d4900cb41675bc3f490e5b8f446494b60aca",
+      "transcript_sha256": "45d34e7a9b6e97d105c9175717f836bebb6bcafc9ef3197fe967971bd581be4e",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log",
+      "pty_byte_offset": 97443,
+      "selected": "Path (location)"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-remove",
+      "journey_family": "operations-branches-scoped-directive-remove",
+      "session_index": 1,
+      "step": 4,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-remove/04-example-com.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-remove/04-example-com.txt",
+      "image_sha256": "930585fae5f55509854c8eafb0ddc923656fddedf18494086821736cae25d1a0",
+      "transcript_sha256": "e0789f3d110fc90ae4f3a5be5d38d55822fe51a7f3549684244865105efa5f27",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log",
+      "pty_byte_offset": 97571,
+      "selected": "example.com"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-remove",
+      "journey_family": "operations-branches-scoped-directive-remove",
+      "session_index": 1,
+      "step": 5,
+      "title": "80 -> 80 proto=http ws=no cert=none",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-remove/05-80-80-proto-http-ws-no-cert-none.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-remove/05-80-80-proto-http-ws-no-cert-none.txt",
+      "image_sha256": "8c5c98e834afa664a1cb632e58d7a54ecc9c62c5659ecbe67bb53c9030d379d5",
+      "transcript_sha256": "8c26115152f22100970ae12c6d19cef8ef28d590b7913a3d81d6186042a8ead0",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log",
+      "pty_byte_offset": 97787,
+      "selected": "80 -> 80 proto=http ws=no cert=none"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-remove",
+      "journey_family": "operations-branches-scoped-directive-remove",
+      "session_index": 1,
+      "step": 6,
+      "title": "/limited",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-remove/06-limited.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-remove/06-limited.txt",
+      "image_sha256": "884d8131a9651a14a552d45f232f232b748de0a89a0fa42f4f4ead4a47b22da1",
+      "transcript_sha256": "1267c440e4f23d84483188a02974dce14028bb7abae826c9d17cb140a90c2f5e",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log",
+      "pty_byte_offset": 97917,
+      "selected": "/limited"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-remove",
+      "journey_family": "operations-branches-scoped-directive-remove",
+      "session_index": 1,
+      "step": 7,
+      "title": "client_max_body_size",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-remove/07-client-max-body-size.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-remove/07-client-max-body-size.txt",
+      "image_sha256": "282bfd875c6fa3992c84f1392545911d507ebfb72abcb4c0af7cfbd9a0ec26e4",
+      "transcript_sha256": "8cf486f9d37900d36deb7df929a6c2ec61e739861369b54b2c46703d4fd458e4",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log",
+      "pty_byte_offset": 99690,
+      "selected": "client_max_body_size"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-remove",
+      "journey_family": "operations-branches-scoped-directive-remove",
+      "session_index": 1,
+      "step": 8,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-remove/08-run.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-remove/08-run.txt",
+      "image_sha256": "be80caa27eef1c5d3dfddcc78db517d4e8d24ab53f43f33ebdd6f42124afdede",
+      "transcript_sha256": "1c8f0c2520e1b1c4a60d4c7bd8069c671b4623f9f74a0dc6460e8d83c93e6b64",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log",
+      "pty_byte_offset": 100269,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-remove",
+      "journey_family": "operations-branches-scoped-directive-remove",
+      "session_index": 1,
+      "step": 9,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-remove/09-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-remove/09-enter-value.txt",
+      "image_sha256": "8b614088379a8e4801443a2e1d719dc4ab0ad938686cec1cfa055fc7ef5598db",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log",
+      "pty_byte_offset": 100323,
+      "value": "YES"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-remove",
+      "journey_family": "operations-branches-scoped-directive-remove",
+      "session_index": 1,
+      "step": 10,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-nginx-directive",
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-remove/10-command-result.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-remove/10-command-result.txt",
+      "image_sha256": "3f3f08862b785c3581515e1ef27535f96c08aa18fe72eeaf19c86477eb0e5fdc",
+      "transcript_sha256": "e549878aef24654f9605cee21c7a1c77149d4dd8e4770f663ef3b4eea48581e6",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log",
+      "pty_byte_offset": 101568,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-branches-scoped-directive-recovered",
+      "journey_family": "operations-branches-scoped-directive-recovered",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the request reaches the application after removal",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-branches-scoped-directive-recovered/01-verify-the-request-reaches-the-application-after-removal.png",
+      "transcript": "docs/assets/interactive/operations-branches-scoped-directive-recovered/01-verify-the-request-reaches-the-application-after-removal.txt",
+      "image_sha256": "c627b89e0c4f20942d3fa2962f5835ff1543a24d9e2d4e7e26637183ba539076",
+      "transcript_sha256": "a40df28e17595527381e1db55518576cc6c769d489f2fbe5a6a481d274713b32",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-recovered.pty.log",
+      "pty_byte_offset": 325,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "operations-branches-manual-nginx-image",
+      "journey_family": "operations-branches-manual-nginx-image",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-branches-manual-nginx-image/03-enter-manually.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-nginx-image/03-enter-manually.txt",
+      "image_sha256": "4e457d0b591c885eb908ccd726c228e657b668f5170dd7d59bb4df8572493c8d",
+      "transcript_sha256": "479e7286d811ff7b88e369c494fd524e9e3fad21f113978ae5488bb84c8d6d6a",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-nginx-image.pty.log",
+      "pty_byte_offset": 86608,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "operations-branches-manual-nginx-image",
+      "journey_family": "operations-branches-manual-nginx-image",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-branches-manual-nginx-image/04-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-nginx-image/04-enter-value.txt",
+      "image_sha256": "1db3e1caa16e0e4c1a6888dd1eae5d8c5f113e7a1610ad143c7746b78350267f",
+      "transcript_sha256": "539dabb6e558ceaeb9158ed112af887b419a453fd39a7deabd80b1042fb769cd",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-nginx-image.pty.log",
+      "pty_byte_offset": 86714,
+      "value": "nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47"
+    },
+    {
+      "journey": "operations-branches-manual-nginx-image",
+      "journey_family": "operations-branches-manual-nginx-image",
+      "session_index": 1,
+      "step": 5,
+      "title": "Skip explicit pulls; Docker can fetch missing images",
+      "kind": "menu",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-branches-manual-nginx-image/05-skip-explicit-pulls-docker-can-fetch-missing-images.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-nginx-image/05-skip-explicit-pulls-docker-can-fetch-missing-images.txt",
+      "image_sha256": "bae96d7e80c39161de65a858b19c7154c220b02cd6e4b7fdaac766163a82b97b",
+      "transcript_sha256": "06e9c0ef5558109fc83b513ddf4e334175462340432f320849c64974082f2320",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-nginx-image.pty.log",
+      "pty_byte_offset": 88275,
+      "selected": "Skip explicit pulls; Docker can fetch missing images"
+    },
+    {
+      "journey": "operations-branches-manual-nginx-image",
+      "journey_family": "operations-branches-manual-nginx-image",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-branches-manual-nginx-image/06-run.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-nginx-image/06-run.txt",
+      "image_sha256": "b54e3237855c3c2d74543f1be531e028a14aa6d963e7624148e780b8bc254fb5",
+      "transcript_sha256": "4eba4a637839f7507e92938c197d54ae9b253b63abd611d194dde0ae52613289",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-nginx-image.pty.log",
+      "pty_byte_offset": 88810,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-branches-manual-nginx-image",
+      "journey_family": "operations-branches-manual-nginx-image",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-nginx-image",
+      "image": "docs/assets/interactive/operations-branches-manual-nginx-image/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-nginx-image/07-command-result.txt",
+      "image_sha256": "e85de6e2ba2b8fa22cb2dc7fc51d1d8761e1b205be2c4deca0d8e4fc058f60ed",
+      "transcript_sha256": "48a3d7cf77a4285c9f799ed9d820f7a9869c7e86d59a250ae9bd8bac3cd11ed6",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-nginx-image.pty.log",
+      "pty_byte_offset": 90646,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-branches-manual-certbot-image",
+      "journey_family": "operations-branches-manual-certbot-image",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-branches-manual-certbot-image/03-enter-manually.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-certbot-image/03-enter-manually.txt",
+      "image_sha256": "b0638af4760ccfb49d741165df9e7faa5ea4371679a31afa6c60039d695041e2",
+      "transcript_sha256": "bf12ea6b33d38ca0fcfa184eadf81369b55e3f4135df3048646997eb1cab211e",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-certbot-image.pty.log",
+      "pty_byte_offset": 84290,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "operations-branches-manual-certbot-image",
+      "journey_family": "operations-branches-manual-certbot-image",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-branches-manual-certbot-image/04-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-certbot-image/04-enter-value.txt",
+      "image_sha256": "d86c0301754fa84b2e24a833c2d1fcb3deba896b62d96b3e3c07d47f624b5316",
+      "transcript_sha256": "030a9082cd937d01c3d773cacf2ed9ba2a706b0b2031081a7bb2fd2ecda214c4",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-certbot-image.pty.log",
+      "pty_byte_offset": 84408,
+      "value": "certbot/certbot:v5.8.0@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20"
+    },
+    {
+      "journey": "operations-branches-manual-certbot-image",
+      "journey_family": "operations-branches-manual-certbot-image",
+      "session_index": 1,
+      "step": 5,
+      "title": "Skip explicit pulls; Docker can fetch missing images",
+      "kind": "menu",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-branches-manual-certbot-image/05-skip-explicit-pulls-docker-can-fetch-missing-images.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-certbot-image/05-skip-explicit-pulls-docker-can-fetch-missing-images.txt",
+      "image_sha256": "fe4e849d5642d1c5d254bfee449652358213c29373cc04359fd6da1afc1975d7",
+      "transcript_sha256": "06e9c0ef5558109fc83b513ddf4e334175462340432f320849c64974082f2320",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-certbot-image.pty.log",
+      "pty_byte_offset": 85961,
+      "selected": "Skip explicit pulls; Docker can fetch missing images"
+    },
+    {
+      "journey": "operations-branches-manual-certbot-image",
+      "journey_family": "operations-branches-manual-certbot-image",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-branches-manual-certbot-image/06-run.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-certbot-image/06-run.txt",
+      "image_sha256": "efe3035e81fcf32dffbfc6c4371c74bc408f73e3a17f62bfdbb12504140cd810",
+      "transcript_sha256": "a6cd65db2e7faa4e56582e8e7fe54f279619593ffc2baac6c7357e56df64bc87",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-certbot-image.pty.log",
+      "pty_byte_offset": 86519,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-branches-manual-certbot-image",
+      "journey_family": "operations-branches-manual-certbot-image",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-certbot-image",
+      "image": "docs/assets/interactive/operations-branches-manual-certbot-image/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-certbot-image/07-command-result.txt",
+      "image_sha256": "b086742a60eb4a79335e7bae825f345f44ba504c48a3d7ccf4309674a06aefdf",
+      "transcript_sha256": "f7678172a64838f70d199b2df2b8df68842714613cad864a4570789b0ab9733b",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-certbot-image.pty.log",
+      "pty_byte_offset": 86916,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-branches-manual-image-config",
+      "journey_family": "operations-branches-manual-image-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/operations-branches-manual-image-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/operations-branches-manual-image-config/03-configuration-test-passed.txt",
+      "image_sha256": "f5adc955b5ad1aeaa2f94197dee5f8677690f793656da776b3f7e94defbf9586",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-image-config.pty.log",
+      "pty_byte_offset": 8031,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "set-nginx-directive-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-directive",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "list-nginx-directives-interactive-result",
+      "status": "passed",
+      "command": "list-nginx-directives",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "scoped-limit-rejected",
+      "status": "passed",
+      "http_status": 413,
+      "headers": "docs/assets/interactive/evidence/operations-branches/scoped-limit-rejected.headers"
+    },
+    {
+      "label": "scoped-limit-unaffected",
+      "status": "passed",
+      "http_status": 405,
+      "headers": "docs/assets/interactive/evidence/operations-branches/scoped-limit-unaffected.headers"
+    },
+    {
+      "label": "scoped-limit-get",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-branches/scoped-limit-get.headers"
+    },
+    {
+      "label": "scoped-directive-verified",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "-H",
+        "Host: example.com",
+        "--data-binary",
+        "@/opt/dockistrate-demo-fixtures/scoped-body.bin",
+        "http://127.0.0.1/limited/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "remove-nginx-directive-interactive-result",
+      "status": "passed",
+      "command": "remove-nginx-directive",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "scoped-limit-removed",
+      "status": "passed",
+      "http_status": 405,
+      "headers": "docs/assets/interactive/evidence/operations-branches/scoped-limit-removed.headers"
+    },
+    {
+      "label": "scoped-directive-recovered",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "-H",
+        "Host: example.com",
+        "--data-binary",
+        "@/opt/dockistrate-demo-fixtures/scoped-body.bin",
+        "http://127.0.0.1/limited/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "scoped-directive-outcome",
+      "status": "passed",
+      "command": "set-nginx-directive",
+      "outcome": "2KiB POST rejected only on /limited; GET and root unaffected; removal restores upstream response"
+    },
+    {
+      "label": "set-nginx-image-interactive-result",
+      "status": "passed",
+      "command": "set-nginx-image",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "set-certbot-image-interactive-result",
+      "status": "passed",
+      "command": "set-certbot-image",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "manual-image-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-branches/manual-image-response.headers"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "operations"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "e3fee3b8c63ca09a89534f056952c4b83e453352d637c864fd399e29120ff46d",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 34
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/operations-branches-recordings.tar.gz",
+    "sha256": "b996457a3c892a31bbcef2e5a13b24ec8e979ae84a912840349ba062fdcde7e5",
+    "size": 56844,
+    "members": {
+      "docs/assets/interactive/evidence/operations-branches/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/operations-branches/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-branches/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/operations-branches/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/operations-branches/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-branches/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/operations-branches/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/operations-branches/008-fixture-image.log": {
+        "sha256": "c2e9d0ed11114dca9a016c299adb18ea57675e1c86744711a96baa67dfefa6b5",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/operations-branches/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/operations-branches/010-fixture-backend.log": {
+        "sha256": "4c577468fa1f965a3c0295134bb4972a9a7ca1ccd2d8cefdfe9cc74281ce3d55",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/operations-branches/011-fixture-public-demo.log": {
+        "sha256": "e6ef19acd427ba94bb8dfc313750d4506a54cef3017c221a2d04d2e337d0a4f2",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/operations-branches/012-fixture-https.log": {
+        "sha256": "3979f61aa43d5bd9fe022185243390603e7a0ff9617fa5f37f7b820a3977b4e4",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/operations-branches/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/operations-branches/014-fixture-scoped-route.log": {
+        "sha256": "e75cd71c4b772436ea332e1fe414609b4c59916b9be0cb0e30f473d58b3d5f23",
+        "size": 1177
+      },
+      "docs/assets/interactive/evidence/operations-branches/015-command-alias.log": {
+        "sha256": "68c7dc0a450270899a2b85c5b0434c3e81a6b96dbe60ae804b3b6892b3593cdf",
+        "size": 20
+      },
+      "docs/assets/interactive/evidence/operations-branches/016-command-alias.log": {
+        "sha256": "719cb7d4136e6d22615c43e6bee5ecc716b8b53995d6879376f22d942b12a1fd",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/operations-branches/017-command-alias.log": {
+        "sha256": "324be7640d38e7a73a95ddf9f8948368629c3777f86ce168f534c0010167e844",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/operations-branches/018-current-proxy-image.log": {
+        "sha256": "faf5f783c5cb3789dbd6c63882d7475f72d5e422d907ac81f9651fcfbf570a72",
+        "size": 85
+      },
+      "docs/assets/interactive/evidence/operations-branches/019-command-alias.log": {
+        "sha256": "1927c25f1510f42b471b399196d754ae7dc642fd365f22be50da822442994885",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/operations-branches/020-command-alias.log": {
+        "sha256": "a2fb157964921e234f9bc70319ef3e62a6510aec06fc4b0f63117a4535ecea4c",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/operations-branches/021-manually-selected-proxy-image.log": {
+        "sha256": "faf5f783c5cb3789dbd6c63882d7475f72d5e422d907ac81f9651fcfbf570a72",
+        "size": 85
+      },
+      "docs/assets/interactive/evidence/operations-branches/022-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/operations-branches/commands.jsonl": {
+        "sha256": "358d1b35e8b5e76fc17c85d1c2d1a87826a9453d6683ad43d1802fc082ebc483",
+        "size": 10552
+      },
+      "docs/assets/interactive/evidence/operations-branches/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-branches/manual-image-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-branches/manual-image-response.headers": {
+        "sha256": "8108f9cfda2b88c286c4217ebe5f38b17be5f2dbc3100d839cfe9d7f9675a4a4",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-branches/manual-image-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-branches/manual-image-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-certbot-image.events.jsonl": {
+        "sha256": "a1a292902761288393a5f7c7ab1d94cf05f48ed4533ba821c11125c682734500",
+        "size": 19374
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-certbot-image.pty.log": {
+        "sha256": "4b75446e939d07885b5609cd0b3f04622ac5344f0b1d330c0a1b06ffdd468a81",
+        "size": 95030
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-image-config.events.jsonl": {
+        "sha256": "11372281889bba1ffce97c73f5efafb29b91b845d66468cbd4ba1a544b674936",
+        "size": 9738
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-image-config.pty.log": {
+        "sha256": "ce87f3a2b876eeb4496acf47823e0341d2fa9bb66e4935b0313d5ecfd243a793",
+        "size": 16145
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-nginx-image.events.jsonl": {
+        "sha256": "6dfa963251aa261da62ad141e2cfde9d9526549217d3d69c87ddc246ef40679e",
+        "size": 19905
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-manual-nginx-image.pty.log": {
+        "sha256": "b1a7225ebd7f223667f03d7ddfba715451b0a077d06bc93c9ed11ee9e5ad1219",
+        "size": 98764
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-list.events.jsonl": {
+        "sha256": "446cbd8a2c77888fbc6b17acc185d6a27b2359ad4b91f2038c08871967cb3609",
+        "size": 19174
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-list.pty.log": {
+        "sha256": "13b4fd892bb59b709dd4f90aca140d6732b7229bad4adfc93771947acacc3ae5",
+        "size": 90829
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-recovered.events.jsonl": {
+        "sha256": "bbbafa351a5580839214ba848c73863c9792613dcebcee601939277fd900dd1e",
+        "size": 1241
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-recovered.pty.log": {
+        "sha256": "247dd610daf6a08e6f4b8bc0ed672ac75e90b02b81d7f3d3a0e639abefb3622d",
+        "size": 325
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.events.jsonl": {
+        "sha256": "8c7c7fe5ee3be4ecbec0cf7c632755f879eec70e67fb2dcb6b6583db6bdc4964",
+        "size": 24006
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-remove.pty.log": {
+        "sha256": "1f496e8a4622eb66eabc323c5a3b6607b2646be282a8bb7e7d82374621c79d21",
+        "size": 109682
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-verified.events.jsonl": {
+        "sha256": "61ecb1630d66f5a0c9dbe0c1b0b766eb92a7b03d2c0aa9c48173c4b3e1399ae9",
+        "size": 1235
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive-verified.pty.log": {
+        "sha256": "6e98376714bd6b3c2a84e9718bf4c914d0ff47e00bf0d9925a10c5fff6fb004c",
+        "size": 333
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.events.jsonl": {
+        "sha256": "2d9b5ea80ca0cd20380b79dd6e131b25ae9c12a090d48ad4f4959fe1d9691511",
+        "size": 22221
+      },
+      "docs/assets/interactive/evidence/operations-branches/operations-branches-scoped-directive.pty.log": {
+        "sha256": "fe172f5ab825c3743eab8516f34733c2698e751b428f5a810893d97d191cd72a",
+        "size": 102636
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-get.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-get.headers": {
+        "sha256": "321ec7c4c0a09fa9715d0b2a7b582d96b3839f1ed0c00d0620e51d5bd46d2258",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-get.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-get.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-rejected.body": {
+        "sha256": "3e4dbdfce5e2f7b7f90a7c3e20559a1f2097e0838787179ab39a0dd19a1a1b7f",
+        "size": 183
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-rejected.headers": {
+        "sha256": "39e02cecf5777d440df424cffea7a93a669f7815699d345e960329a62724797d",
+        "size": 165
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-rejected.status": {
+        "sha256": "c11eae0cc2e648efe410effd75e64dfca8f6b6532b51f6cfa29e5c03503be0d7",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-rejected.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-removed.body": {
+        "sha256": "2adbcddf54f1a728b896771280c676a195cda7bbb48a6b770dd271efe418a0a1",
+        "size": 157
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-removed.headers": {
+        "sha256": "c3f7d4f82f28738888971a2d59ee928966f3afa561a2875d9e2a2ce21477afe8",
+        "size": 157
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-removed.status": {
+        "sha256": "28e9df17875451b106e9c052725fdca7fa706cc28f1d99e93e40fc5f456d45cb",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-removed.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-unaffected.body": {
+        "sha256": "2adbcddf54f1a728b896771280c676a195cda7bbb48a6b770dd271efe418a0a1",
+        "size": 157
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-unaffected.headers": {
+        "sha256": "813af11b7aaaca34284049cfa650b97dc29ce5c2e5e12f6458f396f01a6ee825",
+        "size": 157
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-unaffected.status": {
+        "sha256": "28e9df17875451b106e9c052725fdca7fa706cc28f1d99e93e40fc5f456d45cb",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-branches/scoped-limit-unaffected.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  }
+}

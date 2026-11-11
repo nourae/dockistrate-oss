@@ -1,0 +1,1073 @@
+{
+  "schema_version": 1,
+  "scenario": "security-certificates",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:36.339415+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "security",
+  "group": "certificates",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:40:47.525163+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "security-certificates-certificates",
+      "journey_family": "security-certificates-certificates",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificates/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificates/03-example-com.txt",
+      "image_sha256": "3f427f1b74cd5f85eb1455f0a82e9cb153a55cf3ff06f8fe411391cbb8712bbb",
+      "transcript_sha256": "b288eabba3109ef5f7084ca61839cea891cedc4fe4c33b6c19586271928f8f81",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log",
+      "pty_byte_offset": 71178,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-certificates-certificates",
+      "journey_family": "security-certificates-certificates",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificates/04-enter-manually.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificates/04-enter-manually.txt",
+      "image_sha256": "92e9ee129f33c7d043ccc898756f1ee64f9d0433c0baec3ce8cf38266bc65f47",
+      "transcript_sha256": "77d4d562e27115c7c58d01a7449acbc6e2e454ad97daf589800781372ff97533",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log",
+      "pty_byte_offset": 71492,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "security-certificates-certificates",
+      "journey_family": "security-certificates-certificates",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificates/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificates/05-enter-value.txt",
+      "image_sha256": "04fbade4e475144ba937e019e404d24f59dd0408c2798a341e9cf8655e012d25",
+      "transcript_sha256": "ee118558b1b4cf9e0f5a2ddaf9d4482ae22b729ccb3a1b33fcb26f75ce77c9f7",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log",
+      "pty_byte_offset": 71530,
+      "value": "8443"
+    },
+    {
+      "journey": "security-certificates-certificates",
+      "journey_family": "security-certificates-certificates",
+      "session_index": 1,
+      "step": 6,
+      "title": "Generate self-signed certificate (current)",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificates/06-generate-self-signed-certificate-current.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificates/06-generate-self-signed-certificate-current.txt",
+      "image_sha256": "76805aeccc218734fc87b4f9417c1173fddb4f18adb94c2c1ce1b809e767d9f8",
+      "transcript_sha256": "3da14f64b2c0dd9af792bbbdffc2c1bb69ddf126534acd5a01903e6d95cfebdc",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log",
+      "pty_byte_offset": 71848,
+      "selected": "Generate self-signed certificate (current)"
+    },
+    {
+      "journey": "security-certificates-certificates",
+      "journey_family": "security-certificates-certificates",
+      "session_index": 1,
+      "step": 7,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificates/07-run.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificates/07-run.txt",
+      "image_sha256": "fc103f2d89a5d8a7a9e87420ec65601c0132804adc0d943e5a39d125f4c0e64b",
+      "transcript_sha256": "435ab1673ce1d927c7d9a13c5bc0044b0eba374dc65eaeb4fad6449eb8d82261",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log",
+      "pty_byte_offset": 72278,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-certificates-certificates",
+      "journey_family": "security-certificates-certificates",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificates/08-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificates/08-enter-value.txt",
+      "image_sha256": "4984bd31fa5cd6bfeee16950c2f077b425c6aaae9410a1200782d843a9e30e1a",
+      "transcript_sha256": "91d2313ea1c21670bec790c630dbde976a35b079faf2b8e9eea912d426bddd9a",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log",
+      "pty_byte_offset": 72509,
+      "value": "yes"
+    },
+    {
+      "journey": "security-certificates-certificates",
+      "journey_family": "security-certificates-certificates",
+      "session_index": 1,
+      "step": 9,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificates/09-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificates/09-enter-value.txt",
+      "image_sha256": "632dd5773f026f937f2e01a7799485bff38b5ca9c1a1ad9825d6129b3ea6b72f",
+      "transcript_sha256": "177aedeb95217d2d0f81175f71e2ba1e5ec924d1fef32e125a70632a55d0c031",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log",
+      "pty_byte_offset": 72562,
+      "value": "8443"
+    },
+    {
+      "journey": "security-certificates-certificates",
+      "journey_family": "security-certificates-certificates",
+      "session_index": 1,
+      "step": 10,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificates/10-command-result.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificates/10-command-result.txt",
+      "image_sha256": "fb644b39be66aa6b1727a0a5a571579500c153a9cb35937d0e3842f45feb125b",
+      "transcript_sha256": "a0e1b033db53d7d5b9d50116b56d48139863e3f5989b666b46e72a10c6019e19",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log",
+      "pty_byte_offset": 74089,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-certificates-list-certs",
+      "journey_family": "security-certificates-list-certs",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-certs",
+      "image": "docs/assets/interactive/security-certificates-list-certs/03-command-result.png",
+      "transcript": "docs/assets/interactive/security-certificates-list-certs/03-command-result.txt",
+      "image_sha256": "a7d0845623dd4ac6ecd9fe7eb5559d758e25cbba4de6fbbdffeda4863466933e",
+      "transcript_sha256": "ec98cee14161e88f20dda2e3a3521fe80cc658cfd4b60826a6989b10aa7ed6b2",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-list-certs.pty.log",
+      "pty_byte_offset": 75616,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-certificates-replace-cert",
+      "journey_family": "security-certificates-replace-cert",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "replace-cert",
+      "image": "docs/assets/interactive/security-certificates-replace-cert/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-certificates-replace-cert/03-example-com.txt",
+      "image_sha256": "e66226104b5aebc4f91862a1908d863ce9192510032c0a965495ccff6158ee02",
+      "transcript_sha256": "b288eabba3109ef5f7084ca61839cea891cedc4fe4c33b6c19586271928f8f81",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-replace-cert.pty.log",
+      "pty_byte_offset": 79688,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-certificates-replace-cert",
+      "journey_family": "security-certificates-replace-cert",
+      "session_index": 1,
+      "step": 4,
+      "title": "8443",
+      "kind": "menu",
+      "command": "replace-cert",
+      "image": "docs/assets/interactive/security-certificates-replace-cert/04-8443.png",
+      "transcript": "docs/assets/interactive/security-certificates-replace-cert/04-8443.txt",
+      "image_sha256": "588aafd8717ced5c87e5a23ce91f3f8d16f8c721624c5a53615047725cd244f0",
+      "transcript_sha256": "3b965497e991eecbae1665dc920e8e44a5ec39106ec29c8f0083345dd1390804",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-replace-cert.pty.log",
+      "pty_byte_offset": 80024,
+      "selected": "8443"
+    },
+    {
+      "journey": "security-certificates-replace-cert",
+      "journey_family": "security-certificates-replace-cert",
+      "session_index": 1,
+      "step": 5,
+      "title": "Generate self-signed certificate (current)",
+      "kind": "menu",
+      "command": "replace-cert",
+      "image": "docs/assets/interactive/security-certificates-replace-cert/05-generate-self-signed-certificate-current.png",
+      "transcript": "docs/assets/interactive/security-certificates-replace-cert/05-generate-self-signed-certificate-current.txt",
+      "image_sha256": "e90d93c1e0b0e6751522e9a507fd4c18c87f6ac5206f441d953e8896431c2d02",
+      "transcript_sha256": "3da14f64b2c0dd9af792bbbdffc2c1bb69ddf126534acd5a01903e6d95cfebdc",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-replace-cert.pty.log",
+      "pty_byte_offset": 80331,
+      "selected": "Generate self-signed certificate (current)"
+    },
+    {
+      "journey": "security-certificates-replace-cert",
+      "journey_family": "security-certificates-replace-cert",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "replace-cert",
+      "image": "docs/assets/interactive/security-certificates-replace-cert/06-run.png",
+      "transcript": "docs/assets/interactive/security-certificates-replace-cert/06-run.txt",
+      "image_sha256": "15646cb0e8dbbdaa08aefc90d317b5e631eef66ff0919f84b541dd0bfdd6c1c4",
+      "transcript_sha256": "ada88207ff8a8b4aeb8b8b9925019f9186b949f26a5c88ecf6f54def29dbc6d1",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-replace-cert.pty.log",
+      "pty_byte_offset": 80748,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-certificates-replace-cert",
+      "journey_family": "security-certificates-replace-cert",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "replace-cert",
+      "image": "docs/assets/interactive/security-certificates-replace-cert/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-certificates-replace-cert/07-command-result.txt",
+      "image_sha256": "df147ce73d8fcdaf7354462972473aef15e750072511aba088b22e6665b00999",
+      "transcript_sha256": "c513bd4622f0a80ababeb1aeac11e7647b91b91ae828a403c703f06ceabdc9e9",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-replace-cert.pty.log",
+      "pty_byte_offset": 82310,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-certificates-certificate-local-trust",
+      "journey_family": "security-certificates-certificate-local-trust",
+      "session_index": 1,
+      "step": 1,
+      "title": "Trust the owned certificate and request HTTPS",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-certificates-certificate-local-trust/01-trust-the-owned-certificate-and-request-https.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-local-trust/01-trust-the-owned-certificate-and-request-https.txt",
+      "image_sha256": "b94e8f87b185c85dc8ead9f626bcecaf34bf02b323c2a250c3b8e5f00065feb8",
+      "transcript_sha256": "e3d2ebdee8807e4a795fb21f74087e69b2220900c851ae67de2bb36292aef456",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-local-trust.pty.log",
+      "pty_byte_offset": 433,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-certificates-certificate-acme-prerequisites",
+      "journey_family": "security-certificates-certificate-acme-prerequisites",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/03-example-com.txt",
+      "image_sha256": "8ff05e0a3cc2289fbf636b96be90fe631be66bb54e917636c9b33a87cecf953f",
+      "transcript_sha256": "b288eabba3109ef5f7084ca61839cea891cedc4fe4c33b6c19586271928f8f81",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-acme-prerequisites.pty.log",
+      "pty_byte_offset": 71193,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-certificates-certificate-acme-prerequisites",
+      "journey_family": "security-certificates-certificate-acme-prerequisites",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/04-enter-manually.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/04-enter-manually.txt",
+      "image_sha256": "d5b7b693a578c3820a19c0c5d9648271305f2127047c70a33c951eff44f70443",
+      "transcript_sha256": "9a35edb871ca701e50b1982a3968fa71b6892bb3a822689fc56efe37d80fea79",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-acme-prerequisites.pty.log",
+      "pty_byte_offset": 71701,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "security-certificates-certificate-acme-prerequisites",
+      "journey_family": "security-certificates-certificate-acme-prerequisites",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/05-enter-value.txt",
+      "image_sha256": "dfbeb071d7a162c7984278fcaaa37aea99fe5ec9640a943c707635bb999213e2",
+      "transcript_sha256": "8e1624b325ea75041e642dfe4e2fefef4e02c0821fb5c3d555f4c9bf92a0fbb5",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-acme-prerequisites.pty.log",
+      "pty_byte_offset": 71739,
+      "value": "9443"
+    },
+    {
+      "journey": "security-certificates-certificate-acme-prerequisites",
+      "journey_family": "security-certificates-certificate-acme-prerequisites",
+      "session_index": 1,
+      "step": 6,
+      "title": "Generate Let's Encrypt certificate",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/06-generate-let-s-encrypt-certificate.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/06-generate-let-s-encrypt-certificate.txt",
+      "image_sha256": "d323c63ad9cc5035a39192bc5bdc8af3b55586e6ddc17a7da6e9d3d5677b961a",
+      "transcript_sha256": "e76ffbff626e2fe27ea1c23b2af7349c75b1b842485d3d0a910dfcc9cc7babf8",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-acme-prerequisites.pty.log",
+      "pty_byte_offset": 72364,
+      "selected": "Generate Let's Encrypt certificate"
+    },
+    {
+      "journey": "security-certificates-certificate-acme-prerequisites",
+      "journey_family": "security-certificates-certificate-acme-prerequisites",
+      "session_index": 1,
+      "step": 7,
+      "title": "Cancel",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/07-cancel.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/07-cancel.txt",
+      "image_sha256": "3362591adb3d37b42d14ca9bff35d04f1802ba45414f2f06e35518c6377ef63d",
+      "transcript_sha256": "dc0e145017a98cd537c7f6df398cb5b5f0739fd1505271b7cb9a1fe67f8011a8",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-acme-prerequisites.pty.log",
+      "pty_byte_offset": 73660,
+      "selected": "Cancel"
+    },
+    {
+      "journey": "security-certificates-certificate-acme-prerequisites",
+      "journey_family": "security-certificates-certificate-acme-prerequisites",
+      "session_index": 1,
+      "step": 8,
+      "title": "Return without running",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/08-return-without-running.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-acme-prerequisites/08-return-without-running.txt",
+      "image_sha256": "4c7995c1f9be718a9ba4588683c858b307af408a2eb6effc008d35a4aa547e70",
+      "transcript_sha256": "dfa18f531d3d10f28d4753b7c0de0ba714f6f521063268e80af629d786488e57",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-acme-prerequisites.pty.log",
+      "pty_byte_offset": 74286,
+      "selected": "Back"
+    },
+    {
+      "journey": "security-certificates-certificate-renewal-review",
+      "journey_family": "security-certificates-certificate-renewal-review",
+      "session_index": 1,
+      "step": 3,
+      "title": "Cancel",
+      "kind": "menu",
+      "command": "renew-certs",
+      "image": "docs/assets/interactive/security-certificates-certificate-renewal-review/03-cancel.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-renewal-review/03-cancel.txt",
+      "image_sha256": "3d34ad52fc32766227e741115acb76813113f8e7385005cabc9d576fdcd7be1c",
+      "transcript_sha256": "a4d6360a49def3d68bfd6a1bfbc1565d041a4aadd4c26635fa41f3324e29ed2f",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-renewal-review.pty.log",
+      "pty_byte_offset": 76184,
+      "selected": "Cancel"
+    },
+    {
+      "journey": "security-certificates-certificate-renewal-review",
+      "journey_family": "security-certificates-certificate-renewal-review",
+      "session_index": 1,
+      "step": 4,
+      "title": "Return without running",
+      "kind": "menu",
+      "command": "renew-certs",
+      "image": "docs/assets/interactive/security-certificates-certificate-renewal-review/04-return-without-running.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-renewal-review/04-return-without-running.txt",
+      "image_sha256": "52f0a3852b52a2f9536f55de1cdf72dac94c648bcf8cd20fb231f68498655422",
+      "transcript_sha256": "ec723b90ae316ac5c4f0c80430eeb3cf8b5637e2519cc159755985fc6b3db190",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-renewal-review.pty.log",
+      "pty_byte_offset": 76802,
+      "selected": "Back"
+    },
+    {
+      "journey": "security-certificates-certificate-renewal-scan",
+      "journey_family": "security-certificates-certificate-renewal-scan",
+      "session_index": 1,
+      "step": 3,
+      "title": "Run",
+      "kind": "menu",
+      "command": "renew-certs",
+      "image": "docs/assets/interactive/security-certificates-certificate-renewal-scan/03-run.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-renewal-scan/03-run.txt",
+      "image_sha256": "3446c82ccab406865024ed16ee6522935d278c87ea06c3b0d20cc018d12c06fb",
+      "transcript_sha256": "3c135a93c443494382fc5af9fcfbca7b6d8cca244ee0232b929ee2ea3fb5eed3",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-renewal-scan.pty.log",
+      "pty_byte_offset": 75537,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-certificates-certificate-renewal-scan",
+      "journey_family": "security-certificates-certificate-renewal-scan",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "renew-certs",
+      "image": "docs/assets/interactive/security-certificates-certificate-renewal-scan/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-renewal-scan/04-command-result.txt",
+      "image_sha256": "20c57875f99a4f012ea643be39fbc21a576ce4298cf6007867ea8b4e32ca2ef6",
+      "transcript_sha256": "9e4be8d8f0fe0ffd0a1e2bf3f27e7d51938ce48629cdf2f780c8e62b3a7e0458",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-renewal-scan.pty.log",
+      "pty_byte_offset": 75851,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/03-example-com.txt",
+      "image_sha256": "572b24c107c44c2a7ab2d870377b5aee28efa69ded4551671745608376be679d",
+      "transcript_sha256": "b288eabba3109ef5f7084ca61839cea891cedc4fe4c33b6c19586271928f8f81",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 71196,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/04-enter-manually.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/04-enter-manually.txt",
+      "image_sha256": "f3accc01c57dfebe6b95d12836877ae24a3fbf5ed1ddb15fbccd982de3ad7550",
+      "transcript_sha256": "9a35edb871ca701e50b1982a3968fa71b6892bb3a822689fc56efe37d80fea79",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 71700,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/05-enter-value.txt",
+      "image_sha256": "f0e53c097bf34295cf241ce09dddbb7cb7e1a79d35e060e190a7c78167f2745d",
+      "transcript_sha256": "8e1624b325ea75041e642dfe4e2fefef4e02c0821fb5c3d555f4c9bf92a0fbb5",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 71738,
+      "value": "9443"
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 6,
+      "title": "Upload existing fullchain.pem and privkey.pem",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/06-upload-existing-fullchain-pem-and-privkey-pem.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/06-upload-existing-fullchain-pem-and-privkey-pem.txt",
+      "image_sha256": "d3fce2524d5d6d694d95aa75a35b850e2ef989c072f21dc7d0fc0c5e61a3a6d1",
+      "transcript_sha256": "b1b70065db0a566d2460d22ad7f4b427bec9d97d220ea4f10550e68814cab45f",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 72670,
+      "selected": "Upload existing fullchain.pem and privkey.pem"
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 7,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/07-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/07-enter-value.txt",
+      "image_sha256": "e0554b45f4187226b35ec403a29af883da7ee11108d4350dec0e5d44ba9a5237",
+      "transcript_sha256": "a23332956bbf57c65f66b7aa65aa02b1eaf1dd34550a21da5de5ced792b816e9",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 72887,
+      "value": "/opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem"
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/08-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/08-enter-value.txt",
+      "image_sha256": "975802ade66b26ebf4f2dc687c23dc08965103cf7ee20af6cfa504bb76cc1070",
+      "transcript_sha256": "9b56b3b3e19e2fb3c4f68348bab4f5f642c9fa0b9a1f5438cc8a56db59663de5",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 73111,
+      "value": "/opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/privkey.pem"
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 9,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/09-run.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/09-run.txt",
+      "image_sha256": "4b7ee75ee37a47ef1783905c95dbca95c7468d14d6cf31699c5d5bd1a5351918",
+      "transcript_sha256": "88229d573b5910b3443a8ba01db07c75cfe277d97490442c10bce1d5bab584f9",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 73912,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 10,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/10-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/10-enter-value.txt",
+      "image_sha256": "f9196d6c21a9f4bdfef729943a6dbd47698932685245039b9868a3e0fe881dcf",
+      "transcript_sha256": "f0644305743d7e8bb4af8df0d9ba318dbb0195ed1566f51c8acef348039d6b82",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 74131,
+      "value": "no"
+    },
+    {
+      "journey": "security-certificates-certificate-upload",
+      "journey_family": "security-certificates-certificate-upload",
+      "session_index": 1,
+      "step": 11,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-cert",
+      "image": "docs/assets/interactive/security-certificates-certificate-upload/11-command-result.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-upload/11-command-result.txt",
+      "image_sha256": "8cb754f9e6f3f6cba5c84783c01c3e27435cf53a1323513ec162370a801e87a3",
+      "transcript_sha256": "22ea4b71de60a8c9a3f237c520e9141612032c6b7271d7c299955d79c7e6f9d0",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log",
+      "pty_byte_offset": 75608,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-certificates-uploaded-certificate-local-trust",
+      "journey_family": "security-certificates-uploaded-certificate-local-trust",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the uploaded certificate serves HTTPS",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-certificates-uploaded-certificate-local-trust/01-verify-the-uploaded-certificate-serves-https.png",
+      "transcript": "docs/assets/interactive/security-certificates-uploaded-certificate-local-trust/01-verify-the-uploaded-certificate-serves-https.txt",
+      "image_sha256": "3216be011d66ae0bbee80c20c3f8c3fda07a85009c214ac281ee0bd6dee9d273",
+      "transcript_sha256": "ca3436a97913418cc92b034ed4aa1e0209b9feea84c22281bda4fb906cada956",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-uploaded-certificate-local-trust.pty.log",
+      "pty_byte_offset": 432,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-certificates-remove-uploaded-certificate",
+      "journey_family": "security-certificates-remove-uploaded-certificate",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/03-example-com.txt",
+      "image_sha256": "737f1a7e07fa08be5a15118a95fe76d4e05b91452fffac26bb260690109bc948",
+      "transcript_sha256": "b288eabba3109ef5f7084ca61839cea891cedc4fe4c33b6c19586271928f8f81",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-uploaded-certificate.pty.log",
+      "pty_byte_offset": 92751,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-certificates-remove-uploaded-certificate",
+      "journey_family": "security-certificates-remove-uploaded-certificate",
+      "session_index": 1,
+      "step": 4,
+      "title": "9443",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/04-9443.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/04-9443.txt",
+      "image_sha256": "5beee605429affd138398986e3a315668d6c2e155179b0c01a29deaf37288900",
+      "transcript_sha256": "1aba4339d0d54b07e3c2e635d69cc010fa7777a87f92449812efe9f267a3e225",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-uploaded-certificate.pty.log",
+      "pty_byte_offset": 93109,
+      "selected": "9443"
+    },
+    {
+      "journey": "security-certificates-remove-uploaded-certificate",
+      "journey_family": "security-certificates-remove-uploaded-certificate",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/05-run.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/05-run.txt",
+      "image_sha256": "7ce23ad03132ccaec11363c8c90547ff17da48751a56f381ac6e74190f305d1d",
+      "transcript_sha256": "e006658dc0219e787c4bc41bcfec04a3a9933086979789cfeb30c368a218e5fc",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-uploaded-certificate.pty.log",
+      "pty_byte_offset": 93553,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-certificates-remove-uploaded-certificate",
+      "journey_family": "security-certificates-remove-uploaded-certificate",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/06-enter-value.txt",
+      "image_sha256": "8de9e0f34ab4f38599a03253ab905f6b3e8784c8ae8752be1a96f60de5b533c6",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-uploaded-certificate.pty.log",
+      "pty_byte_offset": 93607,
+      "value": "YES"
+    },
+    {
+      "journey": "security-certificates-remove-uploaded-certificate",
+      "journey_family": "security-certificates-remove-uploaded-certificate",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-uploaded-certificate/07-command-result.txt",
+      "image_sha256": "b1940dd4ed8776b79bae5cb3368ce59cff2927588fb7dfd2e8d6c4a02c9e9f4e",
+      "transcript_sha256": "be3c959011161f776ad670b2dfd541aebc6d0e56846887886dcdfb34f4609bf7",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-uploaded-certificate.pty.log",
+      "pty_byte_offset": 94785,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-certificates-remove-cert",
+      "journey_family": "security-certificates-remove-cert",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-cert/03-example-com.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-cert/03-example-com.txt",
+      "image_sha256": "fd36e64e5c03e43abbba8444950d17e195b329f3675b2ba3095e6aed9e168035",
+      "transcript_sha256": "b288eabba3109ef5f7084ca61839cea891cedc4fe4c33b6c19586271928f8f81",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-cert.pty.log",
+      "pty_byte_offset": 92754,
+      "selected": "example.com"
+    },
+    {
+      "journey": "security-certificates-remove-cert",
+      "journey_family": "security-certificates-remove-cert",
+      "session_index": 1,
+      "step": 4,
+      "title": "8443",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-cert/04-8443.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-cert/04-8443.txt",
+      "image_sha256": "d10546e84f188bbafbac27832e058d90c3229c962cc2f165d748a121c550d024",
+      "transcript_sha256": "3b965497e991eecbae1665dc920e8e44a5ec39106ec29c8f0083345dd1390804",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-cert.pty.log",
+      "pty_byte_offset": 93090,
+      "selected": "8443"
+    },
+    {
+      "journey": "security-certificates-remove-cert",
+      "journey_family": "security-certificates-remove-cert",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-cert/05-run.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-cert/05-run.txt",
+      "image_sha256": "9efd07631eebc45b0761ef271f22af7079edb41bb65ee7393e2fc30061081fb3",
+      "transcript_sha256": "0a2807924e41c48b5de10ef07ebfa6b382c0cb90266a2cf9d3e57b6453dcb36a",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-cert.pty.log",
+      "pty_byte_offset": 93534,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-certificates-remove-cert",
+      "journey_family": "security-certificates-remove-cert",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-cert/06-enter-value.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-cert/06-enter-value.txt",
+      "image_sha256": "f6bfaf87382aea7e6d0fdbfc5c53cfb9ae456e93b9b13989a3c1e7ea31fb2fa3",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-cert.pty.log",
+      "pty_byte_offset": 93588,
+      "value": "YES"
+    },
+    {
+      "journey": "security-certificates-remove-cert",
+      "journey_family": "security-certificates-remove-cert",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/security-certificates-remove-cert/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-certificates-remove-cert/07-command-result.txt",
+      "image_sha256": "b4f89d20593179f8f7d9abcb4b1f8845bca1fdc08fd7ff962b87f217d5bee456",
+      "transcript_sha256": "be3c959011161f776ad670b2dfd541aebc6d0e56846887886dcdfb34f4609bf7",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-cert.pty.log",
+      "pty_byte_offset": 94766,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-certificates-certificate-cleanup-config",
+      "journey_family": "security-certificates-certificate-cleanup-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/security-certificates-certificate-cleanup-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/security-certificates-certificate-cleanup-config/03-configuration-test-passed.txt",
+      "image_sha256": "380fbb28a2ea5fac1df277070171805aed35815bd0915616aac796a2cb6ec423",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-cleanup-config.pty.log",
+      "pty_byte_offset": 8031,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "certificate-created-redirect",
+      "status": "passed",
+      "http_status": 301,
+      "headers": "docs/assets/interactive/evidence/security-certificates/certificate-created-redirect.headers"
+    },
+    {
+      "label": "certificate-created-redirect-header",
+      "status": "passed",
+      "header": "Location: https://example.com:8443/"
+    },
+    {
+      "label": "certificate-local-trust",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "--fail",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "--resolve",
+        "example.com:8443:127.0.0.1",
+        "--cacert",
+        "/opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-8443/fullchain.pem",
+        "https://example.com:8443/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "uploaded-certificate-local-trust",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "--fail",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "--resolve",
+        "example.com:9443:127.0.0.1",
+        "--cacert",
+        "/opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem",
+        "https://example.com:9443/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "security"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "7035266a080b86239771dd102cf899d471c268345145983367a5563787455d91",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 46
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/security-certificates-recordings.tar.gz",
+    "sha256": "aafb65186d213da777044ae29541bc4f90ad8334e1bca680ac7062c1a8a299f8",
+    "size": 82940,
+    "members": {
+      "docs/assets/interactive/evidence/security-certificates/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/security-certificates/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-certificates/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/security-certificates/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/security-certificates/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/security-certificates/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/security-certificates/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-certificates/008-fixture-image.log": {
+        "sha256": "5f2cab43a70b576b42be219f3b2ff9f7ee5f035bd4fe390fae8d9fecbfc28baa",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/security-certificates/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/security-certificates/010-fixture-backend.log": {
+        "sha256": "c43b854cda525ea4a058efbb6707d4ed7313fae0e12431db987e3e411d323af1",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/security-certificates/011-fixture-public-demo.log": {
+        "sha256": "b532e19dc59113a0b50ef5c5eb9909b17697162b3a0346f601f4b5a93e04b4f1",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/security-certificates/012-fixture-https.log": {
+        "sha256": "cd732dfcf83d780b41c37c90b392d0edea601cdc2b2a908bead56ced66c483bf",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/security-certificates/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/security-certificates/014-command-alias.log": {
+        "sha256": "3e3c74455e21d8f9003b3f909a236589d5583fd679165bdd3d532e4ec286fb83",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/security-certificates/015-restore-http-for-provider-comparison.log": {
+        "sha256": "54863166a5ea91baf3ac6702abc9e0e98114b7e0ec58563425aeb89b968fde18",
+        "size": 1179
+      },
+      "docs/assets/interactive/evidence/security-certificates/016-command-alias.log": {
+        "sha256": "8ec24cce47f64cefe957d3fa45cbc1c8606f9060a82c10c6481860a600eb055b",
+        "size": 11
+      },
+      "docs/assets/interactive/evidence/security-certificates/017-command-alias.log": {
+        "sha256": "84ea77ec9563b2f5fb6b698845cfc838442f2d4f9353a2fabb63488db1f23494",
+        "size": 13
+      },
+      "docs/assets/interactive/evidence/security-certificates/018-command-alias.log": {
+        "sha256": "3e3c74455e21d8f9003b3f909a236589d5583fd679165bdd3d532e4ec286fb83",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/security-certificates/019-command-alias.log": {
+        "sha256": "6be37baa315e25b783d86cd69842fd149571e3ca2d2574b233d7f50f38e4ae79",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/security-certificates/020-command-alias.log": {
+        "sha256": "6be37baa315e25b783d86cd69842fd149571e3ca2d2574b233d7f50f38e4ae79",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/security-certificates/021-command-alias.log": {
+        "sha256": "3e3c74455e21d8f9003b3f909a236589d5583fd679165bdd3d532e4ec286fb83",
+        "size": 9
+      },
+      "docs/assets/interactive/evidence/security-certificates/022-remove-upload-demo-listener.log": {
+        "sha256": "19b9fd27f8a60e0f4e96c8cc5ce940a317b0491948c81b5bacbfbba5e742307c",
+        "size": 1577
+      },
+      "docs/assets/interactive/evidence/security-certificates/023-command-alias.log": {
+        "sha256": "d32fb35c88e2a2372b08ccaef161a07d49acecfbba5220b30e0d73fd9be6a888",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/security-certificates/024-remove-demo-https-listener.log": {
+        "sha256": "28368d954783a2cacce37fc2861309ae11b4fe0877ec8d05a6b9daa612932f80",
+        "size": 1568
+      },
+      "docs/assets/interactive/evidence/security-certificates/025-command-alias.log": {
+        "sha256": "d32fb35c88e2a2372b08ccaef161a07d49acecfbba5220b30e0d73fd9be6a888",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/security-certificates/026-image-identities.log": {
+        "sha256": "3e1506a5345bd2622aa436c7e0d7b4cbffdbedaca0545a34ee9ab8e3ea816ce3",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/security-certificates/certificate-created-redirect.body": {
+        "sha256": "b9e577a0f94bdcd6bad7dbd588af263ea2be5acc08a9c01900013631f868c4d9",
+        "size": 169
+      },
+      "docs/assets/interactive/evidence/security-certificates/certificate-created-redirect.headers": {
+        "sha256": "d76ff645a111a9d350c24f5377132a0c45ce13d8ff0e7cc5d817e23d016e4fed",
+        "size": 200
+      },
+      "docs/assets/interactive/evidence/security-certificates/certificate-created-redirect.status": {
+        "sha256": "7969ea6a6b4beec579e78b1e0fceed16290e7f2c47af20c710fbb31459b0d714",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-certificates/certificate-created-redirect.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-certificates/commands.jsonl": {
+        "sha256": "bce817678c6b01bb8327c154c99ff3b4ad9cea76478e41032d8bc0bc649182f5",
+        "size": 10098
+      },
+      "docs/assets/interactive/evidence/security-certificates/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-acme-prerequisites.events.jsonl": {
+        "sha256": "f5dedb87be22c8263deb94d30bf589d2cd7097689f7d35ca348eaca4b372019a",
+        "size": 18322
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-acme-prerequisites.pty.log": {
+        "sha256": "eb8556217bceb655806a3531bb1d6b85c88bf45bf5fe30b8bdd963454f5d055e",
+        "size": 82398
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-cleanup-config.events.jsonl": {
+        "sha256": "7e92175e69e274b68bca1e1a37edfd0ab6ca274dc49445e571e0763cfea54f8b",
+        "size": 10332
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-cleanup-config.pty.log": {
+        "sha256": "e043d64353a8ec842a939ff5fa50424ad1d914766bd23ca4ff03f221275f5afe",
+        "size": 16145
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-local-trust.events.jsonl": {
+        "sha256": "892c6ba6674a98cffe1ca6e70256f0a821e8e593bbf04a6b45b69332dfca5129",
+        "size": 1349
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-local-trust.pty.log": {
+        "sha256": "7d92fe99cada1d831052d36e16a742b3d78b944e430027981090c571e6275cd0",
+        "size": 433
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-renewal-review.events.jsonl": {
+        "sha256": "c4238c7c02e7dae97f56a10dc89c742cb567b39572af11aafebd831bc0cb7bd2",
+        "size": 14679
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-renewal-review.pty.log": {
+        "sha256": "9727955bd4caa66af23ee77bd4ae8864640e7ba1d1816256da371470f898b1f2",
+        "size": 84914
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-renewal-scan.events.jsonl": {
+        "sha256": "59bfafc82f482fd174b7591784a70cb21d348aa845e079a8cc547002c3f9f710",
+        "size": 13735
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-renewal-scan.pty.log": {
+        "sha256": "3f9f0be2ff2d722b5d8db695c39cb6cc81517e2332f443314e82fb00192ca852",
+        "size": 83965
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.events.jsonl": {
+        "sha256": "02735a7781f27dde5c7dc622021a12fa465c0e56da83f0a4edd16978fb8ec96e",
+        "size": 21518
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificate-upload.pty.log": {
+        "sha256": "88e97b55d1f26ee48cbdbd9854d81ad4790551023af4d86dad7bd365aa2c876e",
+        "size": 83722
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.events.jsonl": {
+        "sha256": "8b5dbc2fabe8a75796a5e4076e0c1fb417f2afd0425c5cf16af0124372991bb3",
+        "size": 18239
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-certificates.pty.log": {
+        "sha256": "cde233c9f84b58fcce705f1edc4b60caab81ae520561aa07c6afd3deb4f0d68a",
+        "size": 82190
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-list-certs.events.jsonl": {
+        "sha256": "7702a7858b1708ddd3e158fea6d9fd160556138d5b4016695bfb415f776541c3",
+        "size": 11595
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-list-certs.pty.log": {
+        "sha256": "f232b938830f6c8dd90e693f2c7444d5f55e16e69b22122be248620a9b31edca",
+        "size": 83730
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-cert.events.jsonl": {
+        "sha256": "2d00192ecd401e602b9a0be2ee44a6745782ee8031fd49caa96d7c15b29aa6b0",
+        "size": 15854
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-cert.pty.log": {
+        "sha256": "f38cbee1b561b05330993a5cc58abc9c916fdbe37902eaf5a4f90f87421ec2f4",
+        "size": 102880
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-uploaded-certificate.events.jsonl": {
+        "sha256": "89d24ea7565d1be03a06fd60644d7715461fe23036a6df0c3ac26a282b53eb96",
+        "size": 17657
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-remove-uploaded-certificate.pty.log": {
+        "sha256": "99e1c550453184a59c15d81d90881b56fa2f890ea26619dd8f15b46aad08dead",
+        "size": 102899
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-replace-cert.events.jsonl": {
+        "sha256": "5c96b9b27b1eab7b445d73f3cdefa08db89452d8d74f1b642834fa2c0dbd9525",
+        "size": 16434
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-replace-cert.pty.log": {
+        "sha256": "0f277865b706415c4518d54ef01285f36484e2cb4c67b946c04d924097a8526b",
+        "size": 90424
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-uploaded-certificate-local-trust.events.jsonl": {
+        "sha256": "bda66f389d17f17063439c0b9519d2a99ad0524bd8e0c7fff218c07713e363f3",
+        "size": 1401
+      },
+      "docs/assets/interactive/evidence/security-certificates/security-certificates-uploaded-certificate-local-trust.pty.log": {
+        "sha256": "72ef6fb2c2a7327fc5e68ab9f1c2f78e5f97c0fb2fb185af0798c908970572f2",
+        "size": 432
+      }
+    }
+  }
+}

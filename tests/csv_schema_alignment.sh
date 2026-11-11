@@ -176,7 +176,8 @@ for spec in "${schema_specs[@]}"; do
   assert_contains_header "$docs_md" "$header_var"
   assert_contains_header "$docs_html" "$header_var"
 done
-assert_contains_header "$readme" STATE_BACKEND_PORTS_HEADER
+# The function reference above is the canonical aggregate CSV inventory.
+# README links the operator guide instead of duplicating generated headers.
 
 stale_literals=(
   "record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,cert_ref,ws,redirect_flag,redirect_code"

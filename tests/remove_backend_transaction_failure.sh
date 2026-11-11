@@ -47,6 +47,7 @@ NGINX_STREAM_CONF_DIR="$NGINX_CONFIG_DIR/stream_conf"
 PATH_HEADER_DIR="$NGINX_HTTP_CONF_DIR/path_headers"
 CERTS_DIR="$STATE_DIR/certs"
 BACKEND_PORTS_FILE="$CONFIG_DIR/backend_ports.csv"
+BACKEND_IDENTITY_FILE="$CONFIG_DIR/backend_identity.csv"
 BACKEND_HEADERS_FILE="$CONFIG_DIR/backend_headers.csv"
 BACKEND_HTTP_FILE="$CONFIG_DIR/backend_http_versions.csv"
 BACKEND_MTLS_FILE="$CONFIG_DIR/backend_mtls.csv"
@@ -63,6 +64,7 @@ BACKEND_DOCKER_OPTS_FILE="$CONFIG_DIR/backend_docker_opts.csv"
 LAST_POST_BACKUP_FILE="$BACKUP_DIR/last_post_backup.txt"
 CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha1"
 
+SKIP_DOCKER_CHECKS=false
 INTERACTIVE=false
 
 mkdir -p \
@@ -120,7 +122,7 @@ example.com,429
 EOF_SEC_STATUS
 
 cat >"$SECURITY_RULES_DB" <<'EOF_SEC_RULES'
-enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location
+enabled,domain,mode,status_code,condition_count,selector_1,name_1,condition_1,value_1,selector_2,name_2,condition_2,value_2,selector_3,name_3,condition_3,value_3,selector_4,name_4,condition_4,value_4,selector_5,name_5,condition_5,value_5,selector_6,name_6,condition_6,value_6,selector_7,name_7,condition_7,value_7,selector_8,name_8,condition_8,value_8,selector_9,name_9,condition_9,value_9,selector_10,name_10,condition_10,value_10,reason,source_location,action
 EOF_SEC_RULES
 
 cat >"$SECURITY_IP_RULES_DB" <<'EOF_SEC_IPS'
@@ -152,6 +154,21 @@ cp "$BACKEND_SECURITY_RULE_STATUS_FILE" "$BACKEND_SECURITY_RULE_STATUS_FILE.orig
 cp "$SECURITY_RULES_DB" "$SECURITY_RULES_DB.orig"
 cp "$SECURITY_IP_RULES_DB" "$SECURITY_IP_RULES_DB.orig"
 
+# Seed a managed Docker fixture through the shared metadata-aware mock so the
+# production saved-identity loader and ownership predicate stay active.
+test_backend_token="$(printf '%032d' 2)"
+test_backend_id="$(DOCKER_MOCK_RUNTIME_DIR="$TMP_ROOT/docker" "$ROOT_DIR/tests/mocks/docker" run -d \
+  --name backend-example.com --network dockistrate-net \
+  --label com.dockistrate.managed=true --label com.dockistrate.role=backend \
+  --label "com.dockistrate.state-dir=$(_backend_identity_state_dir)" \
+  --label com.dockistrate.backend-domain=example.com \
+  --label "com.dockistrate.backend-launch=$test_backend_token" nginx:alpine)"
+_backend_runtime_is_full_container_id "$test_backend_id"
+_backend_identity_store example.com "$test_backend_id" "$test_backend_token"
+
+cp "$BACKEND_IDENTITY_FILE" "$BACKEND_IDENTITY_FILE.orig"
+docker_rm_failure_marker="$TMP_ROOT/docker-rm-failure"
+
 set +e
 (remove_backend example.com)
 status=$?
@@ -162,7 +179,13 @@ if [ "$status" -eq 0 ]; then
   exit 1
 fi
 
+if [ ! -f "$docker_rm_failure_marker" ] || [ "$(cat "$docker_rm_failure_marker")" != "$test_backend_id" ]; then
+  echo "[Error] Removal did not reach the intended Docker failure for the verified backend ID." >&2
+  exit 1
+fi
+
 for file in \
+  "$BACKEND_IDENTITY_FILE" \
   "$BACKEND_HEADERS_FILE" \
   "$BACKEND_PORTS_FILE" \
   "$BACKEND_MTLS_FILE" \

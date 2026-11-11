@@ -2,6 +2,8 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../lib/utils/validators.sh
+source "$ROOT_DIR/lib/utils/validators.sh"
 
 # shellcheck source=../lib/nginx/start_nginx.sh
 source "$ROOT_DIR/lib/nginx/start_nginx.sh"

@@ -1,0 +1,6 @@
+Favorites
+> 1) List Port Mappings (list-port-mappings) - ./dockistrate.sh list-port-mappings
+  2) Back
+  3) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

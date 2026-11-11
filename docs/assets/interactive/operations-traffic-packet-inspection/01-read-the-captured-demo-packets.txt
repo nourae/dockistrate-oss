@@ -1,0 +1,9 @@
+$ tcpdump -nn -r /opt/dockistrate-demo/state/pcaps/documentation-example/20261109_113450_nginx.pcap -c 6
+reading from file /opt/dockistrate-demo/state/pcaps/documentation-example/20261109_113450_nginx.pcap, link-type LINUX_SLL2 (Linux cooked v2), snapshot length 262144
+Warning: interface names might be incorrect
+11:34:58.997328 enp39s0 In  IP 172.18.0.1.45640 > 172.18.0.3.80: Flags [S], seq 1256865440, win 64240, options [mss 1460,sackOK,TS val 4225513418 ecr 0,nop,wscale 10], length 0
+11:34:58.997339 enp39s0 Out IP 172.18.0.3.80 > 172.18.0.1.45640: Flags [S.], seq 3249328591, ack 1256865441, win 65160, options [mss 1460,sackOK,TS val 283427550 ecr 4225513418,nop,wscale 10], length 0
+11:34:58.997346 enp39s0 In  IP 172.18.0.1.45640 > 172.18.0.3.80: Flags [.], ack 1, win 63, options [nop,nop,TS val 4225513418 ecr 283427550], length 0
+11:34:58.997481 enp39s0 In  IP 172.18.0.1.45640 > 172.18.0.3.80: Flags [P.], seq 1:76, ack 1, win 63, options [nop,nop,TS val 4225513418 ecr 283427550], length 75: HTTP: GET / HTTP/1.1
+11:34:58.997485 enp39s0 Out IP 172.18.0.3.80 > 172.18.0.1.45640: Flags [.], ack 76, win 64, options [nop,nop,TS val 283427550 ecr 4225513418], length 0
+11:34:58.997571 enp39s0 Out ARP, Request who-has 172.18.0.2 tell 172.18.0.3, length 28

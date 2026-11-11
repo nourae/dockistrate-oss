@@ -62,6 +62,7 @@ function _sr_prompt_domain() {
   fi
   while true; do
     read_with_editing "domain: " selected_domain
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$selected_domain"; then
       return 1
     fi
@@ -69,8 +70,8 @@ function _sr_prompt_domain() {
       echo "[Error] Invalid domain. Please try again." >&2
       continue
     fi
-    if ! backend_exists "$selected_domain"; then
-      echo "[Error] Backend domain '$selected_domain' not found." >&2
+    if ! domain_exists "$selected_domain"; then
+      echo "[Error] Configured domain '$selected_domain' not found." >&2
       continue
     fi
     printf -v "$__var" '%s' "$selected_domain"
@@ -82,6 +83,7 @@ function _sr_prompt_count() {
   local __var="$1" default="${2:-1}" selected_count=""
   while true; do
     read_with_editing "Number of conditions (1-10) [${default}]: " selected_count "$default"
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$selected_count"; then
       return 1
     fi
@@ -91,6 +93,28 @@ function _sr_prompt_count() {
     fi
     echo "[Error] Count must be 1..10." >&2
   done
+}
+
+function _sr_prompt_action() {
+  local __var="$1" current="${2:-}" selected_action="" opts="" line="" value="" label="" first="" rest=""
+  opts="$(get_arg_choices add-security-rule action)"
+  if [ -n "$current" ]; then
+    while IFS= read -r line; do
+      [ -n "$line" ] || continue
+      cli_choice_line_to_value_label "$line" value label
+      if [ "$value" = "$current" ]; then
+        first="$(csv_join_row "$value" "$label (current)")"
+      else
+        rest="${rest}${rest:+$'\n'}$line"
+      fi
+    done <<<"$opts"
+    opts="${first}${rest:+$'\n'}${rest}"
+  fi
+  echo '[Info] Every Require rule must pass first. Then the first matching Block/Allow rule wins in global order.'
+  echo '[Info] Allow skips later Block rules; it never bypasses Require rules, ACLs, or mTLS.'
+  _sr_prompt_choice selected_action 'Rule action' "$opts" || return 1
+  case "$selected_action" in require | block | allow) ;; *) return 1 ;; esac
+  printf -v "$__var" '%s' "$selected_action"
 }
 
 function _sr_prompt_mode() {
@@ -129,6 +153,7 @@ function _sr_prompt_code_optional() {
   fi
   while true; do
     read_with_editing "Status code override (leave empty for ${hint}): " selected_code
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$selected_code"; then
       return 1
     fi
@@ -166,6 +191,7 @@ function _sr_collect_condition_quads() {
     header)
       while true; do
         read_with_editing "Header name: " name
+        [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$name"; then
           return 1
         fi
@@ -178,6 +204,7 @@ function _sr_collect_condition_quads() {
     cookie | arg)
       while true; do
         read_with_editing "Name for ${src}: " name
+        [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$name"; then
           return 1
         fi
@@ -190,6 +217,7 @@ function _sr_collect_condition_quads() {
     var)
       while true; do
         read_with_editing "Name for ${src}: " name
+        [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$name"; then
           return 1
         fi
@@ -233,6 +261,7 @@ function _sr_collect_condition_quads() {
     else
       while true; do
         read_with_editing "Value for ${src} ${cond}: " val
+        [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$val"; then
           return 1
         fi

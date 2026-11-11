@@ -7,6 +7,6 @@ test_start_nginx_rejects_positional_docker_opts() {
 
   assertNotEquals "start-nginx should reject positional docker opts tokens" 0 "$status"
   assertStringContains "start-nginx positional token guardrail message" "positional token alpine is not allowed" "$output"
-  assertTrue "global settings should not store rejected positional nginx docker opts" \
-    "! grep -Fq 'NGINX_DOCKER_OPTS,alpine' '${CONFIG_DIR}/global_settings.csv'"
+  assertEquals "global settings should not store rejected positional nginx docker opts" "" \
+    "$(integration_global_csv_get "$CONFIG_DIR/global_settings.csv" NGINX_DOCKER_OPTS)"
 }

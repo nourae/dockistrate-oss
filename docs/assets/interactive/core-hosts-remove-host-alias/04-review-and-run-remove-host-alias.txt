@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Host Alias (remove-host-alias)
+  Description: Remove a host alias and its keyed configuration; replace the proxy
+
+Arguments:
+  Alias: www.example.com
+
+CLI equivalent:
+  ./dockistrate.sh remove-host-alias www.example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

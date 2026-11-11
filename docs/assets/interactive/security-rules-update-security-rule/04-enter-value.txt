@@ -1,0 +1,10 @@
+
+[Info] Current rule 1
+  Domain: example.com
+  Action: block
+  Conditions: 2
+  Mode: and
+  Code: 403
+  - header:User-Agent contains BadBot
+  - method equals GET
+Domain [example.com]: example.com

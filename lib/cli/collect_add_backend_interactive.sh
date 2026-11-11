@@ -18,6 +18,7 @@ function _collect_add_backend_choose_from_lines() {
   _disp+=("Back")
 
   if ! choose_option idx "$prompt:" "${_disp[@]}"; then
+    [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
     return 2
   fi
   if [ -z "${idx:-}" ] || ! [ "$idx" -ge 0 ] 2>/dev/null || [ "$idx" -ge ${#_vals[@]} ] 2>/dev/null; then
@@ -35,6 +36,7 @@ function _collect_add_backend_choose_from_lines() {
   __MANUAL__)
     [ -n "$manual_prompt" ] || manual_prompt="$prompt"
     read_with_editing "${manual_prompt}: " val "$default"
+    [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$val"; then
       return 2
     fi
@@ -46,11 +48,35 @@ function _collect_add_backend_choose_from_lines() {
   return 0
 }
 
+# Return the preceding visible step, accounting for conditional HTTPS/stream prompts.
+function _collect_add_backend_previous_step() {
+  local current="$1" protocol="$2" redirect="$3"
+  case "$current" in
+  9)
+    if [ "$protocol" != https ]; then
+      printf '5\n'
+    elif [ "$redirect" = no ]; then
+      printf '7\n'
+    else
+      printf '8\n'
+    fi
+    ;;
+  10)
+    case "$protocol" in tcp | udp) printf '5\n' ;; *) printf '9\n' ;; esac
+    ;;
+  *) printf '%s\n' "$((current - 1))" ;;
+  esac
+}
+
 # Guided interactive flow for add-backend with backtracking and sensible ordering
 function collect_add_backend_interactive() {
   local domain="" protocol="http" network_name="$DEFAULT_NETWORK" image="" container_port="" listen="" cert_path="" ws="no" expose_now="yes" docker_opts=""
   local redirect_pref="yes" redirect_target=""
-  local step=0
+  local step=0 picker_status=0
+  local CLI_CHOICE_CANCEL_REASON="" READ_WITH_EDITING_CANCEL_REASON=""
+  SELECTED_CMD=""
+  SELECTED_ARGS=()
+  PROMPT_ARGS_COLLECTED=()
 
   while true; do
     case "$step" in
@@ -64,6 +90,7 @@ function collect_add_backend_interactive() {
           return 1
         fi
         read_with_editing "Domain: " domain
+        [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$domain"; then
           return 1
         fi
@@ -78,11 +105,13 @@ function collect_add_backend_interactive() {
     1) # protocol first
       local _vals=(http https tcp udp __BACK__) _disp=("HTTP" "HTTPS" "TCP" "UDP" "Back") idx
       if ! choose_option idx "Protocol:" "${_disp[@]}"; then
-        return 1
+        [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
+        continue
       fi
       protocol="${_vals[$idx]}"
       if [ "$protocol" = "__BACK__" ]; then
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
       fi
       step=2
@@ -112,17 +141,20 @@ function collect_add_backend_interactive() {
       _vals+=("__BACK__")
       _disp+=("Back")
       if ! choose_option idx "Network:" "${_disp[@]}"; then
-        return 1
+        [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
+        continue
       fi
       network_name="${_vals[$idx]}"
       if [ "$network_name" = "__BACK__" ]; then
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
       fi
       if [ "$network_name" = "__MANUAL__" ]; then
         read_with_editing "Network name [$DEFAULT_NETWORK]: " network_name "$DEFAULT_NETWORK"
+        [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$network_name"; then
-          step=$((step - 1))
+          step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
           continue
         fi
         [ -n "$network_name" ] || network_name="$DEFAULT_NETWORK"
@@ -155,17 +187,20 @@ function collect_add_backend_interactive() {
       _vals_img+=("__BACK__")
       _disp_img+=("Back")
       if ! choose_option idx_img "Docker image:" "${_disp_img[@]}"; then
-        return 1
+        [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
+        continue
       fi
       image="${_vals_img[$idx_img]}"
       if [ "$image" = "__BACK__" ]; then
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
       fi
       if [ "$image" = "__MANUAL__" ]; then
         read_with_editing "Docker image: " image
+        [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$image"; then
-          step=$((step - 1))
+          step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
           continue
         fi
       fi
@@ -197,24 +232,28 @@ function collect_add_backend_interactive() {
         _cp_vals+=("__BACK__")
         _cp_disp+=("Back")
         if ! choose_option idx_cp "$cp_prompt:" "${_cp_disp[@]}"; then
-          return 1
+          [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
+          step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
+          continue
         fi
         container_port="${_cp_vals[$idx_cp]}"
         if [ "$container_port" = "__BACK__" ]; then
-          step=$((step - 1))
+          step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
           continue
         fi
         if [ "$container_port" = "__MANUAL__" ]; then
           read_with_editing "$cp_prompt: " container_port
+          [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
           if is_back_input "$container_port"; then
-            step=$((step - 1))
+            step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
             continue
           fi
         fi
       else
         read_with_editing "$cp_prompt: " container_port
+        [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$container_port"; then
-          step=$((step - 1))
+          step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
           continue
         fi
       fi
@@ -235,22 +274,18 @@ function collect_add_backend_interactive() {
         listen_opts+=$'\n'"${container_port}|${container_port} (container port)"
       fi
       listen_opts+=$'\n'"$(__arg_choices_common_listen_ports)"
-      _collect_add_backend_choose_from_lines listen "Listen port" "$listen_opts" "$listen" "Listen port"
-      case $? in
+      picker_status=0
+      _collect_add_backend_choose_from_lines listen "Listen port" "$listen_opts" "$listen" "Listen port" || picker_status=$?
+      case "$picker_status" in
       0) ;;
       2)
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
         ;;
       *) return 1 ;;
       esac
       if ! is_valid_port "$listen"; then
         echo "[Error] Invalid listen port." >&2
-        continue
-      fi
-      local host_transport="tcp"
-      [ "$protocol" = "udp" ] && host_transport="udp"
-      if ! assert_host_port_available_or_fail "$listen" "$host_transport"; then
         continue
       fi
       step=6
@@ -278,17 +313,20 @@ function collect_add_backend_interactive() {
       _c_vals+=("__MANUAL__" "__BACK__")
       _c_disp+=("Enter manually..." "Back")
       if ! choose_option idx_c "Certificate path (or generate):" "${_c_disp[@]}"; then
-        return 1
+        [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
+        continue
       fi
       cert_path="${_c_vals[$idx_c]}"
       if [ "$cert_path" = "__BACK__" ]; then
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
       fi
       if [ "$cert_path" = "__MANUAL__" ]; then
-        read_with_editing "Cert directory under certs/ or absolute (or 'selfsigned'/'letsencrypt'): " cert_path
+        read_with_editing "Certificate owner/id or managed path (or 'selfsigned'/'letsencrypt'): " cert_path
+        [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         if is_back_input "$cert_path"; then
-          step=$((step - 1))
+          step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
           continue
         fi
       fi
@@ -303,11 +341,13 @@ function collect_add_backend_interactive() {
       fi
       local r_vals=(yes no __BACK__) r_disp=("Enable redirect" "Do not redirect" "Back") idx_r
       if ! choose_option idx_r "HTTP->HTTPS redirect:" "${r_disp[@]}"; then
-        return 1
+        [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
+        continue
       fi
       redirect_pref="${r_vals[$idx_r]}"
       if [ "$redirect_pref" = "__BACK__" ]; then
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
       fi
       [ "$redirect_pref" = "no" ] && redirect_target=""
@@ -321,11 +361,12 @@ function collect_add_backend_interactive() {
       fi
       [ -n "$redirect_target" ] || redirect_target="$listen"
       local redirect_opts="__DEFAULT__|Use HTTPS listen port: ${listen}"$'\n'"443|443"$'\n'"8443|8443"$'\n'"__MANUAL__|Enter manually..."
-      _collect_add_backend_choose_from_lines redirect_target "Redirect target port" "$redirect_opts" "$listen" "Redirect target port"
-      case $? in
+      picker_status=0
+      _collect_add_backend_choose_from_lines redirect_target "Redirect target port" "$redirect_opts" "$listen" "Redirect target port" || picker_status=$?
+      case "$picker_status" in
       0) ;;
       2)
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
         ;;
       *) return 1 ;;
@@ -344,11 +385,13 @@ function collect_add_backend_interactive() {
       fi
       local ws_vals=(no yes __BACK__) ws_disp=("Disabled" "Enabled" "Back") idx_ws
       if ! choose_option idx_ws "WebSocket support:" "${ws_disp[@]}"; then
-        return 1
+        [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
+        continue
       fi
       ws="${ws_vals[$idx_ws]}"
       if [ "$ws" = "__BACK__" ]; then
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
       fi
       step=10
@@ -356,19 +399,30 @@ function collect_add_backend_interactive() {
     10) # expose
       local ex_vals=(yes no __BACK__) ex_disp=("Expose now" "Do not expose" "Back") idx_ex
       if ! choose_option idx_ex "Expose port now:" "${ex_disp[@]}"; then
-        return 1
+        [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
+        continue
       fi
       expose_now="${ex_vals[$idx_ex]}"
       if [ "$expose_now" = "__BACK__" ]; then
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
+      fi
+      if [ "$expose_now" = yes ]; then
+        local host_transport="tcp"
+        [ "$protocol" = udp ] && host_transport=udp
+        if ! assert_host_port_available_or_fail "$listen" "$host_transport"; then
+          step=5
+          continue
+        fi
       fi
       step=11
       ;;
     11) # docker opts last
       read_multiline_with_editing "Additional docker run options (optional; finish with empty line): " docker_opts
+      [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
       if is_back_input "$docker_opts"; then
-        step=$((step - 1))
+        step="$(_collect_add_backend_previous_step "$step" "$protocol" "$redirect_pref")"
         continue
       fi
       step=12

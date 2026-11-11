@@ -2,8 +2,12 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# shellcheck source=../lib/utils/validators.sh
+source "$ROOT_DIR/lib/utils/validators.sh"
 # shellcheck source=../lib/nginx/recreate_nginx_container.sh
 source "$ROOT_DIR/lib/nginx/recreate_nginx_container.sh"
+# shellcheck source=lib/empty_proxy_certificate_fixture.sh
+source "$ROOT_DIR/tests/lib/empty_proxy_certificate_fixture.sh"
 
 tmp_dir="$(mktemp -d "${TMPDIR:-/tmp}/dockistrate_recreate_keylog.XXXXXX")"
 trap 'rm -rf "$tmp_dir"' EXIT

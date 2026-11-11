@@ -1,0 +1,4 @@
+
+[Info] Packet capture stopped and container removed.
+
+Press Enter to continue...

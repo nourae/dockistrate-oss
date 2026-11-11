@@ -26,7 +26,7 @@ test_update_backend_preserves_json_env_quotes_in_docker_opts() {
 
   local opts_file="${CONFIG_DIR}/backend_docker_opts.csv"
   local stored_line stored_opts
-  stored_line="$(grep "^backend:${domain}," "$opts_file" | head -n 1 || true)"
+  stored_line="$(grep "^${domain}," "$opts_file" | head -n 1 || true)"
   if [ -z "$stored_line" ] || ! csv_parse_line "$stored_line" || [ "$CSV_FIELD_COUNT" -lt 2 ]; then
     fail "Expected valid docker opts CSV row for backend:${domain}"
     return
@@ -35,5 +35,5 @@ test_update_backend_preserves_json_env_quotes_in_docker_opts() {
 
   assertEquals "stored docker opts should survive update-backend recreate" "$expected_opts" "$stored_opts"
   assertTrue "update-backend recreate should replay JSON env token without extra escaping" \
-    "grep -Fq 'subcommand=run -d --name ${cname} --network dockistrate-net -e ELASTICSEARCH_HOSTS=[\"http://elasticsearch:9200\"] --label app=kibana nginx:alpine' '$docker_log_file'"
+    "grep -F 'subcommand=run -d --name ${cname} --network dockistrate-net -e ELASTICSEARCH_HOSTS=[\"http://elasticsearch:9200\"] --label app=kibana --label com.dockistrate.managed=true --label com.dockistrate.role=backend --label com.dockistrate.state-dir=' '$docker_log_file' | grep -Eq 'backend-launch=[0-9a-f]{32} nginx:alpine$'"
 }

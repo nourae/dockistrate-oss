@@ -1,0 +1,14 @@
+Review command
+  Command: Set TLS Protocols (set-tls-protocols)
+  Description: Set global TLS protocol list for HTTPS listeners
+
+Arguments:
+  TLS protocols: TLSv1.2 TLSv1.3
+
+CLI equivalent:
+  ./dockistrate.sh set-tls-protocols 'TLSv1.2 TLSv1.3'
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

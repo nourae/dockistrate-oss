@@ -13,6 +13,8 @@ source "$ROOT_DIR/lib/backups.sh"
 source "$ROOT_DIR/lib/nginx.sh"
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/backends.sh"
+# shellcheck source=tests/lib/backend_identity_fixture.sh
+source "$ROOT_DIR/tests/lib/backend_identity_fixture.sh"
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/tls.sh"
 # shellcheck disable=SC1091
@@ -34,8 +36,13 @@ rename_log="$TMP_ROOT/rename.log"
 
 cname="backend-example.com"
 backup_cname="backend-example.com-rollback-123"
-owned_replacement_id="owned-replacement-id"
-foreign_replacement_id="foreign-replacement-id"
+owned_replacement_id="$(printf '%064d' 2)"
+original_container_id="$(printf '%064d' 1)"
+foreign_replacement_id="$(printf '%064d' 3)"
+original_token=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+STATE_DIR="$TMP_ROOT/state"
+mkdir -p "$STATE_DIR"
+backend_fixture_seed_labels "$TMP_ROOT/original.labels" "$original_token" example.com "$STATE_DIR"
 
 function container_exists() {
   case "${1:-}" in
@@ -53,7 +60,23 @@ function docker() {
   local subcommand="${1:-}"
   shift || true
   case "$subcommand" in
+  ps)
+    printf '%s\n' "$owned_replacement_id"
+    return 0
+    ;;
   inspect)
+    if [ "${3:-}" = "$owned_replacement_id" ]; then
+      printf 'unverified\n'
+      return 0
+    fi
+    if [ "${3:-}" = "$original_container_id" ]; then
+      if [ "${2:-}" = '{{.Name}}' ]; then
+        printf '/%s\n' "$backup_cname"
+      else
+        backend_fixture_snapshot "$2" "$original_container_id" running "$TMP_ROOT/original.labels"
+      fi
+      return 0
+    fi
     if [ "${1:-}" = "-f" ] && [ "${3:-}" = "$cname" ]; then
       printf '%s\n' "$foreign_replacement_id"
       return 0
@@ -72,16 +95,23 @@ UPDATE_BACKEND_RUNTIME_MODE="replace"
 UPDATE_BACKEND_RUNTIME_CNAME="$cname"
 UPDATE_BACKEND_RUNTIME_BACKUP_CNAME="$backup_cname"
 UPDATE_BACKEND_RUNTIME_REPLACEMENT_ID="$owned_replacement_id"
+UPDATE_BACKEND_RUNTIME_BACKUP_ID="$original_container_id"
+UPDATE_BACKEND_RUNTIME_TOKEN=0123456789abcdef0123456789abcdef
+UPDATE_BACKEND_RUNTIME_DOMAIN=example.com
+UPDATE_BACKEND_RUNTIME_OLD_TOKEN="$original_token"
 
-_update_backend_runtime_rollback_if_needed
+if _update_backend_runtime_rollback_if_needed; then
+  echo "[Error] Rollback incorrectly reported success when an unrelated container prevented restoration." >&2
+  exit 1
+fi
 
 if [ -s "$rm_log" ]; then
   echo "[Error] Rollback removed the canonical backend container even though it no longer matched the transaction-owned replacement ID." >&2
   exit 1
 fi
 
-if ! grep -Fq "${backup_cname}->${cname}" "$rename_log"; then
-  echo "[Error] Rollback should still attempt to restore the staged backup container name." >&2
+if ! grep -Fq "${original_container_id}->${cname}" "$rename_log"; then
+  echo "[Error] Rollback should still attempt to restore the original container by immutable ID." >&2
   exit 1
 fi
 

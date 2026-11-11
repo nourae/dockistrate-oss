@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Security Rule (remove-security-rule)
+  Description: Remove a security rule by ID
+
+Arguments:
+  ID: 1
+
+CLI equivalent:
+  ./dockistrate.sh remove-security-rule 1
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

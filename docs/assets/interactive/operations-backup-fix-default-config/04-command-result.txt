@@ -1,0 +1,4 @@
+
+[Info] Default config re-created.
+
+Press Enter to continue...

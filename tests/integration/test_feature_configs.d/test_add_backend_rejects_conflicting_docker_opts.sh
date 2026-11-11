@@ -12,5 +12,5 @@ test_add_backend_rejects_conflicting_docker_opts() {
   assertTrue "backend_ports.csv should not contain backend row after rejected add-backend" \
     "! grep -q '^backend,${domain},' '${CONFIG_DIR}/backend_ports.csv'"
   assertTrue "backend_docker_opts.csv should not contain rejected row" \
-    "! grep -q '^backend:${domain},' '${CONFIG_DIR}/backend_docker_opts.csv'"
+    "! grep -q '^${domain},' '${CONFIG_DIR}/backend_docker_opts.csv'"
 }

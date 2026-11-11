@@ -68,6 +68,7 @@ function export_backend_client_p12() {
   if ! _resolve_backend_mtls_dir mtls_dir "$domain"; then
     exit 1
   fi
+  _mtls_validate_authority_state "$mtls_dir" || return 1
   if ! _mtls_require_client_cert_files "$mtls_dir" "$client"; then
     exit 1
   fi
@@ -76,14 +77,36 @@ function export_backend_client_p12() {
   local xtrace_state=""
   xtrace_disable xtrace_state
 
-  local password="" pass1 pass2
+  local password="" pass1="" pass2=""
+  local password_file_line_terminated="false" password_file_has_extra="false" password_file_extra=""
+  local password_stdin_read="false" password_stdin_line_terminated="false"
+  local password_stdin_has_extra="false" password_stdin_extra=""
   case "$password_mode" in
   file)
     if [ ! -f "$password_file" ]; then
       echo "[Error] Password file not found: $password_file" >&2
       exit 1
     fi
-    password="$(head -n1 "$password_file" | tr -d '\r\n')"
+    if ! {
+      if IFS= read -r password; then
+        password_file_line_terminated="true"
+      fi
+      if IFS= read -r password_file_extra || [ -n "$password_file_extra" ]; then
+        password_file_has_extra="true"
+      fi
+    } <"$password_file"; then
+      echo "[Error] Unable to read password file: $password_file" >&2
+      exit 1
+    fi
+    if [ "$password_file_has_extra" = "true" ]; then
+      echo "[Error] Password file must contain exactly one line (an optional final LF or CRLF is allowed)" >&2
+      exit 1
+    fi
+    if [ "$password_file_line_terminated" = "true" ]; then
+      case "$password" in
+      *$'\r') password="${password%$'\r'}" ;;
+      esac
+    fi
     ;;
   env)
     if ! require_valid_var_name "$password_env" >/dev/null 2>&1; then
@@ -97,9 +120,27 @@ function export_backend_client_p12() {
     password="${!password_env}"
     ;;
   stdin)
-    if ! IFS= read -r password; then
+    if IFS= read -r password; then
+      password_stdin_read="true"
+      password_stdin_line_terminated="true"
+    elif [ -n "$password" ]; then
+      password_stdin_read="true"
+    fi
+    if [ "$password_stdin_read" != "true" ]; then
       echo "[Error] Failed to read password from stdin" >&2
       exit 1
+    fi
+    if IFS= read -r password_stdin_extra || [ -n "$password_stdin_extra" ]; then
+      password_stdin_has_extra="true"
+    fi
+    if [ "$password_stdin_has_extra" = "true" ]; then
+      echo "[Error] Password stdin must contain exactly one line (an optional final LF or CRLF is allowed)" >&2
+      exit 1
+    fi
+    if [ "$password_stdin_line_terminated" = "true" ]; then
+      case "$password" in
+      *$'\r') password="${password%$'\r'}" ;;
+      esac
     fi
     ;;
   "")
@@ -114,6 +155,13 @@ function export_backend_client_p12() {
       }
       echo "[Error] Passwords do not match. Try again." >&2
     done
+    ;;
+  esac
+
+  case "$password" in
+  *$'\r'* | *$'\n'*)
+    echo "[Error] Export password must be a single line and cannot contain CR or LF characters" >&2
+    exit 1
     ;;
   esac
 

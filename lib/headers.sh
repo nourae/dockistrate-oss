@@ -9,7 +9,7 @@ if [ -f "${HEADERS_MODULE_DIR}/common.sh" ]; then
 fi
 
 for headers_file in "${HEADERS_MODULE_DIR}"/*.sh; do
-  headers_basename="$(basename "${headers_file}")"
+  headers_basename="${headers_file##*/}"
   if [ "${headers_basename}" = "common.sh" ]; then
     continue
   fi

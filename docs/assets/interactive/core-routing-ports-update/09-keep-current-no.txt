@@ -1,0 +1,7 @@
+WebSocket:
+> 1) Keep current: no
+  2) Yes
+  3) No
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

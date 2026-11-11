@@ -9,33 +9,26 @@ function get_backend_acl_policy() {
   local domain="${1:-}"
   [ -n "$domain" ] && domain="$(normalize_domain "$domain")"
   local val="$ACL_POLICY"
+  _require_persisted_settings_validation || return 1
   local has_explicit_policy="no"
-  if [ -n "$domain" ] && [ -f "$BACKEND_ACL_POLICY_FILE" ]; then
+  if [ -n "$domain" ]; then
     local custom=""
-    custom="$(state_csv_get_two_col_value "$BACKEND_ACL_POLICY_FILE" "$STATE_BACKEND_ACL_POLICIES_HEADER" "$domain" "" 2>/dev/null || true)"
+    custom="$(get_validated_backend_setting_override "$BACKEND_ACL_POLICY_FILE" "$STATE_BACKEND_ACL_POLICIES_HEADER" ACL_POLICY "$domain")" || return 1
     if [ -n "$custom" ]; then
       val="$custom"
       has_explicit_policy="yes"
     fi
   fi
-  # For dedicated hosts, fall back to target domain's ACL policy if:
-  # 1. No explicit config exists for the dedicated host
-  # 2. Inheritance is enabled for ACL
+  # Aliases inherit absent settings; dedicated hosts can disable inheritance.
   if [ "$has_explicit_policy" = "no" ]; then
     local target_domain
-    target_domain="$(backend_for_dedicated_host "$domain")"
+    target_domain="$(_acl_inherited_domain "$domain")" || return 1
     if [ -n "$target_domain" ]; then
-      # Check if inheritance is enabled (defaults to yes if function not available)
-      local should_inherit="yes"
-      if command -v should_inherit_acl >/dev/null 2>&1; then
-        should_inherit_acl "$domain" && should_inherit="yes" || should_inherit="no"
-      fi
-      if [ "$should_inherit" = "yes" ] && [ -f "$BACKEND_ACL_POLICY_FILE" ]; then
-        local target_custom=""
-        target_custom="$(state_csv_get_two_col_value "$BACKEND_ACL_POLICY_FILE" "$STATE_BACKEND_ACL_POLICIES_HEADER" "$target_domain" "" 2>/dev/null || true)"
-        [ -n "$target_custom" ] && val="$target_custom"
-      fi
+      local target_custom=""
+      target_custom="$(get_validated_backend_setting_override "$BACKEND_ACL_POLICY_FILE" "$STATE_BACKEND_ACL_POLICIES_HEADER" ACL_POLICY "$target_domain")" || return 1
+      [ -n "$target_custom" ] && val="$target_custom"
     fi
   fi
-  echo "$val"
+  validate_persisted_setting ACL_POLICY "$val" || return 1
+  printf '%s\n' "$val"
 }

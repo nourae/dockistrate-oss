@@ -8,10 +8,7 @@ test_add_cert_letsencrypt_standalone_creates_files() {
   assertStringContains "standalone mode indicator" "using standalone mode" "$(printf '%s' "$output" | tr '[:upper:]' '[:lower:]')"
   assertStringContains "letsencrypt placement message" "Let’s Encrypt cert placed" "$output"
 
-  cert_dir="${CERTS_DIR}/letsencrypt/live/standalone.example_443"
-  if [ ! -d "$cert_dir" ]; then
-    cert_dir="${CERTS_DIR}/letsencrypt/live/standalone.example"
-  fi
+  cert_dir="${STATE_DIR}/domains/standalone.example/certs/letsencrypt-443"
   assertTrue "standalone cert directory should exist" "[ -d '${cert_dir}' ]"
   assertTrue "standalone fullchain should exist" "[ -f '${cert_dir}/fullchain.pem' ]"
   assertTrue "standalone privkey should exist" "[ -f '${cert_dir}/privkey.pem' ]"

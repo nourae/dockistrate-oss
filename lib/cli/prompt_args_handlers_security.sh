@@ -12,6 +12,10 @@ function prompt_args_handle_security_specials() {
     prompt_args_handle_add_security_rule_interactive "$CMD"
     return $?
     ;;
+  update-acl)
+    prompt_args_handle_update_acl_interactive "$CMD"
+    return $?
+    ;;
   update-security-rule)
     prompt_args_handle_update_security_rule_interactive "$CMD"
     return $?

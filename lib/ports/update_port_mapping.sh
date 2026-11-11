@@ -78,7 +78,7 @@ function update_port_mapping() {
 
   # Optional second argument selects which existing mapping to update
   if [ $# -gt 0 ] && [[ "$1" =~ ^[0-9]+$ ]]; then
-    current_port="$1"
+    current_port="$(normalize_port "$1")" || { echo "[Error] Invalid current port: $1" >&2; return 1; }
     shift || true
   fi
 
@@ -135,6 +135,10 @@ function update_port_mapping() {
           i=$((i + 1))
         done
         prompt_input choice "Choice" "1"
+        choice="$(normalize_positive_decimal "$choice" "$count")" || {
+          echo "[Error] Choice must be between 1 and $count." >&2
+          return 1
+        }
         current="${matches[$((choice - 1))]}"
       fi
     else
@@ -241,6 +245,9 @@ function update_port_mapping() {
   [ -z "$ws" ] && ws="$cur_ws"
   [ -z "$http3_opt" ] && http3_opt="$cur_http3"
   [ -z "$alt_svc_opt" ] && alt_svc_opt="$cur_alt_svc"
+  require_valid_port "$nginx_port" 1 && require_valid_port "$upstream_port" 1 || return 1
+  nginx_port="$(normalize_port "$nginx_port")" || return 1
+  upstream_port="$(normalize_port "$upstream_port")" || return 1
   if ! validate_http_port_combination "$protocol" "$nginx_port"; then
     exit 1
   fi

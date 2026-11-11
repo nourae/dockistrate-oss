@@ -21,10 +21,29 @@ function remove_host_alias() {
   if ! _config_begin_transaction_if_needed started_txn "remove_alias_${alias}"; then
     exit 1
   fi
-  state_csv_delete_by_keys "$aliases_file" "$STATE_BACKEND_ALIASES_HEADER" "$STATE_BACKEND_ALIASES_COLS" 2 "alias" "$alias"
+  if ! state_csv_delete_by_keys "$aliases_file" "$STATE_BACKEND_ALIASES_HEADER" "$STATE_BACKEND_ALIASES_COLS" 2 "alias" "$alias"; then
+    _rollback_handler
+    return 1
+  fi
+  # Removing/recreating a name must not silently resurrect its old ACL. Preserve
+  # another identity's state when repairing an invalid, colliding alias row.
+  if ! _state_helpers_validate_backend_ports_readable_for_cleanup; then
+    _rollback_handler
+    return 1
+  fi
+  if ! backend_exists "$alias" && ! dedicated_host_exists "$alias"; then
+    if ! remove_domain_keyed_render_state "$alias" ||
+      ! safe_rm_f "${SECURITY_IP_DIR}/$(sanitize_domain_name "$alias").inc" "$SECURITY_IP_DIR" ||
+      ! safe_rm_f "${SECURITY_IP_STREAM_DIR}/$(sanitize_domain_name "$alias").inc" "$SECURITY_IP_STREAM_DIR"; then
+      _rollback_handler
+      return 1
+    fi
+  fi
   echo "[Info] Removed host alias '${alias}'${target:+ (was -> ${target})}."
   log_msg "Removed host alias ${alias}"
-  create_backup "" "RemoveAlias_${alias}"
-  update_nginx_config
-  _config_end_transaction_if_started "$started_txn"
+  if ! create_backup "" "RemoveAlias_${alias}" || ! update_nginx_config_for_security_change ||
+    ! _config_end_transaction_if_started "$started_txn"; then
+    _rollback_handler
+    return 1
+  fi
 }

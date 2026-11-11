@@ -1,0 +1,5 @@
+
+Optional local release tag to compare against. Leave blank to check the current on-disk state only.
+Target tag (vMAJOR.MINOR.PATCH)
+Example: v1.0.0
+Blank: leave blank to validate the current checkout only:

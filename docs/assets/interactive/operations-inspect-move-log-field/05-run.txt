@@ -1,0 +1,15 @@
+Review command
+  Command: Move Log Field (move-log-field)
+  Description: Reorder access log fields
+
+Arguments:
+  From position: 9
+  To position: 1
+
+CLI equivalent:
+  ./dockistrate.sh move-log-field 9 1
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

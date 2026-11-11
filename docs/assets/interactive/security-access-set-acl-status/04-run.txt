@@ -1,0 +1,14 @@
+Review command
+  Command: Set ACL Status (set-acl-status)
+  Description: Set the global status code for ACL denials
+
+Arguments:
+  Status code: 403
+
+CLI equivalent:
+  ./dockistrate.sh set-acl-status 403
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

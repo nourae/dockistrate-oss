@@ -23,7 +23,7 @@ function prompt_args_handle_update_security_rule_interactive() {
     echo "[Error] Security rule $id is malformed." >&2
     return 1
   fi
-  local e d m c n \
+  local e d m c n action \
     s1 n1 c1 v1 \
     s2 n2 c2 v2 \
     s3 n3 c3 v3 \
@@ -39,6 +39,7 @@ function prompt_args_handle_update_security_rule_interactive() {
   m="${CSV_FIELDS[2]}"
   c="${CSV_FIELDS[3]}"
   n="${CSV_FIELDS[4]}"
+  action="${CSV_FIELDS[47]:-require}"
   s1="${CSV_FIELDS[5]}"; n1="${CSV_FIELDS[6]}"; c1="${CSV_FIELDS[7]}"; v1="${CSV_FIELDS[8]}"
   s2="${CSV_FIELDS[9]}"; n2="${CSV_FIELDS[10]}"; c2="${CSV_FIELDS[11]}"; v2="${CSV_FIELDS[12]}"
   s3="${CSV_FIELDS[13]}"; n3="${CSV_FIELDS[14]}"; c3="${CSV_FIELDS[15]}"; v3="${CSV_FIELDS[16]}"
@@ -61,11 +62,14 @@ function prompt_args_handle_update_security_rule_interactive() {
   fi
   echo "[Info] Current rule ${id}"
   echo "  Domain: $d"
+  echo "  Action: $action"
   echo "  Conditions: $cur_count"
   if [ "$m" != "single" ] && [ -n "$m" ]; then
     echo "  Mode: $m"
   fi
-  if [ -n "$c" ] && [ "$c" != "-" ]; then
+  if [ "$action" = allow ]; then
+    echo "  Rejection metadata: retained (status=${c:--}), unused by Allow"
+  elif [ -n "$c" ] && [ "$c" != "-" ]; then
     echo "  Code: $c"
   else
     echo "  Code: default (${SECURITY_RULE_STATUS:-})"
@@ -74,9 +78,10 @@ function prompt_args_handle_update_security_rule_interactive() {
     echo "  - $(summarize_cond "${cur_sources[$i]}" "${cur_names[$i]}" "${cur_conds[$i]}" "${cur_values[$i]}")"
   done
 
-  local new_domain="$d" new_code="$c" changed=false
+  local new_domain="$d" new_action="$action" new_code="$c" changed=false
   while true; do
     read_with_editing "Domain [${d}]: " new_domain "$d"
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$new_domain"; then
       return 1
     fi
@@ -84,8 +89,8 @@ function prompt_args_handle_update_security_rule_interactive() {
       echo "[Error] Invalid domain. Please try again." >&2
       continue
     fi
-    if ! backend_exists "$new_domain"; then
-      echo "[Error] Backend domain '$new_domain' not found." >&2
+    if ! domain_exists "$new_domain"; then
+      echo "[Error] Configured domain '$new_domain' not found." >&2
       continue
     fi
     break
@@ -93,34 +98,39 @@ function prompt_args_handle_update_security_rule_interactive() {
   if [ "$new_domain" != "$d" ]; then
     changed=true
   fi
+  if ! _sr_prompt_action new_action "$action"; then return 1; fi
+  [ "$new_action" = "$action" ] || changed=true
 
   local code_input="" code_hint=""
-  if [ -n "$c" ] && [ "$c" != "-" ]; then
-    code_hint="current $c"
-  else
-    code_hint="default ${SECURITY_RULE_STATUS:-}"
-  fi
-  while true; do
-    read_with_editing "Status code override (leave empty to keep ${code_hint}, '-' to clear): " code_input
-    if is_back_input "$code_input"; then
-      return 1
+  if [ "$new_action" != allow ]; then
+    if [ -n "$c" ] && [ "$c" != "-" ]; then
+      code_hint="current $c"
+    else
+      code_hint="default ${SECURITY_RULE_STATUS:-}"
     fi
-    if [ -z "$code_input" ]; then
-      new_code="$c"
-      break
+    while true; do
+      read_with_editing "Status code override (leave empty to keep ${code_hint}, '-' to clear): " code_input
+      [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
+      if is_back_input "$code_input"; then
+        return 1
+      fi
+      if [ -z "$code_input" ]; then
+        new_code="$c"
+        break
+      fi
+      if [ "$code_input" = "-" ]; then
+        new_code="-"
+        break
+      fi
+      if is_status_code "$code_input"; then
+        new_code="$code_input"
+        break
+      fi
+      echo "[Error] Invalid status code. Use 3-digit HTTP status (e.g., 403)." >&2
+    done
+    if [ "$new_code" != "$c" ]; then
+      changed=true
     fi
-    if [ "$code_input" = "-" ]; then
-      new_code="-"
-      break
-    fi
-    if is_status_code "$code_input"; then
-      new_code="$code_input"
-      break
-    fi
-    echo "[Error] Invalid status code. Use 3-digit HTTP status (e.g., 403)." >&2
-  done
-  if [ "$new_code" != "$c" ]; then
-    changed=true
   fi
 
   local replace_choice=""
@@ -172,6 +182,7 @@ function prompt_args_handle_update_security_rule_interactive() {
   if [ "$new_domain" != "$d" ]; then
     args+=(--domain "$new_domain")
   fi
+  if [ "$new_action" != "$action" ]; then args+=(--action "$new_action"); fi
   if [ "$new_code" != "$c" ]; then
     args+=(--code "$new_code")
   fi
@@ -182,6 +193,7 @@ function prompt_args_handle_update_security_rule_interactive() {
     fi
   fi
 
+  echo "[Info] Updated rule ${id}: domain=$new_domain action=$new_action"
   PROMPT_ARGS_COLLECTED=("${args[@]}")
   return 0
 }

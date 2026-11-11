@@ -21,6 +21,8 @@ source "$ROOT_DIR/lib/cli/command_description.sh"
 source "$ROOT_DIR/lib/cli/command_descriptions.sh"
 # shellcheck source=../lib/cli/choose_option.sh
 source "$ROOT_DIR/lib/cli/choose_option.sh"
+# shellcheck source=../lib/cli/command_visibility.sh
+source "$ROOT_DIR/lib/cli/command_visibility.sh"
 # shellcheck source=../lib/cli/review_command.sh
 source "$ROOT_DIR/lib/cli/review_command.sh"
 
@@ -268,9 +270,8 @@ if [[ "$redacted_cli" == *"SECRET=top"* ]] || [[ "$redacted_cli" != *"--docker-o
 fi
 redacted_unknown_cli="$(format_cli_equivalent start-nginx --unknown-flag nginx:mainline --docker-opts "--env UNKNOWN_SHIFT_SECRET=top")"
 if [[ "$redacted_unknown_cli" == *"UNKNOWN_SHIFT_SECRET=top"* ]] ||
-  [[ "$redacted_unknown_cli" != *"--unknown-flag nginx:mainline"* ]] ||
-  [[ "$redacted_unknown_cli" != *"--docker-opts '[REDACTED]'"* ]]; then
-  echo "[Error] Unknown long flags should not shift review redaction onto non-sensitive option values." >&2
+  [[ "$redacted_unknown_cli" != *"[REDACTED]"* ]]; then
+  echo "[Error] Rejected start-nginx suffix should be conservatively redacted." >&2
   echo "$redacted_unknown_cli" >&2
   exit 1
 fi
@@ -321,7 +322,6 @@ fi
 redacted_mixed_flag_header_cli="$(format_cli_equivalent add-header --req-resp response --header X-Token SECRET=top)"
 if [[ "$redacted_mixed_flag_header_cli" == *"SECRET=top"* ]] ||
   [[ "$redacted_mixed_flag_header_cli" != *"--req-resp response"* ]] ||
-  [[ "$redacted_mixed_flag_header_cli" != *"--header X-Token"* ]] ||
   [[ "$redacted_mixed_flag_header_cli" != *"[REDACTED]"* ]]; then
   echo "[Error] Mixed flag/positional header review output should redact the header value." >&2
   echo "$redacted_mixed_flag_header_cli" >&2

@@ -1,0 +1,16 @@
+Review command
+  Command: Add Header (add-header)
+  Description: Add a global request or response header
+
+Arguments:
+  Header direction: response
+  Header name: X-Global-Guide
+  Value: preview
+
+CLI equivalent:
+  ./dockistrate.sh add-header response X-Global-Guide preview
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

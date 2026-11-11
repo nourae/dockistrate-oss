@@ -1,0 +1,17 @@
+Security rule summary
+  Domain: example.com
+  Action: block
+  Conditions: 5
+  Mode: or
+  Code: 403
+  - cookie:session exists -
+  - arg:token equals demo
+  - var:$request_method equals POST
+  - ip:l3 equals 203.0.113.8
+  - path matches ^/private/
+
+Create security rule?:
+> 1) Confirm
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

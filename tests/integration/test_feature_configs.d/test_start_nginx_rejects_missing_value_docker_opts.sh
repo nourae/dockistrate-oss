@@ -7,6 +7,6 @@ test_start_nginx_rejects_missing_value_docker_opts() {
 
   assertNotEquals "start-nginx should reject docker opts missing required values" 0 "$status"
   assertStringContains "start-nginx missing-value guardrail message" "requires a value" "$output"
-  assertTrue "global settings should not store rejected missing-value nginx docker opts" \
-    "! grep -Fq 'NGINX_DOCKER_OPTS,--cpus' '${CONFIG_DIR}/global_settings.csv'"
+  assertEquals "global settings should not store rejected missing-value nginx docker opts" "" \
+    "$(integration_global_csv_get "$CONFIG_DIR/global_settings.csv" NGINX_DOCKER_OPTS)"
 }

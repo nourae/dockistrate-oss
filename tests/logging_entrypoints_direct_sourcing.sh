@@ -26,6 +26,11 @@ if ! grep -q "hello" "$LOG_FILE_PATH"; then
   echo "Expected log_msg output to include the message." >&2
   exit 1
 fi
+log_mode="$(stat -c '%a' "$LOG_FILE_PATH" 2>/dev/null || stat -f '%Lp' "$LOG_FILE_PATH")"
+if [ "$log_mode" != 600 ]; then
+  echo "Expected directly sourced application logging to create owner-only storage." >&2
+  exit 1
+fi
 
 AUDIT_LOG_FILE_PATH="${TMP_DIR}/audit.log"
 AUDIT_LOG_FILE="$AUDIT_LOG_FILE_PATH" ROOT_DIR="$ROOT_DIR" bash -c '
@@ -46,6 +51,11 @@ fi
 
 if ! grep -q "hello" "$AUDIT_LOG_FILE_PATH"; then
   echo "Expected audit_log output to include the message." >&2
+  exit 1
+fi
+audit_mode="$(stat -c '%a' "$AUDIT_LOG_FILE_PATH" 2>/dev/null || stat -f '%Lp' "$AUDIT_LOG_FILE_PATH")"
+if [ "$audit_mode" != 600 ]; then
+  echo "Expected directly sourced audit logging to create owner-only storage." >&2
   exit 1
 fi
 

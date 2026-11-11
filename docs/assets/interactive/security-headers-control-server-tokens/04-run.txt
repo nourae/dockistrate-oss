@@ -1,0 +1,14 @@
+Review command
+  Command: Control Server Tokens (control-server-tokens)
+  Description: Toggle Nginx server_tokens globally
+
+Arguments:
+  On or off: off
+
+CLI equivalent:
+  ./dockistrate.sh control-server-tokens off
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -19,6 +19,7 @@ function _set_port_http3_rewrite_cb() {
 
 function _port_http3_target_exists() {
   local listen_port="${1:-}"
+  listen_port="$(normalize_port "$listen_port")" || return 1
   local line="" line_no=0
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
@@ -41,6 +42,7 @@ function set_port_http3() {
   fi
 
   require_valid_port "$listen_port"
+  listen_port="$(normalize_port "$listen_port")" || return 1
   _parse_http3_flag "$enabled_raw" || exit 1
   _parse_alt_svc_mode "$alt_svc_raw" || exit 1
 
@@ -96,6 +98,7 @@ function list_port_http3() {
 
   if [ -n "$filter_port" ]; then
     require_valid_port "$filter_port"
+    filter_port="$(normalize_port "$filter_port")" || return 1
   fi
 
   [ -f "$BACKEND_PORTS_FILE" ] || {

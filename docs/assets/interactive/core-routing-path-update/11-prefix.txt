@@ -1,0 +1,7 @@
+Path match type (prefix|exact|regex):
+> 1) Prefix
+  2) Exact
+  3) Regex
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+source "$ROOT_DIR/tests/helpers/global_csv.sh"
 
 # shellcheck disable=SC1091
 source "$ROOT_DIR/lib/config.sh"
@@ -73,23 +74,24 @@ REAL_IP_RECURSIVE,on
 NGINX_IMAGE,nginx
 CERTBOT_IMAGE,certbot/certbot
 EOF_CONFIG
+  test_global_csv_from_legacy "$GLOBAL_SETTINGS_FILE"
 cp "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.before"
 
-load_config || fail_test "load_config should accept legacy settings file"
+load_config || fail_test "load_config should accept named settings file"
 cmp -s "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.before" || fail_test "load_config should not rewrite global_settings.csv"
 [ ! -e "$BACKEND_PORTS_FILE" ] || fail_test "load_config should not create backend_ports.csv"
 [ ! -e "$ACCESS_LOG_FIELDS_FILE" ] || fail_test "load_config should not create access_log_fields.csv"
 
 bootstrap_config_runtime || fail_test "bootstrap_config_runtime should repair runtime state"
 
-grep -qx 'NGINX_DIRECTIVE_STRICT,on' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore NGINX_DIRECTIVE_STRICT"
-grep -qx 'NGINX_DOCKER_OPTS,' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore NGINX_DOCKER_OPTS"
-grep -qx 'VISIBILITY_POLICY,full' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore VISIBILITY_POLICY"
-grep -qx 'NGINX_IMAGE,nginx:latest' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not normalize NGINX_IMAGE"
-grep -qx 'CERTBOT_IMAGE,certbot/certbot:latest' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not normalize CERTBOT_IMAGE"
-grep -qx 'NGINX_PULL_MODE,if-missing' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore NGINX_PULL_MODE"
-grep -qx 'CERTBOT_PULL_MODE,if-missing' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not restore CERTBOT_PULL_MODE"
-grep -qx 'TLS_CIPHERS,HIGH:!aNULL:!MD5' "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime should preserve explicit TLS_CIPHERS"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" NGINX_DIRECTIVE_STRICT)" = "on" ] || fail_test "bootstrap_config_runtime did not restore NGINX_DIRECTIVE_STRICT"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" NGINX_DOCKER_OPTS)" = "" ] || fail_test "bootstrap_config_runtime did not restore NGINX_DOCKER_OPTS"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" VISIBILITY_POLICY)" = "full" ] || fail_test "bootstrap_config_runtime did not restore VISIBILITY_POLICY"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" NGINX_IMAGE)" = "nginx:latest" ] || fail_test "bootstrap_config_runtime did not normalize NGINX_IMAGE"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" CERTBOT_IMAGE)" = "certbot/certbot:latest" ] || fail_test "bootstrap_config_runtime did not normalize CERTBOT_IMAGE"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" NGINX_PULL_MODE)" = "if-missing" ] || fail_test "bootstrap_config_runtime did not restore NGINX_PULL_MODE"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" CERTBOT_PULL_MODE)" = "if-missing" ] || fail_test "bootstrap_config_runtime did not restore CERTBOT_PULL_MODE"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" TLS_CIPHERS)" = "HIGH:!aNULL:!MD5" ] || fail_test "bootstrap_config_runtime should preserve explicit TLS_CIPHERS"
 
 [ -f "$BACKEND_PORTS_FILE" ] || fail_test "bootstrap_config_runtime did not create backend_ports.csv"
 [ -f "$ACCESS_LOG_FIELDS_FILE" ] || fail_test "bootstrap_config_runtime did not create access_log_fields.csv"
@@ -106,6 +108,6 @@ grep -qx "$seeded_post_backup" "$LAST_POST_BACKUP_FILE" || fail_test "bootstrap_
 
 rm -rf "$STATE_DIR"
 bootstrap_config_runtime || fail_test "bootstrap_config_runtime should seed fresh runtime state"
-grep -qx "TLS_CIPHERS,${DEFAULT_TLS_CIPHERS}" "$GLOBAL_SETTINGS_FILE" || fail_test "bootstrap_config_runtime did not seed strict default TLS_CIPHERS"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" TLS_CIPHERS)" = "${DEFAULT_TLS_CIPHERS}" ] || fail_test "bootstrap_config_runtime did not seed strict default TLS_CIPHERS"
 
 echo "config bootstrap split checks passed."

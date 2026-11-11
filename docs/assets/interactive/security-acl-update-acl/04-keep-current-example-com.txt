@@ -1,0 +1,6 @@
+Domain:
+> 1) Keep current: example.com
+  2) example.com
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

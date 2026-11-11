@@ -25,8 +25,8 @@ recreate_calls=0
 audit_calls=0
 tamper_after_mkdir_path=""
 tamper_after_mkdir_target=""
-tamper_after_keylog_guard_name=""
-tamper_after_keylog_guard_target=""
+tamper_keylog_leaf=""
+tamper_keylog_target=""
 tamper_after_state_guard_name=""
 tamper_after_state_guard_target=""
 fail_mkdir_path=""
@@ -60,8 +60,8 @@ function reset_runtime() {
   audit_calls=0
   tamper_after_mkdir_path=""
   tamper_after_mkdir_target=""
-  tamper_after_keylog_guard_name=""
-  tamper_after_keylog_guard_target=""
+  tamper_keylog_leaf=""
+  tamper_keylog_target=""
   tamper_after_state_guard_name=""
   tamper_after_state_guard_target=""
   fail_mkdir_path=""
@@ -151,17 +151,23 @@ function cd() {
   builtin cd "$@"
 }
 
-eval "$(declare -f _capture_tls_cd_guarded_keylog_dir | sed '1s/_capture_tls_cd_guarded_keylog_dir/_orig_capture_tls_cd_guarded_keylog_dir/')"
+eval "$(declare -f _capture_tls_keylog_path_guard | sed '1s/_capture_tls_keylog_path_guard/_orig_capture_tls_keylog_path_guard/')"
 eval "$(declare -f _capture_tls_cd_guarded_state_dir | sed '1s/_capture_tls_cd_guarded_state_dir/_orig_capture_tls_cd_guarded_state_dir/')"
 
-function _capture_tls_cd_guarded_keylog_dir() {
-  _orig_capture_tls_cd_guarded_keylog_dir "$@" || return 1
-  if [ -n "$tamper_after_keylog_guard_name" ]; then
-    command ln -sf "$tamper_after_keylog_guard_target" "$tamper_after_keylog_guard_name"
-    tamper_after_keylog_guard_name=""
-    tamper_after_keylog_guard_target=""
+# Faults target the actual reserved unique filename, not an assumed timestamp.
+function _capture_tls_keylog_path_guard() {
+  local candidate="$1" result=0
+  if [ -n "$tamper_keylog_leaf" ]; then
+    printf '%s\n' "$candidate" >"$tmp_dir/tampered-keylog-path"
+    command rm -f "$candidate"
+    case "$tamper_keylog_leaf" in
+    symlink) command ln -s "$tamper_keylog_target" "$candidate" ;;
+    directory) command mkdir "$candidate" ;;
+    esac
+    tamper_keylog_leaf=""
   fi
-  return 0
+  _orig_capture_tls_keylog_path_guard "$@" || result=$?
+  return "$result"
 }
 
 function _capture_tls_cd_guarded_state_dir() {
@@ -203,6 +209,28 @@ invalid_output="$(cat "$invalid_output_file")"
 [ -f "$outside_config/capture_tls_decrypt.state" ] || fail "stop_capture deleted outside TLS decrypt state."
 [ "$recreate_calls" -eq 0 ] || fail "stop_capture should not recreate Nginx for invalid TLS decrypt state."
 assert_not_contains "$invalid_output" "TLS decrypt capture mode disabled." "invalid TLS state"
+
+reset_runtime
+write_tls_state "$CAPTURE_DIR/tls-keys/tlskeys.log"
+outside_disable_config_dir="$tmp_dir/outside-disable-config"
+mkdir -p "$outside_disable_config_dir"
+printf '%s\n' "keep-disable-state" >"$outside_disable_config_dir/capture_tls_decrypt.state"
+tamper_before_cd_path="$CONFIG_DIR"
+tamper_before_cd_target="$outside_disable_config_dir"
+if disable_capture_tls_decrypt "test=disable-state-dir-swap" >/dev/null 2>&1; then
+  fail "disable_capture_tls_decrypt should reject a TLS state directory symlinked immediately before guarded cd."
+fi
+[ "$(cat "$outside_disable_config_dir/capture_tls_decrypt.state")" = "keep-disable-state" ] || fail "disable_capture_tls_decrypt deleted state through a late state directory symlink swap."
+
+reset_runtime
+write_tls_state "$CAPTURE_DIR/tls-keys/tlskeys.log"
+outside_disable_state_file="$tmp_dir/outside-disable-state-file"
+printf '%s\n' "keep-disable-file" >"$outside_disable_state_file"
+tamper_after_state_guard_name="capture_tls_decrypt.state"
+tamper_after_state_guard_target="$outside_disable_state_file"
+disable_capture_tls_decrypt "test=disable-state-file-swap" >/dev/null 2>&1 || fail "disable_capture_tls_decrypt should tolerate a TLS state filename symlink swap."
+[ "$(cat "$outside_disable_state_file")" = "keep-disable-file" ] || fail "disable_capture_tls_decrypt followed a swapped TLS state filename symlink."
+[ ! -e "$CAPTURE_TLS_STATE_FILE" ] || fail "disable_capture_tls_decrypt should remove the intended TLS state file or symlink only."
 
 reset_runtime
 outside_enable_keylog_dir="$tmp_dir/outside-enable-keylog"
@@ -253,12 +281,16 @@ fi
 reset_runtime
 outside_enable_keylog_file="$tmp_dir/outside-enable-keylog-file"
 printf '%s\n' "keep-keylog" >"$outside_enable_keylog_file"
-tamper_after_keylog_guard_name="tlskeys_20260701_120000.log"
-tamper_after_keylog_guard_target="$outside_enable_keylog_file"
-enable_capture_tls_decrypt "test=keylog-file-swap" >/dev/null 2>&1 || fail "enable_capture_tls_decrypt should tolerate a keylog filename symlink swap."
+chmod 640 "$outside_enable_keylog_file"
+tamper_keylog_leaf=symlink
+tamper_keylog_target="$outside_enable_keylog_file"
+if enable_capture_tls_decrypt "test=keylog-file-swap" >/dev/null 2>&1; then
+  fail "enable_capture_tls_decrypt should reject a swapped unique keylog filename symlink."
+fi
 [ "$(cat "$outside_enable_keylog_file")" = "keep-keylog" ] || fail "enable_capture_tls_decrypt followed a swapped keylog filename symlink."
-[ -f "$CAPTURE_DIR/tls-keys/tlskeys_20260701_120000.log" ] || fail "enable_capture_tls_decrypt should create the intended keylog file."
-[ ! -L "$CAPTURE_DIR/tls-keys/tlskeys_20260701_120000.log" ] || fail "enable_capture_tls_decrypt should replace a swapped keylog filename symlink."
+outside_mode="$(stat -c '%a' "$outside_enable_keylog_file" 2>/dev/null || stat -f '%Lp' "$outside_enable_keylog_file")"
+[ "$outside_mode" = 640 ] || fail "enable_capture_tls_decrypt chmod followed a swapped keylog filename symlink."
+[ ! -e "$CAPTURE_TLS_STATE_FILE" ] || fail "swapped unique keylog filename should not publish TLS state."
 
 reset_runtime
 outside_enable_state_file="$tmp_dir/outside-enable-state-file"
@@ -295,11 +327,11 @@ umask "$saved_umask"
 [ ! -e "$CAPTURE_TLS_STATE_FILE" ] || fail "state mkdir failure should not write TLS decrypt state."
 
 reset_runtime
-keylog_dirname="$CAPTURE_DIR/tls-keys/tlskeys_20260701_120000.log"
-mkdir -p "$keylog_dirname"
+tamper_keylog_leaf=directory
 if enable_capture_tls_decrypt "test=keylog-directory-destination" >/dev/null 2>&1; then
   fail "enable_capture_tls_decrypt should reject a keylog destination that is a directory."
 fi
+keylog_dirname="$(cat "$tmp_dir/tampered-keylog-path")"
 [ -d "$keylog_dirname" ] || fail "keylog directory destination should remain a directory."
 if find "$keylog_dirname" -type f | grep -q .; then
   fail "enable_capture_tls_decrypt moved a temp keylog file into an existing directory."

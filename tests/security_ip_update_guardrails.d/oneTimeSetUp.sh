@@ -4,7 +4,10 @@ oneTimeSetUp() {
   TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/security-ip-update.XXXXXX")"
   STATE_DIR="$TMP_ROOT/state"
   CONFIG_DIR="$STATE_DIR/config"
-  mkdir -p "$CONFIG_DIR"
+  BACKUP_DIR="$STATE_DIR/backups"
+  TMP_DIR="$STATE_DIR/tmp"
+  LAST_POST_BACKUP_FILE="$BACKUP_DIR/last_post_backup.txt"
+  mkdir -p "$CONFIG_DIR" "$BACKUP_DIR" "$TMP_DIR"
 
   BACKEND_PORTS_FILE="$CONFIG_DIR/backend_ports.csv"
   cat >"$BACKEND_PORTS_FILE" <<'EOF_BACKENDS'

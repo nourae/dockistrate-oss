@@ -1,0 +1,5 @@
+domain:
+> 1) example.com
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

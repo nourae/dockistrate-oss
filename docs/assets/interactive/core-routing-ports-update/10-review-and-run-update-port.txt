@@ -1,0 +1,19 @@
+Review command
+  Command: Update Port (update-port)
+  Description: Update an existing port mapping, protocol, certificate, or HTTP/3 settings
+
+Arguments:
+  Domain: example.com
+  Current listen port: 8080
+  New listen port: 8081
+  Backend container port: 80
+  Protocol: http
+  WebSocket: no
+
+CLI equivalent:
+  ./dockistrate.sh update-port example.com 8080 --nginx-port 8081 --container-port 80 --protocol http --ws no
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

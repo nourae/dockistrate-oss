@@ -64,17 +64,15 @@ function renew_certs() {
       continue
     fi
 
-    if [[ "$cert_dir" != letsencrypt/* && "$cert_dir" != certs/letsencrypt/* ]]; then
-      _notify_cert_warning "Certificate at ${cert_dir} expires soon (on ${enddate:-unknown}) and is not managed by Let's Encrypt. Update it manually." "$notify_email"
-      continue
-    fi
-
     local le_domain=""
     if ! letsencrypt_source_domain_from_cert_ref le_domain "$cert_dir"; then
       _notify_cert_warning "Skipping invalid Let's Encrypt certificate path '${cert_dir}'" "$notify_email"
       continue
     fi
-    [ -n "$le_domain" ] || continue
+    if [ -z "$le_domain" ]; then
+      _notify_cert_warning "Certificate at ${cert_dir} expires soon (on ${enddate:-unknown}) and is not managed by Let's Encrypt. Update it manually." "$notify_email"
+      continue
+    fi
 
     if [[ "$renewal_sources_seen" != *"|$le_domain|"* ]]; then
       if [ "$started_txn" != "true" ]; then
@@ -91,6 +89,9 @@ function renew_certs() {
     fi
 
     local source_dir="${CERTS_DIR}/letsencrypt/live/${le_domain}"
+    if declare -F _domain_cert_acme_root >/dev/null 2>&1; then
+      source_dir="$(_domain_cert_acme_root)/live/${le_domain}" || return 1
+    fi
     if [ -d "$source_dir" ]; then
       if [ "$source_dir" != "$abs_cert_dir" ]; then
         if ! copy_file_atomic "$source_dir/fullchain.pem" "$fullchain" 640 ||

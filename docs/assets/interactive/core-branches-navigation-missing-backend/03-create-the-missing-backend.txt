@@ -1,0 +1,9 @@
+=== Missing setup ===
+Stop Backend needs an existing backend, but no backends are configured.
+
+Suggested next action:
+> 1) Add backend now
+  2) Return to previous menu
+  3) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

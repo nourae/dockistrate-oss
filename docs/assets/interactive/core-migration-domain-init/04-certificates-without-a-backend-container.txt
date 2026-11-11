@@ -1,0 +1,9 @@
+Choose a backend container, an alias, a dedicated hostname, or certificates without a backend.
+Domain kind:
+  1) Backend with its own container (current)
+  2) Alias for an existing backend
+  3) Dedicated hostname with independent settings
+> 4) Certificates without a backend container
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

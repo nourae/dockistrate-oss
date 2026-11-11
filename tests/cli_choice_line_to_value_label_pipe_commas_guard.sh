@@ -42,6 +42,30 @@ cli_choice_line_to_value_label "$csv_choice_with_pipe" v l
 assert_eq "$v" "not_matches" "csv choice value should not be truncated when label contains pipe"
 assert_eq "$l" "Not Matches — regex does not match. Example: header X-Agent not_matches (curl|wget)" "csv choice label should preserve pipe characters"
 
+# A quoted first field identifies explicit CSV even when a value contains the
+# legacy choice separator. These are parser data, not necessarily valid paths.
+for literal_value in '/api|assets' '/(api|assets)' 'a|b,c' 'say "hello"|again' 'back\slash|tail' ''; do
+  literal_label="Choice: $literal_value"
+  escaped_value="${literal_value//\"/\"\"}"
+  escaped_label="${literal_label//\"/\"\"}"
+  printf -v quoted_choice '"%s","%s"' "$escaped_value" "$escaped_label"
+  v=""; l=""
+  cli_choice_line_to_value_label "$quoted_choice" v l
+  assert_eq "$v" "$literal_value" "quoted CSV choice should preserve the complete value"
+  assert_eq "$l" "$literal_label" "quoted CSV choice should preserve the complete label"
+done
+
+# The new disambiguation applies only to complete two-field CSV records.
+fallback_rows=('"broken|legacy,label' '"single|value"' '"first|part",second,third')
+fallback_values=('"broken' '"single' '"first')
+fallback_labels=('legacy,label' 'value"' 'part",second,third')
+for fallback_index in 0 1 2; do
+  v=""; l=""
+  cli_choice_line_to_value_label "${fallback_rows[fallback_index]}" v l
+  assert_eq "$v" "${fallback_values[fallback_index]}" "non-choice CSV should keep the existing value fallback"
+  assert_eq "$l" "${fallback_labels[fallback_index]}" "non-choice CSV should keep the existing label fallback"
+done
+
 # Guard against output-var collisions with parser internal variable names.
 parsed_value=""
 parsed_label=""

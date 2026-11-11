@@ -1,0 +1,14 @@
+Review command
+  Command: Set Nginx Directive Strict (set-nginx-directive-strict)
+  Description: Enable or disable strict ownership enforcement for directives
+
+Arguments:
+  On or off: off
+
+CLI equivalent:
+  ./dockistrate.sh set-nginx-directive-strict off
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

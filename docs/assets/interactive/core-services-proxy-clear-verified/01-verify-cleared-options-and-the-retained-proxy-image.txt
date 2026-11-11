@@ -1,0 +1,2 @@
+$ docker inspect --format \{\{.Config.Image\}\}\|\{\{.HostConfig.Memory\}\} nginx-proxy
+docs-nginx:review|0

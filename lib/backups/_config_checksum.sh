@@ -13,11 +13,15 @@ function _config_checksum() {
   elif command -v shasum >/dev/null 2>&1; then
     checksum=$(find "$dir" -type f -exec shasum -a 256 {} \; | sort | shasum -a 256 | awk '{print $1}')
   elif command -v openssl >/dev/null 2>&1; then
-    checksum=$(find "$dir" -type f -exec openssl dgst -sha256 {} \; |
-      awk 'match($0, /^SHA256\((.+)\)= ([0-9a-fA-F]+)/, m) { printf "%s  %s\n", m[2], m[1] }' |
+    checksum=$(find "$dir" -type f -exec openssl dgst -sha256 -r {} \; |
+      awk '{
+        digest = $1
+        sub(/^[^[:space:]]+[[:space:]]+\*/, "", $0)
+        printf "%s  %s\n", digest, $0
+      }' |
       sort |
-      openssl dgst -sha256 |
-      awk '{print $NF}')
+      openssl dgst -sha256 -r |
+      awk '{print $1}')
   else
     echo "[Error] Unable to find a SHA-256 checksum tool (sha256sum, shasum, or openssl)." >&2
     return 1

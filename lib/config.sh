@@ -13,7 +13,7 @@ source "${CONFIG_MODULE_DIR}/schema_version.sh"
 source "${CONFIG_MODULE_DIR}/common.sh"
 
 for config_file in "${CONFIG_MODULE_DIR}"/*.sh; do
-  config_basename="$(basename "${config_file}")"
+  config_basename="${config_file##*/}"
   if [ "${config_basename}" = "common.sh" ] || [ "${config_basename}" = "schema_version.sh" ]; then
     continue
   fi

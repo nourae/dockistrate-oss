@@ -4,9 +4,17 @@
 source "${ROOT_DIR}/lib/utils/csv.sh"
 
 test_replace_backend_network_runtime_rollback_on_failure() {
-  run_dockistrate add-backend netrollback.test nginx:alpine 9200 http >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend netrollback.test nginx:alpine 9200 http >/dev/null
   assertEquals "seed add-backend" 0 $?
 
+  local original_id
+  original_id="$(PATH="${MOCK_BIN_DIR}:$PATH" docker inspect -f '{{.Id}}' backend-netrollback.test)"
+  assertEquals "managed backend has a full immutable ID" 64 "${#original_id}"
+  assertTrue "managed backend ID is lowercase hexadecimal" "printf '%s\n' '$original_id' | grep -Eq '^[0-9a-f]{64}$'"
+  # Replace only the mock proxy metadata to retain the downstream conflict
+  # which exercises backend network rollback after a valid ownership check.
+  PATH="${MOCK_BIN_DIR}:$PATH" docker rm -f nginx-proxy >/dev/null
+  PATH="${MOCK_BIN_DIR}:$PATH" docker run -d --name nginx-proxy --label unrelated=true nginx:alpine >/dev/null
   local docker_log_file="${STATE_DIR}/docker_replace_backend_network_rollback.log"
   rm -f "$docker_log_file"
 
@@ -47,10 +55,10 @@ test_replace_backend_network_runtime_rollback_on_failure() {
   assertEquals "backend row type after rollback" "backend" "$type"
   assertEquals "backend row domain after rollback" "netrollback.test" "$domain"
   assertEquals "backend row network after rollback" "dockistrate-net" "$backend_network"
-  assertEquals "backend upstream after rollback" "127.0.0.1:9200" "$upstream"
+  assertEquals "backend upstream after rollback" "172.30.0.2:9200" "$upstream"
 
   assertTrue "network change should disconnect old network before failure" \
-    "grep -Fq 'subcommand=network disconnect dockistrate-net backend-netrollback.test' '$docker_log_file'"
+    "grep -Fq 'subcommand=network disconnect dockistrate-net ${original_id}' '$docker_log_file'"
   assertTrue "rollback hook should reconnect old network after failure" \
-    "grep -Fq 'subcommand=network connect dockistrate-net backend-netrollback.test' '$docker_log_file'"
+    "grep -Fq 'subcommand=network connect dockistrate-net ${original_id}' '$docker_log_file'"
 }

@@ -1,0 +1,7 @@
+Search all commands:
+Filter: remove-all-acl
+Press S or / to search, C to clear, Enter to select, ? for help
+  1) Access Control & Rules :: Remove All ACL — Remove all ACL rules
+> 2) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

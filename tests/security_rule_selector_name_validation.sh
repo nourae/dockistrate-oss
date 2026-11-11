@@ -4,6 +4,7 @@ set -Eeuo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 CONFIG_DIR="${ROOT_DIR}/state/config"
 SECURITY_RULES_FILE="${CONFIG_DIR}/security_rules.csv"
+SECURITY_CONDITIONS_FILE="${ROOT_DIR}/state/domains/selector-validation.test/runtime/applied/security_conditions.csv"
 
 function fail_test() {
   echo "[Error] $*" >&2
@@ -49,8 +50,10 @@ expect_failure_contains "invalid var selector name" \
   update-security-rule 1 --count 1 var bad-name equals abc
 
 tmp_file="$(mktemp "${TMPDIR:-/tmp}/dockistrate_security_rules.XXXXXX")"
-awk -F',' -v OFS=',' -v bad="$bad_arg_name" 'NR == 2 { $7 = bad } { print }' "$SECURITY_RULES_FILE" >"$tmp_file"
-mv "$tmp_file" "$SECURITY_RULES_FILE"
+# Regeneration rebuilds the aggregate from the accepted per-domain snapshot.
+# Corrupt that persisted authority to exercise the renderer's selector guard.
+awk -F',' -v OFS=',' -v bad="$bad_arg_name" 'NR == 2 { $4 = bad } { print }' "$SECURITY_CONDITIONS_FILE" >"$tmp_file"
+mv "$tmp_file" "$SECURITY_CONDITIONS_FILE"
 
 expect_failure_contains "invalid arg selector name" update-nginx-config
 

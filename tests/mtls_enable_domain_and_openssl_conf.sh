@@ -46,16 +46,6 @@ function log_msg() { :; }
 function capture_docker_logs() { :; }
 function update_nginx_config() { :; }
 function _ensure_tls_permissions() { chmod 600 "$1"; }
-function _generate_backend_ca() {
-  local mtls_dir="${1:-}"
-  mkdir -p "$mtls_dir"
-  printf 'ca\n' >"${mtls_dir}/ca.crt"
-  printf 'key\n' >"${mtls_dir}/ca.key"
-}
-function _generate_backend_crl() {
-  local mtls_dir="${1:-}"
-  printf 'crl\n' >"${mtls_dir}/ca.crl"
-}
 
 set +e
 (enable_backend_mtls '../bad') >/dev/null 2>&1
@@ -96,6 +86,97 @@ if ! grep -Fq 'basicConstraints = CA:FALSE' "$OPENSSL_CONF"; then
   echo "[Error] mTLS OpenSSL config lost CA:FALSE client constraint." >&2
   exit 1
 fi
+
+MTLS_DIR="$CERTS_DIR/mtls/example.com"
+
+function assert_complete_mtls_directives() {
+  local directives="${1:-}" label="${2:-mTLS directives}"
+  if [ "$(grep -Fxc '    ssl_client_certificate /etc/letsencrypt/mtls/example.com/ca.crt;' <<<"$directives")" -ne 1 ] ||
+    [ "$(grep -Fxc '    ssl_crl /etc/letsencrypt/mtls/example.com/ca.crl;' <<<"$directives")" -ne 1 ] ||
+    [ "$(grep -Fxc '    ssl_verify_client on;' <<<"$directives")" -ne 1 ]; then
+    echo "[Error] ${label} did not emit the complete validated directive set." >&2
+    echo "$directives" >&2
+    exit 1
+  fi
+}
+
+function expect_mtls_directives_failure() {
+  local label="${1:-mTLS render}" expected="${2:-}"
+  local output_file="$TMP_ROOT/mtls-directives.out" error_file="$TMP_ROOT/mtls-directives.err"
+  local status=0
+
+  : >"$output_file"
+  : >"$error_file"
+  set +e
+  _backend_mtls_directives example.com >"$output_file" 2>"$error_file"
+  status=$?
+  set -e
+  if [ "$status" -eq 0 ]; then
+    echo "[Error] ${label} unexpectedly succeeded." >&2
+    exit 1
+  fi
+  if [ -s "$output_file" ]; then
+    echo "[Error] ${label} emitted partial mTLS directives before failing." >&2
+    cat "$output_file" >&2
+    exit 1
+  fi
+  if [ -n "$expected" ] && ! grep -Fq "$expected" "$error_file"; then
+    echo "[Error] ${label} did not report the expected diagnostic: ${expected}" >&2
+    cat "$error_file" >&2
+    exit 1
+  fi
+}
+
+generator_marker="$TMP_ROOT/crl-generator-called"
+function _generate_backend_crl() {
+  : >"$generator_marker"
+  return 1
+}
+directives="$(_backend_mtls_directives example.com)"
+assert_complete_mtls_directives "$directives" "existing CRL render"
+if [ -e "$generator_marker" ]; then
+  echo "[Error] Existing regular mTLS CRL unexpectedly triggered regeneration." >&2
+  exit 1
+fi
+
+rm -f "$MTLS_DIR/ca.crl"
+unset -f _generate_backend_crl
+expect_mtls_directives_failure "missing CRL without generator" "CRL generation is unavailable"
+# shellcheck source=../lib/mtls/_generate_backend_crl.sh
+source "$ROOT_DIR/lib/mtls/_generate_backend_crl.sh"
+
+function _generate_backend_crl() {
+  printf 'unexpected generator stdout\n'
+  echo "forced CRL generation failure" >&2
+  return 1
+}
+expect_mtls_directives_failure "failed CRL generation" "Failed to generate required mTLS CRL"
+
+function _generate_backend_crl() { return 0; }
+expect_mtls_directives_failure "false-success CRL generation" "did not create a safe regular mTLS CRL"
+
+outside_crl="$TMP_ROOT/outside.crl"
+printf 'outside crl\n' >"$outside_crl"
+ln -s "$outside_crl" "$MTLS_DIR/ca.crl"
+expect_mtls_directives_failure "symlinked CRL" "must be a non-symlink regular file"
+rm -f "$MTLS_DIR/ca.crl"
+
+mkfifo "$MTLS_DIR/ca.crl"
+expect_mtls_directives_failure "special-file CRL" "must be a non-symlink regular file"
+rm -f "$MTLS_DIR/ca.crl"
+
+function _generate_backend_crl() {
+  local mtls_dir="${1:-}"
+  printf 'regenerated crl\n' >"${mtls_dir}/ca.crl"
+}
+directives="$(_backend_mtls_directives example.com)"
+assert_complete_mtls_directives "$directives" "regenerated CRL render"
+if [ "$(cat "$MTLS_DIR/ca.crl")" != "regenerated crl" ]; then
+  echo "[Error] Missing mTLS CRL was not regenerated before rendering." >&2
+  exit 1
+fi
+# shellcheck source=../lib/mtls/_generate_backend_crl.sh
+source "$ROOT_DIR/lib/mtls/_generate_backend_crl.sh"
 
 OUTSIDE_DIR="$TMP_ROOT/outside"
 mkdir -p "$OUTSIDE_DIR"

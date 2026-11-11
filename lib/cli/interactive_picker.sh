@@ -4,6 +4,9 @@ function interactive_picker_run_command_prompt() {
   local CMD="$1"
   local skip_availability=false
   local skip_runtime_prep=false
+  if declare -F dockistrate_prepare_header_command >/dev/null 2>&1; then
+    dockistrate_prepare_header_command "$CMD" || return 1
+  fi
 
   if declare -F dockistrate_command_skips_runtime_prep >/dev/null 2>&1 &&
     dockistrate_command_skips_runtime_prep "$CMD"; then
@@ -20,6 +23,9 @@ function interactive_picker_run_command_prompt() {
     if ! dockistrate_prepare_runtime; then
       echo "[Error] Unable to prepare runtime environment." >&2
       read -rp "Press Enter to continue..." _
+      if declare -F dockistrate_stop_verbose_logging >/dev/null 2>&1; then
+        dockistrate_stop_verbose_logging
+      fi
       return 1
     fi
   fi
@@ -37,13 +43,21 @@ function interactive_picker_run_command_prompt() {
         0)
           guidance_action="${INTERACTIVE_NO_STATE_ACTION:-}"
           if [ -n "$guidance_action" ]; then
-            CMD="$guidance_action"
-            continue
+            # The suggested command may require startup that the original
+            # command deliberately deferred (restore -> create backup).
+            if interactive_picker_run_command_prompt "$guidance_action"; then
+              return 0
+            else
+              return $?
+            fi
           fi
           ;;
         2)
           SELECTED_CMD=""
           SELECTED_ARGS=()
+          if declare -F dockistrate_stop_verbose_logging >/dev/null 2>&1; then
+            dockistrate_stop_verbose_logging
+          fi
           return 2
           ;;
         3)
@@ -54,6 +68,9 @@ function interactive_picker_run_command_prompt() {
 
         SELECTED_CMD=""
         SELECTED_ARGS=()
+        if declare -F dockistrate_stop_verbose_logging >/dev/null 2>&1; then
+          dockistrate_stop_verbose_logging
+        fi
         return 1
       fi
     fi
@@ -70,6 +87,9 @@ function interactive_picker_run_command_prompt() {
 
     SELECTED_CMD=""
     SELECTED_ARGS=()
+    if declare -F dockistrate_stop_verbose_logging >/dev/null 2>&1; then
+      dockistrate_stop_verbose_logging
+    fi
     return 1
   done
 }
@@ -203,6 +223,10 @@ function interactive_picker_run_home_action() {
   "$INTERACTIVE_PICKER_HOME_SERVICES_LABEL")
     interactive_picker_choose_command_list "${INTERACTIVE_PICKER_HOME_SERVICES_LABEL}:" \
       "${INTERACTIVE_PICKER_HOME_COMMANDS_SERVICES[@]}"
+    ;;
+  "$INTERACTIVE_PICKER_HOME_DOMAIN_CONFIG_LABEL")
+    interactive_picker_choose_command_list "${INTERACTIVE_PICKER_HOME_DOMAIN_CONFIG_LABEL}:" \
+      "${INTERACTIVE_PICKER_COMMANDS_DOMAIN_CONFIG[@]}"
     ;;
   "$INTERACTIVE_PICKER_HOME_CERTIFICATES_LABEL")
     interactive_picker_choose_command_list "${INTERACTIVE_PICKER_HOME_CERTIFICATES_LABEL}:" "${INTERACTIVE_PICKER_COMMANDS_CERTIFICATES[@]}"

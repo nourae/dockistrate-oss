@@ -1,0 +1,7 @@
+Search all commands:
+Filter: stop-backend
+Press S or / to search, C to clear, Enter to select, ? for help
+> 1) Backends :: Stop Backend — Stop a backend container — unavailable: no backends
+  2) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

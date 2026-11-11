@@ -1,0 +1,11 @@
+directive_scope:
+> 1) Global (http)
+  2) Backend (server)
+  3) Port (server)
+  4) Path (location)
+  5) Global (stream)
+  6) Backend (stream)
+  7) Port (stream)
+  8) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

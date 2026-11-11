@@ -122,6 +122,9 @@ EOF_NGINX
   ENABLE_AUTO_BACKUPS="true"
   BACKUP_RETENTION="0"
   ENABLE_BACKUP_COMPRESSION="true"
+  # Runtime recovery reloads the restored settings before recreating Nginx.
+  # Keep this fixture a complete configuration rather than a marker-only tree.
+  _save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
   STUB_FIND_FAIL_MATCH=""
   STUB_CONTAINER_RUNNING="false"
   STUB_CONTAINER_EXISTS="false"
@@ -158,6 +161,7 @@ worker_processes  auto;
 events {}
 http {}
 EOF_NGINX
+  cp "$GLOBAL_SETTINGS_FILE" "$payload_dir/config/global_settings.csv"
   (cd "$payload_root" && tar -czf "$BACKUP_DIR/${name}.tar.gz" "$name")
   printf '%s.tar.gz\n' "$name"
 }
@@ -246,7 +250,7 @@ fi
 assert_file_contains_line "$CONFIG_DIR/marker.txt" "old-e"
 assert_file_exists "$CONFIG_DIR/legacy.txt"
 assert_file_missing "$CONFIG_DIR/new_only.txt"
-assert_equals "1" "$(count_trace_before "safe_rm_rf" "capture_docker_logs")" "restore cleanup should stop after the first safe_rm_rf rejection"
+assert_equals "1" "$(count_trace_before "safe_rm_rf" "capture_docker_logs")" "restore cleanup should stop config deletion after the first safe_rm_rf rejection"
 
 # Scenario F: absolute archive path is accepted.
 reset_runtime_state "old-f"
@@ -370,5 +374,142 @@ assert_file_exists "$CONFIG_DIR/legacy.txt"
 assert_file_missing "$CONFIG_DIR/new_only.txt"
 assert_equals "1" "$(count_trace "runtime_state_path_guard_if_declared")" "restore should hit the injected runtime path guard failure"
 assert_equals "0" "$(count_trace "update_nginx_config")" "restore should not continue after runtime path guard failure"
+
+# Scenario L: directory backups must preserve and reject a config symlink while
+# snapshotting instead of following it with privileged cp.
+reset_runtime_state "old-l"
+SKIP_DOCKER_CHECKS="true"
+symlink_backup="$TMP_ROOT/symlink_restore_l"
+symlink_target="$TMP_ROOT/symlink_restore_target_l"
+rm -rf "$symlink_backup" "$symlink_target"
+mkdir -p "$symlink_backup" "$symlink_target"
+printf 'external-l\n' >"$symlink_target/marker.txt"
+printf 'external-only\n' >"$symlink_target/external_only.txt"
+ln -s "$symlink_target" "$symlink_backup/config"
+set +e
+(restore_backup "$symlink_backup") >/dev/null 2>&1
+status=$?
+set -e
+if [ "$status" -eq 0 ]; then
+  fail_test "restore_backup should reject a directory backup with a symlinked config directory"
+fi
+assert_file_contains_line "$CONFIG_DIR/marker.txt" "old-l"
+assert_file_exists "$CONFIG_DIR/legacy.txt"
+assert_file_missing "$CONFIG_DIR/external_only.txt"
+assert_file_contains_line "$symlink_target/marker.txt" "external-l"
+assert_equals "0" "$(count_trace "fix_permissions")" "symlinked directory backup should fail before permission normalization"
+assert_equals "0" "$(count_trace "update_nginx_config")" "symlinked directory backup should fail before config regeneration"
+
+# Scenario M: the portable directory snapshot copy must retain the expected
+# backup-root/config layout on both BSD cp and GNU cp implementations.
+reset_runtime_state "old-m"
+SKIP_DOCKER_CHECKS="true"
+directory_backup="$TMP_ROOT/directory_restore_m"
+rm -rf "$directory_backup"
+mkdir -p "$directory_backup/config/nginx_conf/conf.d"
+printf 'new-m\n' >"$directory_backup/config/marker.txt"
+printf 'directory-copy\n' >"$directory_backup/config/new_only.txt"
+printf 'events {}\nhttp {}\n' >"$directory_backup/config/nginx_conf/nginx.conf"
+cp "$GLOBAL_SETTINGS_FILE" "$directory_backup/config/global_settings.csv"
+restore_backup "$directory_backup"
+assert_file_contains_line "$CONFIG_DIR/marker.txt" "new-m"
+assert_file_contains_line "$CONFIG_DIR/new_only.txt" "directory-copy"
+assert_file_missing "$CONFIG_DIR/legacy.txt"
+assert_equals "1" "$(count_trace "fix_permissions")" "physical directory backup should restore after snapshotting"
+assert_equals "1" "$(count_trace "update_nginx_config")" "physical directory backup should regenerate config after snapshotting"
+
+# Exercise the same snapshot layout with GNU cp when coreutils is available on
+# macOS. Linux CI covers GNU cp through Scenario M's default cp.
+if command -v gcp >/dev/null 2>&1; then
+  reset_runtime_state "old-n"
+  SKIP_DOCKER_CHECKS="true"
+  gnu_directory_backup="$TMP_ROOT/directory_restore_n"
+  rm -rf "$gnu_directory_backup"
+  mkdir -p "$gnu_directory_backup/config/nginx_conf/conf.d"
+  printf 'new-n\n' >"$gnu_directory_backup/config/marker.txt"
+  printf 'gnu-directory-copy\n' >"$gnu_directory_backup/config/new_only.txt"
+  printf 'events {}\nhttp {}\n' >"$gnu_directory_backup/config/nginx_conf/nginx.conf"
+  cp "$GLOBAL_SETTINGS_FILE" "$gnu_directory_backup/config/global_settings.csv"
+  gnu_cp_path="$(command -v gcp)"
+  function cp() { "$gnu_cp_path" "$@"; }
+  if ! restore_backup "$gnu_directory_backup"; then
+    unset -f cp
+    fail_test "physical directory backup should restore with GNU cp"
+  fi
+  unset -f cp
+  assert_file_contains_line "$CONFIG_DIR/marker.txt" "new-n"
+  assert_file_contains_line "$CONFIG_DIR/new_only.txt" "gnu-directory-copy"
+  assert_file_missing "$CONFIG_DIR/legacy.txt"
+fi
+
+# Scenario O: replacing a directory backup between its initial resolution and
+# the second open must fail closed instead of snapshotting the replacement.
+reset_runtime_state "old-o"
+SKIP_DOCKER_CHECKS="true"
+race_backup="$TMP_ROOT/directory_restore_o"
+race_backup_original="$TMP_ROOT/directory_restore_o_original"
+race_backup_replacement="$TMP_ROOT/directory_restore_o_replacement"
+rm -rf "$race_backup" "$race_backup_original" "$race_backup_replacement"
+mkdir -p "$race_backup/config" "$race_backup_replacement/config"
+printf 'expected-o\n' >"$race_backup/config/marker.txt"
+printf 'replacement-o\n' >"$race_backup_replacement/config/marker.txt"
+printf 'replacement-only\n' >"$race_backup_replacement/config/replacement_only.txt"
+
+set +e
+race_output="$(
+  function mkdir() {
+    local arg="" last_arg="" mkdir_status=0 should_swap="false"
+    for arg in "$@"; do
+      last_arg="$arg"
+    done
+    command mkdir "$@"
+    mkdir_status=$?
+    if [ "${last_arg#${TMP_DIR%/}/restore_}" != "$last_arg" ] &&
+      [ "${last_arg%/directory}" != "$last_arg" ]; then
+      should_swap="true"
+    fi
+    if [ "$mkdir_status" -eq 0 ] && [ "$should_swap" = "true" ]; then
+      command mv "$race_backup" "$race_backup_original" || return 1
+      command mv "$race_backup_replacement" "$race_backup" || return 1
+    fi
+    return "$mkdir_status"
+  }
+  restore_backup "$race_backup" 2>&1
+)"
+race_status=$?
+set -e
+if [ "$race_status" -eq 0 ]; then
+  fail_test "restore_backup accepted a directory replaced before the snapshot copy"
+fi
+if ! grep -Fq "Backup directory changed identity" <<<"$race_output"; then
+  fail_test "directory replacement was not rejected by the snapshot identity check"
+fi
+assert_file_contains_line "$CONFIG_DIR/marker.txt" "old-o"
+assert_file_exists "$CONFIG_DIR/legacy.txt"
+assert_file_missing "$CONFIG_DIR/replacement_only.txt"
+assert_equals "0" "$(count_trace "fix_permissions")" "directory replacement should fail before permission normalization"
+assert_equals "0" "$(count_trace "update_nginx_config")" "directory replacement should fail before config regeneration"
+
+# Scenario P: commit metadata failures in a conditional restore must fail and
+# recover both files and the previously running proxy instead of clearing the
+# transaction and reporting success.
+for metadata_name in last_post_backup.txt last_rollback_targets.sha256 last_rollback_state.sha256; do
+  reset_runtime_state "old-p"
+  STUB_CONTAINER_RUNNING="true"
+  STUB_CONTAINER_EXISTS="true"
+  archive_name="$(create_restore_archive "restore_p" "new-p")"
+  mkdir "$BACKUP_DIR/$metadata_name"
+  if (restore_backup "$archive_name") >"$TMP_ROOT/metadata-failure.out" 2>&1; then
+    fail_test "restore_backup reported success after $metadata_name write failure"
+  fi
+  grep -Fq 'Failed to write transaction metadata' "$TMP_ROOT/metadata-failure.out" ||
+    fail_test "$metadata_name restore failure did not reach the metadata write check"
+  assert_file_contains_line "$CONFIG_DIR/marker.txt" "old-p"
+  assert_file_exists "$CONFIG_DIR/legacy.txt"
+  assert_file_missing "$CONFIG_DIR/new_only.txt"
+  assert_equals "2" "$(count_trace "recreate_nginx_container")" "metadata failure must recover the previous proxy"
+  assert_trace_contains_line "recreate_nginx_container:2:${NGINX_IMAGE}:80/tcp"
+  assert_file_missing "$(_transaction_lock_dir)"
+done
 
 echo "restore_backup runtime recovery tests passed."

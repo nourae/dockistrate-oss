@@ -27,7 +27,7 @@ function add_log_field() {
   local -a new_fields=()
   local i=0 inserted=false
   if [ -n "$pos" ]; then
-    if ! [[ "$pos" =~ ^[0-9]+$ ]]; then
+    if ! pos="$(normalize_decimal_number "$pos")"; then
       echo "[Error] position must be numeric" >&2
       exit 1
     fi

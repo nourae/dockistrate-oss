@@ -1,25 +1,25 @@
 # shellcheck shell=bash
 
 function list_headers() {
-  if [ ! -f "$CUSTOM_HEADERS_FILE" ] || [ ! -s "$CUSTOM_HEADERS_FILE" ]; then
+  if [ ! -e "$CUSTOM_HEADERS_FILE" ] && [ ! -L "$CUSTOM_HEADERS_FILE" ]; then
     echo "[None]"
     return
   fi
 
-  if ! csv_require_header "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER"; then
-    echo "[None]"
-    return
+  local shared_records=""
+  if ! shared_records="$(_header_records "$CUSTOM_HEADERS_FILE" global)"; then
+    return 1
   fi
 
   local line="" line_no=0 printed=false
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
     [ "$line_no" -eq 1 ] && continue
-    csv_parse_line "$line" || continue
-    [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || continue
+    csv_parse_line "$line" || return 1
+    [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || return 1
     printed=true
     echo "${CSV_FIELDS[0]} ${CSV_FIELDS[1]} $(operator_value_for_display header_value "${CSV_FIELDS[2]}")"
-  done <"$CUSTOM_HEADERS_FILE"
+  done <<<"$shared_records"
 
   if [ "$printed" = false ]; then
     echo "[None]"

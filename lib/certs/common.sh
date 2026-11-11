@@ -1,5 +1,12 @@
 # shellcheck shell=bash
 
+function _certbot_proxy_publishes_http() {
+  local bindings="" binding=""
+  bindings="$(container_published_port_bindings "$NGINX_CONTAINER_NAME")" || return 1
+  while IFS= read -r binding; do [ "$binding" != 80/tcp ] || return 0; done <<<"$bindings"
+  return 1
+}
+
 function _certbot_docker_is_darwin_host() {
   [ "$(uname -s 2>/dev/null || true)" = "Darwin" ]
 }
@@ -29,9 +36,17 @@ function _certbot_docker_numeric_id_or_fallback() {
 
 function _certbot_docker_path_stat() {
   local certbot_path="${1:-}"
+  local stat_output=""
 
-  stat -f '%u %g %Lp' "$certbot_path" 2>/dev/null ||
-    stat -c '%u %g %a' "$certbot_path" 2>/dev/null
+  if stat_output="$(stat -c '%u %g %a' "$certbot_path" 2>/dev/null)"; then
+    printf '%s\n' "$stat_output"
+    return 0
+  fi
+  if stat_output="$(stat -f '%u %g %Lp' "$certbot_path" 2>/dev/null)"; then
+    printf '%s\n' "$stat_output"
+    return 0
+  fi
+  return 1
 }
 
 function _certbot_docker_normalize_mode_digits() {

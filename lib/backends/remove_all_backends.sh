@@ -6,7 +6,8 @@ function remove_all_backends() {
   fi
 
   local removed=0
-  local backends="" line="" line_no=0
+  local backends="" line="" line_no=0 dom=""
+  local -a domains=()
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
     [ "$line_no" -eq 1 ] && continue
@@ -17,14 +18,26 @@ function remove_all_backends() {
     backends+="${STATE_BP_DOMAIN}"$'\n'
   done <"$BACKEND_PORTS_FILE"
 
-  while read -r dom; do
+  # Collect first so nested confirmation prompts retain the caller's stdin.
+  while IFS= read -r dom; do
     [ -n "$dom" ] || continue
-    remove_backend "$dom"
-    removed=$((removed + 1))
+    domains+=("$dom")
   done < <(printf '%s' "$backends" | awk 'NF > 0' | sort -u)
 
-  if [ "$removed" -eq 0 ]; then
+  if [ "${#domains[@]}" -eq 0 ]; then
     echo "[Info] No backends configured."
+    return
+  fi
+
+  for dom in "${domains[@]}"; do
+    remove_backend "$dom" || return 1
+    if ! backend_exists "$dom"; then
+      removed=$((removed + 1))
+    fi
+  done
+
+  if [ "$removed" -eq 0 ]; then
+    echo "[Info] No backends removed."
   else
     echo "[Info] Removed ${removed} backends."
     create_backup "" "RemoveAllBackends"

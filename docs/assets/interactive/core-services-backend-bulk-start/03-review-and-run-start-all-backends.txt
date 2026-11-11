@@ -1,0 +1,14 @@
+Review command
+  Command: Start All Backends (start-all-backends)
+  Description: Start all backend containers
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh start-all-backends
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

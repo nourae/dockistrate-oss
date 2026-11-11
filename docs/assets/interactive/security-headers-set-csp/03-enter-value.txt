@@ -1,0 +1,3 @@
+
+[Info] Current global CSP: <none>
+CSP value (Off to remove): default-src 'self'

@@ -1,0 +1,7 @@
+Review the conversion from the legacy state layout before applying the migration.
+Review or apply:
+  1) Review changes without applying them (current)
+> 2) Apply changes
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

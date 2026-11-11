@@ -3,7 +3,7 @@
 test_packet_capture_ignores_removed_capture_image_env() {
   rm -rf "${CAPTURE_DIR}/test_capture_bad_image"
   local docker_log_file
-  docker_log_file="$(mktemp "${TMPDIR:-/tmp}/dockistrate.capture.env-ignore.XXXXXX.log")"
+  docker_log_file="$(mktemp "${TMPDIR:-/tmp}/dockistrate.capture.env-ignore.log.XXXXXX")"
   integration_seed_managed_proxy >/dev/null
   assertEquals "seed managed nginx-proxy for capture image override test" 0 $?
 

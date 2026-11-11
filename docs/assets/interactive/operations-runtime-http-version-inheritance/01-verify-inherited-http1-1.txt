@@ -1,0 +1,2 @@
+$ curl --noproxy \* -ksS --http2 --resolve example.com:443:127.0.0.1 -o /dev/null -w HTTP\ version:\ %\{http_version\}\;\ status:\ %\{http_code\}\\n https://example.com/
+HTTP version: 1.1; status: 200

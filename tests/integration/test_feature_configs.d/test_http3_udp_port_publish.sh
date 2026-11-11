@@ -5,7 +5,7 @@ test_http3_udp_port_publish() {
   local docker_log_file="${STATE_DIR}/docker_http3_udp_publish.log"
   rm -f "$docker_log_file"
 
-  run_dockistrate add-backend "$domain" nginx:alpine 9443 https --listen 8443 >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend "$domain" nginx:alpine 9443 https --listen 8443 >/dev/null
   assertEquals "add-backend https 8443" 0 $?
 
   run_dockistrate set-port-http3 8443 on >/dev/null

@@ -1,0 +1,7 @@
+Absolute request path handled by a path-level route.
+Path prefix
+Example: /api:
+> 1) /service
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

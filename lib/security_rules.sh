@@ -13,7 +13,7 @@ if [ -f "${SECURITY_RULES_MODULE_DIR}/common.sh" ]; then
 fi
 
 for security_rules_file in "${SECURITY_RULES_MODULE_DIR}"/*.sh; do
-  security_rules_basename="$(basename "${security_rules_file}")"
+  security_rules_basename="${security_rules_file##*/}"
   if [ "${security_rules_basename}" = "common.sh" ]; then
     continue
   fi

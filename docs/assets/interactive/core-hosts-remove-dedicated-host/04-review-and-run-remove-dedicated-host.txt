@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Dedicated Host (remove-dedicated-host)
+  Description: Remove a dedicated host
+
+Arguments:
+  Hostname: app.example.com
+
+CLI equivalent:
+  ./dockistrate.sh remove-dedicated-host app.example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -6,24 +6,25 @@ function list_backend_client_certs() {
     echo "[Usage] list-backend-client-certs <domain>"
     exit 1
   fi
-  # Domain and persisted mTLS directory are both revalidated before any state mutation.
+  # Listing validates existing state; it must never initialize a lost database.
   _mtls_normalize_valid_domain domain "$domain" || exit 1
-  local mtls_dir
-  mtls_dir="$(get_backend_mtls_dir "$domain")"
+  local mtls_dir=""
+  if ! mtls_dir="$(get_backend_mtls_dir "$domain")"; then
+    return 1
+  fi
   [ -n "$mtls_dir" ] || {
     echo "[Info] mTLS not enabled for $domain"
     return
   }
-  normalize_mtls_dir mtls_dir "$mtls_dir" || exit 1
-  if ! _init_backend_mtls_state "$mtls_dir"; then
-    echo "[Error] Failed to initialize mTLS state for $domain" >&2
+  if ! _mtls_validate_authority_state "$mtls_dir"; then
+    echo "[Error] Failed to validate mTLS state for $domain" >&2
     return 1
   fi
   local index_file="${mtls_dir}/index.txt"
   local any=false
   for crt in "$mtls_dir"/*.crt; do
     [ -e "$crt" ] || continue
-    local base="$(basename "$crt")"
+    local base="${crt##*/}"
     [ "$base" = "ca.crt" ] && continue
     local cn="${base%.crt}" status="unknown"
     if [ -f "$index_file" ]; then

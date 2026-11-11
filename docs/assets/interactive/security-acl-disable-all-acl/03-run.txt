@@ -1,0 +1,14 @@
+Review command
+  Command: Disable All ACL (disable-all-acl)
+  Description: Disable all ACL rules
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh disable-all-acl
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,239 +1,143 @@
 # Dockistrate
 
-Dockistrate is a Bash-based operator tool for running multiple backend
-containers behind one Nginx reverse proxy. It manages backend containers, port
-exposure, certificates, headers, access controls, diagnostics, backups, and
-generated Nginx configuration from a single CLI or interactive picker.
+Dockistrate runs application containers behind a shared Nginx proxy. Its
+interactive menus guide you through applications, ports, certificates, routing,
+headers, and access rules. Review a change before running it, then check the
+result. The same commands are available for automation.
 
-Dockistrate is built for high-privilege infrastructure operators. It preserves
-operator flexibility for valid advanced configurations while continuing to
-block non-bypassable exploit paths such as unsafe paths, config injection, and
-unsafe write/delete operations.
+It is built for trusted infrastructure operators with Docker access. Linux
+and macOS are supported, including macOS Bash 3.2. Operators do not need Python.
 
-## Documentation
+**Upgrading from 1.x?** Version 2.0.0 requires state migration and
+backend ownership setup. Back up configuration and application data, then follow
+the [upgrade guide](docs/guides/updates.md#upgrading-from-101-to-200).
 
-- [Documentation index](docs/README.md)
-- [Backends and ports](docs/guides/backends-and-ports.md)
-- [TLS, certificates, and HTTP/3](docs/guides/tls-certificates-http3.md)
-- [Path routing](docs/guides/path-routing.md)
-- [Headers, real IP, HSTS, and CSP](docs/guides/headers-real-ip-hsts-csp.md)
-- [Access control and security rules](docs/guides/access-control-security-rules.md)
-- [Backups, restore, and cleanup](docs/guides/backups-restore-cleanup.md)
-- [Diagnostics and traffic capture](docs/guides/diagnostics-capture.md)
-- [Advanced Nginx and Docker options](docs/guides/advanced-nginx-docker-options.md)
-- [Function reference](docs/function-reference.md) and
-  [HTML function reference](docs/function-reference.html)
-- [Threat model](docs/security/threat-model.md)
+## Get started
 
-## Requirements
+Install Docker and OpenSSL. On macOS, keep Docker Desktop running. The examples
+use `curl` to check application responses. See the
+[requirements](CONTRIBUTING.md#setup) for development and test dependencies.
 
-- Bash. Dockistrate supports macOS Bash 3.2 and GNU Bash.
-- Docker. On macOS, install and run
-  [Docker Desktop](https://docs.docker.com/desktop/). On Linux, run as a user
-  that can access Docker or use `sudo`.
-- OpenSSL for certificate and TLS workflows.
-- Optional: GNU coreutils on macOS for the full local test timeout helper
-  (`gtimeout`).
-
-## Install
-
-Clone the repository and run Dockistrate from the repo root. For production,
-check out a release tag instead of tracking `main`:
+Clone the repository and choose a production release tag. Replace `vX.Y.Z`
+with that tag; a detached HEAD is expected.
 
 ```bash
 git clone https://github.com/nourae/dockistrate-oss.git
 cd dockistrate-oss
 git fetch --tags --prune origin
 git checkout vX.Y.Z
-```
-
-Production checkouts are expected to show a detached HEAD at the selected
-release tag. That keeps the deployed code pinned and reproducible.
-
-Run Dockistrate with:
-
-```bash
-./dockistrate.sh [--version] [-v|--verbose] [-i|--interactive] <command> [args]
-```
-
-Use verbose mode when you want commands and logged actions echoed to the
-terminal:
-
-```bash
-./dockistrate.sh -v status
-```
-
-Enable Bash completion:
-
-```bash
-source /path/to/dockistrate/completion/dockistrate-completion.bash
-```
-
-## Updates
-
-Do not reclone for normal updates. Create a Dockistrate backup first, then
-fetch tags, run the read-only preflight, and check out the target release:
-
-```bash
-./dockistrate.sh create-backup
-git fetch --tags --prune origin
-./dockistrate.sh upgrade-preflight --require-backup vX.Y.Z
-git checkout vX.Y.Z
-./dockistrate.sh upgrade-preflight --require-backup
-```
-
-Run `./dockistrate.sh check-config` after checkout if a managed proxy exists.
-Production users should stay on release tags and should not use `git pull` as
-the update workflow; branch pulls can move a deployment to unreleased changes.
-Use `./dockistrate.sh help update` for the workflow reminder. Dockistrate does
-not fetch, discover, or apply updates automatically. The target release tag must
-match the `VERSION` file in that tag.
-
-## Quick Start
-
-Create a backend, expose it on port 80, start the proxy, and verify generated
-configuration:
-
-```bash
-./dockistrate.sh add-backend example.com nginx:alpine 80 http
-./dockistrate.sh start-nginx
-./dockistrate.sh status
-./dockistrate.sh check-config
-```
-
-The HTTP `add-backend` flow creates the initial port 80 mapping automatically
-unless you pass `--no-expose`.
-
-Fresh configs default the ACL policy to `deny`. For a local smoke test, allow
-loopback first, then send the expected Host header because Nginx routes by
-domain:
-
-```bash
-./dockistrate.sh add-acl example.com l7 allow 127.0.0.1/32
-curl -i http://localhost -H 'Host: example.com'
-```
-
-Remove the sample backend when done:
-
-```bash
-./dockistrate.sh remove-backend --yes example.com
-./dockistrate.sh remove-nginx
-```
-
-## Interactive Mode
-
-Interactive mode keeps common workflows behind a picker so operators can search
-commands, choose known domains/ports/certificates, and review arguments before
-execution:
-
-```bash
 ./dockistrate.sh -i
 ```
 
-Use interactive mode when you want guided prompts. Use CLI mode when scripting
-or running in CI.
+<!-- walkthrough: readme-home -->
 
-Routing and certificate prompts prefer menus for known values. For example,
-`add-backend` lists common listen/redirect ports, and `update-port` first asks
-which existing mapping to change, then reviews the full CLI-equivalent command
-after the new ports, protocol, certificate, WebSocket, HTTP/3, and Alt-Svc
-choices are selected. Manual entry remains available for custom ports, custom
-Alt-Svc values, certificate paths, and upload file paths.
+![Choose a task from Home.](docs/assets/interactive/core-all-http-backend/01-choose-a-task.png)
 
-## Common Workflows
+Choose a task from Home. [Read the captured text](docs/assets/interactive/core-all-http-backend/01-choose-a-task.txt).
 
-| Goal | Start here |
-| --- | --- |
-| Add, update, or remove backends | [Backends and ports](docs/guides/backends-and-ports.md) |
-| Expose HTTP, HTTPS, TCP, UDP, WebSocket, or HTTP/3 ports | [Backends and ports](docs/guides/backends-and-ports.md) |
-| Add certificates, renew ACME certificates, or tune TLS | [TLS, certificates, and HTTP/3](docs/guides/tls-certificates-http3.md) |
-| Route specific paths to different targets | [Path routing](docs/guides/path-routing.md) |
-| Manage request/response headers and real client IP behavior | [Headers, real IP, HSTS, and CSP](docs/guides/headers-real-ip-hsts-csp.md) |
-| Configure ACLs and request security rules | [Access control and security rules](docs/guides/access-control-security-rules.md) |
-| Back up, restore, clean, uninstall, or repair permissions | [Backups, restore, and cleanup](docs/guides/backups-restore-cleanup.md) |
-| Inspect logs, generated configs, runtime status, and packet captures | [Diagnostics and traffic capture](docs/guides/diagnostics-capture.md) |
-| Customize Nginx images, Docker runtime options, or directive overrides | [Advanced Nginx and Docker options](docs/guides/advanced-nginx-docker-options.md) |
+<!-- /walkthrough: readme-home -->
 
-For the exhaustive command and function inventory, use the
-[function reference](docs/function-reference.md).
+Use the arrow keys and Enter, or the displayed numbers, to choose an item.
+Press `?` for help. **Back**, Esc, or Q returns from a menu; at Home, Esc or Q
+exits. In a text field, type `back` to revisit the previous step. Blank input
+follows the displayed default. [Learn navigation, Search, Recent commands,
+and Favorites](docs/guides/interactive-workflows.md).
 
-## Core Commands
+## Your first application
 
-```text
-start-nginx              Start or recreate the Nginx proxy container
-stop-nginx               Stop the proxy container
-remove-nginx             Remove the proxy container and anonymous volumes
-status                   Show the default operator dashboard
-status-all               Show the expanded operator report
-check-config             Run nginx -t inside the proxy container
-help-update              Show the local release-tag update workflow
-upgrade-preflight        Read-only state/tag compatibility check
+<a id="1-serve-http"></a>
 
-add-backend              Start a backend and optionally expose an initial port
-update-backend           Change image, container port, Docker opts, or network
-remove-backend           Remove backend state and its container (--yes for scripts)
-list-backends            Show configured backends and exposure summary
+Start with a fresh demonstration installation and available ports 80 and 443.
+Choose **Add a new backend**, enter `example.com`, select **HTTP**, and choose
+`dockistrate-net`. Use `nginx:alpine`, container port `80`, and listen port `80`.
+Keep WebSocket disabled, choose **Expose now**, and leave extra Docker options
+empty. Review the values, then choose **Run**.
 
-add-port                 Add HTTP, HTTPS, TCP, or UDP exposure
-update-port              Change an existing port mapping
-remove-port              Remove a port mapping
-list-port-mappings       List configured listener mappings
+<!-- walkthrough: readme-review -->
 
-add-cert                 Generate or upload certificate material
-renew-certs              Renew eligible Let's Encrypt certificates
-create-backup            Snapshot state/config
-restore-backup           Restore a safe backup archive or backup name
-uninstall-all            Remove Dockistrate-managed runtime state by scope
-```
+![Review the domain, image and ports before choosing Run.](docs/assets/interactive/core-all-http-backend/13-review-the-http-backend.png)
 
-## Validation
+Review the domain, image and ports before choosing Run. [Read the captured text](docs/assets/interactive/core-all-http-backend/13-review-the-http-backend.txt).
 
-Run the regression suite before release candidates or behavior changes:
+<!-- /walkthrough: readme-review -->
+
+The proxy starts with the exposed backend. Fresh configurations deny requests
+at both address layers. For this public demonstration, choose **Advanced
+command browser → Backend Access Overrides → Set Backend ACL Policy**, select
+`example.com`, choose `allow`, and run the change. Private applications should
+keep the appropriate [client and connection-peer allowances](docs/guides/access-control-security-rules.md#address-layers-and-private-services).
+
+Choose **Diagnostics / troubleshoot → Check Config**, then make a request:
 
 ```bash
-./tests/run.sh
+curl --noproxy '*' -i http://127.0.0.1 -H 'Host: example.com'
 ```
 
-The suite uses lightweight Docker mocks and `SKIP_DOCKER_CHECKS=true` behavior.
-It checks generated artifacts such as backend state, Nginx configs, TLS
-overrides, ACL/security-rule includes, headers, mTLS directives, and packet
-capture helpers.
+<!-- walkthrough: readme-result -->
 
-## Security Model
+![A request through the proxy returns HTTP 200 and the example application.](docs/assets/interactive/core-all-verify-http/01-http-responds-successfully.png)
 
-Dockistrate assumes a trusted, high-privilege operator. It does not try to
-prevent every risky but intentional admin choice, such as weak TLS settings or
-advanced Docker options. It does enforce exploit-prevention controls around
-config generation, state files, paths, headers, certificates, and cleanup.
+A request through the proxy returns HTTP 200 and the example application. [Read the captured text](docs/assets/interactive/core-all-verify-http/01-http-responds-successfully.txt).
 
-Runtime material lives under `state/`, including generated config, certs,
-backups, logs, packet captures, and temporary files. Do not commit private keys,
-real certificates, logs, captures, or runtime state from production systems.
-The active `state/` root and its runtime subdirectories must be real
-directories; Dockistrate rejects symlinked runtime roots before writing,
-logging, or normalizing permissions.
-Docker option and header values are fully visible by default in operator-facing
-output and saved interactive history. Use
-`./dockistrate.sh set-visibility-policy redacted` when shared terminals or
-support transcripts should hide those values in display, audit, and saved
-interactive command history; stored state and generated runtime configuration
-still retain the real values.
-The current backend and port state header is
-`record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location`.
+<!-- /walkthrough: readme-result -->
 
-## Non-Affiliation
+A successful example returns `200 OK` and the Nginx welcome page. This local
+request needs no DNS change. The [complete backend walkthrough](docs/guides/backends-and-ports.md)
+shows the prompts, result, verification, and removal steps.
 
-Dockistrate is independent and is not affiliated with, endorsed by, or sponsored by Docker, F5, NGINX, Certbot, Let’s Encrypt, or any other third-party tool or service it invokes or integrates with.
+<a id="2-add-local-https"></a>
+<a id="3-block-a-matching-request"></a>
 
-## Contributing
+Continue with [local HTTPS](docs/guides/tls-certificates-http3.md) or
+[block and unblock a matching request](docs/guides/access-control-security-rules.md).
+Each guide includes choices, screenshots, short explanations, verification,
+and undo steps. Self-signed HTTPS is a local demonstration;
+use a trusted certificate for public clients.
 
-Keep user-facing surfaces in sync when behavior changes: CLI dispatch,
-interactive prompts, completion, README/docs, and generated function-reference
-outputs. Runtime changes should include focused tests under `tests/` or
-`tests/integration/`.
+## Find your next task
 
-Docs-only changes should state that no runtime behavior changed.
+| I want to… | Illustrated guide |
+| --- | --- |
+| Add applications, ports, or WebSockets | [Backends and ports](docs/guides/backends-and-ports.md) |
+| Add a hostname or change inheritance | [Hosts and aliases](docs/guides/hosts-and-aliases.md) |
+| Configure HTTPS, TLS, or HTTP/3 | [Certificates and TLS](docs/guides/tls-certificates-http3.md) |
+| Require client certificates | [Mutual TLS](docs/guides/mutual-tls.md) |
+| Control clients or requests | [Access controls](docs/guides/access-control-security-rules.md) |
+| Route paths or change headers | [Routing](docs/guides/path-routing.md) · [Headers and client IPs](docs/guides/headers-real-ip-hsts-csp.md) |
+| Investigate a problem | [Diagnostics, logs, and capture](docs/guides/diagnostics-capture.md) |
+| Back up, recover, or upgrade | [Backup and recovery](docs/guides/backups-restore-cleanup.md) · [Updates](docs/guides/updates.md) |
 
-## License
+The [documentation index](docs/README.md) maps every menu section to its guide.
+Use **Search all commands** when you already know the operation's name.
 
-See [LICENSE](LICENSE).
+## Edit configuration files
+
+Each domain has editable CSV files under `state/domains/<domain>/config/`.
+Manual edits remain pending until you choose **Domain configuration files →
+Validate Domain Config → Apply Domain Config**. Preview the changes before
+choosing **Apply changes**. Existing menu commands apply their changes
+immediately, while protecting pending manual edits.
+
+The [domain configuration guide](docs/guides/domain-configuration.md) explains
+file editing, previews, application, and recovery. The last successful
+configuration remains in `runtime/applied/` beneath the domain directory.
+
+## Automation and reference
+
+The review screen names each selected setting and includes the equivalent CLI
+command. Commands needing no arguments show `(none)`. Start with:
+
+```bash
+./dockistrate.sh help
+source completion/dockistrate-completion.bash
+```
+
+Use [advanced settings](docs/guides/advanced-nginx-docker-options.md) for Nginx
+options, images, and runtime settings. Before an upgrade, back up and follow
+the [update guide](docs/guides/updates.md). Application volumes and bind mounts
+need their own backups; configuration backups alone do not protect that data.
+
+See [contributing](CONTRIBUTING.md), the [security policy](SECURITY.md), and the
+[function reference](docs/function-reference.md) for development and deeper
+technical details. Dockistrate is independent of Docker, F5, NGINX, Certbot,
+Let's Encrypt, and other integrated services. See [LICENSE](LICENSE).

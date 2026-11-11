@@ -1,0 +1,18 @@
+Review command
+  Command: Remove Path Option (remove-path-option)
+  Description: Remove a specific path override
+
+Arguments:
+  Domain: example.com
+  Listen port: 80
+  Path prefix: /service
+
+CLI equivalent:
+  ./dockistrate.sh remove-path-option example.com 80 /service
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

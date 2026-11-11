@@ -8,6 +8,9 @@ function replace_cert() {
   local upload_fc="${4:-}"
   local upload_pk="${5:-}"
   local started_txn=false
+  # Replacement refreshes certificate material; listener and redirect choices
+  # remain the operator's existing configuration in both storage layouts.
+  local CERT_AUTOCONFIG_DISABLED=1
 
   if [ -z "$domain" ]; then
     echo "[Usage] replace-cert <domain> [port_suffix] [selfsigned|letsencrypt|upload] [fullchain] [privkey]"
@@ -17,6 +20,10 @@ function replace_cert() {
   require_valid_domain "$domain"
   require_valid_port "$port_suffix"
   domain="$(normalize_domain "$domain")"
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    domain_config_replace_certificate "$domain" "$port_suffix" "$cert_choice" "$upload_fc" "$upload_pk"
+    return $?
+  fi
 
   local cert_type
   case "$cert_choice" in

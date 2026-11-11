@@ -1,0 +1,4 @@
+/opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem
+Path to an existing privkey.pem file when uploading a custom certificate.
+Private key path
+Example: /path/to/privkey.pem: /opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/privkey.pem

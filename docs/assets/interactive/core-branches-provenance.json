@@ -1,0 +1,1958 @@
+{
+  "schema_version": 1,
+  "scenario": "core-branches",
+  "source_commit": "16a177ded92212887ca91254fc40f0bdf4eef738",
+  "started_at": "2026-11-07T17:32:37.522724+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42396731591",
+  "github_run_attempt": "1",
+  "scenario_module": "core",
+  "group": "branches",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1016-aws x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"46 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T17:35:57.990632+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 1,
+      "title": "Choose a task",
+      "kind": "menu",
+      "command": "stop-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/01-choose-a-task.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/01-choose-a-task.txt",
+      "image_sha256": "7a209a6205e917540721bfaf9abef50dadd5ef08c52e2ff606f28ac4e5c8e6ad",
+      "transcript_sha256": "37b99b156cbb6e6eec6b6c1341f92fdfabdee080da3e67f19751e41fa08a8c2a",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 6842,
+      "selected": "Search all commands"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 2,
+      "title": "Find Stop Backend",
+      "kind": "menu",
+      "command": "stop-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/02-find-stop-backend.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/02-find-stop-backend.txt",
+      "image_sha256": "056f58b3721b8c3a71a97a16e0d613ca0c7999c356b8148a72c094f9814e9476",
+      "transcript_sha256": "acc9086be24e542ed1b73862e39cbef20ae995affef3e9eab40571e9b373c045",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 79059,
+      "selected": "Backends :: Stop Backend \u2014 Stop a backend container \u2014 unavailable: no backends"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 3,
+      "title": "Create the missing backend",
+      "kind": "menu",
+      "command": "stop-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/03-create-the-missing-backend.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/03-create-the-missing-backend.txt",
+      "image_sha256": "de36c4b187df111e143bbf040c3adaa99c9fbeda6721089b51a49b6989f06de4",
+      "transcript_sha256": "72fdf991e4365296f6659f27f23f2bda0784e5b7a138db42448fe44cde55f44f",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 79310,
+      "selected": "Add backend now"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter domain",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/04-enter-domain.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/04-enter-domain.txt",
+      "image_sha256": "2650da874cd11708280080e057aa656d4b8222be70a747e1f70e597a5ff6dfef",
+      "transcript_sha256": "be076fb5115aa9a5c7b8baba5638a1a3a9d7434008917fdd03a76d5f3259fd6c",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 79415,
+      "selected": "Enter domain"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/05-enter-value.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/05-enter-value.txt",
+      "image_sha256": "51f29e5fb79f2268b3ca1137470feff9c0c0560aea200cc2e6a84567794e0c33",
+      "transcript_sha256": "87e2d0f48cd5c8365142fa5ba5c99fad9dd2eb61071754427cb6d8434b68cd60",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 79443,
+      "value": "example.com"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 6,
+      "title": "HTTP",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/06-http.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/06-http.txt",
+      "image_sha256": "7bd30ef8301d6ce00b5dac6ecb46784cdcdd3e3ab01d5ddc5c40a0107c51774d",
+      "transcript_sha256": "ab8e52a46402c20d49721d6c083c6fc68d1926119253790a0d37372731b1c40d",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 79585,
+      "selected": "HTTP"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 7,
+      "title": "dockistrate-net",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/07-dockistrate-net.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/07-dockistrate-net.txt",
+      "image_sha256": "cd60bb73ed10a0494a9fd163e7b3fbde6eb406bb18c23d7c31c62208e1032843",
+      "transcript_sha256": "d73070eb07f732854c53752901ac375d983dd6f8107e3c111169b91840010377",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 79921,
+      "selected": "dockistrate-net"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 8,
+      "title": "Enter manually...",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/08-enter-manually.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/08-enter-manually.txt",
+      "image_sha256": "d2860caafc1d664c7abc4a4cc073191c5a0167a7266ebbbe64bb247eef1c8bf2",
+      "transcript_sha256": "fe6c3c151b36ebd4111868b6a3ebd5c18a0d95a6896bc09774e655d023c67bfd",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 85385,
+      "selected": "Enter manually..."
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 9,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/09-enter-value.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/09-enter-value.txt",
+      "image_sha256": "7d73b9f6055487e7ff19e2ead9309d528e862afd2687f4cf98ffd5ddf48be33f",
+      "transcript_sha256": "44b9406a41adaf6b73ca9dd1891eaf1a9c4eebc6616085dfef6452c9c2ed2452",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 85420,
+      "value": "nginx:alpine"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 10,
+      "title": "80",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/10-80.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/10-80.txt",
+      "image_sha256": "50ddb42a4700fed94ee9fff801a9ed26be965cd67cdb29bb6c4f273f6ad880c7",
+      "transcript_sha256": "6b883725472db07ff0cec5f8ea588918ecdb7a78271178b43205381c23c8b87e",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 85622,
+      "selected": "80"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 11,
+      "title": "Use default: 80",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/11-use-default-80.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/11-use-default-80.txt",
+      "image_sha256": "afeddf63b54fabecb0a2950a50c5284edb837cf614f9ee6bf3754d4a22dcd2ea",
+      "transcript_sha256": "42eddd7ceb294d2230beff675147322ae8e543029a414b958b3306b4d8073572",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 85812,
+      "selected": "Use default: 80"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 12,
+      "title": "Disabled",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/12-disabled.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/12-disabled.txt",
+      "image_sha256": "976f078b333cfcd831822701417b56220639985b14d2632d3d40e5112bae24f6",
+      "transcript_sha256": "f9788dfa6d71f6a132a60f735011d1f5400f9e2b07c525fa3e96e766d029b913",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 85938,
+      "selected": "Disabled"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 13,
+      "title": "Create the backend before exposing a port",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/13-create-the-backend-before-exposing-a-port.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/13-create-the-backend-before-exposing-a-port.txt",
+      "image_sha256": "5622ef44afb39539e6662bdbc095a6a535fe8b2949a6b8357e8328cc75ff8f42",
+      "transcript_sha256": "c000195af0947dff95242efbe43addcb6c4ba7c5ab8ca5a0a97502913a9ab418",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 86202,
+      "selected": "Do not expose"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 14,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/14-enter-value.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/14-enter-value.txt",
+      "image_sha256": "874d76980542c822e294f7c0a4f7473ece12fc802c06e436693c41a8f809ba79",
+      "transcript_sha256": "134c24ec9504f5d35bc353f5c4c4bbd0d766515e2236cc577518b23b1f7e3aa3",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 86276,
+      "value": ""
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 15,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/15-run.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/15-run.txt",
+      "image_sha256": "eff98435ad9a6bcb0c848481aea879227004e415866903fae92ee40c35a15529",
+      "transcript_sha256": "e2fcaafc1480b22e0d4e969d9ebe0e088f3b57f992e864400ca57bde033423d2",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 86984,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 16,
+      "title": "The suggested backend creation completes",
+      "kind": "result",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/16-the-suggested-backend-creation-completes.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/16-the-suggested-backend-creation-completes.txt",
+      "image_sha256": "ca9613862c4f5cc8f4c5b478a40642770e3c9d368bd4c29c49b27b713ed4fbfd",
+      "transcript_sha256": "859cbd3c189ee6f7f6b2ade307e5f182c219859b0419c2dd96ac7d486565afc7",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 90785,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-branches-navigation-missing-backend",
+      "journey_family": "core-branches-navigation-missing-backend",
+      "session_index": 1,
+      "step": 17,
+      "title": "Return to Home",
+      "kind": "menu",
+      "command": "add-backend",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-backend/17-return-to-home.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-backend/17-return-to-home.txt",
+      "image_sha256": "47b767e5865390fec3eb9a8be9eb6338fdcd33552367b758f74da8491f161153",
+      "transcript_sha256": "f197377f3116a9e9972de3f9e9b9d21722ba2ed880a55300f84872f1d43a21ce",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log",
+      "pty_byte_offset": 98890,
+      "selected": "Quit"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 1,
+      "title": "Choose a task",
+      "kind": "menu",
+      "command": "remove-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/01-choose-a-task.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/01-choose-a-task.txt",
+      "image_sha256": "3f0976c120557912fd6499e00a95da9807a62b657d8fb2b1a8b508940196cf4a",
+      "transcript_sha256": "b432e1e6af85906f61c4f4627f3e3ee609a5aa5743abaeba72ba46893c245da3",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 6842,
+      "selected": "Search all commands"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 2,
+      "title": "Find Remove Port",
+      "kind": "menu",
+      "command": "remove-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/02-find-remove-port.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/02-find-remove-port.txt",
+      "image_sha256": "803297853672876ba6b9dc8c5283fbf61ff576786c4e433e9ba024523fb30612",
+      "transcript_sha256": "1def71232fadac67366dc11258baee20add24dbf1036d2c8cc457f195623b3f3",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 98350,
+      "selected": "Routing & Ports :: Remove Port \u2014 Remove a port mapping for a backend \u2014 unavailable:"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 3,
+      "title": "Create the missing port mapping",
+      "kind": "menu",
+      "command": "remove-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/03-create-the-missing-port-mapping.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/03-create-the-missing-port-mapping.txt",
+      "image_sha256": "5e4d8988cb0d48e3b45bc0f03152d83893ca5e4b83d8ffbb3e954b3e83446565",
+      "transcript_sha256": "5d7dfca3b58e468cf8323fea01261aeaf13e43a2beb1824c8740c0f56ffa5f5a",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 98607,
+      "selected": "Add port now"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 4,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/04-example-com.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/04-example-com.txt",
+      "image_sha256": "cce6194f929d9706b6bdea42b323a8f554bde213e150ee2d82feacead236ae14",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 98776,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 5,
+      "title": "80",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/05-80.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/05-80.txt",
+      "image_sha256": "3a4b93227539c544041fd0610c00d57b2c7c0269985514310586f016ce00cd8e",
+      "transcript_sha256": "8278635a2ae10c9756b1888b64bb69633ffb91e991280cb76e65873516c6d547",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 99004,
+      "selected": "80"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 6,
+      "title": "80",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/06-80.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/06-80.txt",
+      "image_sha256": "6640d9408ed27a303df1b744ff6e4fd4d443238431eaa19e25e85b3a1b9a85db",
+      "transcript_sha256": "75ba695a86d81ec921fc829c91716e51d63d258b52002185eb064b3920b3abf4",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 99268,
+      "selected": "80"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 7,
+      "title": "HTTP (current)",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/07-http-current.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/07-http-current.txt",
+      "image_sha256": "107769ea12441fee715fad1db5241e5a56f696d6614e9211afcdc76c6605b98f",
+      "transcript_sha256": "3c899443655106e7ec1e6a59967894c609ccd20b36a9f632d434bcf772613ade",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 99499,
+      "selected": "HTTP (current)"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 8,
+      "title": "no (current)",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/08-no-current.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/08-no-current.txt",
+      "image_sha256": "adf846b0375806c15f7b8ec354954b63253b796c3cd8de8b5661910fe40564db",
+      "transcript_sha256": "4c809a996d9655427c9bafdb01aa42865c1e1e13fb9e66581ecce795993a1506",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 99675,
+      "selected": "no (current)"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 9,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/09-run.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/09-run.txt",
+      "image_sha256": "3e0b91f973f9494a29edf9919d879be34cc60de20cea6002417f7044c1a3b504",
+      "transcript_sha256": "e7e19d1bee3de495a6fdf477f306e1ccabd855bf2a52390735989e3bd5531f00",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 100132,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 10,
+      "title": "The suggested HTTP port creation completes",
+      "kind": "result",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/10-the-suggested-http-port-creation-completes.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/10-the-suggested-http-port-creation-completes.txt",
+      "image_sha256": "57c7e0352104445d8f5883c2bb5a1ace0186f11606cb2737fbb7b41d21d2d035",
+      "transcript_sha256": "0e33e4f6e1b6ed7b350435a58a12dc5900f6d170cbdd7cdc0b9eeb28f121c29c",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 101644,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-branches-navigation-missing-port",
+      "journey_family": "core-branches-navigation-missing-port",
+      "session_index": 1,
+      "step": 11,
+      "title": "Return to Home",
+      "kind": "menu",
+      "command": "add-port",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-port/11-return-to-home.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-port/11-return-to-home.txt",
+      "image_sha256": "c12d86f0f6dd3c83a757d7f847c408f95bb18af932c645ff7dd6a6898d1f4f61",
+      "transcript_sha256": "edeabbfc3c10a3bf10335c0803532971952c4f337b11423818ddc0994c248141",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log",
+      "pty_byte_offset": 109749,
+      "selected": "Quit"
+    },
+    {
+      "journey": "core-branches-navigation-missing-certificates",
+      "journey_family": "core-branches-navigation-missing-certificates",
+      "session_index": 1,
+      "step": 1,
+      "title": "Choose a task",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-certificates/01-choose-a-task.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-certificates/01-choose-a-task.txt",
+      "image_sha256": "a49406b50359424e5df1945987ceb9b0fa988142200f86ad688cf7d63f7f8a0c",
+      "transcript_sha256": "ae9964c40c85c77bd5b8b30c33b08ec76f23a8a0a3e7c01614f6d820c204d5af",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-certificates.pty.log",
+      "pty_byte_offset": 6846,
+      "selected": "Search all commands"
+    },
+    {
+      "journey": "core-branches-navigation-missing-certificates",
+      "journey_family": "core-branches-navigation-missing-certificates",
+      "session_index": 1,
+      "step": 2,
+      "title": "Find Remove Cert",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-certificates/02-find-remove-cert.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-certificates/02-find-remove-cert.txt",
+      "image_sha256": "aa466cd103c43122aa6042175bff8f51ddb138a02a11e08770d68b927b840b25",
+      "transcript_sha256": "959e33b1eb1b6fc5f34a42af4ad0e6456655e5e079915273fd5da383a3ee5f86",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-certificates.pty.log",
+      "pty_byte_offset": 93017,
+      "selected": "Certificates :: Remove Cert \u2014 Delete a certificate directory for a domain or port"
+    },
+    {
+      "journey": "core-branches-navigation-missing-certificates",
+      "journey_family": "core-branches-navigation-missing-certificates",
+      "session_index": 1,
+      "step": 3,
+      "title": "Return from missing certificates guidance",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-certificates/03-return-from-missing-certificates-guidance.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-certificates/03-return-from-missing-certificates-guidance.txt",
+      "image_sha256": "86a33714bc58fef835973d5b6538168b9c04444acedf15175e5521cd0eaa4a32",
+      "transcript_sha256": "59abc84acfea173fee0cf180d022f644ecba9bf57146d07b0c3198cd2ec38708",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-certificates.pty.log",
+      "pty_byte_offset": 93541,
+      "selected": "Return to previous menu"
+    },
+    {
+      "journey": "core-branches-navigation-missing-certificates",
+      "journey_family": "core-branches-navigation-missing-certificates",
+      "session_index": 1,
+      "step": 4,
+      "title": "Return from command search",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-certificates/04-return-from-command-search.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-certificates/04-return-from-command-search.txt",
+      "image_sha256": "0591b243774996f50385f06b648cfe44d593889ded14c2956b3b65b32ae1a550",
+      "transcript_sha256": "69eb4c0dba2fe6ff53243ec89eaad0c583683a6c5b8aaf6d13d0b3fe24468d7c",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-certificates.pty.log",
+      "pty_byte_offset": 94221,
+      "selected": "Back"
+    },
+    {
+      "journey": "core-branches-navigation-missing-certificates",
+      "journey_family": "core-branches-navigation-missing-certificates",
+      "session_index": 1,
+      "step": 5,
+      "title": "Return to Home",
+      "kind": "menu",
+      "command": "remove-cert",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-certificates/05-return-to-home.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-certificates/05-return-to-home.txt",
+      "image_sha256": "f007aa5653a2d19a2304e595235edaf33257ac0be78d6181691ecb78544f61e8",
+      "transcript_sha256": "ca4220f7821e1f3ee953cd18d5daeb86370946229892e729690eab7309bba607",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-certificates.pty.log",
+      "pty_byte_offset": 102320,
+      "selected": "Quit"
+    },
+    {
+      "journey": "core-branches-navigation-missing-headers",
+      "journey_family": "core-branches-navigation-missing-headers",
+      "session_index": 1,
+      "step": 1,
+      "title": "Choose a task",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-headers/01-choose-a-task.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-headers/01-choose-a-task.txt",
+      "image_sha256": "7516ac56f5b65cb8572fd86bab16b47bf6ea476ab633e6d06878e1985d607539",
+      "transcript_sha256": "ae9964c40c85c77bd5b8b30c33b08ec76f23a8a0a3e7c01614f6d820c204d5af",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-headers.pty.log",
+      "pty_byte_offset": 6846,
+      "selected": "Search all commands"
+    },
+    {
+      "journey": "core-branches-navigation-missing-headers",
+      "journey_family": "core-branches-navigation-missing-headers",
+      "session_index": 1,
+      "step": 2,
+      "title": "Find Update Backend Header",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-headers/02-find-update-backend-header.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-headers/02-find-update-backend-header.txt",
+      "image_sha256": "836424be0683735d780bf83080efe309df95aee837fe66ceba98a28c0c0d35e4",
+      "transcript_sha256": "8d153125dca155140a20d535077b84447538ea42de020b4bbf060c13c74bb545",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-headers.pty.log",
+      "pty_byte_offset": 72182,
+      "selected": "Backend Headers :: Update Backend Header \u2014 Update a backend header override \u2014"
+    },
+    {
+      "journey": "core-branches-navigation-missing-headers",
+      "journey_family": "core-branches-navigation-missing-headers",
+      "session_index": 1,
+      "step": 3,
+      "title": "Return from missing headers guidance",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-headers/03-return-from-missing-headers-guidance.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-headers/03-return-from-missing-headers-guidance.txt",
+      "image_sha256": "7c25b49ad4e815f3610f8cf33217a3fa8e95022a373402a6f4a9f317613c3466",
+      "transcript_sha256": "65ded343fc63c471f1fb6296a7e30f5a071947b474cf68ed6fe30f24de05ae38",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-headers.pty.log",
+      "pty_byte_offset": 72732,
+      "selected": "Return to previous menu"
+    },
+    {
+      "journey": "core-branches-navigation-missing-headers",
+      "journey_family": "core-branches-navigation-missing-headers",
+      "session_index": 1,
+      "step": 4,
+      "title": "Return from command search",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-headers/04-return-from-command-search.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-headers/04-return-from-command-search.txt",
+      "image_sha256": "75a904c78795e2ec71b61fba47566e022cacaa6f25a94f2cdee2f83a1a9c4e9f",
+      "transcript_sha256": "16f4e8a2356303b8369846a692987fab476ea11fb9f1cdd16c6699fcf1250cbf",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-headers.pty.log",
+      "pty_byte_offset": 73412,
+      "selected": "Back"
+    },
+    {
+      "journey": "core-branches-navigation-missing-headers",
+      "journey_family": "core-branches-navigation-missing-headers",
+      "session_index": 1,
+      "step": 5,
+      "title": "Return to Home",
+      "kind": "menu",
+      "command": "update-backend-header",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-headers/05-return-to-home.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-headers/05-return-to-home.txt",
+      "image_sha256": "340e82cf5cb05adbae072495bbbe0ae7be7d90ea74f24d4c7d0135e7fb95d319",
+      "transcript_sha256": "7b3cdcab5a2f7bb2bf201a8ec3d0e23419935279e4da4f8d751f596dc9104e2e",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-headers.pty.log",
+      "pty_byte_offset": 81498,
+      "selected": "Quit"
+    },
+    {
+      "journey": "core-branches-navigation-missing-mtls",
+      "journey_family": "core-branches-navigation-missing-mtls",
+      "session_index": 1,
+      "step": 1,
+      "title": "Choose a task",
+      "kind": "menu",
+      "command": "disable-backend-mtls",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-mtls/01-choose-a-task.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-mtls/01-choose-a-task.txt",
+      "image_sha256": "b781c6d5045cd0c362ab20a634adadfa8f461c7d2633f2548355327cef5559fb",
+      "transcript_sha256": "ae9964c40c85c77bd5b8b30c33b08ec76f23a8a0a3e7c01614f6d820c204d5af",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-mtls.pty.log",
+      "pty_byte_offset": 6846,
+      "selected": "Search all commands"
+    },
+    {
+      "journey": "core-branches-navigation-missing-mtls",
+      "journey_family": "core-branches-navigation-missing-mtls",
+      "session_index": 1,
+      "step": 2,
+      "title": "Find Disable Backend mTLS",
+      "kind": "menu",
+      "command": "disable-backend-mtls",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-mtls/02-find-disable-backend-mtls.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-mtls/02-find-disable-backend-mtls.txt",
+      "image_sha256": "dbd355abbfd73acb9f8634aad51645437f286d2fdec13a8aea2d6e19a2d0467d",
+      "transcript_sha256": "5338e0dcef1239018ae9002844f2491f453ae86b76d9bb2dc0e9412681bbd92e",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-mtls.pty.log",
+      "pty_byte_offset": 78645,
+      "selected": "Backend mTLS & Client Certs :: Disable Backend mTLS \u2014 Disable backend mTLS for a"
+    },
+    {
+      "journey": "core-branches-navigation-missing-mtls",
+      "journey_family": "core-branches-navigation-missing-mtls",
+      "session_index": 1,
+      "step": 3,
+      "title": "Return from missing mtls guidance",
+      "kind": "menu",
+      "command": "disable-backend-mtls",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-mtls/03-return-from-missing-mtls-guidance.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-mtls/03-return-from-missing-mtls-guidance.txt",
+      "image_sha256": "5ed396f9e4343cab92bc1c4cfd0bd025059aa87bb9352948a96c1d5e78855c2f",
+      "transcript_sha256": "2122904c607565b91a302caeff8d969deb0f3c3d137d677356a6e83171f0edc7",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-mtls.pty.log",
+      "pty_byte_offset": 79173,
+      "selected": "Return to previous menu"
+    },
+    {
+      "journey": "core-branches-navigation-missing-mtls",
+      "journey_family": "core-branches-navigation-missing-mtls",
+      "session_index": 1,
+      "step": 4,
+      "title": "Return from command search",
+      "kind": "menu",
+      "command": "disable-backend-mtls",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-mtls/04-return-from-command-search.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-mtls/04-return-from-command-search.txt",
+      "image_sha256": "29902177ce39c3e451f495dbe2ff7f48ba3cba9022f87a6bfcb59d60e7eeeabc",
+      "transcript_sha256": "13d5d7589c8ac0fd3934a16240aa8ef4afec49e8fa90badfde0a8b1c7c6bba79",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-mtls.pty.log",
+      "pty_byte_offset": 79887,
+      "selected": "Back"
+    },
+    {
+      "journey": "core-branches-navigation-missing-mtls",
+      "journey_family": "core-branches-navigation-missing-mtls",
+      "session_index": 1,
+      "step": 5,
+      "title": "Return to Home",
+      "kind": "menu",
+      "command": "disable-backend-mtls",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-mtls/05-return-to-home.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-mtls/05-return-to-home.txt",
+      "image_sha256": "00dc761817ab141d0b22c888dd9e42b175bc089c6b7affcbf2f2931902c2d959",
+      "transcript_sha256": "ca4220f7821e1f3ee953cd18d5daeb86370946229892e729690eab7309bba607",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-mtls.pty.log",
+      "pty_byte_offset": 87986,
+      "selected": "Quit"
+    },
+    {
+      "journey": "core-branches-navigation-missing-acl",
+      "journey_family": "core-branches-navigation-missing-acl",
+      "session_index": 1,
+      "step": 1,
+      "title": "Choose a task",
+      "kind": "menu",
+      "command": "disable-acl",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-acl/01-choose-a-task.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-acl/01-choose-a-task.txt",
+      "image_sha256": "4bf981c91a3d0b13e524669becda293c906f78af6166edf3fe5ebf17cca3ae50",
+      "transcript_sha256": "ae9964c40c85c77bd5b8b30c33b08ec76f23a8a0a3e7c01614f6d820c204d5af",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-acl.pty.log",
+      "pty_byte_offset": 6842,
+      "selected": "Search all commands"
+    },
+    {
+      "journey": "core-branches-navigation-missing-acl",
+      "journey_family": "core-branches-navigation-missing-acl",
+      "session_index": 1,
+      "step": 2,
+      "title": "Find Disable ACL",
+      "kind": "menu",
+      "command": "disable-acl",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-acl/02-find-disable-acl.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-acl/02-find-disable-acl.txt",
+      "image_sha256": "1db10e509d686a70ecd016a944d6bd9b280b21f592d975eef910be9fe52ab32e",
+      "transcript_sha256": "0ca53c119615fc5aba24f6a21444eadda05b6cd6db53ecc4277f8917fddaf4e2",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-acl.pty.log",
+      "pty_byte_offset": 75648,
+      "selected": "Access Control & Rules :: Disable ACL \u2014 Disable an ACL rule \u2014 unavailable: no ACL"
+    },
+    {
+      "journey": "core-branches-navigation-missing-acl",
+      "journey_family": "core-branches-navigation-missing-acl",
+      "session_index": 1,
+      "step": 3,
+      "title": "Return from missing acl guidance",
+      "kind": "menu",
+      "command": "disable-acl",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-acl/03-return-from-missing-acl-guidance.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-acl/03-return-from-missing-acl-guidance.txt",
+      "image_sha256": "74545ab9504eb5204c2a6786a344e26936853e9e1f214113cc054d747c7c5b97",
+      "transcript_sha256": "c05fb9f04819606a364e2d02e2e96ed49b352e2bd032b9330415a6a7790b3596",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-acl.pty.log",
+      "pty_byte_offset": 76154,
+      "selected": "Return to previous menu"
+    },
+    {
+      "journey": "core-branches-navigation-missing-acl",
+      "journey_family": "core-branches-navigation-missing-acl",
+      "session_index": 1,
+      "step": 4,
+      "title": "Return from command search",
+      "kind": "menu",
+      "command": "disable-acl",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-acl/04-return-from-command-search.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-acl/04-return-from-command-search.txt",
+      "image_sha256": "b0b47362ba9b97391371304db59e22fa64de6164c92418f7054ffe7cc9efb08c",
+      "transcript_sha256": "4962bcb1442baed6d40cf49307428aa17af7b2f6ab894363fefb97c8e19c25ab",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-acl.pty.log",
+      "pty_byte_offset": 76770,
+      "selected": "Back"
+    },
+    {
+      "journey": "core-branches-navigation-missing-acl",
+      "journey_family": "core-branches-navigation-missing-acl",
+      "session_index": 1,
+      "step": 5,
+      "title": "Return to Home",
+      "kind": "menu",
+      "command": "disable-acl",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-acl/05-return-to-home.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-acl/05-return-to-home.txt",
+      "image_sha256": "6bace37dc972968d1312ea9b3f54e0576785a1001d581732f339cf8de8a7f041",
+      "transcript_sha256": "ca4220f7821e1f3ee953cd18d5daeb86370946229892e729690eab7309bba607",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-acl.pty.log",
+      "pty_byte_offset": 84873,
+      "selected": "Quit"
+    },
+    {
+      "journey": "core-branches-navigation-missing-security-rule",
+      "journey_family": "core-branches-navigation-missing-security-rule",
+      "session_index": 1,
+      "step": 1,
+      "title": "Choose a task",
+      "kind": "menu",
+      "command": "disable-security-rule",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-security-rule/01-choose-a-task.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-security-rule/01-choose-a-task.txt",
+      "image_sha256": "de56f5030bd692ccf512b746cafc8064803671e060f368d99b85af3b84f7d686",
+      "transcript_sha256": "ae9964c40c85c77bd5b8b30c33b08ec76f23a8a0a3e7c01614f6d820c204d5af",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-security-rule.pty.log",
+      "pty_byte_offset": 6842,
+      "selected": "Search all commands"
+    },
+    {
+      "journey": "core-branches-navigation-missing-security-rule",
+      "journey_family": "core-branches-navigation-missing-security-rule",
+      "session_index": 1,
+      "step": 2,
+      "title": "Find Disable Security Rule",
+      "kind": "menu",
+      "command": "disable-security-rule",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-security-rule/02-find-disable-security-rule.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-security-rule/02-find-disable-security-rule.txt",
+      "image_sha256": "4f85093dd43661b584cf7037235b719588800ee467fc2b86fab2e454d3d79b79",
+      "transcript_sha256": "c557697de0edb0070d99a6753ac6f2971161818b9388957802b128d36181b358",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-security-rule.pty.log",
+      "pty_byte_offset": 78696,
+      "selected": "Access Control & Rules :: Disable Security Rule \u2014 Disable a security rule \u2014"
+    },
+    {
+      "journey": "core-branches-navigation-missing-security-rule",
+      "journey_family": "core-branches-navigation-missing-security-rule",
+      "session_index": 1,
+      "step": 3,
+      "title": "Return from missing security-rule guidance",
+      "kind": "menu",
+      "command": "disable-security-rule",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-security-rule/03-return-from-missing-security-rule-guidance.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-security-rule/03-return-from-missing-security-rule-guidance.txt",
+      "image_sha256": "5dec321f931732179e1ccd1807bade712cc04592b37c8180e5d1b27e81953c5b",
+      "transcript_sha256": "bdc22188b0aa0db198513ce4c507b18a3f11a60d0bce2da5412e8110570d55ae",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-security-rule.pty.log",
+      "pty_byte_offset": 79252,
+      "selected": "Return to previous menu"
+    },
+    {
+      "journey": "core-branches-navigation-missing-security-rule",
+      "journey_family": "core-branches-navigation-missing-security-rule",
+      "session_index": 1,
+      "step": 4,
+      "title": "Return from command search",
+      "kind": "menu",
+      "command": "disable-security-rule",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-security-rule/04-return-from-command-search.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-security-rule/04-return-from-command-search.txt",
+      "image_sha256": "bb2cfaf45e6dd8b8476298711604bff143d0565ac75136633ad6871a0ca274b5",
+      "transcript_sha256": "59f161c24209fccce78649ecb0afc9a883271c4636171bec1a2b2b3e7113a5bb",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-security-rule.pty.log",
+      "pty_byte_offset": 79926,
+      "selected": "Back"
+    },
+    {
+      "journey": "core-branches-navigation-missing-security-rule",
+      "journey_family": "core-branches-navigation-missing-security-rule",
+      "session_index": 1,
+      "step": 5,
+      "title": "Return to Home",
+      "kind": "menu",
+      "command": "disable-security-rule",
+      "image": "docs/assets/interactive/core-branches-navigation-missing-security-rule/05-return-to-home.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-missing-security-rule/05-return-to-home.txt",
+      "image_sha256": "75a1921d6177902ff66d5efdeb3ee4b01229ce2678f6219cce7b8afc8e90e333",
+      "transcript_sha256": "ca4220f7821e1f3ee953cd18d5daeb86370946229892e729690eab7309bba607",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-security-rule.pty.log",
+      "pty_byte_offset": 88025,
+      "selected": "Quit"
+    },
+    {
+      "journey": "core-branches-manual-restore-before",
+      "journey_family": "core-branches-manual-restore-before",
+      "session_index": 1,
+      "step": 1,
+      "title": "The later header is active before restoration",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-branches-manual-restore-before/01-the-later-header-is-active-before-restoration.png",
+      "transcript": "docs/assets/interactive/core-branches-manual-restore-before/01-the-later-header-is-active-before-restoration.txt",
+      "image_sha256": "43ff6f84af4e1f8840c4498f44662932624e60ec01aae0a5b0665aaab3b47269",
+      "transcript_sha256": "11affa1180c2fd87cce9809263e1e8d10811b6c2128d62c39992e9718eeb6f54",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-before.pty.log",
+      "pty_byte_offset": 367,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-branches-navigation-restore-manual",
+      "journey_family": "core-branches-navigation-restore-manual",
+      "session_index": 1,
+      "step": 3,
+      "title": "Use a backup outside the local backup folder",
+      "kind": "menu",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/core-branches-navigation-restore-manual/03-use-a-backup-outside-the-local-backup-folder.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-restore-manual/03-use-a-backup-outside-the-local-backup-folder.txt",
+      "image_sha256": "818470485c430ff7a2d312b4f097c35fb587e9a42d7bef08f3d17e4de6af8792",
+      "transcript_sha256": "5ab5496559e87160f31f8d9d719f68e616ab505998de131b359fc4fc582a2623",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-restore-manual.pty.log",
+      "pty_byte_offset": 80318,
+      "selected": "Enter backup path manually"
+    },
+    {
+      "journey": "core-branches-navigation-restore-manual",
+      "journey_family": "core-branches-navigation-restore-manual",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter the received backup path",
+      "kind": "input",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/core-branches-navigation-restore-manual/04-enter-the-received-backup-path.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-restore-manual/04-enter-the-received-backup-path.txt",
+      "image_sha256": "5d8cf43d970043f674b1e38e989b69269e3a5aaf04d5c726969a8a50b8f50801",
+      "transcript_sha256": "009924eaa8626c36af7fa9f3957252a953bfec95ba9e33475994986bc1be88a4",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-restore-manual.pty.log",
+      "pty_byte_offset": 80636,
+      "value": "/opt/dockistrate-demo-fixtures/manual-restore.tar.gz"
+    },
+    {
+      "journey": "core-branches-navigation-restore-manual",
+      "journey_family": "core-branches-navigation-restore-manual",
+      "session_index": 1,
+      "step": 5,
+      "title": "Keep the optional backend details empty",
+      "kind": "input",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/core-branches-navigation-restore-manual/05-keep-the-optional-backend-details-empty.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-restore-manual/05-keep-the-optional-backend-details-empty.txt",
+      "image_sha256": "889c1e132099aedb610e7ffc7534c4584ba62c93f0b66c6b25698dfb70665bad",
+      "transcript_sha256": "dbd8e5ce7c5eb70cfaebca4efc3b22d35e8109a8f494dde45ccd3ccb362e89ca",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-restore-manual.pty.log",
+      "pty_byte_offset": 80903,
+      "value": ""
+    },
+    {
+      "journey": "core-branches-navigation-restore-manual",
+      "journey_family": "core-branches-navigation-restore-manual",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/core-branches-navigation-restore-manual/06-run.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-restore-manual/06-run.txt",
+      "image_sha256": "8e5d44e6fcb1ef43765605413c4b1992654a0a9819611fd42f2efd544142df87",
+      "transcript_sha256": "097c004bcc6415f27cf72b96d38e30418834115abcd896828e7f933e7328dfe4",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-restore-manual.pty.log",
+      "pty_byte_offset": 81365,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-branches-navigation-restore-manual",
+      "journey_family": "core-branches-navigation-restore-manual",
+      "session_index": 1,
+      "step": 7,
+      "title": "Confirm restoring the received backup",
+      "kind": "input",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/core-branches-navigation-restore-manual/07-confirm-restoring-the-received-backup.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-restore-manual/07-confirm-restoring-the-received-backup.txt",
+      "image_sha256": "2980919020e3bc94358ffe93a63a07338b0845197e2e4e8ec21329fe48791b81",
+      "transcript_sha256": "59846d9c7537d9a141248762f1adeb391ffcda1e4992817a2611478c32538765",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-restore-manual.pty.log",
+      "pty_byte_offset": 81482,
+      "value": "y"
+    },
+    {
+      "journey": "core-branches-navigation-restore-manual",
+      "journey_family": "core-branches-navigation-restore-manual",
+      "session_index": 1,
+      "step": 8,
+      "title": "The external backup is restored",
+      "kind": "result",
+      "command": "restore-backup",
+      "image": "docs/assets/interactive/core-branches-navigation-restore-manual/08-the-external-backup-is-restored.png",
+      "transcript": "docs/assets/interactive/core-branches-navigation-restore-manual/08-the-external-backup-is-restored.txt",
+      "image_sha256": "6542e059f8444b03efa1df5d219764b1b63085688acd55762f65b366af204fd7",
+      "transcript_sha256": "fc6f9eb67c145ce2e2ec7b70a8d21e217fdc8610a136a0275bd3071eb90550e2",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-navigation-restore-manual.pty.log",
+      "pty_byte_offset": 83441,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-branches-manual-restore-after",
+      "journey_family": "core-branches-manual-restore-after",
+      "session_index": 1,
+      "step": 1,
+      "title": "The restored response no longer has the later header",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-branches-manual-restore-after/01-the-restored-response-no-longer-has-the-later-header.png",
+      "transcript": "docs/assets/interactive/core-branches-manual-restore-after/01-the-restored-response-no-longer-has-the-later-header.txt",
+      "image_sha256": "a14c6a3c209e98f7a3f248f7fd923a5a436121b0330ca5610b3287f83fefc931",
+      "transcript_sha256": "0a7f1aa55aaea412bde7e52bbb987ccd63bbb8da2e547d9f9547449cfa87dbb3",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-after.pty.log",
+      "pty_byte_offset": 339,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-branches-manual-restore-config",
+      "journey_family": "core-branches-manual-restore-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/core-branches-manual-restore-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/core-branches-manual-restore-config/03-configuration-test-passed.txt",
+      "image_sha256": "54fb9a1be91032549c09d926cb179e3768e624e0099bb57dfec7658ffccd8864",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-config.pty.log",
+      "pty_byte_offset": 8025,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-branches-pending-edit-review-apply",
+      "journey_family": "core-branches-pending-edit-review-apply",
+      "session_index": 1,
+      "step": 3,
+      "title": "example.com",
+      "kind": "menu",
+      "command": "restart-backend",
+      "image": "docs/assets/interactive/core-branches-pending-edit-review-apply/03-example-com.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-review-apply/03-example-com.txt",
+      "image_sha256": "0e7b01bf6163767be7c9af5df85cc0c6593b41f68ba40665d8f080f07d5426e0",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log",
+      "pty_byte_offset": 78412,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-branches-pending-edit-review-apply",
+      "journey_family": "core-branches-pending-edit-review-apply",
+      "session_index": 1,
+      "step": 4,
+      "title": "Review the pending file changes before restarting",
+      "kind": "menu",
+      "command": "restart-backend",
+      "image": "docs/assets/interactive/core-branches-pending-edit-review-apply/04-review-the-pending-file-changes-before-restarting.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-review-apply/04-review-the-pending-file-changes-before-restarting.txt",
+      "image_sha256": "57dd2d11abdb2ecc5dd72d840d82ce5f80d8dbf99e661b0eceaf9776c9c777df",
+      "transcript_sha256": "259f15b0b1b89b4bd4e45027137f72bff50b1e5d7bac6456dacc44add31ba214",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log",
+      "pty_byte_offset": 78645,
+      "selected": "Review file changes"
+    },
+    {
+      "journey": "core-branches-pending-edit-review-apply",
+      "journey_family": "core-branches-pending-edit-review-apply",
+      "session_index": 1,
+      "step": 5,
+      "title": "Apply the pending files through the nested review",
+      "kind": "menu",
+      "command": "restart-backend",
+      "image": "docs/assets/interactive/core-branches-pending-edit-review-apply/05-apply-the-pending-files-through-the-nested-review.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-review-apply/05-apply-the-pending-files-through-the-nested-review.txt",
+      "image_sha256": "4daffd295bf6f161c97050b41b545d9abd01da2bb7a728dd34dbcd7c1df7f673",
+      "transcript_sha256": "cb60056f392d7761d4d728b9bde84bcf28ddb337d548058526431ce941f3e883",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log",
+      "pty_byte_offset": 79196,
+      "selected": "Apply file changes"
+    },
+    {
+      "journey": "core-branches-pending-edit-review-apply",
+      "journey_family": "core-branches-pending-edit-review-apply",
+      "session_index": 1,
+      "step": 6,
+      "title": "Confirm applying the pending header",
+      "kind": "menu",
+      "command": "apply-domain-config",
+      "image": "docs/assets/interactive/core-branches-pending-edit-review-apply/06-confirm-applying-the-pending-header.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-review-apply/06-confirm-applying-the-pending-header.txt",
+      "image_sha256": "ff8fa5d7e08e4180590d042eab56ab2ffae00a36c386fa188241726c9df8cce5",
+      "transcript_sha256": "f3ecc9a52bb93555148f5a21890549e111009bc4a0320f93e742325028ef0839",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log",
+      "pty_byte_offset": 79685,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-branches-pending-edit-review-apply",
+      "journey_family": "core-branches-pending-edit-review-apply",
+      "session_index": 1,
+      "step": 7,
+      "title": "Pending files applied; collect the original command again",
+      "kind": "result",
+      "command": "apply-domain-config",
+      "image": "docs/assets/interactive/core-branches-pending-edit-review-apply/07-pending-files-applied-collect-the-original-command-again.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-review-apply/07-pending-files-applied-collect-the-original-command-again.txt",
+      "image_sha256": "3ebc2fe7391d0d7684b2abe9d6697698cf4db1d86bb5b0ebf078cdfa66d8dc97",
+      "transcript_sha256": "ffed01acd080425161b3b76361695a08427541c1675bf2f92aa010eeefe61fd4",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log",
+      "pty_byte_offset": 80940,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-branches-pending-edit-review-apply",
+      "journey_family": "core-branches-pending-edit-review-apply",
+      "session_index": 1,
+      "step": 8,
+      "title": "Select the backend again after applying files",
+      "kind": "menu",
+      "command": "restart-backend",
+      "image": "docs/assets/interactive/core-branches-pending-edit-review-apply/08-select-the-backend-again-after-applying-files.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-review-apply/08-select-the-backend-again-after-applying-files.txt",
+      "image_sha256": "e04b1e9775ee367ed26510db345f66215e02dd9a3243b29b21271ee690822612",
+      "transcript_sha256": "04ba29a535431b85f9da31616f2eeb005a87cee71f386164427538b08cf5313c",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log",
+      "pty_byte_offset": 81109,
+      "selected": "example.com"
+    },
+    {
+      "journey": "core-branches-pending-edit-review-apply",
+      "journey_family": "core-branches-pending-edit-review-apply",
+      "session_index": 1,
+      "step": 9,
+      "title": "Review the recollected restart command",
+      "kind": "menu",
+      "command": "restart-backend",
+      "image": "docs/assets/interactive/core-branches-pending-edit-review-apply/09-review-the-recollected-restart-command.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-review-apply/09-review-the-recollected-restart-command.txt",
+      "image_sha256": "3299c35650b274aee4b67411ad21f552c9d35273d9a9d7917aaf789e0c1ae772",
+      "transcript_sha256": "e834426eaa64f3fcf1af2caab651c8f9abc51253b952f3b9e7f2e8de12a72cf3",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log",
+      "pty_byte_offset": 81436,
+      "selected": "Run"
+    },
+    {
+      "journey": "core-branches-pending-edit-review-apply",
+      "journey_family": "core-branches-pending-edit-review-apply",
+      "session_index": 1,
+      "step": 10,
+      "title": "The original restart command completes after recollection",
+      "kind": "result",
+      "command": "restart-backend",
+      "image": "docs/assets/interactive/core-branches-pending-edit-review-apply/10-the-original-restart-command-completes-after-recollection.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-review-apply/10-the-original-restart-command-completes-after-recollection.txt",
+      "image_sha256": "e2c94e889ab1e39408cc30e233b148f8af72d9192b4ae66687913b84e2dce6d0",
+      "transcript_sha256": "227bb0ac0a2fc7287fc95203c98c93de18210590040506865acd15a38c255332",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log",
+      "pty_byte_offset": 82603,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "core-branches-pending-edit-active-response",
+      "journey_family": "core-branches-pending-edit-active-response",
+      "session_index": 1,
+      "step": 1,
+      "title": "The applied header remains active after restarting",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/core-branches-pending-edit-active-response/01-the-applied-header-remains-active-after-restarting.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-active-response/01-the-applied-header-remains-active-after-restarting.txt",
+      "image_sha256": "ab05f487a804e4e3470fdd5c5ed7fe8407369901cbcaa751f631e81bdf661454",
+      "transcript_sha256": "e26983d1894426d07bda590189e38730963de32e81a5b5759268edbf76b6831d",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-active-response.pty.log",
+      "pty_byte_offset": 372,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "core-branches-pending-edit-final-config",
+      "journey_family": "core-branches-pending-edit-final-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/core-branches-pending-edit-final-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/core-branches-pending-edit-final-config/03-configuration-test-passed.txt",
+      "image_sha256": "f61a018d6266d2c98546a8ae4ffefb17cd49aa9e89542807fd658b3b2ccc90a6",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-final-config.pty.log",
+      "pty_byte_offset": 8017,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "missing-backend-created",
+      "status": "passed",
+      "container_state": "running"
+    },
+    {
+      "label": "suggested-port-default-deny",
+      "status": "passed",
+      "http_status": 403,
+      "headers": "docs/assets/interactive/evidence/core-branches/suggested-port-default-deny.headers"
+    },
+    {
+      "label": "suggested-port-http-success",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/core-branches/suggested-port-http-success.headers"
+    },
+    {
+      "label": "missing-prerequisites-created",
+      "status": "passed",
+      "domain": "example.com",
+      "listener": 80,
+      "initial_backend_unexposed": true,
+      "http_status": 200
+    },
+    {
+      "label": "missing-certificates-guidance",
+      "status": "passed",
+      "suggested_action": "Add certificate now",
+      "runtime_unchanged": true
+    },
+    {
+      "label": "missing-headers-guidance",
+      "status": "passed",
+      "suggested_action": "Add backend header now",
+      "runtime_unchanged": true
+    },
+    {
+      "label": "missing-mtls-guidance",
+      "status": "passed",
+      "suggested_action": "Enable backend mTLS now",
+      "runtime_unchanged": true
+    },
+    {
+      "label": "missing-acl-guidance",
+      "status": "passed",
+      "suggested_action": "Add ACL rule now",
+      "runtime_unchanged": true
+    },
+    {
+      "label": "missing-security-rule-guidance",
+      "status": "passed",
+      "suggested_action": "Add security rule now",
+      "runtime_unchanged": true
+    },
+    {
+      "label": "local-backup-history-transferred",
+      "status": "passed",
+      "entries": [
+        "20261107_173241_post_command_set-auto-backups_obhfHi.tar.gz",
+        "20261107_173241_post_command_set-auto-backups_obhfHi.tar.gz.sha256",
+        "20261107_173241_pre_command_set-auto-backups_LSonIW.tar.gz",
+        "20261107_173241_pre_command_set-auto-backups_LSonIW.tar.gz.sha256",
+        "20261107_173253_pre_command_add-backend_gMrim5.tar.gz",
+        "20261107_173253_pre_command_add-backend_gMrim5.tar.gz.sha256",
+        "20261107_173302_post_command_add-backend_70aqD3.tar.gz",
+        "20261107_173302_post_command_add-backend_70aqD3.tar.gz.sha256",
+        "20261107_173314_pre_command_add-port_KTGIQ7.tar.gz",
+        "20261107_173314_pre_command_add-port_KTGIQ7.tar.gz.sha256",
+        "20261107_173321_post_command_add-port_sscmZe.tar.gz",
+        "20261107_173321_post_command_add-port_sscmZe.tar.gz.sha256",
+        "20261107_173326_pre_command_set-backend-acl-policy_hs4sb5.tar.gz",
+        "20261107_173326_pre_command_set-backend-acl-policy_hs4sb5.tar.gz.sha256",
+        "20261107_173333_post_command_set-backend-acl-policy_DjwiSI.tar.gz",
+        "20261107_173333_post_command_set-backend-acl-policy_DjwiSI.tar.gz.sha256",
+        "20261107_173433_post_command_set-backup-compression_rXigfL.tar.gz",
+        "20261107_173433_post_command_set-backup-compression_rXigfL.tar.gz.sha256",
+        "20261107_173435_before-manual-restore.tar.gz.sha256",
+        "20261107_173447_post_command_add-backend-header_kGKbjb.tar.gz",
+        "20261107_173447_post_command_add-backend-header_kGKbjb.tar.gz.sha256",
+        "last_full_backup.sha256",
+        "last_full_backup.txt",
+        "last_post_backup.txt",
+        "last_rollback_state.sha256",
+        "last_rollback_targets.sha256"
+      ],
+      "deleted_entries": 0
+    },
+    {
+      "label": "manual-restore-before",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "manual-restore-http-success",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/core-branches/manual-restore-http-success.headers"
+    },
+    {
+      "label": "manual-restore-after",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "external-backup-restored",
+      "status": "passed",
+      "source_backup_sha256": "8fdd010f1c7c93be2c5ba7c2783bf52e5cb5cbf0b3d3f8fb9619485ec58ff49a",
+      "source_unchanged": true,
+      "later_header_removed": true,
+      "http_status": 200
+    },
+    {
+      "label": "pending-review-before",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/core-branches/pending-review-before.headers"
+    },
+    {
+      "label": "pending-review-still-inactive",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/core-branches/pending-review-still-inactive.headers"
+    },
+    {
+      "label": "pending-file-review-unchanged",
+      "status": "passed",
+      "applied_unchanged": true,
+      "draft_unchanged": true,
+      "runtime_unchanged": true,
+      "preview_excerpt": "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.review-preview.txt"
+    },
+    {
+      "label": "pending-apply-active-before-restart",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/core-branches/pending-apply-active-before-restart.headers"
+    },
+    {
+      "label": "pending-apply-restarted",
+      "status": "passed",
+      "container_state": "running"
+    },
+    {
+      "label": "pending-apply-after-restart",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/core-branches/pending-apply-after-restart.headers"
+    },
+    {
+      "label": "pending-edit-active-response",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "-sS",
+        "-D",
+        "-",
+        "-o",
+        "/dev/null",
+        "-H",
+        "Host: example.com",
+        "http://127.0.0.1/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "pending-apply-recollect-restart",
+      "status": "passed",
+      "draft_sha256": "fdc445f3f14185ac0f1327cb00f2c20834b3eb34d0b820e0776b8317d5acc881",
+      "arguments_recollected": true,
+      "active_header": "X-Interactive-Draft: activated"
+    },
+    {
+      "label": "core-group-complete",
+      "status": "passed",
+      "group": "branches"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "core"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "9c2c3af58d23f7512b672d249ccc253ae9c43ceda85fe27933a2b65e3d787ece",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 72
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/core-branches-recordings.tar.gz",
+    "sha256": "e95a833fe022dc5cf035a7bd9f219850257da1f2f5256d45c581a0314aad55f7",
+    "size": 90689,
+    "members": {
+      "docs/assets/interactive/evidence/core-branches/001-source-commit.log": {
+        "sha256": "fce4651fb9092d95221b534f669fd2d39e2aec770cd2ade050c8f5307e641f6e",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/core-branches/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/core-branches/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/core-branches/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/core-branches/006-kernel-version.log": {
+        "sha256": "858aad262bf1f1e848c00747d19e51058b24cf497f7541adf93cd8d9f6f04187",
+        "size": 38
+      },
+      "docs/assets/interactive/evidence/core-branches/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/core-branches/008-fixture-image.log": {
+        "sha256": "2aca0784b1f8186c79d0a9c4aa697d383e02ea7b964fd6f2d646da4df470206e",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/core-branches/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/core-branches/010-command-alias.log": {
+        "sha256": "07a3b668387351a84d8db20e1fdccf4bacb11dd20220c06a79eda86f894d0e4a",
+        "size": 13
+      },
+      "docs/assets/interactive/evidence/core-branches/011-inspect-example-com.log": {
+        "sha256": "a4ecc5c87d811bbff7a118c17ef8cf83318cb623a103c15b8549089aa2a7f0ac",
+        "size": 8
+      },
+      "docs/assets/interactive/evidence/core-branches/012-command-alias.log": {
+        "sha256": "9f1f4f08d28a052e5d1076d98e2bf2f4393a9aa8efa9c3f1e9355a6a0ebd654d",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/core-branches/013-suggested-port-public-demo.log": {
+        "sha256": "f5831bd3e0047f4712e557cedd03a9f5574bea71a2d34e743d263902d88c9290",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/core-branches/014-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/015-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/016-command-alias.log": {
+        "sha256": "d32fb35c88e2a2372b08ccaef161a07d49acecfbba5220b30e0d73fd9be6a888",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/core-branches/017-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/018-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/019-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/020-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/021-command-alias.log": {
+        "sha256": "794afabf45b2d8ee50483327029d2023b63a46c65f3889adc6f81dca88ac805a",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/core-branches/022-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/023-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/024-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/025-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/026-command-alias.log": {
+        "sha256": "9f793bb0efd9142f84a26e29e039f4e59edc52ef800dcfdb3dce290aadbccc2f",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/core-branches/027-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/028-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/029-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/030-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/031-command-alias.log": {
+        "sha256": "b7b3ff0bfed96aba6ea88eb6d72c1c818cbd04d1c752122577f690d369518de1",
+        "size": 12
+      },
+      "docs/assets/interactive/evidence/core-branches/032-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/033-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/034-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/035-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/036-command-alias.log": {
+        "sha256": "8cb033b1fea59f6f14baddd62652a5b4ab827175f25e9940678acb9fd6a6c414",
+        "size": 22
+      },
+      "docs/assets/interactive/evidence/core-branches/037-runtime-identities.log": {
+        "sha256": "49e17fb29624211e25a2694b11de7aba1e2dfb2bf77ed18b8ece9c404d15206c",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/038-runtime-processes.log": {
+        "sha256": "50ac587b680658d0d96a3cc2a843c0fe5e9dc141047984aca462c55de997c35c",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/039-manual-backup-compression.log": {
+        "sha256": "620935410f66746adb924626bfff5e5c11fcc79f972f1cd6b0716d2f881bd3ec",
+        "size": 114
+      },
+      "docs/assets/interactive/evidence/core-branches/040-manual-backup-create.log": {
+        "sha256": "0053f75dd9d0694d874bc119d25715a9b957af2e49187a1d5281dc612ffe8168",
+        "size": 110
+      },
+      "docs/assets/interactive/evidence/core-branches/041-move-backup-to-external-fixture.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/042-manual-restore-later-change.log": {
+        "sha256": "e3ecb008297f721580370967a8ef7071332df4517e65726595e887faf3abce09",
+        "size": 1162
+      },
+      "docs/assets/interactive/evidence/core-branches/043-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/044-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/045-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/046-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/047-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/048-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/049-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/050-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/051-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/052-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/053-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/054-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/055-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/056-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/057-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/058-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/059-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/060-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/061-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/062-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/063-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/064-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/065-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/066-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/067-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/068-export-demo-backup-history.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/069-command-alias.log": {
+        "sha256": "150b9ecc3046ee7581871d6fbea6466d1f7d0603300c52ef7f13db186846ec4e",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/core-branches/070-runtime-identities.log": {
+        "sha256": "008b832c6b5bcb99255eb611491f2159e32cfa985e8cbea6c6c83bebf4601d65",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/071-runtime-processes.log": {
+        "sha256": "bfd69cd3955f8ab6a9bf564841ce9a18434c0330d76b8307466f3882a7bc27df",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/072-command-alias.log": {
+        "sha256": "0a8667c296b137b83f823b39a9992880532030d3eb48dc928186454342fc350c",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/core-branches/073-runtime-identities.log": {
+        "sha256": "008b832c6b5bcb99255eb611491f2159e32cfa985e8cbea6c6c83bebf4601d65",
+        "size": 207
+      },
+      "docs/assets/interactive/evidence/core-branches/074-runtime-processes.log": {
+        "sha256": "bfd69cd3955f8ab6a9bf564841ce9a18434c0330d76b8307466f3882a7bc27df",
+        "size": 230
+      },
+      "docs/assets/interactive/evidence/core-branches/075-inspect-example-com.log": {
+        "sha256": "a4ecc5c87d811bbff7a118c17ef8cf83318cb623a103c15b8549089aa2a7f0ac",
+        "size": 8
+      },
+      "docs/assets/interactive/evidence/core-branches/076-image-identities.log": {
+        "sha256": "072e49eb04b239714fd551e591a6129ad05a6eb6c2253536a87eb91237b97621",
+        "size": 2934
+      },
+      "docs/assets/interactive/evidence/core-branches/commands.jsonl": {
+        "sha256": "573d7985822b99f9de80a22590bceca9d1b332152333e530a703ba06c24ae115",
+        "size": 34684
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-after.events.jsonl": {
+        "sha256": "aede5c5c6c651527ab02a5bb2b4fb4872df4812bfb700bd66bc6f22556af03a2",
+        "size": 1017
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-after.pty.log": {
+        "sha256": "9336e128185b5dd3424e824e673e3b966cb781bcb5ff1b4b047db3dfb5231b60",
+        "size": 339
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-before.events.jsonl": {
+        "sha256": "552478d1edb2629a442e16b5b0256ec1ece366263a87fe5addb4174c0cbeaa60",
+        "size": 1023
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-before.pty.log": {
+        "sha256": "33cb9600e7fea89837abb6d6ed6f5ca5fbedac5f1615d57373dfd0fbd0f5b566",
+        "size": 367
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-config.events.jsonl": {
+        "sha256": "b2cfa57d775754dddf5f06d320fa4551d2efbf382087762fb21af7d140ea5ff6",
+        "size": 9472
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-manual-restore-config.pty.log": {
+        "sha256": "66b45c3ad752838f1eccac37f5e7229ae758c04072306b2052cd7c650fdc4571",
+        "size": 16126
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-acl.events.jsonl": {
+        "sha256": "7772aeb012a9045e46d8a210d86ff3e3048d51ef2ffa2fa580c20a97ba0cfc77",
+        "size": 13215
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-acl.pty.log": {
+        "sha256": "4e072a2f766a563ba158b35c71fec6351e8293e18fe12473009c4f719fd62a92",
+        "size": 84873
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.events.jsonl": {
+        "sha256": "bce480d241614655aeae71279014c5a0dcd5a9b1f5d84f6aaa337b3839f14d16",
+        "size": 27121
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-backend.pty.log": {
+        "sha256": "1e3140cbef73158fc74b7a65c88418429f9939f9af216078b4dae2a7b81180b3",
+        "size": 98890
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-certificates.events.jsonl": {
+        "sha256": "fc973a098b1e4c1bafba0b8e6097acaaba49ac553ab1abac186a65559b1d49c3",
+        "size": 14171
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-certificates.pty.log": {
+        "sha256": "a9ca3d426c3d626b226d8db8e27ad3337674d5e012c39432d063f1980db3f033",
+        "size": 102320
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-headers.events.jsonl": {
+        "sha256": "4f95bfeee836de1f74017c6345712a8eb02c8aa7b992df5831f13032366876ef",
+        "size": 16538
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-headers.pty.log": {
+        "sha256": "952abec6d4ce44d6be3beee34fc07586024581fb60e4cbe94de9d5949927162c",
+        "size": 81498
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-mtls.events.jsonl": {
+        "sha256": "d7b51cacee387720efb7ba16fb143c34d8d2d7f3d3f5395a45896fd2447f4a96",
+        "size": 15918
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-mtls.pty.log": {
+        "sha256": "40058c7b2fbf8ef0dbd95768e6623b42504ad4d7adbb8880f270cb4e850caaad",
+        "size": 87986
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.events.jsonl": {
+        "sha256": "1df8838e246686af715ddf4f8cb349caf8d9fcd80e1b408fa7e8f87ce87db4e8",
+        "size": 18653
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-port.pty.log": {
+        "sha256": "aaa2e5f3ed94fcb45f39f0584565342f06376e715d5f7c1fd596ebd4c63fec4b",
+        "size": 109749
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-security-rule.events.jsonl": {
+        "sha256": "03f22c50cc86a5910cb66dd75984fa7160b37dcfb4782a99645b21804d8964a7",
+        "size": 17242
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-missing-security-rule.pty.log": {
+        "sha256": "9c3d7380d31ea7d59f04b38a4a4d09e34e9a0327292c9e536d83477e5525150d",
+        "size": 88025
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-restore-manual.events.jsonl": {
+        "sha256": "961650360c1e635d36fcaa52237f48138627e65df702afa9646b0247c835072d",
+        "size": 20272
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-navigation-restore-manual.pty.log": {
+        "sha256": "c405c8a6fdad41387e48fed4cc3a9c14d6188368afe6bda93297efd61631df10",
+        "size": 91533
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-active-response.events.jsonl": {
+        "sha256": "319fd95f39659b55b5d12e3f1f8776698f72ac17470bc51db4a93c004bf18140",
+        "size": 1065
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-active-response.pty.log": {
+        "sha256": "8000dc84d79a029f9789efd8bd24646b3000a1a90696e7ec2eb5f9a0500b8a95",
+        "size": 372
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-final-config.events.jsonl": {
+        "sha256": "dee7a3edf2d296ee21983be0d4ae3ef1ecb6c3197d0748eb7d5c31343377e8d9",
+        "size": 9736
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-final-config.pty.log": {
+        "sha256": "a2d0dec5356195583f19fc633cec53da48f62c94fce3c670d70d1244b8b4bdb5",
+        "size": 16122
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.events.jsonl": {
+        "sha256": "683cc83c2eae1d57bea0a4b47274d52ffbb115fb5e36a71e75877b5a18748164",
+        "size": 19221
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.pty.log": {
+        "sha256": "d95ab1686f2f2c328ec24d897c3c31963514e424624444065be9ba406d533096",
+        "size": 90704
+      },
+      "docs/assets/interactive/evidence/core-branches/core-branches-pending-edit-review-apply.review-preview.txt": {
+        "sha256": "b38af339111df8c82342b84f29cf89f4ec504c3dca858547310722b71ad55147",
+        "size": 83
+      },
+      "docs/assets/interactive/evidence/core-branches/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/manual-restore-http-success.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/core-branches/manual-restore-http-success.headers": {
+        "sha256": "2ae90d253e449fe3500940f6dd53f40e9f0b90635f3eca610a7a2b87528da100",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/core-branches/manual-restore-http-success.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-branches/manual-restore-http-success.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-apply-active-before-restart.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-apply-active-before-restart.headers": {
+        "sha256": "eeda3d4d9e5aab1b364d64c0081101d29562e98124ac3d93f8703ba380444a37",
+        "size": 270
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-apply-active-before-restart.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-apply-active-before-restart.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-apply-after-restart.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-apply-after-restart.headers": {
+        "sha256": "522a48206f08dff455e0072a70aa158ebf74a9c5299786fca2df4e5e03c63f8d",
+        "size": 270
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-apply-after-restart.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-apply-after-restart.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-review-before.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-review-before.headers": {
+        "sha256": "28ffddbf78d7e5ead07f764a86a33cd7e8dfea9810ac40e6e74ba47a1b66780b",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-review-before.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-review-before.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-review-still-inactive.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-review-still-inactive.headers": {
+        "sha256": "6637f9c5e2d5d2e3d42a8c43c1a768a58f1af604c2d7e8b2d9345e0441ed170c",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-review-still-inactive.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-branches/pending-review-still-inactive.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/suggested-port-default-deny.body": {
+        "sha256": "798d0a35fe651f2dbbda9ce8883869aebc89c1980e8dfbf5685561205c3d6b83",
+        "size": 153
+      },
+      "docs/assets/interactive/evidence/core-branches/suggested-port-default-deny.headers": {
+        "sha256": "1bf5530a3a02c12ee507d0c0dd07af28d213f580269a8015601f1fecda03fcfb",
+        "size": 155
+      },
+      "docs/assets/interactive/evidence/core-branches/suggested-port-default-deny.status": {
+        "sha256": "97a58cc66d1cd6b51466af8ed52d6a38053b5572fee09a0ae8859c26b82bdf67",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-branches/suggested-port-default-deny.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/core-branches/suggested-port-http-success.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/core-branches/suggested-port-http-success.headers": {
+        "sha256": "bfc307530562c117fcb1ca476d7e74e9a1983dccb365b90c145e5f6d25826a65",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/core-branches/suggested-port-http-success.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/core-branches/suggested-port-http-success.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  }
+}

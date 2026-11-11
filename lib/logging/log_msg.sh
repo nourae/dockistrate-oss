@@ -11,22 +11,19 @@ function log_msg() {
     local log_file="${LOG_FILE:-}"
     timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
     if [ -z "$log_file" ]; then
-      echo "[$timestamp] $*"
+      echo "[Warn] Log entry was not saved: private log storage is unavailable." >&2
       return 0
     fi
     ensure_log_writable "$log_file" || {
-      echo "[$timestamp] $*"
+      echo "[Warn] Log entry was not saved: private log storage is unavailable." >&2
       return 0
     }
-    if [ -w "$log_file" ] || touch "$log_file" &>/dev/null; then
-      if [ "${VERBOSE:-false}" = true ]; then
-        echo "[$timestamp] $*" | tee -a "$log_file"
-      else
-        echo "[$timestamp] $*" | tee -a "$log_file" >/dev/null
-      fi
-    else
-      # Fall back to stdout/stderr without failing the whole run
-      echo "[$timestamp] $*"
+    if ! { printf '[%s] %s\n' "$timestamp" "$*" >>"$log_file"; } 2>/dev/null; then
+      echo "[Warn] Log entry was not saved: private log write failed." >&2
+      return 0
+    fi
+    if [ "${VERBOSE:-false}" = true ]; then
+      printf '[%s] %s\n' "$timestamp" "$*"
     fi
   fi
 }

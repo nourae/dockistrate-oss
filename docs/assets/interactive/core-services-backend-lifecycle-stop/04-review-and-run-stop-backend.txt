@@ -1,0 +1,14 @@
+Review command
+  Command: Stop Backend (stop-backend)
+  Description: Stop a backend container
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh stop-backend example.com
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

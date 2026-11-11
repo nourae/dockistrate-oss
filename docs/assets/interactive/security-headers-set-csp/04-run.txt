@@ -1,0 +1,14 @@
+Review command
+  Command: Set CSP (set-csp)
+  Description: Set or disable a global Content-Security-Policy
+
+Arguments:
+  csp value: default-src 'self'
+
+CLI equivalent:
+  ./dockistrate.sh set-csp 'default-src '\''self'\'''
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

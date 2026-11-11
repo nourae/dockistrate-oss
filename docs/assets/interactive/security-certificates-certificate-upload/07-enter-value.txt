@@ -1,0 +1,4 @@
+
+Path to an existing fullchain.pem file when uploading a custom certificate.
+Fullchain path
+Example: /path/to/fullchain.pem: /opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem

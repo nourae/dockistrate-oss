@@ -1,0 +1,9 @@
+$ curl --noproxy \* -ksS -D - -o /dev/null --resolve example.com:443:127.0.0.1 https://example.com/
+HTTP/2 200
+server: nginx/1.31.7
+date: Sat, 07 Nov 2026 16:17:23 GMT
+content-type: text/html
+content-length: 896
+last-modified: Wed, 21 Oct 2026 17:54:44 GMT
+etag: "6ad8fc64-380"
+accept-ranges: bytes

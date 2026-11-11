@@ -1,0 +1,7 @@
+$ curl --noproxy \* -sS -D - -o /dev/null -H Host:\ example.com --data-binary @/opt/dockistrate-demo-fixtures/scoped-body.bin http://127.0.0.1/limited/
+HTTP/1.1 405 Not Allowed
+Server: nginx/1.31.7
+Date: Mon, 09 Nov 2026 11:35:38 GMT
+Content-Type: text/html
+Content-Length: 157
+Connection: keep-alive

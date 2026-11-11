@@ -4,14 +4,14 @@
 source "${ROOT_DIR}/lib/utils/csv.sh"
 
 test_replace_backend_network_routes_to_update_backend() {
-  run_dockistrate add-backend netalias.test nginx:alpine 9100 http >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend netalias.test nginx:alpine 9100 http >/dev/null
   assertEquals "seed add-backend" 0 $?
 
   local output
   local docker_log_file="${STATE_DIR}/docker_replace_backend_network.log"
   rm -f "$docker_log_file"
   output="$(
-    DOCKER_MOCK_PS_NAMES='backend-netalias.test' \
+    SKIP_DOCKER_CHECKS=false \
       DOCKER_MOCK_INSPECT_NETWORK_IP='10.55.0.5' \
       DOCKER_MOCK_LOG_FILE="$docker_log_file" \
       SKIP_UPDATE_NGINX_CONFIG=true \
@@ -23,7 +23,7 @@ test_replace_backend_network_routes_to_update_backend() {
 
   local docker_log
   docker_log="$(cat "$docker_log_file")"
-  assertStringContains "replace-backend-network should use safe inspect template for network lookup" 'if eq $k "custom-net"' "$docker_log"
+  assertStringContains "replace-backend-network should read verified network snapshots" 'printf "%s|%s\n" $k $v.IPAddress' "$docker_log"
   if printf '%s\n' "$docker_log" | grep -Fq '.NetworkSettings.Networks.custom-net.IPAddress'; then
     fail "replace-backend-network should not use unsafe dot-lookup for hyphenated networks"
   fi

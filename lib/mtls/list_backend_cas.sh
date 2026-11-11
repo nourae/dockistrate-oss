@@ -6,8 +6,7 @@ function list_backend_cas() {
     return
   fi
   if ! csv_require_header "$BACKEND_MTLS_FILE" "$STATE_BACKEND_MTLS_HEADER"; then
-    echo "[Info] No backend CAs configured"
-    return
+    return 1
   fi
   printf "%-30s | %-40s | %-19s\n" "Domain" "Path" "Expires"
   echo "--------------------------------------------------------------------------------"
@@ -15,13 +14,21 @@ function list_backend_cas() {
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
     [ "$line_no" -eq 1 ] && continue
-    csv_parse_line "$line" || continue
-    [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_MTLS_COLS" ] || continue
-    local domain dir normalized_dir
+    if ! csv_parse_line "$line" || [ "$CSV_FIELD_COUNT" -ne "$STATE_BACKEND_MTLS_COLS" ]; then
+      printf "%-30s | %-40s | %-19s\n" "[invalid row ${line_no}]" "[invalid mTLS path]" "invalid"
+      had_invalid=true
+      continue
+    fi
+    local domain dir normalized_domain normalized_dir
     domain="${CSV_FIELDS[0]}"
     dir="${CSV_FIELDS[1]}"
-    [ -z "$domain" ] && continue
-    if [ -z "$dir" ] || ! normalize_mtls_dir normalized_dir "$dir" >/dev/null 2>&1; then
+    normalized_domain="$(normalize_domain "$domain")"
+    if [ -z "$domain" ] || [ "$domain" != "$normalized_domain" ] || ! is_valid_domain "$domain"; then
+      printf "%-30s | %-40s | %-19s\n" "[invalid domain ${line_no}]" "[invalid mTLS path]" "invalid"
+      had_invalid=true
+      continue
+    fi
+    if [ -z "$dir" ] || ! _mtls_validate_owned_dir normalized_dir "$domain" "$dir" >/dev/null 2>&1; then
       printf "%-30s | %-40s | %-19s\n" "$domain" "[invalid mTLS path]" "invalid"
       had_invalid=true
       continue

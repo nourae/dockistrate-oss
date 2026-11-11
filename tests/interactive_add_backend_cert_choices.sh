@@ -19,6 +19,10 @@ BACKEND_PORTS_FILE="$tmp_dir/backend_ports.csv"
 mkdir -p "$CERTS_DIR" "$NGINX_HTTP_CONF_DIR"
 
 choices="$(__arg_choices_cert_path "add-backend")"
+[ "$(printf '%s\n' "$choices" | grep -c 'Generate self-signed certificate')" -eq 1 ] || {
+  echo '[Error] Backend certificate picker must offer self-signed generation exactly once.' >&2
+  exit 1
+}
 if ! grep -Fq "selfsigned|Generate self-signed certificate" <<<"$choices"; then
   echo "[Error] add-backend cert choices should offer self-signed generation." >&2
   echo "$choices" >&2

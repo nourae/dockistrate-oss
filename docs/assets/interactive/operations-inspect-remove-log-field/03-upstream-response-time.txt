@@ -1,0 +1,15 @@
+Numeric row ID from the corresponding list command.
+ID
+Example: 1:
+> 1) $upstream_response_time
+  2) $realip_remote_addr
+  3) $remote_addr
+  4) $host
+  5) "$request"
+  6) $status
+  7) $body_bytes_sent
+  8) [request] "$http_referer"
+  9) [request] "$http_user_agent"
+  10) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

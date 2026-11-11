@@ -1,0 +1,1010 @@
+{
+  "schema_version": 1,
+  "scenario": "security-tls",
+  "source_commit": "862534a6eab1d45e69455ad4331b3c42b60cc9fb",
+  "started_at": "2026-11-07T16:38:26.862973+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42392269431",
+  "github_run_attempt": "1",
+  "scenario_module": "security",
+  "group": "tls",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-07 16:43:40 +0000 UTC\",\"CreatedSince\":\"42 seconds ago\",\"Digest\":\"sha256:10e1a748f786390a412cdc9bca7cfd95758a0d3d04ef5dd05bc384450b592b15\",\"ID\":\"sha256:10e1a748f786390a412cdc9bca7cfd95758a0d3d04ef5dd05bc384450b592b15\",\"Repository\":\"dockistrate-docs-curl-http3\",\"SharedSize\":\"N/A\",\"Size\":\"142MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"45 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-04 21:23:39 +0000 UTC\",\"CreatedSince\":\"2 days ago\",\"Digest\":\"sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2\",\"ID\":\"sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2\",\"Repository\":\"debian\",\"SharedSize\":\"N/A\",\"Size\":\"120MB\",\"Tag\":\"trixie-slim\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T16:44:22.426614+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "security-tls-set-tls-protocols",
+      "journey_family": "security-tls-set-tls-protocols",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-set-tls-protocols/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-tls-set-tls-protocols/03-enter-value.txt",
+      "image_sha256": "7375b144af567c7451a8391c826079cb28cdd323cfacf9881248f81fd9c5b170",
+      "transcript_sha256": "44eee95097f10e11931c1401d430b9767a72a27466c74864c7a0fb10e6835e13",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-protocols.pty.log",
+      "pty_byte_offset": 83342,
+      "value": "TLSv1.2 TLSv1.3"
+    },
+    {
+      "journey": "security-tls-set-tls-protocols",
+      "journey_family": "security-tls-set-tls-protocols",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-set-tls-protocols/04-run.png",
+      "transcript": "docs/assets/interactive/security-tls-set-tls-protocols/04-run.txt",
+      "image_sha256": "2efa5c7c074266aa3bc52118e943bcf7256ce15f596472245a0a7b15479bde57",
+      "transcript_sha256": "8820603a289cb3f3adb7810a31f6eac7eecc79e6c4524a20a01f03859fe36581",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-protocols.pty.log",
+      "pty_byte_offset": 83724,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-tls-set-tls-protocols",
+      "journey_family": "security-tls-set-tls-protocols",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-set-tls-protocols/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-set-tls-protocols/05-command-result.txt",
+      "image_sha256": "a5dcf15c62fe6a076615b77b8905b84d51a767d6c5cbce5d2b365e0a042b6d60",
+      "transcript_sha256": "4d1cf80a28b30dde369a13746b363a82b29ab50a08aa7db3d03a096988fddfb5",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-protocols.pty.log",
+      "pty_byte_offset": 84936,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-set-tls-ciphers",
+      "journey_family": "security-tls-set-tls-ciphers",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-set-tls-ciphers/03-enter-value.png",
+      "transcript": "docs/assets/interactive/security-tls-set-tls-ciphers/03-enter-value.txt",
+      "image_sha256": "72d43b2675e3549ae2b158a7593878d213dcb84bc57bb4672d1ecaa5e77154fd",
+      "transcript_sha256": "534403ece4c63cb0b61c09b2d5ce897f6a5a8c813be2b5d01f64f44904535b4d",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-ciphers.pty.log",
+      "pty_byte_offset": 82654,
+      "value": "HIGH:!aNULL:!MD5"
+    },
+    {
+      "journey": "security-tls-set-tls-ciphers",
+      "journey_family": "security-tls-set-tls-ciphers",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-set-tls-ciphers/04-run.png",
+      "transcript": "docs/assets/interactive/security-tls-set-tls-ciphers/04-run.txt",
+      "image_sha256": "0cc16873171e8d6de3d7dda0407b44de20689f041db5d36fe87c41da098aeab2",
+      "transcript_sha256": "39ce384bd73709075adda1955cce74a8572994f8492d2f7d02da05e8d950ef4b",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-ciphers.pty.log",
+      "pty_byte_offset": 83010,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-tls-set-tls-ciphers",
+      "journey_family": "security-tls-set-tls-ciphers",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-set-tls-ciphers/05-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-set-tls-ciphers/05-command-result.txt",
+      "image_sha256": "ef3eb0086c8dc577963ceb3f3fd6065bab704ce750cd407608ebfba262d79284",
+      "transcript_sha256": "ff2c24435526169098e2cef2c9bce0ed569900f88bb29c0ffdad3fdfc304b658",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-ciphers.pty.log",
+      "pty_byte_offset": 84221,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-tls-settings",
+      "journey_family": "security-tls-tls-settings",
+      "session_index": 1,
+      "step": 3,
+      "title": "443",
+      "kind": "menu",
+      "command": "set-port-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-tls-settings/03-443.png",
+      "transcript": "docs/assets/interactive/security-tls-tls-settings/03-443.txt",
+      "image_sha256": "325cbd72b5552100b3054eba236cae3d6497b3c874c31339d0e180a9b26fd416",
+      "transcript_sha256": "44cc0590be622b30592b61246d453be9b7312893383e12d6c950913f7e83b27b",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings.pty.log",
+      "pty_byte_offset": 86641,
+      "selected": "443"
+    },
+    {
+      "journey": "security-tls-tls-settings",
+      "journey_family": "security-tls-tls-settings",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-port-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-tls-settings/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-tls-tls-settings/04-enter-value.txt",
+      "image_sha256": "373cf512183c421c8d1eb73d43c664d0c0adaf81e0c4a3c77a339b3aa5ffbb86",
+      "transcript_sha256": "6c4a073d24a4a45786b3379a4f03b59be29accb3edc94ee290bbcf12911e3b46",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings.pty.log",
+      "pty_byte_offset": 86807,
+      "value": "TLSv1.3"
+    },
+    {
+      "journey": "security-tls-tls-settings",
+      "journey_family": "security-tls-tls-settings",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-port-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-tls-settings/05-run.png",
+      "transcript": "docs/assets/interactive/security-tls-tls-settings/05-run.txt",
+      "image_sha256": "ee8e6f17d8066e73276aaf097292c40a515d5c45253e44153f193af9c73de240",
+      "transcript_sha256": "7b62852eb1b23626d3ee59a4026a8b7e908b371e476b4740a2be61b406857c6c",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings.pty.log",
+      "pty_byte_offset": 87210,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-tls-tls-settings",
+      "journey_family": "security-tls-tls-settings",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-port-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-tls-settings/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-tls-settings/06-command-result.txt",
+      "image_sha256": "3a085fa60b22f79336107c38e4517a18624e01710fca93508e4cb62000367f71",
+      "transcript_sha256": "2a9bf40811295360ae5951c10de227c12389ed722f6ccd9b5b2a2ca0d7f20781",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings.pty.log",
+      "pty_byte_offset": 88427,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-set-port-tls-ciphers",
+      "journey_family": "security-tls-set-port-tls-ciphers",
+      "session_index": 1,
+      "step": 3,
+      "title": "443",
+      "kind": "menu",
+      "command": "set-port-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-set-port-tls-ciphers/03-443.png",
+      "transcript": "docs/assets/interactive/security-tls-set-port-tls-ciphers/03-443.txt",
+      "image_sha256": "1509f7bb49b5a61b9cf5c56d828bb4dd02680dc116da52d540b0fb5247848ce1",
+      "transcript_sha256": "44cc0590be622b30592b61246d453be9b7312893383e12d6c950913f7e83b27b",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-port-tls-ciphers.pty.log",
+      "pty_byte_offset": 85978,
+      "selected": "443"
+    },
+    {
+      "journey": "security-tls-set-port-tls-ciphers",
+      "journey_family": "security-tls-set-port-tls-ciphers",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "set-port-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-set-port-tls-ciphers/04-enter-value.png",
+      "transcript": "docs/assets/interactive/security-tls-set-port-tls-ciphers/04-enter-value.txt",
+      "image_sha256": "f294e5ee45fce5b6d8c43add0098aacdd7d6573224e9270441fe692c1ec85d1f",
+      "transcript_sha256": "d9049d58a1fe95af1a1412950e8dd402097151992cb1b19e10abb20be081cfb5",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-port-tls-ciphers.pty.log",
+      "pty_byte_offset": 86144,
+      "value": "HIGH:!aNULL:!MD5"
+    },
+    {
+      "journey": "security-tls-set-port-tls-ciphers",
+      "journey_family": "security-tls-set-port-tls-ciphers",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-port-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-set-port-tls-ciphers/05-run.png",
+      "transcript": "docs/assets/interactive/security-tls-set-port-tls-ciphers/05-run.txt",
+      "image_sha256": "e03d210ca305043aa9887499783e895863a49223ef37a0aec16cd7eb1af919a5",
+      "transcript_sha256": "600e7c0954f8f69a105715d81ac15e37287ef6badf18ebbfa0e3a5adbc5c0b08",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-port-tls-ciphers.pty.log",
+      "pty_byte_offset": 86555,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-tls-set-port-tls-ciphers",
+      "journey_family": "security-tls-set-port-tls-ciphers",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-port-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-set-port-tls-ciphers/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-set-port-tls-ciphers/06-command-result.txt",
+      "image_sha256": "1ffd515d3a58d41285f833d5540b8c9d01d615fdeb651e4c7f2b37dd77458f5e",
+      "transcript_sha256": "1a773e30e515baf1ae71faccd7f1249ba404d275c61b14d3fae951eab4499609",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-set-port-tls-ciphers.pty.log",
+      "pty_byte_offset": 87759,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-tls12-excluded",
+      "journey_family": "security-tls-tls12-excluded",
+      "session_index": 1,
+      "step": 1,
+      "title": "TLS 1.2 is rejected while the listener requires TLS 1.3",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-tls-tls12-excluded/01-tls-1-2-is-rejected-while-the-listener-requires-tls-1-3.png",
+      "transcript": "docs/assets/interactive/security-tls-tls12-excluded/01-tls-1-2-is-rejected-while-the-listener-requires-tls-1-3.txt",
+      "image_sha256": "123c4a56eb64f574d285b83b7dc958c9eba51af8f2e4fd30d8842992195e1e5e",
+      "transcript_sha256": "a67833c4fc841822d9433e09aa3bf0338d776789f9af96d1b5b3ffde414df6cc",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-tls12-excluded.pty.log",
+      "pty_byte_offset": 327,
+      "viewport": "bottom",
+      "exit_code": 35
+    },
+    {
+      "journey": "security-tls-remove-port-tls-protocols",
+      "journey_family": "security-tls-remove-port-tls-protocols",
+      "session_index": 1,
+      "step": 3,
+      "title": "443",
+      "kind": "menu",
+      "command": "remove-port-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-remove-port-tls-protocols/03-443.png",
+      "transcript": "docs/assets/interactive/security-tls-remove-port-tls-protocols/03-443.txt",
+      "image_sha256": "19b6efb7326c08c4618947df2346ec047ed8d6cd54e8e93aff844b2c0a2ebbc7",
+      "transcript_sha256": "44cc0590be622b30592b61246d453be9b7312893383e12d6c950913f7e83b27b",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-protocols.pty.log",
+      "pty_byte_offset": 98864,
+      "selected": "443"
+    },
+    {
+      "journey": "security-tls-remove-port-tls-protocols",
+      "journey_family": "security-tls-remove-port-tls-protocols",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-port-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-remove-port-tls-protocols/04-run.png",
+      "transcript": "docs/assets/interactive/security-tls-remove-port-tls-protocols/04-run.txt",
+      "image_sha256": "01406753c8524aebe8e47077f614dfc5013cd713d05c3af6b81ef909c370c85a",
+      "transcript_sha256": "88b791a49e74dc4b4023122f4f25bd968dc94b3c71ef33135b1063d564dbd4da",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-protocols.pty.log",
+      "pty_byte_offset": 99288,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-tls-remove-port-tls-protocols",
+      "journey_family": "security-tls-remove-port-tls-protocols",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-port-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-remove-port-tls-protocols/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-tls-remove-port-tls-protocols/05-enter-value.txt",
+      "image_sha256": "b4e7dc79a4999580b59fdea2da8ede2bda88ded90601004fc40860954553cf79",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-protocols.pty.log",
+      "pty_byte_offset": 99342,
+      "value": "YES"
+    },
+    {
+      "journey": "security-tls-remove-port-tls-protocols",
+      "journey_family": "security-tls-remove-port-tls-protocols",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-port-tls-protocols",
+      "image": "docs/assets/interactive/security-tls-remove-port-tls-protocols/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-remove-port-tls-protocols/06-command-result.txt",
+      "image_sha256": "978673c376d0188b8843ef5f5bade21e0931f5dfbbed0086e6551bfe082b2473",
+      "transcript_sha256": "8f946136f1dd9133c432704b18123cd74b1745073e59670bdb4dfabdd171fbab",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-protocols.pty.log",
+      "pty_byte_offset": 100571,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-remove-port-tls-ciphers",
+      "journey_family": "security-tls-remove-port-tls-ciphers",
+      "session_index": 1,
+      "step": 3,
+      "title": "443",
+      "kind": "menu",
+      "command": "remove-port-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-remove-port-tls-ciphers/03-443.png",
+      "transcript": "docs/assets/interactive/security-tls-remove-port-tls-ciphers/03-443.txt",
+      "image_sha256": "f33b91f035a604cf31943bc7f696359ed2bdf8630d13d57fc59565a513f12a4a",
+      "transcript_sha256": "44cc0590be622b30592b61246d453be9b7312893383e12d6c950913f7e83b27b",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-ciphers.pty.log",
+      "pty_byte_offset": 98211,
+      "selected": "443"
+    },
+    {
+      "journey": "security-tls-remove-port-tls-ciphers",
+      "journey_family": "security-tls-remove-port-tls-ciphers",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-port-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-remove-port-tls-ciphers/04-run.png",
+      "transcript": "docs/assets/interactive/security-tls-remove-port-tls-ciphers/04-run.txt",
+      "image_sha256": "baaa70d4021163f9fca5e3c03b7c1fecab66e2e0c8820d67db956e42bcbf6d76",
+      "transcript_sha256": "a645acd5e3c227d4a52828c9940282215510b7ee5cb6a2db49f0d5db8078e227",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-ciphers.pty.log",
+      "pty_byte_offset": 98627,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-tls-remove-port-tls-ciphers",
+      "journey_family": "security-tls-remove-port-tls-ciphers",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-port-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-remove-port-tls-ciphers/05-enter-value.png",
+      "transcript": "docs/assets/interactive/security-tls-remove-port-tls-ciphers/05-enter-value.txt",
+      "image_sha256": "6cc1201ef7338b973f2562ed7835e7ec1c7555370b2fcecf3e50024b6767c198",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-ciphers.pty.log",
+      "pty_byte_offset": 98681,
+      "value": "YES"
+    },
+    {
+      "journey": "security-tls-remove-port-tls-ciphers",
+      "journey_family": "security-tls-remove-port-tls-ciphers",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-port-tls-ciphers",
+      "image": "docs/assets/interactive/security-tls-remove-port-tls-ciphers/06-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-remove-port-tls-ciphers/06-command-result.txt",
+      "image_sha256": "add4f044d8a56930fe5d8ef35982fd58ff2aa8a3901e5901e957add0a3283c01",
+      "transcript_sha256": "940b24b3a724c6e13d81a801bd74e40fc30d25ada71d7e5e1dc3609ef7b829b8",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-ciphers.pty.log",
+      "pty_byte_offset": 99908,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-http3",
+      "journey_family": "security-tls-http3",
+      "session_index": 1,
+      "step": 3,
+      "title": "443",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3/03-443.png",
+      "transcript": "docs/assets/interactive/security-tls-http3/03-443.txt",
+      "image_sha256": "17ac9b51cffc5cd719f242c4c3efb25cf6cda4d7ac9068907ef836e9fdd806af",
+      "transcript_sha256": "44cc0590be622b30592b61246d453be9b7312893383e12d6c950913f7e83b27b",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3.pty.log",
+      "pty_byte_offset": 83717,
+      "selected": "443"
+    },
+    {
+      "journey": "security-tls-http3",
+      "journey_family": "security-tls-http3",
+      "session_index": 1,
+      "step": 4,
+      "title": "On",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3/04-on.png",
+      "transcript": "docs/assets/interactive/security-tls-http3/04-on.txt",
+      "image_sha256": "b564d5ccb3a4b77ee94545346b86b36335a3aa95e689d539d1607e04b94a86ce",
+      "transcript_sha256": "c4f1676a1d3b8c6bf6da6a2e4830f0b1b0ed32ad36706444b03d0cf17bfcead0",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3.pty.log",
+      "pty_byte_offset": 83965,
+      "selected": "On"
+    },
+    {
+      "journey": "security-tls-http3",
+      "journey_family": "security-tls-http3",
+      "session_index": 1,
+      "step": 5,
+      "title": "Auto (current)",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3/05-auto-current.png",
+      "transcript": "docs/assets/interactive/security-tls-http3/05-auto-current.txt",
+      "image_sha256": "b9aa78d26c00532e856b66e9b217f23303f833a104fe33dc02a75a84936c3fb4",
+      "transcript_sha256": "f2c25f396b363eeddfc33fc3905d67fbf20bb341d0ffe4c623f302726487fea6",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3.pty.log",
+      "pty_byte_offset": 84250,
+      "selected": "Auto (current)"
+    },
+    {
+      "journey": "security-tls-http3",
+      "journey_family": "security-tls-http3",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3/06-run.png",
+      "transcript": "docs/assets/interactive/security-tls-http3/06-run.txt",
+      "image_sha256": "06f3c06aa7c2b5b9fa71f145c81bbb541c153c1615679c48a5da8c3a7f3d7ef6",
+      "transcript_sha256": "ccdd6f653a06069adecc459515322ef6f1508e842238eb364bd98d66ed42e1c6",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3.pty.log",
+      "pty_byte_offset": 84624,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-tls-http3",
+      "journey_family": "security-tls-http3",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-http3/07-command-result.txt",
+      "image_sha256": "a4e365dbadb3352df7196150ea7993b3b704d9ef0b900b9f0fb04202f0cda21d",
+      "transcript_sha256": "776890b2c3dcc86ed1b71916a0b08208c50afc4bb3566ae7029bb8238b667063",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3.pty.log",
+      "pty_byte_offset": 86146,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-list-port-http3",
+      "journey_family": "security-tls-list-port-http3",
+      "session_index": 1,
+      "step": 3,
+      "title": "443",
+      "kind": "menu",
+      "command": "list-port-http3",
+      "image": "docs/assets/interactive/security-tls-list-port-http3/03-443.png",
+      "transcript": "docs/assets/interactive/security-tls-list-port-http3/03-443.txt",
+      "image_sha256": "5ec6df5102b5c02c69cbb700255db0949cced1dc45bcb68c6f4cd87bceef7577",
+      "transcript_sha256": "44cc0590be622b30592b61246d453be9b7312893383e12d6c950913f7e83b27b",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-list-port-http3.pty.log",
+      "pty_byte_offset": 77410,
+      "selected": "443"
+    },
+    {
+      "journey": "security-tls-list-port-http3",
+      "journey_family": "security-tls-list-port-http3",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-port-http3",
+      "image": "docs/assets/interactive/security-tls-list-port-http3/04-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-list-port-http3/04-command-result.txt",
+      "image_sha256": "24ce3073f1e3a25ca67c56c5ffe06355afb4745e71ef5145f92966f0868f9084",
+      "transcript_sha256": "3304c6003fac56acc69c5f0674a0e207889bc06613d834ab6abdfccaca7d5fcf",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-list-port-http3.pty.log",
+      "pty_byte_offset": 77503,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-http3-verified",
+      "journey_family": "security-tls-http3-verified",
+      "session_index": 1,
+      "step": 1,
+      "title": "HTTP/3 request succeeds without fallback",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/security-tls-http3-verified/01-http-3-request-succeeds-without-fallback.png",
+      "transcript": "docs/assets/interactive/security-tls-http3-verified/01-http-3-request-succeeds-without-fallback.txt",
+      "image_sha256": "db0e5255478ae9299c553ad1d30a01c85dcde313167a5b623a1278ed00f7a464",
+      "transcript_sha256": "fc6f07501f557156a787c6dc77ce21de854ec37e44cf52e048d2c08a6a48dc3f",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3-verified.pty.log",
+      "pty_byte_offset": 826,
+      "viewport": "bottom",
+      "exit_code": 0
+    },
+    {
+      "journey": "security-tls-http3-disable",
+      "journey_family": "security-tls-http3-disable",
+      "session_index": 1,
+      "step": 3,
+      "title": "443",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3-disable/03-443.png",
+      "transcript": "docs/assets/interactive/security-tls-http3-disable/03-443.txt",
+      "image_sha256": "5c62a43f702a056868355feea621cbde0af7ea3c9c75d9d77924de18066ec397",
+      "transcript_sha256": "44cc0590be622b30592b61246d453be9b7312893383e12d6c950913f7e83b27b",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3-disable.pty.log",
+      "pty_byte_offset": 83723,
+      "selected": "443"
+    },
+    {
+      "journey": "security-tls-http3-disable",
+      "journey_family": "security-tls-http3-disable",
+      "session_index": 1,
+      "step": 4,
+      "title": "Off",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3-disable/04-off.png",
+      "transcript": "docs/assets/interactive/security-tls-http3-disable/04-off.txt",
+      "image_sha256": "5b9a68485a5e97ac38f93595a20ca8cd89f9d048455ddc1c833cd70fd981da68",
+      "transcript_sha256": "daa29a0d569536a561881a4b8a6d6621e8c9de2e2e1a59a4d1d9b09a0175e3ab",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3-disable.pty.log",
+      "pty_byte_offset": 83971,
+      "selected": "Off"
+    },
+    {
+      "journey": "security-tls-http3-disable",
+      "journey_family": "security-tls-http3-disable",
+      "session_index": 1,
+      "step": 5,
+      "title": "Auto (current)",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3-disable/05-auto-current.png",
+      "transcript": "docs/assets/interactive/security-tls-http3-disable/05-auto-current.txt",
+      "image_sha256": "1f10de6b37144e402eb7f0b43a74d86a82b3d9ec7ea7888d6d6873295f3e00e1",
+      "transcript_sha256": "f2c25f396b363eeddfc33fc3905d67fbf20bb341d0ffe4c623f302726487fea6",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3-disable.pty.log",
+      "pty_byte_offset": 84256,
+      "selected": "Auto (current)"
+    },
+    {
+      "journey": "security-tls-http3-disable",
+      "journey_family": "security-tls-http3-disable",
+      "session_index": 1,
+      "step": 6,
+      "title": "Run",
+      "kind": "menu",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3-disable/06-run.png",
+      "transcript": "docs/assets/interactive/security-tls-http3-disable/06-run.txt",
+      "image_sha256": "15deba640eb407f86bbaab50cba8e5110a929002e8ac20a16ae6f61b1392a1ff",
+      "transcript_sha256": "9bebf3de21cf5968764e71f846780aeffef8f68fa42cb7bf2b9d162f69a2eead",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3-disable.pty.log",
+      "pty_byte_offset": 84632,
+      "selected": "Run"
+    },
+    {
+      "journey": "security-tls-http3-disable",
+      "journey_family": "security-tls-http3-disable",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "set-port-http3",
+      "image": "docs/assets/interactive/security-tls-http3-disable/07-command-result.png",
+      "transcript": "docs/assets/interactive/security-tls-http3-disable/07-command-result.txt",
+      "image_sha256": "4023c596820c582877df38d2a9dc98c5c7c1e2a4705d3bdaf5466b10d78a12a5",
+      "transcript_sha256": "6a5ed4b38b11b38868ee9a3fe536d17c2e8fe8893807a6359fc642ade869b7ad",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-http3-disable.pty.log",
+      "pty_byte_offset": 86147,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "security-tls-tls-settings-config",
+      "journey_family": "security-tls-tls-settings-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/security-tls-tls-settings-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/security-tls-tls-settings-config/03-configuration-test-passed.txt",
+      "image_sha256": "7b0debc7a6728b69e759b5b265ef540745001c070b854d87c2386495b320ee4b",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings-config.pty.log",
+      "pty_byte_offset": 8027,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "tls13-response",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-tls/tls13-response.headers"
+    },
+    {
+      "label": "tls12-excluded",
+      "status": "passed",
+      "argv": [
+        "curl",
+        "--noproxy",
+        "*",
+        "--tlsv1.2",
+        "--tls-max",
+        "1.2",
+        "--silent",
+        "--show-error",
+        "--max-time",
+        "15",
+        "--cacert",
+        "/opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem",
+        "--resolve",
+        "example.com:443:127.0.0.1",
+        "https://example.com/"
+      ],
+      "expected_exit": 35
+    },
+    {
+      "label": "tls12-restored",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-tls/tls12-restored.headers"
+    },
+    {
+      "label": "http3-advertisement",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/security-tls/http3-advertisement.headers"
+    },
+    {
+      "label": "http3-advertisement-header",
+      "status": "passed",
+      "header": "alt-svc:"
+    },
+    {
+      "label": "http3-verified",
+      "status": "passed",
+      "argv": [
+        "docker",
+        "run",
+        "--rm",
+        "--network",
+        "host",
+        "--user",
+        "0",
+        "--mount",
+        "type=bind,src=/opt/dockistrate-demo/state/domains/example.com/certs/selfsigned-443/fullchain.pem,dst=/tmp/server-ca.pem,readonly",
+        "sha256:10e1a748f786390a412cdc9bca7cfd95758a0d3d04ef5dd05bc384450b592b15",
+        "--noproxy",
+        "*",
+        "--http3-only",
+        "--fail",
+        "--silent",
+        "--show-error",
+        "--connect-timeout",
+        "10",
+        "--max-time",
+        "30",
+        "--cacert",
+        "/tmp/server-ca.pem",
+        "--resolve",
+        "example.com:443:127.0.0.1",
+        "--dump-header",
+        "-",
+        "--output",
+        "/dev/null",
+        "--write-out",
+        "\nHTTP version: %{http_version}; status: %{http_code}\n",
+        "https://example.com/"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "http3-transport",
+      "status": "passed",
+      "client_image_id": "sha256:10e1a748f786390a412cdc9bca7cfd95758a0d3d04ef5dd05bc384450b592b15",
+      "base_digest": "debian@sha256:a72b4433de1cf7d6bae0c4cee74d0547f58601a643b3375f070c51600d63b6b2",
+      "protocol": "HTTP/3",
+      "http_status": 200,
+      "server_trust": "owned self-signed server certificate"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "security"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "3ad864f73368e9c3055abb5db88020477e2149a08bf14f254b246692c69ef400",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 37
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/security-tls-recordings.tar.gz",
+    "sha256": "0f9528b43750dc90cff869a61f67d7d4fdf1c358fb4727db6f3cdca1e7803e72",
+    "size": 91663,
+    "members": {
+      "docs/assets/interactive/evidence/security-tls/001-source-commit.log": {
+        "sha256": "a93670cb9166177643d49cde1f5aef3aeb70d24ccf750cdf524378394929d8da",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/security-tls/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-tls/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/security-tls/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/security-tls/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/security-tls/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/security-tls/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/security-tls/008-fixture-image.log": {
+        "sha256": "29a2635fd0d12b49a489b468806ffc7b5d84d9f17b47f9d5ed0f0a1450d552d2",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/security-tls/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/security-tls/010-fixture-backend.log": {
+        "sha256": "7adc59664e154f3b9581f6bbdabf2f2fc6036696e9685140cbd58e72606c748c",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/security-tls/011-fixture-public-demo.log": {
+        "sha256": "39b8c3aa87fb67c29987d7b96a9a847df636e40d69d9b7f497c6ddc9d38ae030",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/security-tls/012-fixture-https.log": {
+        "sha256": "e5c2d905a855678a968697a886981cbd4188d7e03aaeef096a0ded98cf945a0d",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/security-tls/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/security-tls/014-command-alias.log": {
+        "sha256": "bd4cedec66d959282335e5b8d0ae0283a7ba0a4f338fbb8e5b7930293306e10f",
+        "size": 18
+      },
+      "docs/assets/interactive/evidence/security-tls/015-command-alias.log": {
+        "sha256": "deace8fe5dc6f9403f130b88f4357856e087c58f3bcef33d6978978a07309e86",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/security-tls/016-command-alias.log": {
+        "sha256": "cfb4a3409e8f70660fc904282b44526216dc91a4d64402b81fa5b77e6ec09d72",
+        "size": 23
+      },
+      "docs/assets/interactive/evidence/security-tls/017-command-alias.log": {
+        "sha256": "ed469a372b4e9497460aef38ee2f83af118127552a146c357f61f91affbee702",
+        "size": 21
+      },
+      "docs/assets/interactive/evidence/security-tls/018-command-alias.log": {
+        "sha256": "49c6c252fd98d134771d28c61c1e4124df4bcb1902688f43e59c2ca46727210f",
+        "size": 26
+      },
+      "docs/assets/interactive/evidence/security-tls/019-command-alias.log": {
+        "sha256": "b7b77c6290618d5ce8938380cf39d7c0ed4981a832f534cee99ecacdd55ce799",
+        "size": 24
+      },
+      "docs/assets/interactive/evidence/security-tls/020-command-alias.log": {
+        "sha256": "5ace1eb01f71f808f28411c693133528656802b4f1779db31f3567619574b49b",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-tls/021-command-alias.log": {
+        "sha256": "a10f59fbb76bc08164ef4c9ce78021b851d93bb72ec30042957ff80212c57250",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/security-tls/022-http3-client-base-pull.log": {
+        "sha256": "bed244981bb9e14c2ee5dbead9d8d44f2df1d884b050cd089f0fbea90b793d86",
+        "size": 335
+      },
+      "docs/assets/interactive/evidence/security-tls/023-http3-client-base-digest.log": {
+        "sha256": "6889464b906ede55095126fd5660829be565182b300329a994ccf8e1454a846c",
+        "size": 79
+      },
+      "docs/assets/interactive/evidence/security-tls/024-http3-client-install-official-package.log": {
+        "sha256": "9900696e84db05907c07f8c8122a783d41310a8d0ed638939fa3e35f0624ec9e",
+        "size": 15575
+      },
+      "docs/assets/interactive/evidence/security-tls/025-http3-client-image-id.log": {
+        "sha256": "f16a9e26d9b599a8e4f8da799bcd65fc59f8223dddebef2d46a1af2f860a7710",
+        "size": 72
+      },
+      "docs/assets/interactive/evidence/security-tls/026-http3-client-version.log": {
+        "sha256": "84e18a4933237f9f02d1a77d2ea64c83ee91681ca46646c3191237aca4ee5c33",
+        "size": 582
+      },
+      "docs/assets/interactive/evidence/security-tls/027-command-alias.log": {
+        "sha256": "5ace1eb01f71f808f28411c693133528656802b4f1779db31f3567619574b49b",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/security-tls/028-image-identities.log": {
+        "sha256": "faa7eee60d62b124e6b4b82e5429651d1abb9c0d7b1bfac4c7f8f09b7b65a812",
+        "size": 3650
+      },
+      "docs/assets/interactive/evidence/security-tls/commands.jsonl": {
+        "sha256": "c35af966ded088e6a5171b8465bd9e5d338e40a6fd5f619c97c2c4a9c90c28f2",
+        "size": 11716
+      },
+      "docs/assets/interactive/evidence/security-tls/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-tls/http3-advertisement.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-tls/http3-advertisement.headers": {
+        "sha256": "664be2020269948cc0a6405f6f627fad9bbf64897e481450c5b7eab8e00dc06c",
+        "size": 240
+      },
+      "docs/assets/interactive/evidence/security-tls/http3-advertisement.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-tls/http3-advertisement.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-http3-disable.events.jsonl": {
+        "sha256": "e17c8293ee4860dae047b6db28293aa25c74a7e38b7eac7ea019c8bb97dd3cb1",
+        "size": 15867
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-http3-disable.pty.log": {
+        "sha256": "552a1883fb195251b5d058c121fe23922fa212570009fe8619d3ed7ce5bf0628",
+        "size": 94261
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-http3-verified.events.jsonl": {
+        "sha256": "fdad17457f0cd2e05c5c3d11ee8d04e442e9f47d2cc447a53d2845bc9e79eaf5",
+        "size": 1991
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-http3-verified.pty.log": {
+        "sha256": "9771d3fd6de4a609370d7aa9ea93931792cae34ff373beba89c11d291cfcf4d1",
+        "size": 826
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-http3.events.jsonl": {
+        "sha256": "8af9198544dc9097163e23faf96a78be4e1af1e54b0ea548b2a8f4f190f4159f",
+        "size": 14959
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-http3.pty.log": {
+        "sha256": "4ec29f8d844354f72f5d87f7ebc1e4205d3ae6971cceb27a4bf2856c91452ea8",
+        "size": 94260
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-list-port-http3.events.jsonl": {
+        "sha256": "434312fecdec2e66eaa5d3a2d664db2bea79bd7e83aab42baad09350e099ac68",
+        "size": 12662
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-list-port-http3.pty.log": {
+        "sha256": "75afb40ecc607480da16b21e603f964220882c64f7fb53873210bcaf8ad03f32",
+        "size": 85621
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-ciphers.events.jsonl": {
+        "sha256": "d1abbe6c3ad81b4bfaad1711e3ec96fc3cd6b6c734b3e8ad15b1aa404591128b",
+        "size": 18738
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-ciphers.pty.log": {
+        "sha256": "30841b84a257c247e894f1e20dff8e4dff929ce4710fc5d1093dca8ca3d4ab22",
+        "size": 108026
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-protocols.events.jsonl": {
+        "sha256": "852e510a4015b9809e3075ac866ebe87058962dd8b981836c077af1d4934ddc6",
+        "size": 19620
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-remove-port-tls-protocols.pty.log": {
+        "sha256": "70d7ce752f768bddd6d2013638e37b2b80e516701858ea8ce7b5b2a325090683",
+        "size": 108685
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-set-port-tls-ciphers.events.jsonl": {
+        "sha256": "a7c92fd54a3ac2f9ce2bdff52d2d583af8f0f08a72b2cce8dc37e8b7eaa20f57",
+        "size": 17571
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-set-port-tls-ciphers.pty.log": {
+        "sha256": "a552683faa40899a7b287d1083c91fc9df96e2486aa7c8f1df1a6bef1160c8c3",
+        "size": 95873
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-ciphers.events.jsonl": {
+        "sha256": "0e4dcc262290ba52c45774d012875372f53779f32b7d636952a61cb8dd13db13",
+        "size": 15103
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-ciphers.pty.log": {
+        "sha256": "a7e94ecff1634cefbdddc87480c5012ed87bd2ece3884be7b96223a1069931bb",
+        "size": 92335
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-protocols.events.jsonl": {
+        "sha256": "f054d120de85ed002642fa59ca346f264ed4dd8bad73c58eef3f44e5b4c6fdb1",
+        "size": 15772
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-set-tls-protocols.pty.log": {
+        "sha256": "de4ef2a576c47b6aaab48401a3c2eaca724d3bd55d4ec6e439116480691d7609",
+        "size": 93049
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings-config.events.jsonl": {
+        "sha256": "68fca9d4f48bfcaca7ab923d486788bf537985a53d546a89cdf7d055681544cd",
+        "size": 9276
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings-config.pty.log": {
+        "sha256": "32ff899c5d39eb8e20b59a8e19e93df493e681e2d5067edec65cc8a55ff4ca48",
+        "size": 16141
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings.events.jsonl": {
+        "sha256": "5ab6eee4a9411d11d0f96aec448b14c9e2a019b280107660329f046e67d2c4e0",
+        "size": 17119
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-tls-settings.pty.log": {
+        "sha256": "e4bf4789044ed7b4bb31a2a0bcdfec5f7c2d8f0b789898e628c46f01d55c00ec",
+        "size": 96541
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-tls12-excluded.events.jsonl": {
+        "sha256": "2a9dec7225e233419ef4fe400185ef2a7d7ab76b399d180b4470419c361064b3",
+        "size": 1296
+      },
+      "docs/assets/interactive/evidence/security-tls/security-tls-tls12-excluded.pty.log": {
+        "sha256": "8aa245e24306b349ec935519d69724095f60f95a4ced8197edd40ec8e517f3c3",
+        "size": 327
+      },
+      "docs/assets/interactive/evidence/security-tls/tls12-restored.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-tls/tls12-restored.headers": {
+        "sha256": "39eba72315e61e88ff081b655494c928dbf69b2f6ef75555cce5ee80b05e47d8",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/security-tls/tls12-restored.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-tls/tls12-restored.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/security-tls/tls13-response.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/security-tls/tls13-response.headers": {
+        "sha256": "bcfcbbf2230d4cdcc88db9b9ee8e96dd32e75979f97f64497de4ba0f40c2898e",
+        "size": 210
+      },
+      "docs/assets/interactive/evidence/security-tls/tls13-response.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/security-tls/tls13-response.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      }
+    }
+  }
+}

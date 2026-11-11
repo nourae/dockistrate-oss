@@ -55,15 +55,16 @@ function run_preflight_status() {
 }
 
 function append_security_rule_row_with_condition() {
-  local condition="$1" file="$2"
+  local condition="$1" file="$2" columns="${3:-$STATE_SECURITY_RULES_COLS}"
   local fields=()
   local i
 
-  fields=(1 preflight-rule.test and "" 1 method - "$condition" GET)
+  fields=(1 preflight-rule.test single "" 1 method - "$condition" GET)
   for i in 2 3 4 5 6 7 8 9 10; do
     fields+=("" "" "" "")
   done
   fields+=("" "")
+  case "$columns" in 47) ;; 48) fields+=(require) ;; *) return 1 ;; esac
 
   (
     IFS=,
@@ -179,13 +180,31 @@ reset_state
 printf '%s\n' "1" >"$ROOT_DIR/state/config/state_schema_version"
 expect_status 0
 
+# Preflight runs before migration, so its read-only warning must inspect real
+# historical 47-column rules as well as current 48-column action records.
+for rules_schema in 1 4 "$CURRENT_STATE_SCHEMA_VERSION"; do
+  reset_state
+  printf '%s\n' "$rules_schema" >"$ROOT_DIR/state/config/state_schema_version"
+  rules_header="$STATE_SECURITY_RULES_HEADER"; rules_columns="$STATE_SECURITY_RULES_COLS"
+  if [ "$rules_schema" -lt 5 ]; then rules_header="$STATE_SECURITY_RULES_LEGACY_HEADER"; rules_columns=47; fi
+  printf '%s\n' "$rules_header" >"$ROOT_DIR/state/config/security_rules.csv"
+  append_security_rule_row_with_condition "in" "$ROOT_DIR/state/config/security_rules.csv" "$rules_columns"
+  cp "$ROOT_DIR/state/config/security_rules.csv" "$TMP_DIR/security_rules.before"
+  expect_status 0
+  grep -Fq "Security rules: 1 persisted rule row(s) use operators whose generated behavior was corrected" "$TMP_DIR/preflight.err" ||
+    fail_test "upgrade-preflight should warn about corrected operators in schema${rules_schema} rules"
+  cmp -s "$ROOT_DIR/state/config/security_rules.csv" "$TMP_DIR/security_rules.before" ||
+    fail_test "upgrade-preflight changed schema${rules_schema} rules"
+done
+# An old-width row under a current header is malformed, not a legacy record.
 reset_state
-printf '%s\n' "1" >"$ROOT_DIR/state/config/state_schema_version"
+printf '%s\n' "$CURRENT_STATE_SCHEMA_VERSION" >"$ROOT_DIR/state/config/state_schema_version"
 printf '%s\n' "$STATE_SECURITY_RULES_HEADER" >"$ROOT_DIR/state/config/security_rules.csv"
-append_security_rule_row_with_condition "in" "$ROOT_DIR/state/config/security_rules.csv"
+append_security_rule_row_with_condition "in" "$ROOT_DIR/state/config/security_rules.csv" 47
 expect_status 0
-grep -Fq "Security rules: 1 persisted rule row(s) use operators whose generated behavior was corrected" "$TMP_DIR/preflight.err" ||
-  fail_test "upgrade-preflight should warn about persisted security rules using corrected operators"
+if grep -Fq 'Security rules:' "$TMP_DIR/preflight.err"; then
+  fail_test 'upgrade-preflight interpreted a mismatched security-rule width'
+fi
 
 reset_state
 printf '%s\n' "1" >"$ROOT_DIR/state/config/state_schema_version"
@@ -200,7 +219,14 @@ printf '%s\n' "malformed" >"$ROOT_DIR/state/config/state_schema_version"
 expect_status 4
 
 reset_state
-printf '%s\n' "2" >"$ROOT_DIR/state/config/state_schema_version"
+printf '%s\n' "$CURRENT_STATE_SCHEMA_VERSION" >"$ROOT_DIR/state/config/state_schema_version"
+cp "$ROOT_DIR/state/config/state_schema_version" "$TMP_DIR/schema.current.before"
+expect_status 0
+cmp -s "$ROOT_DIR/state/config/state_schema_version" "$TMP_DIR/schema.current.before" ||
+  fail_test "upgrade-preflight should not rewrite the current schema marker"
+
+reset_state
+printf '%s\n' "$((CURRENT_STATE_SCHEMA_VERSION + 1))" >"$ROOT_DIR/state/config/state_schema_version"
 expect_status 4
 
 reset_state

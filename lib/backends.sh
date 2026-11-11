@@ -9,7 +9,7 @@ if [ -f "${BACKENDS_DIR}/common.sh" ]; then
 fi
 
 for backend_file in "${BACKENDS_DIR}"/*.sh; do
-  backend_basename="$(basename "$backend_file")"
+  backend_basename="${backend_file##*/}"
   if [ "$backend_basename" = "common.sh" ]; then
     continue
   fi

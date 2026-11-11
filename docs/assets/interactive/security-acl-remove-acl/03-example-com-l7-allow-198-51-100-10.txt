@@ -1,0 +1,8 @@
+Numeric row ID from the corresponding list command.
+ID
+Example: 1:
+> 1) example.com l7 allow 198.51.100.10
+  2) example.com l7 deny 203.0.113.0/24
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

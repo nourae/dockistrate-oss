@@ -7,7 +7,7 @@ _dockistrate_complete_headers() {
   remove-backend-header)
     if [[ $cword -eq 2 ]] && [ -f "$BACKEND_HEADERS_FILE" ]; then
       local domains
-      domains=$(awk -F'|' '{print $1}' "$BACKEND_HEADERS_FILE")
+      domains="$(__dockistrate_csv_first_column_values "$BACKEND_HEADERS_FILE")"
       COMPREPLY=($(compgen -W "$domains" -- "$cur"))
       return 0
     fi
@@ -19,7 +19,7 @@ _dockistrate_complete_headers() {
   list-backend-headers)
     if [[ $cword -eq 2 ]] && [ -f "$BACKEND_HEADERS_FILE" ]; then
       local domains
-      domains=$(awk -F'|' '{print $1}' "$BACKEND_HEADERS_FILE")
+      domains="$(__dockistrate_csv_first_column_values "$BACKEND_HEADERS_FILE")"
       COMPREPLY=($(compgen -W "$domains" -- "$cur"))
       return 0
     fi

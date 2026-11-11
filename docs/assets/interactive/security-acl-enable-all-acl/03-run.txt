@@ -1,0 +1,14 @@
+Review command
+  Command: Enable All ACL (enable-all-acl)
+  Description: Enable all ACL rules
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh enable-all-acl
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

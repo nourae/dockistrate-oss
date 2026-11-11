@@ -2,22 +2,16 @@
 
 function describe_image_with_local_state() {
   local image="$1" pull_mode="$2" label="$3" container="${4:-}"
+  require_valid_image_ref "$image" "$label" || return 1
   local mode_note=""
-  if image_uses_latest_tag "$image"; then
-    mode_note="mode=${pull_mode:-if-missing}"
-  else
-    mode_note="pinned"
-  fi
-  local local_note="local: missing" running_img="" best_tag="" digest_short="" created=""
+  mode_note="$(image_pull_policy_note "$image" "$pull_mode")"
+  local local_note="local: missing" running_img="" best_tag="" digest_short="" created="" identity_note=""
   if [ -n "$container" ] && command -v docker >/dev/null 2>&1; then
     running_img="$(docker inspect -f '{{.Config.Image}}' "$container" 2>/dev/null || true)"
   fi
   if command -v docker >/dev/null 2>&1; then
     local tags digest id inspect=""
-    inspect="$(docker image inspect "$image" --format '{{join .RepoTags \",\"}}|{{if .RepoDigests}}{{index .RepoDigests 0}}{{end}}|{{.Id}}|{{.Created}}' 2>/dev/null || true)"
-    if [ -z "$inspect" ] && [ -n "$container" ]; then
-      inspect="$(docker inspect -f '{{join .RepoTags \",\"}}|{{if .RepoDigests}}{{index .RepoDigests 0}}{{end}}|{{.Image}}|{{.Created}}' "$container" 2>/dev/null || true)"
-    fi
+    inspect="$(docker image inspect "$image" --format '{{join .RepoTags ","}}|{{if .RepoDigests}}{{index .RepoDigests 0}}{{end}}|{{.Id}}|{{.Created}}' 2>/dev/null || true)"
     if [ -n "$inspect" ]; then
       tags="${inspect%%|*}"
       digest="${inspect#*|}"
@@ -41,32 +35,24 @@ function describe_image_with_local_state() {
       if [ -n "$digest" ] && [[ "$digest" == *@sha256:* ]]; then
         digest_short="${digest#*@sha256:}"
         digest_short="${digest_short:0:12}"
+        identity_note="registry digest sha256:${digest_short}"
       elif [ -n "$id" ]; then
         digest_short="${id#sha256:}"
         digest_short="${digest_short:0:12}"
+        identity_note="image ID sha256:${digest_short}"
       fi
       local_note="local: ${best_tag:-$image}"
       if [ -n "$digest_short" ]; then
-        local_note+=" (@${digest_short})"
+        local_note+=" (${identity_note})"
       fi
       if [ -n "$created" ]; then
         local_note+=" (created ${created%%T*})"
       fi
     fi
   fi
-  if [ "$local_note" = "local: missing" ] && [ -n "$running_img" ]; then
-    local_note="running: ${running_img}"
+  if [ -n "$running_img" ] && [ "$running_img" != "$image" ]; then
+    local_note+="; running reference: ${running_img}"
   fi
-  local resolved="$image"
-  if [ -n "$best_tag" ]; then
-    resolved="$best_tag"
-    if [ -n "$digest_short" ]; then
-      resolved+=" (@${digest_short})"
-    fi
-  elif [ -n "$digest_short" ] && [[ "$image" == *@sha256:* ]]; then
-    resolved="${image%@sha256:*}@sha256:${digest_short}"
-  elif [ -n "$digest_short" ]; then
-    resolved="${image}@sha256:${digest_short}"
-  fi
-  echo "${label} image: ${resolved} [${mode_note}; ${local_note}]"
+  # Local aliases and image IDs must not replace or masquerade as the configured pin.
+  echo "${label} image: ${image} [${mode_note}; ${local_note}]"
 }

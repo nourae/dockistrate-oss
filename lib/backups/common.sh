@@ -164,12 +164,31 @@ function rollback_pre_hook_remove() {
 }
 
 function run_rollback_pre_hooks() {
-  local hook=""
+  local hook="" failed=false nginx_hook=""
   for hook in ${ROLLBACK_PRE_HOOK:-}; do
+    if [ "$hook" = _nginx_runtime_rollback_if_needed ]; then
+      nginx_hook="$hook"
+      continue
+    fi
     if declare -F "$hook" >/dev/null 2>&1; then
-      "$hook" || true
+      if ! "$hook"; then
+        echo "[Error] Rollback hook failed: $hook" >&2
+        failed=true
+      fi
+    else
+      echo "[Error] Rollback hook is unavailable: $hook" >&2
+      failed=true
     fi
   done
+  # The proxy must see recovered backend identities/networks. Its snapshot
+  # protection is registered at transaction start, before backend hooks exist.
+  if [ -n "$nginx_hook" ]; then
+    if ! declare -F "$nginx_hook" >/dev/null 2>&1 || ! "$nginx_hook"; then
+      echo "[Error] Rollback hook failed: $nginx_hook" >&2
+      failed=true
+    fi
+  fi
+  [ "$failed" = false ]
 }
 
 function _nginx_runtime_rollback_capture_image() {
@@ -218,6 +237,9 @@ function _nginx_prepare_runtime_rollback() {
   fi
 
   NGINX_RUNTIME_ROLLBACK_DEPTH=$((depth + 1))
+  if declare -F domain_config_runtime_capture_proxy >/dev/null 2>&1; then
+    domain_config_runtime_capture_proxy || return 1
+  fi
 }
 
 function _nginx_mark_runtime_rollback_needed() {
@@ -226,6 +248,9 @@ function _nginx_mark_runtime_rollback_needed() {
     return 0
   fi
   NGINX_RUNTIME_ROLLBACK_APPLY_NEEDED="true"
+  if declare -F domain_config_runtime_mark_proxy_changed >/dev/null 2>&1; then
+    domain_config_runtime_mark_proxy_changed || return 1
+  fi
 }
 
 function _nginx_clear_runtime_rollback_state() {
@@ -236,6 +261,7 @@ function _nginx_clear_runtime_rollback_state() {
   unset NGINX_RUNTIME_ROLLBACK_IMAGE
   unset NGINX_RUNTIME_ROLLBACK_BINDINGS
   unset NGINX_RUNTIME_ROLLBACK_APPLY_NEEDED
+  unset NGINX_RUNTIME_ROLLBACK_PROJECTION_STATE
 }
 
 function _nginx_release_runtime_rollback() {
@@ -251,6 +277,12 @@ function _nginx_release_runtime_rollback() {
     return 0
   fi
 
+  # A renderer may finish before its caller commits the enclosing transaction.
+  # Keep the original runtime available if that later metadata commit fails.
+  if transaction_is_active; then
+    return 0
+  fi
+
   _nginx_clear_runtime_rollback_state
 }
 
@@ -259,14 +291,20 @@ function _nginx_runtime_rollback_if_needed() {
   if ! [[ "$depth" =~ ^[0-9]+$ ]] || [ "$depth" -le 0 ]; then
     return 0
   fi
-  if [ "${NGINX_RUNTIME_ROLLBACK_APPLY_NEEDED:-false}" != "true" ]; then
-    return 0
-  fi
-
   local existed="${NGINX_RUNTIME_ROLLBACK_CONTAINER_EXISTED:-false}"
   local was_running="${NGINX_RUNTIME_ROLLBACK_WAS_RUNNING:-false}"
   local image="${NGINX_RUNTIME_ROLLBACK_IMAGE:-${NGINX_IMAGE:-}}"
   local bindings="${NGINX_RUNTIME_ROLLBACK_BINDINGS:-}"
+  local projection="" apply_needed="${NGINX_RUNTIME_ROLLBACK_APPLY_NEEDED:-false}"
+  if [ -n "${NGINX_RUNTIME_ROLLBACK_PROJECTION_STATE:-}" ]; then
+    # Recover before removing anything: issuer files may have changed outside
+    # the transaction, so only its prevalidated snapshot is rollback authority.
+    _nginx_recover_certificate_projection projection "$NGINX_RUNTIME_ROLLBACK_PROJECTION_STATE" || return 1
+    if ! _nginx_container_has_certificate_projection "$projection"; then
+      apply_needed=true
+    fi
+  fi
+  [ "$apply_needed" = true ] || return 0
 
   if [ -n "${NGINX_CONTAINER_NAME:-}" ] && nginx_container_is_managed; then
     remove_container_and_anonymous_volumes "$NGINX_CONTAINER_NAME" >/dev/null 2>&1 || true
@@ -278,16 +316,23 @@ function _nginx_runtime_rollback_if_needed() {
     return 0
   fi
 
-  if ! recreate_nginx_container "$image" "$bindings"; then
-    return 1
+  if [ -n "$projection" ]; then
+    recreate_nginx_container "$image" "$bindings" "$projection" || return 1
+  else
+    recreate_nginx_container "$image" "$bindings" || return 1
   fi
 
   if [ "$was_running" != "true" ] && [ -n "${NGINX_CONTAINER_NAME:-}" ] && nginx_container_is_managed; then
-    docker stop "$NGINX_CONTAINER_NAME" >/dev/null 2>&1 || true
+    docker stop "$NGINX_CONTAINER_NAME" >/dev/null 2>&1 || return 1
+    container_running "$NGINX_CONTAINER_NAME" && return 1
   fi
 
   if [ "$was_running" = "true" ] && [ -n "${NGINX_CONTAINER_NAME:-}" ] && ! container_running "$NGINX_CONTAINER_NAME"; then
     return 1
+  fi
+  if [ "$was_running" = true ] && [ -n "$projection" ] &&
+    declare -F _nginx_wait_for_security_update_ready >/dev/null 2>&1; then
+    _nginx_wait_for_security_update_ready || return 1
   fi
 
   return 0
@@ -384,8 +429,25 @@ function _rollback_target_churn_marker() {
   printf 'C\t%s\t%s.%s.%s\n' "$path" "$nonce" "$$" "${RANDOM:-0}"
 }
 
+function _rollback_target_snapshot_metadata() {
+  local path="${1:-}" metadata="" pattern=""
+  [ -n "$path" ] || return 1
+  # Reads can change atime; ctime and ownership are not restored. Include the
+  # permissions and full mtime that archive extraction/replay can preserve.
+  # BSD %p retains special permission bits; %.9Fm emits exact seconds/nanoseconds.
+  if metadata="$(LC_ALL=C TZ=UTC0 stat -c '%a|%y' "$path" 2>/dev/null)"; then
+    pattern='^[0-7]+[|]-?[0-9]+-[0-9][0-9]-[0-9][0-9] [0-9][0-9]:[0-9][0-9]:[0-9][0-9]([.][0-9]+)? [+-][0-9][0-9][0-9][0-9]$'
+  elif metadata="$(LC_ALL=C TZ=UTC0 stat -f '%p|%.9Fm' "$path" 2>/dev/null)"; then
+    pattern='^[0-7]+[|]-?[0-9]+[.][0-9]{9}$'
+  else
+    return 1
+  fi
+  [[ "$metadata" =~ $pattern ]] || return 1
+  printf '%s\n' "$metadata"
+}
+
 function _rollback_target_state_entry_line() {
-  local path="${1:-}" entry_checksum="" link_target=""
+  local path="${1:-}" entry_checksum="" link_target="" metadata=""
   [ -n "$path" ] || return 1
 
   if [ ! -e "$path" ] && [ ! -L "$path" ]; then
@@ -394,8 +456,10 @@ function _rollback_target_state_entry_line() {
   fi
 
   if [ -L "$path" ]; then
-    link_target="$(readlink "$path" 2>/dev/null || true)"
-    printf 'L\t%s\t%s\n' "$path" "$link_target"
+    link_target="$(readlink -n "$path" 2>/dev/null && printf '.')" || return 1
+    link_target="${link_target%.}"
+    metadata="$(_rollback_target_snapshot_metadata "$path")" || return 1
+    printf 'L\t%s\t%s\t%s\n' "$path" "$link_target" "$metadata"
     return 0
   fi
 
@@ -407,12 +471,20 @@ function _rollback_target_state_entry_line() {
       fi
       return 1
     fi
-    printf 'F\t%s\t%s\n' "$path" "$entry_checksum"
+    if ! metadata="$(_rollback_target_snapshot_metadata "$path")"; then
+      if [ ! -e "$path" ] && [ ! -L "$path" ]; then
+        printf 'M\t%s\n' "$path"
+        return 0
+      fi
+      return 1
+    fi
+    printf 'F\t%s\t%s\t%s\n' "$path" "$entry_checksum" "$metadata"
     return 0
   fi
 
   if [ -d "$path" ]; then
-    printf 'D\t%s\n' "$path"
+    metadata="$(_rollback_target_snapshot_metadata "$path")" || return 1
+    printf 'D\t%s\t%s\n' "$path" "$metadata"
     return 0
   fi
 
@@ -448,7 +520,7 @@ function _rollback_target_state_lines() {
       return 0
     fi
 
-    printf 'D\t%s\n' "$normalized"
+    _rollback_target_state_entry_line "$normalized" || return 1
     [ -n "$listing" ] || return 0
     while IFS= read -r relative_path; do
       [ -n "$relative_path" ] || continue
@@ -527,14 +599,16 @@ function _backup_resolve_path_within_root() {
   [ -n "$raw_path" ] || return 1
 
   local root_norm path_norm
-  if ! root_norm="$(_realpath_portable "$BACKUP_DIR" 2>/dev/null)"; then
+  if ! root_norm="$(_realpath_portable "$BACKUP_DIR" 2>/dev/null && printf '.')"; then
     echo "[Error] Unable to resolve backup root: $BACKUP_DIR" >&2
     return 1
   fi
-  if ! path_norm="$(_normalize_delete_target_path "$raw_path" 2>/dev/null)"; then
+  root_norm="${root_norm%.}"
+  if ! path_norm="$(_normalize_delete_target_path "$raw_path" 2>/dev/null && printf '.')"; then
     echo "[Error] Invalid backup path: $raw_path" >&2
     return 1
   fi
+  path_norm="${path_norm%.}"
 
   case "$path_norm" in
   "$root_norm" | "$root_norm"/*) ;;
@@ -595,8 +669,10 @@ function _write_backup_archive_checksum() {
 }
 
 function _verify_backup_archive_checksum_if_present() {
-  local archive="${1:-}" checksum_file="" line="" expected="" checksum_name="" extra="" actual=""
-  [ -f "$archive" ] || return 1
+  local archive="${1:-}" digest_archive="${2:-${1:-}}"
+  local checksum_file="" line="" expected="" checksum_name="" extra="" actual=""
+  [ -n "$archive" ] || return 1
+  [ -f "$digest_archive" ] || return 1
   checksum_file="$(_backup_archive_checksum_file "$archive")" || return 1
   if [ ! -f "$checksum_file" ]; then
     echo "[Warn] No checksum sidecar found for backup archive: $archive" >&2
@@ -617,11 +693,219 @@ function _verify_backup_archive_checksum_if_present() {
     echo "[Error] Checksum sidecar ${checksum_file} references '${checksum_name}', expected '$(basename "$archive")'." >&2
     return 1
   fi
-  actual="$(_sha256_digest_file "$archive")" || return 1
+  actual="$(_sha256_digest_file "$digest_archive")" || return 1
   if [ "$actual" != "$expected" ]; then
     echo "[Error] Backup archive checksum mismatch: $archive" >&2
     return 1
   fi
+}
+
+function _backup_remove_private_restore_dir() {
+  local restore_dir="${1:-}" tmp_root=""
+  _backup_ensure_runtime_defaults
+  [ -n "$restore_dir" ] || return 0
+  tmp_root="${TMP_DIR%/}"
+  case "$restore_dir" in
+  "$tmp_root"/restore_*) ;;
+  *)
+    echo "[Error] Refusing to remove unexpected restore workspace: $restore_dir" >&2
+    return 1
+    ;;
+  esac
+
+  if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
+    runtime_state_path_guard_if_declared "$TMP_DIR" "restore temporary directory" || return 1
+    runtime_state_path_guard_if_declared "$restore_dir" "restore temporary workspace" || return 1
+  fi
+  if ! declare -F safe_rm_rf >/dev/null 2>&1; then
+    echo "[Error] Safe restore workspace cleanup is unavailable." >&2
+    return 1
+  fi
+  safe_rm_rf "$restore_dir" "$TMP_DIR"
+}
+
+function _backup_make_private_restore_dir() {
+  local __out_var="${1:-}"
+  require_valid_var_name "$__out_var" || return 1
+  _backup_ensure_runtime_defaults
+
+  if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
+    runtime_state_path_guard_if_declared "$TMP_DIR" "restore temporary directory" || return 1
+  fi
+  if [ ! -d "$TMP_DIR" ]; then
+    echo "[Error] Restore temporary directory is unavailable: $TMP_DIR" >&2
+    return 1
+  fi
+
+  local created_restore_dir="" old_umask
+  old_umask="$(umask)"
+  umask 077
+  if ! created_restore_dir="$(mktemp -d "${TMP_DIR%/}/restore_XXXXXX")"; then
+    umask "$old_umask"
+    echo "[Error] Failed to create private restore workspace under $TMP_DIR" >&2
+    return 1
+  fi
+  umask "$old_umask"
+
+  if ! chmod 700 "$created_restore_dir" 2>/dev/null; then
+    _backup_remove_private_restore_dir "$created_restore_dir" || true
+    echo "[Error] Failed to secure private restore workspace: $created_restore_dir" >&2
+    return 1
+  fi
+  if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
+    runtime_state_path_guard_if_declared "$created_restore_dir" "restore temporary workspace" || {
+      _backup_remove_private_restore_dir "$created_restore_dir" || true
+      return 1
+    }
+  fi
+
+  printf -v "$__out_var" '%s' "$created_restore_dir"
+}
+
+function _validate_backup_directory_tree_safe() {
+  local source_dir="${1:-}" unsafe_entry=""
+  if [ ! -d "$source_dir" ] || [ -L "$source_dir" ]; then
+    echo "[Error] Backup directory snapshot is not a physical directory: $source_dir" >&2
+    return 1
+  fi
+
+  if ! unsafe_entry="$(find "$source_dir" -mindepth 1 \( -type l -o \( ! -type d ! -type f \) \) -print -quit 2>/dev/null)"; then
+    echo "[Error] Failed to inspect backup directory snapshot: $source_dir" >&2
+    return 1
+  fi
+  if [ -n "$unsafe_entry" ]; then
+    echo "[Error] Backup directory contains a symlink or special filesystem object: $unsafe_entry" >&2
+    return 1
+  fi
+}
+
+function _backup_directory_identity() {
+  local path="${1:-}" stat_path="" identity=""
+  [ -n "$path" ] || return 1
+  if [ ! -d "$path" ] || [ -L "$path" ]; then
+    return 1
+  fi
+
+  stat_path="$path"
+  case "$stat_path" in
+  -*) stat_path="./$stat_path" ;;
+  esac
+
+  if identity="$(trap - ERR; command stat -c '%d:%i' -- "$stat_path" 2>/dev/null || exit 1)"; then
+    :
+  elif identity="$(trap - ERR; command stat -f '%d:%i' "$stat_path" 2>/dev/null || exit 1)"; then
+    :
+  else
+    return 1
+  fi
+
+  case "$identity" in
+  "" | *[!0-9:]* | *:*:*) return 1 ;;
+  *:*) ;;
+  *) return 1 ;;
+  esac
+  printf '%s\n' "$identity"
+}
+
+function _snapshot_backup_directory_for_restore() {
+  local __out_var="${1:-}" source_dir="${2:-}" restore_dir="${3:-}"
+  require_valid_var_name "$__out_var" || return 1
+  if [ ! -d "$source_dir" ] || [ -L "$source_dir" ]; then
+    echo "[Error] Backup path is not a physical directory: $source_dir" >&2
+    return 1
+  fi
+  [ -d "$restore_dir" ] || return 1
+
+  local source_physical="" restore_physical="" current_physical=""
+  local source_identity="" source_recheck_identity="" source_after_identity=""
+  if ! source_identity="$(_backup_directory_identity "$source_dir")"; then
+    echo "[Error] Failed to identify physical backup directory: $source_dir" >&2
+    return 1
+  fi
+  source_physical="$(cd "$source_dir" 2>/dev/null && pwd -P && printf '.')" || return 1
+  source_physical="${source_physical%$'\n.'}"
+  restore_physical="$(cd "$restore_dir" 2>/dev/null && pwd -P && printf '.')" || return 1
+  restore_physical="${restore_physical%$'\n.'}"
+  if [ -L "$source_dir" ]; then
+    echo "[Error] Backup directory changed to a symlink while preparing the restore snapshot: $source_dir" >&2
+    return 1
+  fi
+  case "$restore_physical" in
+  "$source_physical" | "$source_physical"/*)
+    echo "[Error] Refusing to create a restore snapshot inside its source directory: $source_dir" >&2
+    return 1
+    ;;
+  esac
+
+  local snapshot_dir="${restore_dir%/}/directory"
+  if ! mkdir -m 700 "$snapshot_dir" 2>/dev/null; then
+    echo "[Error] Failed to create private backup directory snapshot." >&2
+    return 1
+  fi
+
+  if ! source_recheck_identity="$(_backup_directory_identity "$source_dir")" ||
+    [ "$source_recheck_identity" != "$source_identity" ]; then
+    echo "[Error] Backup directory changed identity while preparing the restore snapshot: $source_dir" >&2
+    return 1
+  fi
+
+  # Run cp from the opened source directory so later pathname replacement does
+  # not redirect traversal. Verify the second open has the same physical path
+  # and device/inode identity captured above. -P preserves links for fail-closed
+  # validation below, and the final identity checks reject a pathname swap that
+  # occurs during the copy.
+  if ! (
+    cd "$source_dir" &&
+      current_physical="$(pwd -P && printf '.')" &&
+      [ "${current_physical%$'\n.'}" = "$source_physical" ] &&
+      [ "$(_backup_directory_identity .)" = "$source_identity" ] &&
+      COPYFILE_DISABLE=1 COPY_EXTENDED_ATTRIBUTES_DISABLE=1 cp -RP . "$snapshot_dir/" &&
+      [ "$(_backup_directory_identity .)" = "$source_identity" ]
+  ); then
+    echo "[Error] Failed to snapshot backup directory: $source_dir" >&2
+    return 1
+  fi
+  if ! source_after_identity="$(_backup_directory_identity "$source_dir")" ||
+    [ "$source_after_identity" != "$source_identity" ]; then
+    echo "[Error] Backup directory changed identity while creating the restore snapshot: $source_dir" >&2
+    return 1
+  fi
+  _validate_backup_directory_tree_safe "$snapshot_dir" || return 1
+  printf -v "$__out_var" '%s' "$snapshot_dir"
+}
+
+function _snapshot_backup_archive_for_restore() {
+  local __out_var="${1:-}" archive="${2:-}" restore_dir="${3:-}"
+  require_valid_var_name "$__out_var" || return 1
+  [ -f "$archive" ] || return 1
+  [ -d "$restore_dir" ] || return 1
+
+  local snapshot_dir="${restore_dir%/}/archive" snapshot_path="" old_umask
+  if ! mkdir -m 700 "$snapshot_dir" 2>/dev/null; then
+    echo "[Error] Failed to create private backup archive snapshot directory." >&2
+    return 1
+  fi
+  snapshot_path="${snapshot_dir}/archive.tar.gz"
+
+  old_umask="$(umask)"
+  umask 077
+  # Shell redirection opens the operator-supplied pathname once. Validation and
+  # extraction use only the private regular-file snapshot created from that FD.
+  if ! cat <"$archive" >"$snapshot_path"; then
+    umask "$old_umask"
+    rm -f "$snapshot_path"
+    echo "[Error] Failed to snapshot backup archive: $archive" >&2
+    return 1
+  fi
+  umask "$old_umask"
+
+  if [ ! -f "$snapshot_path" ] || [ -L "$snapshot_path" ] || ! chmod 400 "$snapshot_path" 2>/dev/null; then
+    rm -f "$snapshot_path"
+    echo "[Error] Failed to secure backup archive snapshot." >&2
+    return 1
+  fi
+  _verify_backup_archive_checksum_if_present "$archive" "$snapshot_path" || return 1
+  printf -v "$__out_var" '%s' "$snapshot_path"
 }
 
 function _tar_archive_is_noop_backup() {

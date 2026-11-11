@@ -1,0 +1,7 @@
+mode (and|or):
+> 1) Normalize repository permissions (current)
+  2) Prepare Darwin Certbot mounts for sudo user mapping
+  3) Repair a different directory...
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

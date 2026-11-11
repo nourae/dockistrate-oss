@@ -1,4 +1,8 @@
 # shellcheck shell=bash
+if ! declare -F _global_settings_update_nginx_config_for_security_change >/dev/null 2>&1; then
+  # shellcheck source=common.sh
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/common.sh"
+fi
 
 # Control trusted proxy ranges for the real_ip module
 function set_trusted_proxies() {
@@ -35,6 +39,6 @@ function set_trusted_proxies() {
   else
     echo "${GLOBAL_SETTINGS_INFO_PREFIX} TRUSTED_PROXY_RANGES cleared in $GLOBAL_SETTINGS_FILE."
   fi
-  update_nginx_config || { transaction_return_failure; return 1; }
+  _global_settings_update_nginx_config_for_security_change || { transaction_return_failure; return 1; }
   _config_end_transaction_if_started "$started_txn" || { transaction_return_failure; return 1; }
 }

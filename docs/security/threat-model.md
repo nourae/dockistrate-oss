@@ -19,6 +19,7 @@ Assumptions grounded in repository state:
 - The current `state/` tree should be writable only by trusted operators. If untrusted local users can run the CLI or modify `state/`, several risks become critical.
 - ACL and security-rule IP selectors are IPv4-only in the current runtime model. IPv6 clients must be handled by upstream network policy, proxy topology, or future explicit IPv6 support rather than assuming Dockistrate IP ACL rows cover them.
 - Data sensitivity varies by deployment. The model assumes production deployments may carry credentials, PII, session cookies, API tokens, or regulated data through proxied traffic and packet captures.
+- Operator value visibility defaults to `full`. The opt-in `redacted` policy hides Docker option, header, and generic managed/raw Nginx directive values in Dockistrate command previews, audit/verbose command entries, success messages, and list/status output, and skips affected interactive recents/favorites. This is a display/history-copy control for CLI and interactive mode, not a storage boundary: execution inputs, persisted state, and generated config retain real values. Changing the policy does not erase older logs/history or sanitize shell history, process arguments, proxy/backend logs, captures, or TLS key logs. Interactive keyboard input can remain visible on the terminal. Evidence: `lib/utils/operator_visibility.sh`, `lib/cli/run_command.sh`, `lib/cli/review_command.sh`, `lib/cli/interactive_recents.sh`, `lib/nginx_directives/`.
 
 Open questions that would materially change risk ranking:
 - Will production deployments be single-operator/single-tenant, or can multiple admins or tenants share one host, Docker daemon, proxy, or `state/` tree?
@@ -29,6 +30,7 @@ Open questions that would materially change risk ranking:
 ### Primary components
 - CLI and interactive picker: parses operator commands, loads modules, prepares runtime state, and dispatches workflows. Evidence: `dockistrate.sh`, `lib/cli/run_command.sh`.
 - State/config store: CSV-backed state, global settings, TLS/mTLS metadata, Docker options, Nginx directive overrides, ACL/security rules, logs, backups, pcaps, and temporary files under `state/`. Evidence: `lib/config/common.sh`, `lib/utils/state_csv.sh`.
+- Editable domain state: `state/domains/<domain>/config/` is operator input, while `runtime/applied/` records the validated active configuration. Manual apply captures a complete candidate and validates schema/reference relationships before runtime changes; rollback preserves later source edits. Status and unrelated commands use applied state so unfinished drafts remain isolated. CSV values are parsed as data and are never sourced as shell code. Evidence: `lib/domain_config/`.
 - Runtime path and permission guard layer: rejects symlinked/out-of-root runtime paths and tightens sensitive file modes. Evidence: `lib/runtime_paths.sh`, `lib/config/bootstrap_config_runtime.sh`, `lib/permissions/common.sh`.
 - Nginx generator and lifecycle manager: renders HTTP/stream config, default 444 servers, ACL/security includes, header maps, TLS/mTLS directives, and recreates/reloads the managed proxy container. Evidence: `lib/nginx/update_nginx_config.sh`, `lib/nginx/recreate_nginx_container.sh`, `lib/nginx/fix_default_config.sh`.
 - Backend Docker orchestration: starts, updates, stops, rolls back, and tracks backend containers and Docker networks. Evidence: `lib/backends/add_backend.sh`, `lib/backends/update_backend.sh`, `lib/backends/common.sh`.
@@ -43,7 +45,9 @@ Open questions that would materially change risk ranking:
 - Internet clients -> Nginx proxy container: HTTP, HTTPS, TCP, UDP, and HTTP/3 traffic reaches published ports. Nginx applies host/port/path routing, optional TLS/mTLS, default 444 servers for unmatched hosts, optional trusted proxy real-IP handling, ACL/security rules, headers, redirects, and directive overrides. Evidence: `lib/nginx/update_nginx_config.sh`, `lib/nginx/fix_default_config.sh`, `lib/nginx/_backend_mtls_directives.sh`.
 - Nginx proxy container -> Backend containers: proxied traffic crosses Docker networks to backend IP/port targets. Nginx joins backend networks and disconnects unused networks, but container network isolation is still an operator design decision. Evidence: `lib/nginx/common.sh`, `lib/nginx/remove_unused_nginx_networks.sh`.
 - Dockistrate CLI -> Certbot container -> ACME CA: certificate issuance uses Dockerized Certbot, mounted cert/acme-webroot directories, optional webroot mode through Nginx, and standalone port 80 mode when Nginx is not running. Evidence: `lib/certs/add_cert.sh`, `lib/certs/common.sh`.
-- Dockistrate CLI -> Capture container -> Packet captures/TLS key logs: diagnostics can run `tcpdump` in the Nginx network namespace and optionally enable TLS key logging. Capture output and TLS key logs are sensitive local artifacts with containment checks and restricted modes. Evidence: `lib/capture/start_capture.sh`, `lib/capture/common.sh`, `lib/nginx/recreate_nginx_container.sh`.
+- Dockistrate CLI -> Capture container -> Packet captures/TLS key logs: diagnostics can run `tcpdump` in the Nginx network namespace and optionally enable TLS key logging. Capture output and TLS key logs are sensitive local artifacts with containment checks and restricted modes. The privileged Nginx master opens the key log before workers drop privileges; workers inherit the append descriptor while directory/file modes remain `700/600`. The helper rejects symlinked paths, non-regular files, and multiply linked files. Capture-enabled workers and privileged/Docker operators remain within the trust boundary for session secrets. Evidence: `lib/capture/start_capture.sh`, `lib/capture/common.sh`, `lib/nginx/recreate_nginx_container.sh`, `sslkeyloglib/sslkeylogfile.c`.
+
+- Backup source -> private restore snapshot -> state: interactive confirmation precedes copying or decompression; public restore bounds compressed archive bytes, uncompressed tar-stream bytes, logical file payload, and entry counts before live mutation. Directory inputs use the same payload and entry limits. Tar format admission and fixed reader filters prevent nested compression from bypassing the stream limit; reading through tar padding includes appended members in validation. Runtime initialization waits for an accepted candidate, and caller termination signals stop the owned intake process group before private cleanup. Explicit positive `RESTORE_MAX_*` environment overrides support larger operator-selected backups in both CLI and interactive mode; restored settings cannot change these controls, and internal rollback is independent of them. These bounds limit intake work rather than establish archive provenance or reserve disk space. See [restore intake limits](../guides/backups-restore-cleanup.md#restore-intake-limits).
 
 #### Diagram
 ```mermaid
@@ -63,6 +67,61 @@ flowchart LR
   CAPTURE --> PCAPS["Pcaps and Key Logs"]
 ```
 
+### Stored operator-value copies
+
+Full visibility intentionally retains operator values in successful interactive
+recents/favorites and attempted-command audit entries, including commands that
+later fail validation or roll back. Saved-command files, Dockistrate application
+logs, and current/rotated audit logs require owner-only `600` access before
+reading/writing their contents. Existing copies are tightened by runtime
+preparation and permission repair. Failure to establish private access prevents
+persistence and raw log-message fallback. These controls cover CLI and
+interactive logging while preserving full-mode command replay. Evidence:
+`lib/cli/interactive_recents.sh`, `lib/logging/`, `lib/permissions/`.
+
+This addresses unintended access to additional history/audit copies; it does
+not remove intentional retention, encrypt disk data, or erase previously
+collected copies. Recents have a count limit, favorites have no age limit, and
+audit rotation keeps one prior file. Backend/header removal does not purge
+history/logs. Backups can retain saved commands and earlier settings; retention
+is an operator choice. Canonical state remains a separate access surface:
+`global_settings.csv` defaults to `640` and may contain Nginx Docker options.
+Startup, saves, and restore enforce that ceiling without widening tighter modes.
+Ordinary saves retain the existing numeric owner/group; replacement contents
+remain in private staging until their metadata is verified and the file is
+atomically published. Restore secures its validated private candidate before
+copying it into live state. Unsafe file types/links and failed permission or
+ownership checks stop the affected operation. Read-only semantic validation
+itself does not alter metadata. See the
+[saved-settings upgrade note](../guides/backups-restore-cleanup.md#saved-global-settings-permissions-after-upgrade).
+Private-file checks verify Unix mode bits, regular-file type, and link count;
+they do not remove extended ACLs or constrain privileged access and external
+filesystem sharing. Effective access still depends on those OS controls.
+See [storage and retention](../guides/advanced-nginx-docker-options.md#saved-values-and-retention).
+
+The external findings about saved Docker/header history and audit copies need
+revalidation against the merged implementation and its permission-failure,
+rotation, and retained-data behavior. This threat-model update does not mark
+those findings verified or closed; deliberate full-mode persistence and older
+external copies remain part of the operator trust model.
+
+### Private-key permission repair
+
+CLI and interactive permission repair recognize key/bundle filenames regardless
+of the configured certificate root and inspect other PEM files for private-key
+markers. Repair removes excess Unix mode bits without granting missing key
+access, is limited to the selected physical directory, and leaves symlinks
+unchanged. Hardlinked regular files and failed traversal/metadata/read checks
+stop repair before changes. Ownership/mode changes are verified; failures
+trigger metadata rollback, with incomplete recovery reported explicitly. A
+detected concurrent ownership/mode change or unexpected partial utility result
+is left untouched during rollback.
+These checks do not lock out other processes that can modify the same files.
+Metadata transactions do not archive key contents. These checks do not remove
+extended ACLs, encrypt stored material, or replace the trusted-operator and OS
+access model. Evidence: `lib/permissions/common.sh`,
+`lib/permissions/fix_permissions.sh`, `lib/permissions/metadata_transaction.sh`.
+
 ## Assets and security objectives
 | Asset | Why it matters | Security objective (C/I/A) |
 | --- | --- | --- |
@@ -72,6 +131,7 @@ flowchart LR
 | TLS private keys and certificates under `state/certs` | Exposure enables MITM or impersonation of configured domains | C/I |
 | mTLS CA, client certs, CRLs, and exported PKCS#12 bundles | Protect client-authenticated backends; exposure can bypass or weaken client authentication | C/I |
 | Backups under `state/backups` | Can restore or overwrite runtime state; may contain certs/config and rollback material | C/I/A |
+| Saved recents/favorites under `state/config` | Full-mode replayable commands can retain Docker, header, and directive secrets after active settings change | C/I |
 | Logs, audit logs, pcaps, and TLS key logs under `state/logs` and `state/pcaps` | May contain client IPs, URLs, headers, credentials, session material, or decrypted-session keys | C/I |
 | Backend network attachments and published proxy ports | Define internet exposure and east-west reachability between proxy and containers | I/A |
 | Nginx/Certbot/backend/capture image references | Mutable or malicious images can compromise traffic handling and local runtime state | I/A/C |
@@ -104,19 +164,31 @@ flowchart LR
 | Headers and path routing | CLI/state -> Nginx includes | Operator/state -> generated config | Header values, path matches, rewrites, redirects, and host aliases affect upstream requests/responses | `lib/headers/_build_header_files.sh`, `lib/nginx/_emit_path_locations.sh` |
 | Raw and typed Nginx directives | CLI/state -> Nginx includes | Operator -> generated config | Intentional advanced override surface; strict mode protects owner-managed directives | `lib/nginx_directives/catalog.sh`, `lib/nginx_directives/render.sh`, `lib/nginx_directives/strict_mode.sh` |
 | Backend and proxy Docker options | CLI/state -> Docker Engine | Operator -> Docker runtime | Reserved Dockistrate ownership flags are blocked, but risky admin flags may still be allowed | `lib/backends/validate_docker_opts.sh`, `lib/global_settings/set_nginx_docker_opts.sh` |
-| Image references and pull policy | CLI/state -> registries/Docker | Operator/registry -> runtime code | Nginx/Certbot defaults are pinned tags, capture default is digest-pinned, backend images are operator supplied | `lib/config/common.sh`, `lib/config/pull_image_if_autopull.sh` |
+| Image references and pull policy | CLI/state -> registries/Docker | Operator/registry -> runtime code | Fresh Nginx/Certbot defaults and the capture default use digests; existing saved selections and backend images remain operator supplied; digest selection pins content without authenticating the publisher | `lib/config/common.sh`, `lib/config/pull_image_if_autopull.sh`, [image maintenance](image-maintenance.md) |
 | Certificate upload and ACME issuance | CLI + filesystem + network | Operator/ACME -> cert store | Writes private keys and cert chains, runs Certbot, may publish port 80 standalone | `lib/certs/add_cert.sh`, `lib/certs/common.sh` |
 | mTLS lifecycle and export | CLI/state/filesystem | Operator -> client-auth material | CA/client keys, CRLs, and PKCS#12 export are sensitive | `lib/mtls/common.sh`, `lib/mtls/export_backend_client_p12.sh` |
 | Backup and restore | CLI + tar archive | Archive/filesystem -> state | Backup archive can overwrite state if validation fails | `lib/backups/common.sh`, `lib/backups/restore_backup_archive.sh` |
 | Packet capture and TLS decrypt | CLI + Docker + filesystem | Operator -> sensitive diagnostics | Writes pcaps and optionally TLS key logs with explicit acknowledgement and path guards | `lib/capture/start_capture.sh`, `lib/capture/common.sh`, `lib/capture/stop_capture.sh` |
 
 ## Top abuse paths
-1. Goal: hijack routed traffic. Steps: obtain local write access to `state/config/backend_ports.csv` or run privileged CLI commands -> alter backend upstream, path, alias, or port rows -> `update_nginx_config` renders new upstream routes -> internet traffic is proxied to an attacker-controlled container or port.
+ACL and security-rule edits, client-identity settings (trusted proxies, real-IP
+recursion, and global/backend client-IP headers), and dedicated-host
+`acl|security_rules|headers|all` inheritance updates replace the managed proxy.
+Removing the previous container terminates its existing authorized sessions;
+the operation checks the replacement container and `nginx -t` before success.
+This boundary prevents old workers from retaining revoked policy or trust.
+It does not promise continuous availability, test every listener/backend, or
+affect connections that bypass the managed proxy. Failed updates attempt to
+restore the previous state and runtime. CLI and interactive paths share this
+behavior; operator-selected trust ranges remain unrestricted beyond syntax
+validation. See [policy update behavior](../guides/access-control-security-rules.md#when-policy-changes-take-effect).
+
+1. Goal: hijack routed traffic. Steps: obtain local write access to a domain's editable CSVs and induce an operator to apply them, tamper directly with its privileged `runtime/applied` snapshot, or run privileged CLI commands -> alter backend, path, alias, or listener settings -> apply or regeneration activates the altered routes -> internet traffic is proxied to an attacker-controlled container or port. Editing a draft alone does not activate it.
 2. Goal: bypass IP-based access controls. Steps: operator configures a broad trusted proxy range or enables a client IP header in front of untrusted hops -> remote client supplies spoofed forwarding headers -> real-IP values influence ACL/security-rule decisions -> protected backend becomes reachable.
 3. Goal: compromise the host through Docker. Steps: compromise an operator account or automation that can pass image refs or Docker options -> run a malicious image or permissive mount/capability option -> Docker starts a privileged container -> attacker gains host filesystem or Docker control.
 4. Goal: compromise proxy integrity through image supply chain. Steps: deployment uses mutable image tags or untrusted registries -> registry/tag is replaced with malicious Nginx, Certbot, backend, or capture image -> auto-pull or manual start executes attacker-controlled code -> traffic, certs, or state are exposed.
 5. Goal: move laterally from a backend. Steps: attacker compromises one backend container -> scans networks shared with Nginx and other backends -> reaches services not intended for that tenant -> steals data or disrupts proxy/backend availability.
-6. Goal: exfiltrate TLS-protected traffic. Steps: obtain read access to `state/certs`, `state/pcaps`, or TLS key logs -> collect private keys, client certs, pcaps, or key-log material -> decrypt sessions, impersonate clients, or replay sensitive data.
+6. Goal: exfiltrate TLS-protected traffic. Steps: obtain read access to domain-owned `certs/` or `mtls/` directories, shared ACME state, retained legacy `state/certs`, `state/pcaps`, or TLS key logs -> collect private keys, client certs, pcaps, or key-log material -> decrypt sessions, impersonate clients, or replay sensitive data.
 7. Goal: inject unsafe Nginx behavior through advanced overrides. Steps: trusted or compromised operator adds raw directives, permissive TLS settings, or header/path overrides -> config remains syntactically valid but security posture is weakened -> attacker abuses larger request limits, proxy behavior, headers, or stream settings.
 8. Goal: restore malicious state. Steps: attacker supplies or tampers with a backup archive -> restore path accepts unsafe members or state rows -> generated config or runtime artifacts are overwritten -> proxy routing, ACLs, or cert material are compromised.
 9. Goal: deny service through configuration churn or bad state. Steps: frequent mutations, conflicting ports, invalid persisted rows, unavailable images, or failed reload/recreate operations occur -> Nginx fails readiness or rolls back -> exposed services experience downtime.
@@ -127,11 +199,11 @@ flowchart LR
 | TM-001 | Local untrusted user, compromised operator account, or compromised automation | Ability to write `state/`, alter checkout files, or run Dockistrate commands | Tamper with persisted state or generated config to change routing, ACLs, headers, TLS, or mTLS behavior | Traffic interception, unauthorized backend exposure, policy bypass, outage | `state/config/*`, generated Nginx config, TLS/mTLS state | Runtime path guards reject out-of-root and symlinked runtime paths; CSV headers/widths and render-time validation fail closed; transactions and rollback protect multi-file mutations (`lib/runtime_paths.sh`, `lib/nginx/update_nginx_config.sh`, `lib/backups/common.sh`) | No cryptographic integrity/signing for state; local write access is trusted | Restrict checkout and `state/` ownership to trusted admins only; run from release tags; consider optional file integrity monitoring or signed state snapshots for shared hosts | Audit `state/config` diffs, audit log changes, file-integrity alerts on CSV and generated config writes | Medium if host is shared; low if single trusted operator | High | high |
 | TM-002 | Remote attacker through misconfigured trusted proxy path | Nginx trusts a client IP header from a broad or untrusted proxy range | Spoof real client IP to bypass ACL/security-rule decisions | Unauthorized backend access | ACL/security rules, backend confidentiality/integrity | Trusted proxy ranges are syntactically validated; real-IP directives are emitted before ACL/security includes; fresh configs default ACL policy to deny (`lib/utils/validators.sh`, `lib/nginx/common.sh`, `lib/nginx/update_nginx_config.sh`) | Correct proxy topology is operator knowledge; Dockistrate cannot prove ranges are semantically trusted | Use tight CIDRs for `set-trusted-proxies`; avoid client-IP header trust outside a controlled load balancer; use mTLS or app auth for sensitive backends | Log/alert on unexpected `realip_remote_addr`, denied-to-allowed ACL shifts, and unusual proxy source ranges | Medium where deployed behind proxies | High | high |
 | TM-003 | Compromised operator account or malicious admin configuration | Ability to set backend/proxy images or Docker runtime options | Run malicious images or containers with risky mounts/capabilities | Host compromise, Docker daemon compromise, proxy/backend compromise | Docker Engine, host filesystem, proxy/backends | Docker option parser blocks Dockistrate-owned names, networks, mounts for proxy, published ports, labels, cleanup flags, positional override tokens, and control chars (`lib/backends/validate_docker_opts.sh`) | Risky but valid admin Docker options are intentionally allowed; Docker access itself is high privilege | Limit CLI/Docker access to trusted admins; prefer rootless/isolated Docker where feasible; document approved option profiles for production; separate tenants by host or daemon | Docker event monitoring for privileged containers, host mounts, unexpected images, and label changes | Medium | High | high |
-| TM-004 | Supply-chain attacker or compromised registry | Deployment uses mutable image tags, untrusted registries, or auto-pull behavior | Replace or poison Nginx, Certbot, backend, or capture images | Traffic interception, cert theft, malicious backend execution, host impact via container runtime | Images, proxy, Certbot mounts, backends, captures | Default Nginx/Certbot images are pinned tags, capture image is digest-pinned, image refs are syntax-validated, pull mode defaults to `if-missing` (`lib/config/common.sh`, `lib/utils/validators.sh`, `lib/config/pull_image_if_autopull.sh`) | Tags remain mutable; backend images are operator supplied; no built-in signature enforcement | Pin production images by digest; use trusted registries; disable auto-pull where reproducibility matters; record image digests during deployment | Alert on image digest drift, unexpected pulls, and container image changes | Medium | High | high |
+| TM-004 | Supply-chain attacker or compromised registry | Deployment selects untrusted image content, mutable tags, or an unreviewed digest | Replace or poison Nginx, Certbot, backend, or capture images | Traffic interception, cert theft, malicious backend execution, host impact via container runtime | Images, proxy, Certbot mounts, backends, captures | Fresh Nginx/Certbot defaults and the capture image are digest-pinned; image refs are syntax-validated; status distinguishes tags from digests (`lib/config/common.sh`, `lib/utils/validators.sh`, `lib/nginx/describe_image_with_local_state.sh`) | Persisted/custom tags remain mutable; digest pinning does not authenticate publishers; no built-in signature enforcement or automatic vulnerability assessment; `never` skips only explicit pulls | Review upstream sources, signatures/provenance where available, SBOMs and vulnerabilities; refresh pinned digests deliberately; record unavailable evidence and deployment digests using the [maintenance procedure](image-maintenance.md) | Alert on unexpected digest/reference changes and pulls; recheck advisories and pinned base packages | Medium | High | high |
 | TM-005 | Remote attacker abusing operator-configured advanced proxy behavior | Operator enables raw directives, weak TLS, broad body/time limits, or permissive headers/paths | Exploit a valid but risky configuration to weaken request handling, TLS posture, or response/request headers | Security-control bypass, increased DoS surface, header confusion | Nginx config, request/response policy, TLS policy | Typed directive catalog validates known directives; raw directives block control chars and Nginx structure chars; strict mode protects owner-managed directives (`lib/nginx_directives/catalog.sh`, `lib/nginx_directives/strict_mode.sh`) | Dockistrate intentionally preserves admin flexibility and does not enforce policy baselines | Define production policy profiles outside Dockistrate; review raw directive state before release; keep strict mode on unless a change is explicitly approved | Diff `nginx_directives.csv`, alert when strict mode is off, run `check-config` after overrides | Medium | Medium | medium |
 | TM-006 | Compromised backend container or tenant | Backend networks are shared or backend has broad network reachability | Move laterally through Docker networks connected to Nginx and other backends | Cross-service access, data exposure, service disruption | Backend containers, Docker networks, Nginx proxy | Operator can choose backend networks; Nginx connects required networks and removes unused network attachments (`lib/backends/add_backend.sh`, `lib/nginx/common.sh`, `lib/nginx/remove_unused_nginx_networks.sh`) | No built-in tenant authorization or network policy enforcement between backends | Use per-tenant/per-risk Docker networks; avoid mixing mutually untrusted backends; isolate sensitive workloads on separate hosts/daemons | Monitor Docker network membership and east-west traffic; alert on unexpected container-to-container connections | Medium in multi-tenant deployments | Medium/High | medium |
 | TM-007 | Local user with read access, compromised operator account, or malicious capture workflow | Access to `state/certs`, `state/pcaps`, TLS key logs, exported PKCS#12 bundles, or logs | Exfiltrate key material, captures, or decrypted-session artifacts | TLS impersonation, mTLS bypass, sensitive traffic disclosure | TLS keys, mTLS CA/client keys, pcaps, TLS key logs, logs | Sensitive file modes are tightened; cert refs and mTLS dirs are contained; TLS decrypt capture requires explicit enablement and validates key-log paths (`lib/permissions/common.sh`, `lib/utils/certs.sh`, `lib/capture/common.sh`) | Artifacts are still stored on local disk and may contain production secrets | Keep `state/` on encrypted storage for production; restrict backup/capture export; prohibit TLS decrypt in sensitive environments unless incident-approved; rotate certs after suspected read exposure | File access monitoring on certs/pcaps/key logs; audit `start-capture --tls-decrypt`; alert on PKCS#12 export | Low/Medium | High | medium |
-| TM-008 | Malicious local archive source or compromised operator | Ability to supply backup archive or choose restore target | Restore unsafe paths/member types or malicious state to overwrite runtime config | State compromise, key overwrite, outage | Backups, state files, generated config | Backup names are constrained; tar entries reject absolute/parent paths, links, and unsafe member types before extraction (`lib/backups/common.sh`, `lib/backups/restore_backup_archive.sh`) | Restoring a syntactically safe but malicious backup is still a privileged destructive action | Only restore trusted backups; verify checksums/provenance; keep offline backup inventory; review restored state before restarting production proxy | Log restore commands, compare post-restore config diff, alert on backup archive source anomalies | Low | High | medium |
+| TM-008 | Malicious local archive source or compromised operator | Ability to supply backup archive or directory | Exhaust intake resources or restore unsafe paths/member types or malicious state | State compromise, key overwrite, outage | Backups, state files, generated config, host disk/CPU | Early interactive confirmation; bounded archive, expanded-stream, file-payload and entry intake; private input snapshots; unsafe path/member rejection; persisted-setting validation before live changes; internal rollback independent of public intake limits (`lib/backups/restore_backup.sh`, `lib/backups/common.sh`, `lib/backups/restore_backup_archive.sh`) | Limits can be raised by the privileged operator; disk space is not reserved; syntactically valid malicious configuration remains a privileged restore choice | Only restore trusted backups; verify checksums/provenance; size explicit limits and available storage for large restores; keep offline backup inventory; review restored state before restarting production proxy | Log restore commands and intake rejections, compare post-restore config diff, alert on backup source anomalies and disk use | Low | High | medium |
 | TM-009 | Remote clients, compromised backend, or operator error | Exposed ports, expensive proxy/backend behavior, frequent config changes, unavailable images, or conflicting ports | Exhaust proxy/backend resources or trigger failed reload/recreate cycles | Service downtime or degraded proxy performance | Nginx availability, backend availability, Docker runtime | Port conflicts are preflighted; generated config is validated before render/reload paths; Nginx runtime rollback/readiness checks exist for mutating updates (`lib/utils/ports_runtime.sh`, `lib/nginx/update_nginx_config.sh`, `lib/backups/common.sh`) | No rate limiting or resource policy is enforced by default; availability controls depend on operator directives and backend behavior | Add production Nginx limits/rate controls via reviewed directives; stage changes; monitor reload failures; avoid unbounded capture on production traffic | Alert on Nginx restart/reload failures, high 4xx/5xx rates, Docker health changes, disk growth in logs/pcaps | Medium | Medium | medium |
 
 ## Criticality calibration
@@ -161,6 +233,7 @@ flowchart LR
 | `lib/mtls/` | Manages backend CA/client certs, CRLs, revocation, and PKCS#12 export | TM-007 |
 | `lib/capture/common.sh` | Stores and validates TLS-decrypt state and key-log paths | TM-001, TM-007 |
 | `lib/capture/start_capture.sh` | Starts packet capture containers and writes pcaps/key logs | TM-007, TM-009 |
+| `sslkeyloglib/sslkeylogfile.c` | Opens the private log before worker privilege changes, rejects unsafe file targets, and records keys across SNI context changes | TM-007 |
 | `lib/backups/common.sh` | Transaction rollback, safe tar extraction, backup naming, and archive validation | TM-001, TM-008 |
 | `lib/permissions/common.sh` | Tightens runtime file/directory modes and sensitive TLS file permissions | TM-001, TM-007 |
 

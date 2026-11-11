@@ -1,0 +1,15 @@
+Review command
+  Command: Set Backend ACL Policy (set-backend-acl-policy)
+  Description: Override ACL allow/deny policy for a backend, alias, or dedicated host
+
+Arguments:
+  Domain: example.com
+  Policy: allow
+
+CLI equivalent:
+  ./dockistrate.sh set-backend-acl-policy example.com allow
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

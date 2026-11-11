@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 
 function set_nginx_directive_raw() {
-  local scope_input="${1:-}" scope="" domain="" listen_port="" path_prefix="" directive="" value=""
+  local scope_input="${1:-}" scope="" domain="" listen_port="" path_prefix="" directive="" value="" display_value=""
   local usage_msg="[Usage] set-nginx-directive-raw <global|backend|port|path|stream-global|stream-backend|stream-port> [domain] [listen_port] [path_prefix] <directive> <value>"
 
   if [ -z "$scope_input" ]; then
@@ -80,19 +80,21 @@ function set_nginx_directive_raw() {
   fi
   end_transaction_success
 
+  display_value="$(operator_value_for_display directive_value "$value")"
+
   if [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_GLOBAL" ]; then
-    echo "[Info] Set global raw nginx directive '${directive}' to '${value}'."
+    echo "[Info] Set global raw nginx directive '${directive}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_BACKEND" ]; then
-    echo "[Info] Set backend raw nginx directive '${directive}' for '${domain}' to '${value}'."
+    echo "[Info] Set backend raw nginx directive '${directive}' for '${domain}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_PORT" ]; then
-    echo "[Info] Set port raw nginx directive '${directive}' for '${domain}:${listen_port}' to '${value}'."
+    echo "[Info] Set port raw nginx directive '${directive}' for '${domain}:${listen_port}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_PATH" ]; then
-    echo "[Info] Set path raw nginx directive '${directive}' for '${domain}:${listen_port}${path_prefix}' to '${value}'."
+    echo "[Info] Set path raw nginx directive '${directive}' for '${domain}:${listen_port}${path_prefix}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_STREAM_GLOBAL" ]; then
-    echo "[Info] Set stream-global raw nginx directive '${directive}' to '${value}'."
+    echo "[Info] Set stream-global raw nginx directive '${directive}' to '${display_value}'."
   elif [ "$scope" = "$NGINX_DIRECTIVE_SCOPE_STREAM_BACKEND" ]; then
-    echo "[Info] Set stream-backend raw nginx directive '${directive}' for '${domain}' to '${value}'."
+    echo "[Info] Set stream-backend raw nginx directive '${directive}' for '${domain}' to '${display_value}'."
   else
-    echo "[Info] Set stream-port raw nginx directive '${directive}' for '${domain}:${listen_port}' to '${value}'."
+    echo "[Info] Set stream-port raw nginx directive '${directive}' for '${domain}:${listen_port}' to '${display_value}'."
   fi
 }

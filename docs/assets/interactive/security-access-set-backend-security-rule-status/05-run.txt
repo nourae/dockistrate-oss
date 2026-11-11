@@ -1,0 +1,15 @@
+Review command
+  Command: Set Backend Security Rule Status (set-backend-security-rule-status)
+  Description: Override security rule status for a backend, alias, or dedicated host
+
+Arguments:
+  Domain: example.com
+  Status code: 404
+
+CLI equivalent:
+  ./dockistrate.sh set-backend-security-rule-status example.com 404
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

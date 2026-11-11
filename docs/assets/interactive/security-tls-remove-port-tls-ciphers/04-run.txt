@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Port TLS Ciphers (remove-port-tls-ciphers)
+  Description: Clear TLS cipher override for an HTTPS port
+
+Arguments:
+  Listen port: 443
+
+CLI equivalent:
+  ./dockistrate.sh remove-port-tls-ciphers 443
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

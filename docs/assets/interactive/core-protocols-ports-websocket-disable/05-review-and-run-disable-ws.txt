@@ -1,0 +1,15 @@
+Review command
+  Command: Disable WS (disable-ws)
+  Description: Disable WebSocket handling for a port mapping
+
+Arguments:
+  Domain: protocol.example.com
+  Listen port: 18080
+
+CLI equivalent:
+  ./dockistrate.sh disable-ws protocol.example.com 18080
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

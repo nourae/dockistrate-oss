@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
 test_recreate_nginx_preflights_new_busy_ports() {
-  cat >"${CONFIG_DIR}/backend_ports.csv" <<'EOF'
-record_type,domain,backend_upstream,network,path_prefix,header_set,listen_port,upstream_port,protocol,certificate_ref,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc,path_match,path_priority,path_target,path_rewrite,reason,source_location
-backend,preflight-busy.test,127.0.0.1:7000,dockistrate-net,,,,,,,,,,,,,,,,,
-port,preflight-busy.test,,,,,18180,7000,http,none,no,off,,off,auto,,,,,,
-EOF
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend preflight-busy.test nginx:alpine 7000 http --no-expose >/dev/null
+  assertEquals "seed managed backend before preflighting new proxy listeners" 0 $?
+  SKIP_DOCKER_CHECKS=false run_dockistrate stop-nginx >/dev/null
+  assertEquals "stop the existing proxy before preflighting ports it no longer holds" 0 $?
+  local source_dir
+  for source_dir in "$STATE_DIR/domains/preflight-busy.test/config" "$STATE_DIR/domains/preflight-busy.test/runtime/applied"; do
+    printf 'listen_port,upstream_port,protocol,certificate_owner,certificate_id,websocket,redirect_enabled,redirect_code,http3_enabled,alt_svc\n18180,7000,http,,,no,off,,off,auto\n' >"$source_dir/ports.csv"
+  done
 
   local docker_log_file="${STATE_DIR}/docker_recreate_preflight_busy.log"
   rm -f "$docker_log_file"

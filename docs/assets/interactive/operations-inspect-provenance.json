@@ -1,0 +1,911 @@
+{
+  "schema_version": 1,
+  "scenario": "operations-inspect",
+  "source_commit": "3d2ee0b58e2f729255105b30e5715990696f107b",
+  "started_at": "2026-11-07T16:16:19.386922+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42390384054",
+  "github_run_attempt": "1",
+  "scenario_module": "operations",
+  "group": "inspect",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1016-aws x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"44 hours ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"6 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"7 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-07T16:19:21.251897+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "operations-inspect-status",
+      "journey_family": "operations-inspect-status",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-inspect-status/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-status/03-command-result.txt",
+      "image_sha256": "0cd921731c06e6d9de9ddc2c26f248bad93018668f3e3949502246625173a0b1",
+      "transcript_sha256": "bf92484a6fb837cafef9c26f43cc017b7298c3b3648e3985bccfe8b97b451704",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status.pty.log",
+      "pty_byte_offset": 82926,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-status",
+      "journey_family": "operations-inspect-status",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result \u2014 earlier output 1",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-inspect-status/04-command-result-earlier-output-1.png",
+      "transcript": "docs/assets/interactive/operations-inspect-status/04-command-result-earlier-output-1.txt",
+      "image_sha256": "95545e799dc929353a5e7cca0acfceae8dfb955b25c2f94d43802e34c086d1b7",
+      "transcript_sha256": "bf92484a6fb837cafef9c26f43cc017b7298c3b3648e3985bccfe8b97b451704",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status.pty.log",
+      "pty_byte_offset": 82926,
+      "viewport": "scrollback",
+      "scrollback_steps": 1
+    },
+    {
+      "journey": "operations-inspect-status",
+      "journey_family": "operations-inspect-status",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result \u2014 earlier output 2",
+      "kind": "result",
+      "command": "status",
+      "image": "docs/assets/interactive/operations-inspect-status/05-command-result-earlier-output-2.png",
+      "transcript": "docs/assets/interactive/operations-inspect-status/05-command-result-earlier-output-2.txt",
+      "image_sha256": "80805190fdcaa29b7c24ab8e2b1308f4c1a3b30cace404d920f647cf28db5bc5",
+      "transcript_sha256": "bf92484a6fb837cafef9c26f43cc017b7298c3b3648e3985bccfe8b97b451704",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status.pty.log",
+      "pty_byte_offset": 82926,
+      "viewport": "top",
+      "scrollback_steps": 2
+    },
+    {
+      "journey": "operations-inspect-status-all",
+      "journey_family": "operations-inspect-status-all",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "status-all",
+      "image": "docs/assets/interactive/operations-inspect-status-all/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-status-all/03-command-result.txt",
+      "image_sha256": "49e5dc16372d1b995f39ac5ffa1ac0a9fe8bc69755b4bff915b908e9d8a4a850",
+      "transcript_sha256": "bb9d61214ae6014251c9b7d7ad1c05ed6e22687d88e5cfffc07000e064457a43",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status-all.pty.log",
+      "pty_byte_offset": 83895,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-status-all",
+      "journey_family": "operations-inspect-status-all",
+      "session_index": 1,
+      "step": 4,
+      "title": "Command result \u2014 earlier output 1",
+      "kind": "result",
+      "command": "status-all",
+      "image": "docs/assets/interactive/operations-inspect-status-all/04-command-result-earlier-output-1.png",
+      "transcript": "docs/assets/interactive/operations-inspect-status-all/04-command-result-earlier-output-1.txt",
+      "image_sha256": "1d279ef2c19befa7cb9d1347a948a7c83fef9c96e88c398244ddd3f27fbfe3a9",
+      "transcript_sha256": "bb9d61214ae6014251c9b7d7ad1c05ed6e22687d88e5cfffc07000e064457a43",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status-all.pty.log",
+      "pty_byte_offset": 83895,
+      "viewport": "scrollback",
+      "scrollback_steps": 1
+    },
+    {
+      "journey": "operations-inspect-status-all",
+      "journey_family": "operations-inspect-status-all",
+      "session_index": 1,
+      "step": 5,
+      "title": "Command result \u2014 earlier output 2",
+      "kind": "result",
+      "command": "status-all",
+      "image": "docs/assets/interactive/operations-inspect-status-all/05-command-result-earlier-output-2.png",
+      "transcript": "docs/assets/interactive/operations-inspect-status-all/05-command-result-earlier-output-2.txt",
+      "image_sha256": "5dc194c6a0f9e66702fa5157c0667d0492dfdafce054b6f6dae3ea640a7d31f5",
+      "transcript_sha256": "bb9d61214ae6014251c9b7d7ad1c05ed6e22687d88e5cfffc07000e064457a43",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status-all.pty.log",
+      "pty_byte_offset": 83895,
+      "viewport": "scrollback",
+      "scrollback_steps": 2
+    },
+    {
+      "journey": "operations-inspect-status-all",
+      "journey_family": "operations-inspect-status-all",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result \u2014 earlier output 3",
+      "kind": "result",
+      "command": "status-all",
+      "image": "docs/assets/interactive/operations-inspect-status-all/06-command-result-earlier-output-3.png",
+      "transcript": "docs/assets/interactive/operations-inspect-status-all/06-command-result-earlier-output-3.txt",
+      "image_sha256": "30992342f584f65c3cd9c80fc222db8bb1f63cfa9c57941578208de6720b51ee",
+      "transcript_sha256": "bb9d61214ae6014251c9b7d7ad1c05ed6e22687d88e5cfffc07000e064457a43",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status-all.pty.log",
+      "pty_byte_offset": 83895,
+      "viewport": "scrollback",
+      "scrollback_steps": 3
+    },
+    {
+      "journey": "operations-inspect-status-all",
+      "journey_family": "operations-inspect-status-all",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result \u2014 earlier output 4",
+      "kind": "result",
+      "command": "status-all",
+      "image": "docs/assets/interactive/operations-inspect-status-all/07-command-result-earlier-output-4.png",
+      "transcript": "docs/assets/interactive/operations-inspect-status-all/07-command-result-earlier-output-4.txt",
+      "image_sha256": "fdbae0fa626bb731bd2f331de304f92f41b6400a30e4bd7f3ed29705e14af9d9",
+      "transcript_sha256": "bb9d61214ae6014251c9b7d7ad1c05ed6e22687d88e5cfffc07000e064457a43",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status-all.pty.log",
+      "pty_byte_offset": 83895,
+      "viewport": "top",
+      "scrollback_steps": 4
+    },
+    {
+      "journey": "operations-inspect-check-config",
+      "journey_family": "operations-inspect-check-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/operations-inspect-check-config/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-check-config/03-command-result.txt",
+      "image_sha256": "14083bdad33b41c9ff1bd4afae3499007107497d085664f32c5b6d84593fc33b",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-check-config.pty.log",
+      "pty_byte_offset": 65483,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-tail-proxy-logs",
+      "journey_family": "operations-inspect-tail-proxy-logs",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "tail-proxy-logs",
+      "image": "docs/assets/interactive/operations-inspect-tail-proxy-logs/03-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-inspect-tail-proxy-logs/03-enter-value.txt",
+      "image_sha256": "dbe31eac260e89a100c65be1f223f6794fee419825f872692bfabac0948d98d7",
+      "transcript_sha256": "78693d6adcbeadd2355f8967db6b150bcfd4ea67930228f6efaa3070f911f57c",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-tail-proxy-logs.pty.log",
+      "pty_byte_offset": 71597,
+      "value": "20"
+    },
+    {
+      "journey": "operations-inspect-tail-proxy-logs",
+      "journey_family": "operations-inspect-tail-proxy-logs",
+      "session_index": 1,
+      "step": 4,
+      "title": "Observe the application request in proxy logs",
+      "kind": "result",
+      "command": "tail-proxy-logs",
+      "image": "docs/assets/interactive/operations-inspect-tail-proxy-logs/04-observe-the-application-request-in-proxy-logs.png",
+      "transcript": "docs/assets/interactive/operations-inspect-tail-proxy-logs/04-observe-the-application-request-in-proxy-logs.txt",
+      "image_sha256": "67b8b39ee6ce973bdc8950a49d4dc571c735087cea3cbc4425dd9062749fedd7",
+      "transcript_sha256": "151982b222a050151ead1bda26d8694345a3416a009a1ff69cd9997256785617",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-tail-proxy-logs.pty.log",
+      "pty_byte_offset": 72450
+    },
+    {
+      "journey": "operations-inspect-list-log-fields",
+      "journey_family": "operations-inspect-list-log-fields",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-log-fields",
+      "image": "docs/assets/interactive/operations-inspect-list-log-fields/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-list-log-fields/03-command-result.txt",
+      "image_sha256": "9ff0ece3fb37c935700d7f5141ff4ec7a98d4c88386da1dd9d1eb2df6b229845",
+      "transcript_sha256": "ee0c183665c41121bc7bb3bcf85608cdc5d7fc3a7ccbb41e3b05f192c745ad19",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields.pty.log",
+      "pty_byte_offset": 76508,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-add-log-field",
+      "journey_family": "operations-inspect-add-log-field",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-log-field",
+      "image": "docs/assets/interactive/operations-inspect-add-log-field/03-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-inspect-add-log-field/03-enter-value.txt",
+      "image_sha256": "3d56fe780320e78f041e0dfcb8766841b36cf93575aef0e90d74072256bb4d72",
+      "transcript_sha256": "072a4925439d45886f9bb21ba3a3838789fae1dd47cadfc27487986a66db5fc9",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-add-log-field.pty.log",
+      "pty_byte_offset": 72115,
+      "value": "$request_time"
+    },
+    {
+      "journey": "operations-inspect-add-log-field",
+      "journey_family": "operations-inspect-add-log-field",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "add-log-field",
+      "image": "docs/assets/interactive/operations-inspect-add-log-field/04-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-inspect-add-log-field/04-enter-value.txt",
+      "image_sha256": "f1a8977c3a8402c7260050cb3c57137ec889e9c80aed48cb50666b412fdb1f06",
+      "transcript_sha256": "97f9244b0b5ea9e3a630ebc2d91cfaa04eb205302960b3db1f3ba81ae68a4b44",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-add-log-field.pty.log",
+      "pty_byte_offset": 72144,
+      "value": ""
+    },
+    {
+      "journey": "operations-inspect-add-log-field",
+      "journey_family": "operations-inspect-add-log-field",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "add-log-field",
+      "image": "docs/assets/interactive/operations-inspect-add-log-field/05-run.png",
+      "transcript": "docs/assets/interactive/operations-inspect-add-log-field/05-run.txt",
+      "image_sha256": "04443e61d269f29d5f91247d9a55b369d8dad86ce6e98a21f74e23a34b0055e0",
+      "transcript_sha256": "2fd6c81ddb041a1f04760bba6402aad4bb8e42dfd5d0183f49e469769ec5b8a3",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-add-log-field.pty.log",
+      "pty_byte_offset": 72509,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-inspect-add-log-field",
+      "journey_family": "operations-inspect-add-log-field",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "add-log-field",
+      "image": "docs/assets/interactive/operations-inspect-add-log-field/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-add-log-field/06-command-result.txt",
+      "image_sha256": "e88b406cf26e1645963e00d1516e15bc92f42e18469e8cc1045312feaa06c9fe",
+      "transcript_sha256": "b09cb358bdb2c984957759cbb739cd696ed28583831804ed0990dc000a22de97",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-add-log-field.pty.log",
+      "pty_byte_offset": 73751,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-list-log-fields--session-002",
+      "journey_family": "operations-inspect-list-log-fields",
+      "session_index": 2,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-log-fields",
+      "image": "docs/assets/interactive/operations-inspect-list-log-fields--session-002/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-list-log-fields--session-002/03-command-result.txt",
+      "image_sha256": "858e218adeb7dbed89c1419b46cfe7a820316c479f239f82d0dfb442c8fba5f0",
+      "transcript_sha256": "b8462fb8b2cd9e8fc29598088354d6cba90e7b0e8f07f185336cdcf84c68479f",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields--session-002.pty.log",
+      "pty_byte_offset": 76528,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-update-log-field",
+      "journey_family": "operations-inspect-update-log-field",
+      "session_index": 1,
+      "step": 3,
+      "title": "$request_time",
+      "kind": "menu",
+      "command": "update-log-field",
+      "image": "docs/assets/interactive/operations-inspect-update-log-field/03-request-time.png",
+      "transcript": "docs/assets/interactive/operations-inspect-update-log-field/03-request-time.txt",
+      "image_sha256": "6c01803b52d979283f3080ec69702beb578f02a2ff37d61492f13bdb332f8dab",
+      "transcript_sha256": "d1a9921f109c676ee2844bdab41f7cb1f63a59010a15b6876c6033558554a910",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-update-log-field.pty.log",
+      "pty_byte_offset": 72181,
+      "selected": "$request_time"
+    },
+    {
+      "journey": "operations-inspect-update-log-field",
+      "journey_family": "operations-inspect-update-log-field",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "update-log-field",
+      "image": "docs/assets/interactive/operations-inspect-update-log-field/04-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-inspect-update-log-field/04-enter-value.txt",
+      "image_sha256": "4442a3ff706d8ccb761c3273b0917ed1737f5c2c4055e8621817921548c55f3b",
+      "transcript_sha256": "f34b2c0f0844ad77e43a664876e1f864a6109f33d6bba7f32fe93f99672bbcbf",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-update-log-field.pty.log",
+      "pty_byte_offset": 72240,
+      "value": "$upstream_response_time"
+    },
+    {
+      "journey": "operations-inspect-update-log-field",
+      "journey_family": "operations-inspect-update-log-field",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "update-log-field",
+      "image": "docs/assets/interactive/operations-inspect-update-log-field/05-run.png",
+      "transcript": "docs/assets/interactive/operations-inspect-update-log-field/05-run.txt",
+      "image_sha256": "8700f3b6338b9de4ba610c0b3db8a15a354fe3c877355a8d62905b6dc044f9ca",
+      "transcript_sha256": "3da840187d5eaebd623dedf69c5837e3471e896d9d8fc89792fbeddb43387981",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-update-log-field.pty.log",
+      "pty_byte_offset": 72637,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-inspect-update-log-field",
+      "journey_family": "operations-inspect-update-log-field",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "update-log-field",
+      "image": "docs/assets/interactive/operations-inspect-update-log-field/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-update-log-field/06-command-result.txt",
+      "image_sha256": "c52ba1961b224b90e047a78f33d598f9afd75c5841c5c48909b329492c5a7950",
+      "transcript_sha256": "37bc59b524c1b6f7cb75e382f8fe580020ad5ac2ac837ab1f3a8b79537bd264d",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-update-log-field.pty.log",
+      "pty_byte_offset": 73896,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-move-log-field",
+      "journey_family": "operations-inspect-move-log-field",
+      "session_index": 1,
+      "step": 3,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "move-log-field",
+      "image": "docs/assets/interactive/operations-inspect-move-log-field/03-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-inspect-move-log-field/03-enter-value.txt",
+      "image_sha256": "6226d6f54bce45a0b06efd64ad3658f93f41875d090deacf4ffab5a04afcb8ef",
+      "transcript_sha256": "377e555c8b175d349f691d322d19671e7fdb5d60f78ecd2e3d4356614e46789c",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-move-log-field.pty.log",
+      "pty_byte_offset": 75331,
+      "value": "9"
+    },
+    {
+      "journey": "operations-inspect-move-log-field",
+      "journey_family": "operations-inspect-move-log-field",
+      "session_index": 1,
+      "step": 4,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "move-log-field",
+      "image": "docs/assets/interactive/operations-inspect-move-log-field/04-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-inspect-move-log-field/04-enter-value.txt",
+      "image_sha256": "f939505f12389d024f1d920b554e7e37df40f0a06d3759bd9bf1d930e0dc6ef2",
+      "transcript_sha256": "c0bb375c9f25171531d24c268d11225441dc208331e63ce212ba38fb8a6c726d",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-move-log-field.pty.log",
+      "pty_byte_offset": 75365,
+      "value": "1"
+    },
+    {
+      "journey": "operations-inspect-move-log-field",
+      "journey_family": "operations-inspect-move-log-field",
+      "session_index": 1,
+      "step": 5,
+      "title": "Run",
+      "kind": "menu",
+      "command": "move-log-field",
+      "image": "docs/assets/interactive/operations-inspect-move-log-field/05-run.png",
+      "transcript": "docs/assets/interactive/operations-inspect-move-log-field/05-run.txt",
+      "image_sha256": "6236a6f4968ed4a3b3a6590d32e8639cb864bdfa802a0b0af4d6b010d8fd0db2",
+      "transcript_sha256": "80d50b937cc0a1324fb7e37eace92634e4b0e283126f5ab8e67234be964c959b",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-move-log-field.pty.log",
+      "pty_byte_offset": 75705,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-inspect-move-log-field",
+      "journey_family": "operations-inspect-move-log-field",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "move-log-field",
+      "image": "docs/assets/interactive/operations-inspect-move-log-field/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-move-log-field/06-command-result.txt",
+      "image_sha256": "b093f4437d2c2ce452ac484ade5c4e3ee55f66ff782a664d58b76dd557b44b09",
+      "transcript_sha256": "97c9c6f76ab7d8c7505e5cc186b4bf8b8b9eb7633e6fcea8e098086e3dfd087c",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-move-log-field.pty.log",
+      "pty_byte_offset": 76938,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-list-log-fields--session-003",
+      "journey_family": "operations-inspect-list-log-fields",
+      "session_index": 3,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-log-fields",
+      "image": "docs/assets/interactive/operations-inspect-list-log-fields--session-003/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-list-log-fields--session-003/03-command-result.txt",
+      "image_sha256": "507b097dc1eef2dc87f92fbfa399bafa21360335eef064a80656f835a3e63178",
+      "transcript_sha256": "1ab783553ea4dc466a7a129b303908629cfff65d2a84d6233aa2d285cc5b169a",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields--session-003.pty.log",
+      "pty_byte_offset": 76546,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-remove-log-field",
+      "journey_family": "operations-inspect-remove-log-field",
+      "session_index": 1,
+      "step": 3,
+      "title": "$upstream_response_time",
+      "kind": "menu",
+      "command": "remove-log-field",
+      "image": "docs/assets/interactive/operations-inspect-remove-log-field/03-upstream-response-time.png",
+      "transcript": "docs/assets/interactive/operations-inspect-remove-log-field/03-upstream-response-time.txt",
+      "image_sha256": "90472360a65caada67234cd102bd05d0d82308e32ac4fd1ff46580374165b844",
+      "transcript_sha256": "64071b505237ffc7eb00907c10c45b032e95292bd09b53fb29bca60d425734a3",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-remove-log-field.pty.log",
+      "pty_byte_offset": 94087,
+      "selected": "$upstream_response_time"
+    },
+    {
+      "journey": "operations-inspect-remove-log-field",
+      "journey_family": "operations-inspect-remove-log-field",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "remove-log-field",
+      "image": "docs/assets/interactive/operations-inspect-remove-log-field/04-run.png",
+      "transcript": "docs/assets/interactive/operations-inspect-remove-log-field/04-run.txt",
+      "image_sha256": "ab02ef86b00502d388a9467824e22c280999447afbeb0ce681f62988963466cf",
+      "transcript_sha256": "b36ae4de17f303aedb3592d39bd5acae9c65654e247582882b72fef2491239a8",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-remove-log-field.pty.log",
+      "pty_byte_offset": 94458,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-inspect-remove-log-field",
+      "journey_family": "operations-inspect-remove-log-field",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "remove-log-field",
+      "image": "docs/assets/interactive/operations-inspect-remove-log-field/05-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-inspect-remove-log-field/05-enter-value.txt",
+      "image_sha256": "97160dadf17b463ac604794a09e3d7ff35bb4de275e393a2daf7120a1f2eca59",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-remove-log-field.pty.log",
+      "pty_byte_offset": 94512,
+      "value": "YES"
+    },
+    {
+      "journey": "operations-inspect-remove-log-field",
+      "journey_family": "operations-inspect-remove-log-field",
+      "session_index": 1,
+      "step": 6,
+      "title": "Command result",
+      "kind": "result",
+      "command": "remove-log-field",
+      "image": "docs/assets/interactive/operations-inspect-remove-log-field/06-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-remove-log-field/06-command-result.txt",
+      "image_sha256": "487d32a8281e9556d9327f0aac6a71ff5d157f7b1981765631d1d7981a19eafe",
+      "transcript_sha256": "430f15c00cb8bdf6b39ea9070593fc31cc505951e0e0410781631b9d3b322d52",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-remove-log-field.pty.log",
+      "pty_byte_offset": 95753,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-log-fields-restored",
+      "journey_family": "operations-inspect-log-fields-restored",
+      "session_index": 1,
+      "step": 3,
+      "title": "Command result",
+      "kind": "result",
+      "command": "list-log-fields",
+      "image": "docs/assets/interactive/operations-inspect-log-fields-restored/03-command-result.png",
+      "transcript": "docs/assets/interactive/operations-inspect-log-fields-restored/03-command-result.txt",
+      "image_sha256": "41fa978e80bd634e017d55542ae6a60b3f8be50a98c7471592cbb1120448570f",
+      "transcript_sha256": "ee0c183665c41121bc7bb3bcf85608cdc5d7fc3a7ccbb41e3b05f192c745ad19",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-log-fields-restored.pty.log",
+      "pty_byte_offset": 76517,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-inspect-logging-config",
+      "journey_family": "operations-inspect-logging-config",
+      "session_index": 1,
+      "step": 3,
+      "title": "Configuration test passed",
+      "kind": "result",
+      "command": "check-config",
+      "image": "docs/assets/interactive/operations-inspect-logging-config/03-configuration-test-passed.png",
+      "transcript": "docs/assets/interactive/operations-inspect-logging-config/03-configuration-test-passed.txt",
+      "image_sha256": "5569b03946d5593c5211e2c6e36618a6d06cb7e37ef4088314dddc52e93dcd46",
+      "transcript_sha256": "149778770d2c6f3a2bdbae0c244f826e03a199917b32fb2ca8f414c80d577ac0",
+      "pty_log": "docs/assets/interactive/evidence/operations-inspect/operations-inspect-logging-config.pty.log",
+      "pty_byte_offset": 8031,
+      "viewport": "bottom"
+    }
+  ],
+  "checks": [
+    {
+      "label": "status-interactive-result",
+      "status": "passed",
+      "command": "status",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "status-all-interactive-result",
+      "status": "passed",
+      "command": "status-all",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "check-config-interactive-result",
+      "status": "passed",
+      "command": "check-config",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "diagnostic-request",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-inspect/diagnostic-request.headers"
+    },
+    {
+      "label": "tail-proxy-logs-observed",
+      "status": "passed",
+      "command": "tail-proxy-logs",
+      "outcome": "request and 200 response visible; Ctrl-C stops following"
+    },
+    {
+      "label": "list-log-fields-interactive-result",
+      "status": "passed",
+      "command": "list-log-fields",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "add-log-field-interactive-result",
+      "status": "passed",
+      "command": "add-log-field",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "list-log-fields-interactive-result",
+      "status": "passed",
+      "command": "list-log-fields",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "update-log-field-interactive-result",
+      "status": "passed",
+      "command": "update-log-field",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "move-log-field-interactive-result",
+      "status": "passed",
+      "command": "move-log-field",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "log-field-request",
+      "status": "passed",
+      "http_status": 200,
+      "headers": "docs/assets/interactive/evidence/operations-inspect/log-field-request.headers"
+    },
+    {
+      "label": "list-log-fields-interactive-result",
+      "status": "passed",
+      "command": "list-log-fields",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "remove-log-field-interactive-result",
+      "status": "passed",
+      "command": "remove-log-field",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "list-log-fields-interactive-result",
+      "status": "passed",
+      "command": "list-log-fields",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "operations"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "8a98f9cbb8e98fde361f078bda2f86f0082210997f23dcb1e95a060843d7fe2a",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 32
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/operations-inspect-recordings.tar.gz",
+    "sha256": "fcafe8792a1b2010ce62359f7c9523d710efeade5ae88c757bebe9dd0be992af",
+    "size": 106943,
+    "members": {
+      "docs/assets/interactive/evidence/operations-inspect/001-source-commit.log": {
+        "sha256": "5987ca8d9204d09d800b36d6b5bfb8553cd73f23aea59309eb0ed38d6961afa5",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/operations-inspect/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-inspect/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/operations-inspect/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/operations-inspect/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-inspect/006-kernel-version.log": {
+        "sha256": "858aad262bf1f1e848c00747d19e51058b24cf497f7541adf93cd8d9f6f04187",
+        "size": 38
+      },
+      "docs/assets/interactive/evidence/operations-inspect/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/operations-inspect/008-fixture-image.log": {
+        "sha256": "a3a5fdc22128308a829a543818614354730d9b02eda420e01dfafb8426b4362f",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/operations-inspect/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/operations-inspect/010-fixture-backend.log": {
+        "sha256": "94705da38852a41ce18e6f08441419ce5b59c6f14b620e8b209fef9dbd4880e1",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/operations-inspect/011-fixture-public-demo.log": {
+        "sha256": "23d50ee0b8f70c411b470020c4620125a07ffd28169ed5285cc7c94d8682dd74",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/operations-inspect/012-fixture-https.log": {
+        "sha256": "9b04c831ca11d15c2cd4f1756d4e66c5c74035faf01d6eaf387b30de1910946d",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/operations-inspect/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/operations-inspect/014-command-alias.log": {
+        "sha256": "1ea622c2c5c31ea9770c8832e15c8ae9351c2fc63dcdd282c753c891fcd03ac1",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-inspect/015-command-alias.log": {
+        "sha256": "ba4fab9483e6aba5f6397a78bafa9a80848a022254058cde4a0e2cdb9bb63c8f",
+        "size": 11
+      },
+      "docs/assets/interactive/evidence/operations-inspect/016-command-alias.log": {
+        "sha256": "c9dfa8ad8458c971596ce7a90b8f8e1016fc46c9d1377d3c01c19fb4b51567de",
+        "size": 13
+      },
+      "docs/assets/interactive/evidence/operations-inspect/017-command-alias.log": {
+        "sha256": "5a25a8181b82e26916f2592676ea7e2d001d7fbe0fe4860c3fb398fc1372b645",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/operations-inspect/018-command-alias.log": {
+        "sha256": "5f57acae7d356e608e855ed0c395bf8dd48d058125f6668852175c1d8ccdc332",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/operations-inspect/019-command-alias.log": {
+        "sha256": "a1e445404a5bd4e781b459dc1d35640f78dc5668e1f140db5a9dd4d3dbf7ddb7",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/operations-inspect/020-command-alias.log": {
+        "sha256": "5f57acae7d356e608e855ed0c395bf8dd48d058125f6668852175c1d8ccdc332",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/operations-inspect/021-command-alias.log": {
+        "sha256": "38ecd34708d5fe8e9cee483374dce13385a9989b68a5ca7d3d40d772039777d7",
+        "size": 17
+      },
+      "docs/assets/interactive/evidence/operations-inspect/022-inspect-field-positions.log": {
+        "sha256": "79d78227ba374ad421ae349db81474f4a85b5d1c6f056d4f607ffad285695429",
+        "size": 188
+      },
+      "docs/assets/interactive/evidence/operations-inspect/023-command-alias.log": {
+        "sha256": "721da7e152baaeb910f182cfd94ca92998825d33477d2ef74b5cc05685f55135",
+        "size": 15
+      },
+      "docs/assets/interactive/evidence/operations-inspect/024-command-alias.log": {
+        "sha256": "5f57acae7d356e608e855ed0c395bf8dd48d058125f6668852175c1d8ccdc332",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/operations-inspect/025-command-alias.log": {
+        "sha256": "d0f125ce3a3d0bfec7146092d30995af00063610f0d0a60e16dc36104e2306dd",
+        "size": 17
+      },
+      "docs/assets/interactive/evidence/operations-inspect/026-command-alias.log": {
+        "sha256": "5f57acae7d356e608e855ed0c395bf8dd48d058125f6668852175c1d8ccdc332",
+        "size": 16
+      },
+      "docs/assets/interactive/evidence/operations-inspect/027-image-identities.log": {
+        "sha256": "a06f08ac73381bce08070d326e2e863b193077f0e483b456fb2c09b78ffc80da",
+        "size": 2934
+      },
+      "docs/assets/interactive/evidence/operations-inspect/commands.jsonl": {
+        "sha256": "f7fdd8375cdc81877350670a8d108d909d17ef695c7d9402f7c209a7eac582b6",
+        "size": 10799
+      },
+      "docs/assets/interactive/evidence/operations-inspect/diagnostic-request.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-inspect/diagnostic-request.headers": {
+        "sha256": "ad93aa7f232a51bf71cefb75c6b1f942791e5d8338898828ca2103ed2a5f6096",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-inspect/diagnostic-request.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-inspect/diagnostic-request.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-inspect/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-inspect/log-field-request.body": {
+        "sha256": "201cd1bf3d32e7f5fd8aa22c6de5370852fe03fb654ee22d345dd82f16a246a0",
+        "size": 896
+      },
+      "docs/assets/interactive/evidence/operations-inspect/log-field-request.headers": {
+        "sha256": "66b1ab8bb0fa434bf2816779095dc9e738635665817fc1a834674752f8bcb658",
+        "size": 238
+      },
+      "docs/assets/interactive/evidence/operations-inspect/log-field-request.status": {
+        "sha256": "c11e3f4837efde2441e23a7b9da02131f53bf59fddeb7147c4ab81afe400460f",
+        "size": 4
+      },
+      "docs/assets/interactive/evidence/operations-inspect/log-field-request.stderr": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-add-log-field.events.jsonl": {
+        "sha256": "b9f3b6f828e03b7d5968fdabc6c4d56d4df92fe6915950b2a560410581fd7303",
+        "size": 15629
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-add-log-field.pty.log": {
+        "sha256": "54d1b8c4fd7c990c1616d8648678c4799980e0f687f7e8f2b8b3fa632bcc1f9e",
+        "size": 81852
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-check-config.events.jsonl": {
+        "sha256": "6c3db1dae77ea12a57907c16409b6d236f8159cc9e880d2a652ced113dc62a48",
+        "size": 11673
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-check-config.pty.log": {
+        "sha256": "be49487a8b3530e010a57d10e5fde5708539545b84c4bf7e307594ec8be94be3",
+        "size": 73584
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields--session-002.events.jsonl": {
+        "sha256": "71d9e7eb6819b21af4b7a1c1ca039d6d1df927d7410845bcea3cef6844d74ef3",
+        "size": 13402
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields--session-002.pty.log": {
+        "sha256": "a6f32a380669e25fbe31ec67b86355e2171273be32005d12b5954038aab808bf",
+        "size": 84629
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields--session-003.events.jsonl": {
+        "sha256": "b6c587477f13e0dcdc0fbdae4e109b7fcd1ae40aa38b39a1ea540595508e9ef3",
+        "size": 13414
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields--session-003.pty.log": {
+        "sha256": "62bf428a18f495893970c215e11568013ae6c79ba9443e1a92e76cb063fe216d",
+        "size": 84660
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields.events.jsonl": {
+        "sha256": "4eb7440b970355535486728ee164e0bb1c2071ab7558468de0ca118b07528e41",
+        "size": 12746
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-list-log-fields.pty.log": {
+        "sha256": "4ad49c6c94e4aaeb52fb5b4ddc895974b32ac9dadeafe83c3653e2e3572576a1",
+        "size": 84613
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-log-fields-restored.events.jsonl": {
+        "sha256": "b9577d2646403b6dde193159d096afae9131277432520cca3108227c806797b2",
+        "size": 13140
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-log-fields-restored.pty.log": {
+        "sha256": "6de1dbb15d5e689a146411af6473a019382ed06f10f470163d9da4619f93e532",
+        "size": 84643
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-logging-config.events.jsonl": {
+        "sha256": "2cc1c9213a9712cf6f75703932a33bd1508257fee55973051d47ed410d6bb998",
+        "size": 9342
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-logging-config.pty.log": {
+        "sha256": "e063c0c0eb2110f0c7bed91337f424cb58eda4edbcaa81ba140add395accaa5d",
+        "size": 16153
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-move-log-field.events.jsonl": {
+        "sha256": "8f47c5ea899a64f2d5358089c563e28a51cc3e89fb8733b879162f7a174ecb1b",
+        "size": 16241
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-move-log-field.pty.log": {
+        "sha256": "ba1bd9ad2ed223b8816aa6a99fa62a7b779985d58b9c2c5d9444b6b36d749690",
+        "size": 85052
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-remove-log-field.events.jsonl": {
+        "sha256": "aafd0f3445eb0e439ba0d90fd9d20fdf750828b49f1a3ba23914be26fb24813c",
+        "size": 16754
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-remove-log-field.pty.log": {
+        "sha256": "9c9fd0a165309c3e57732a84918d1e7ff2d9f0b3ba7949e86b6c0b354fb2baad",
+        "size": 103871
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status-all.events.jsonl": {
+        "sha256": "b5c8821ffe110a6fee4259636055318064e81dc8bb2d66bf6efecd9f87b0be5d",
+        "size": 16981
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status-all.pty.log": {
+        "sha256": "344ee04ec3018f3a1094009994d27b327206c194d85a257269c0de48d63f7505",
+        "size": 91998
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status.events.jsonl": {
+        "sha256": "398b0cf4703c55206574b67e4f8c49f3f38284e58a3bb1f7ccb25b3d6b2e51c1",
+        "size": 15500
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-status.pty.log": {
+        "sha256": "8b4367e299c5b41c169f76c6b8e4e9181cd65ce32c3dd6d3be0cd5e9eeea0724",
+        "size": 91029
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-tail-proxy-logs.events.jsonl": {
+        "sha256": "8fdc45511a49295cf2e2b298f4b88a2a5a9ba5624850f2791fbfe688f99b081e",
+        "size": 9260
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-tail-proxy-logs.pty.log": {
+        "sha256": "d66d3583880015038bc7d2d9122e5a04c01a81eb63c31f918a4edb653a52fc93",
+        "size": 72450
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-update-log-field.events.jsonl": {
+        "sha256": "18ed1a454050b78c081260d356f0825d5516d8509cc1c30c681ab1e440f22836",
+        "size": 18636
+      },
+      "docs/assets/interactive/evidence/operations-inspect/operations-inspect-update-log-field.pty.log": {
+        "sha256": "4ed23e04b3c3e60985eb64402e8ca00382f0bcac448deb57e6d9180b3b531133",
+        "size": 82010
+      }
+    }
+  }
+}

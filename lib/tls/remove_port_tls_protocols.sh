@@ -7,6 +7,7 @@ function remove_port_tls_protocols() {
     return 1
   }
   require_valid_port "$port" 1 || return 1
+  port="$(normalize_port "$port")" || return 1
   if [ -f "$PORT_TLS_PROTOCOLS_FILE" ]; then
     local started_txn=false
     if ! transaction_is_active; then

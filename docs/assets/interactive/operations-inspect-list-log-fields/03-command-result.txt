@@ -1,0 +1,11 @@
+
+1:  $realip_remote_addr
+2:  $remote_addr
+3:  $host
+4:  "$request"
+5:  $status
+6:  $body_bytes_sent
+7: [request] "$http_referer"
+8: [request] "$http_user_agent"
+
+Press Enter to continue...

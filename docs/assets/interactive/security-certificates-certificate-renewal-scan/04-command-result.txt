@@ -1,0 +1,7 @@
+
+[Info] Scanning configured HTTPS certificates (renewal window: 30 days)...
+[Info] example.com/selfsigned-443 expires on Nov  9 11:34:24 2027 GMT.
+[Info] example.com/selfsigned-8443 expires on Nov  9 11:36:20 2027 GMT.
+[Info] Renewal scan finished; no certificates required renewal.
+
+Press Enter to continue...

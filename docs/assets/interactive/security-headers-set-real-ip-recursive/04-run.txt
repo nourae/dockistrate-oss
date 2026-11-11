@@ -1,0 +1,14 @@
+Review command
+  Command: Set Real IP Recursive (set-real-ip-recursive)
+  Description: Toggle recursive real_ip processing
+
+Arguments:
+  On or off: on
+
+CLI equivalent:
+  ./dockistrate.sh set-real-ip-recursive on
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,18 @@
+Review command
+  Command: Update Backend (update-backend)
+  Description: Update backend settings, or explicitly replace an unmanaged container by full ID and image
+
+Arguments:
+  Domain: example.com
+  Container image: nginx:alpine
+  Backend container port:
+  Extra Docker run options:
+  Docker network: dockistrate-net
+
+CLI equivalent:
+  ./dockistrate.sh update-backend example.com --image nginx:alpine --network dockistrate-net
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

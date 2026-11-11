@@ -67,6 +67,22 @@ record_selected_command_if_allowed
 [ "$RECENT_RECORD_COUNT" -eq 0 ] ||
   fail_test "upgrade-preflight should skip interactive recent-command recording"
 
+interactive_picker_run_command_prompt "fix-permissions" ||
+  fail_test "interactive permission repair prompt should succeed"
+[ "$PREPARE_RUNTIME_COUNT" -eq 0 ] ||
+  fail_test "permission repair should skip unrelated runtime preparation"
+record_selected_command_if_allowed
+[ "$RECENT_RECORD_COUNT" -eq 0 ] ||
+  fail_test "permission repair should skip unrelated recent-command writes"
+
+interactive_picker_run_command_prompt "restore-backup" ||
+  fail_test "interactive restore prompt should succeed"
+[ "$PREPARE_RUNTIME_COUNT" -eq 0 ] ||
+  fail_test "restore argument collection should defer runtime preparation until intake succeeds"
+record_selected_command_if_allowed
+[ "$RECENT_RECORD_COUNT" -eq 0 ] ||
+  fail_test "restore argument collection should not record an unconfirmed restore"
+
 interactive_picker_run_command_prompt "status" ||
   fail_test "normal interactive command should still prepare runtime"
 [ "$PREPARE_RUNTIME_COUNT" -eq 1 ] ||

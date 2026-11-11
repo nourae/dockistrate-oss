@@ -1,0 +1,14 @@
+Condition 5 operator:
+  1) Equals — string equals. Example: path equals /health
+  2) Not Equals — string not equal. Example: path not_equals /health
+  3) Contains — substring present (case-insensitive). Example: path contains /api/
+  4) Not Contains — substring not present. Example: path not_contains /api/
+  5) Starts With — string starts with. Example: path starts_with /admin
+  6) Not Starts With — string does not start with. Example: path not_starts_with /admin
+  7) Ends With — string ends with. Example: path ends_with .json
+  8) Not Ends With — string does not end with. Example: path not_ends_with .json
+> 9) Matches — regex matches (case-insensitive). Example: path matches /health
+  10) Not Matches — regex does not match. Example: path not_matches /health
+  11) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

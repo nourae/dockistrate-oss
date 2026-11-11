@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Backend Ca (remove-backend-ca)
+  Description: Delete the backend CA and client certificates
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh remove-backend-ca example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

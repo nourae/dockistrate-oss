@@ -1,0 +1,14 @@
+Review command
+  Command: Fix Default Config (fix-default-config)
+  Description: Regenerate default Nginx config and certificates
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh fix-default-config
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

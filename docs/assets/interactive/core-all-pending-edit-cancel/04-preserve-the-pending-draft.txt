@@ -1,0 +1,6 @@
+Unapplied file changes for example.com. Resolve these before continuing with stop-backend.
+  1) Review file changes
+  2) Apply file changes
+> 3) Cancel command
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,14 @@
+Review command
+  Command: Update Nginx Config (update-nginx-config)
+  Description: Regenerate applied configuration without applying pending domain edits (fails fast if nginx -s reload fails on a reused container)
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh update-nginx-config
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,16 @@
+Review command
+  Command: Set Nginx Directive (set-nginx-directive)
+  Description: Set a typed nginx directive override (global/backend/port/path/stream scopes)
+
+Arguments:
+  Directive scope: global
+  Directive name: client_max_body_size
+  Directive value: 2m
+
+CLI equivalent:
+  ./dockistrate.sh set-nginx-directive global client_max_body_size 2m
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,4 @@
+$ /opt/dockistrate-demo/dockistrate.sh list-backends
+Domain               | Aliases              | Config Image             | Running Image            | Network         | HTTP Ver   | mTLS  | Client IP       | Proxy IP        | ACL   | ACL St    | Sec St    | Ports
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+preserved.example.com | -                    | nginx:alpine             | nginx@sha256:713fc2ebfd92 | dockistrate-net | http2      | no    | X-Forwarded-For | X-Real-IP       | allow | 403       | 403       | 80:http

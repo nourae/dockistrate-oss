@@ -1,0 +1,5 @@
+Alias for example.com (blank=Back):
+> 1) Enter alias
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

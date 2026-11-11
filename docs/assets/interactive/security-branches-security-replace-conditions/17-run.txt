@@ -1,0 +1,25 @@
+Review command
+  Command: Update Security Rule (update-security-rule)
+  Description: Change a security rule's action, conditions, or rejection settings
+
+Arguments:
+  ID: 1
+  Status code: Inherited default
+  Condition count: 2
+  Condition 1 — Source: header
+  Condition 1 — Name: User-Agent
+  Condition 1 — Test: contains
+  Condition 1 — Value: OtherBot
+  Condition 2 — Source: method
+  Condition 2 — Name: -
+  Condition 2 — Test: equals
+  Condition 2 — Value: POST
+  Condition combination: or
+
+CLI equivalent:
+  ./dockistrate.sh update-security-rule 1 --code - --count 2 header User-Agent contains OtherBot method - equals POST --mode or
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

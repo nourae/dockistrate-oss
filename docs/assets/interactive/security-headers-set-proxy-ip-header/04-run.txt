@@ -1,0 +1,14 @@
+Review command
+  Command: Set Proxy IP Header (set-proxy-ip-header)
+  Description: Set the header carrying the proxy IP address
+
+Arguments:
+  Header name or off: Proxy-IP
+
+CLI equivalent:
+  ./dockistrate.sh set-proxy-ip-header Proxy-IP
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

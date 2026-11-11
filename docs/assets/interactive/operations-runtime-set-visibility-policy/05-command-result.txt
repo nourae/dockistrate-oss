@@ -1,0 +1,4 @@
+
+[Info] VISIBILITY_POLICY set to redacted and saved in /opt/dockistrate-demo/state/config/global_settings.csv.
+
+Press Enter to continue...

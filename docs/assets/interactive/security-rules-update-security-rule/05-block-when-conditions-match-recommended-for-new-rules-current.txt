@@ -1,0 +1,7 @@
+Rule action:
+> 1) Block when conditions match (recommended for new rules) (current)
+  2) Require conditions to match
+  3) Allow past later Block rules
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

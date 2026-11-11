@@ -7,6 +7,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$ROOT_DIR/lib/config.sh"
 # shellcheck source=../lib/utils.sh
 source "$ROOT_DIR/lib/utils.sh"
+# shellcheck source=helpers/global_csv.sh
+source "$ROOT_DIR/tests/helpers/global_csv.sh"
+# shellcheck source=../lib/backends/common.sh
+source "$ROOT_DIR/lib/backends/common.sh"
 # shellcheck source=../lib/global_settings/common.sh
 source "$ROOT_DIR/lib/global_settings/common.sh"
 # shellcheck source=../lib/global_settings/set_visibility_policy.sh
@@ -15,6 +19,8 @@ source "$ROOT_DIR/lib/global_settings/set_visibility_policy.sh"
 source "$ROOT_DIR/lib/global_settings/show_visibility_policy.sh"
 # shellcheck source=../lib/global_settings/show_nginx_docker_opts.sh
 source "$ROOT_DIR/lib/global_settings/show_nginx_docker_opts.sh"
+# shellcheck source=../lib/headers/common.sh
+source "$ROOT_DIR/lib/headers/common.sh"
 # shellcheck source=../lib/headers/list_headers.sh
 source "$ROOT_DIR/lib/headers/list_headers.sh"
 # shellcheck source=../lib/headers/list_backend_headers.sh
@@ -83,12 +89,12 @@ unset VISIBILITY_POLICY
 save_config || fail_test "save_config should persist default visibility policy"
 
 [ "$(show_visibility_policy)" = "full" ] || fail_test "default visibility policy should be full"
-grep -qx 'VISIBILITY_POLICY,full' "$GLOBAL_SETTINGS_FILE" || fail_test "VISIBILITY_POLICY should persist as full"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" VISIBILITY_POLICY)" = "full" ] || fail_test "VISIBILITY_POLICY should persist as full"
 
 set_visibility_policy redacted >/dev/null || fail_test "set_visibility_policy redacted should succeed"
 [ "$(show_visibility_policy)" = "redacted" ] || fail_test "show_visibility_policy should return redacted"
-grep -qx 'VISIBILITY_POLICY,redacted' "$GLOBAL_SETTINGS_FILE" || fail_test "VISIBILITY_POLICY should persist as redacted"
-grep -qx 'NGINX_DOCKER_OPTS,--env NGINX_TOKEN=secret' "$GLOBAL_SETTINGS_FILE" || fail_test "canonical docker opts should stay full in state"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" VISIBILITY_POLICY)" = "redacted" ] || fail_test "VISIBILITY_POLICY should persist as redacted"
+[ "$(test_global_csv_get "$GLOBAL_SETTINGS_FILE" NGINX_DOCKER_OPTS)" = "--env NGINX_TOKEN=secret" ] || fail_test "canonical docker opts should stay full in state"
 
 if set_visibility_policy hidden >/dev/null 2>&1; then
   fail_test "set_visibility_policy should reject invalid values"
@@ -104,7 +110,7 @@ fi
 } >"$BACKEND_HEADERS_FILE"
 {
   printf '%s\n' "$STATE_BACKEND_DOCKER_OPTS_HEADER"
-  csv_join_row backend:example.com "--env BACKEND_TOKEN=secret"
+  csv_join_row example.com "--env BACKEND_TOKEN=secret"
 } >"$BACKEND_DOCKER_OPTS_FILE"
 
 show_output="$(show_nginx_docker_opts)"

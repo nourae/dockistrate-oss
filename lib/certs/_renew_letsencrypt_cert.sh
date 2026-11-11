@@ -1,7 +1,10 @@
 # shellcheck shell=bash
 
 function _renew_letsencrypt_cert() {
-  local domain="${1:-}"
+  local domain="${1:-}" issuer_root="${CERTS_DIR}/letsencrypt"
+  if declare -F _domain_cert_acme_root >/dev/null 2>&1; then
+    issuer_root="$(_domain_cert_acme_root)" || return 1
+  fi
 
   if [ -z "$domain" ]; then
     echo "[Error] Missing domain for renewal" >&2
@@ -11,13 +14,14 @@ function _renew_letsencrypt_cert() {
   domain="$(normalize_domain "$domain")"
   require_valid_domain "$domain" return || return 1
 
+  require_valid_image_ref "${CERTBOT_IMAGE:-}" "Certbot" || return 1
   check_certbot_installed
   if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
-    runtime_state_paths_guard_if_declared "${CERTS_DIR}/letsencrypt" "$ACME_WEBROOT_DIR" || return 1
+    runtime_state_paths_guard_if_declared "${issuer_root}" "$ACME_WEBROOT_DIR" || return 1
   fi
-  mkdir -p "${CERTS_DIR}/letsencrypt" "$ACME_WEBROOT_DIR"
+  mkdir -p "${issuer_root}" "$ACME_WEBROOT_DIR"
   if declare -F runtime_state_paths_guard_if_declared >/dev/null 2>&1; then
-    runtime_state_paths_guard_if_declared "${CERTS_DIR}/letsencrypt" "$ACME_WEBROOT_DIR" || return 1
+    runtime_state_paths_guard_if_declared "${issuer_root}" "$ACME_WEBROOT_DIR" || return 1
   fi
 
   local running_state=""
@@ -40,7 +44,7 @@ function _renew_letsencrypt_cert() {
     set +e
     certbot_user_mapping="$(
       trap - ERR EXIT
-      certbot_docker_host_user_mapping "${CERTS_DIR}/letsencrypt" "$ACME_WEBROOT_DIR"
+      certbot_docker_host_user_mapping "${issuer_root}" "$ACME_WEBROOT_DIR"
     )"
     certbot_user_status=$?
     set -e
@@ -52,18 +56,22 @@ function _renew_letsencrypt_cert() {
     fi
   fi
 
-  pull_image_if_autopull "$CERTBOT_IMAGE" "Certbot"
+  pull_image_if_autopull "$CERTBOT_IMAGE" "Certbot" || return 1
 
   local certbot_exit
-  if [ "$running_state" = "true" ]; then
+  if [ "$running_state" = "true" ] && _certbot_proxy_publishes_http; then
     echo "[Info] Renewing Let's Encrypt certificate for ${domain} using webroot mode..."
-    update_nginx_config
+    if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+      _domain_config_prepare_acme_challenge || return 1
+    else
+      update_nginx_config || return 1
+    fi
     local -a certbot_cmd=(docker run "${docker_run_tty_args[@]}" --rm)
     if [ ${#certbot_user_args[@]} -gt 0 ]; then
       certbot_cmd+=("${certbot_user_args[@]}")
     fi
     certbot_cmd+=(
-      -v "${CERTS_DIR}/letsencrypt:/etc/letsencrypt"
+      -v "${issuer_root}:/etc/letsencrypt"
       -v "${ACME_WEBROOT_DIR}:/var/www/certbot"
       "$CERTBOT_IMAGE" certonly
       --webroot --webroot-path /var/www/certbot
@@ -86,7 +94,7 @@ function _renew_letsencrypt_cert() {
     fi
     certbot_cmd+=(
       -p 80:80
-      -v "${CERTS_DIR}/letsencrypt:/etc/letsencrypt"
+      -v "${issuer_root}:/etc/letsencrypt"
       -v "${ACME_WEBROOT_DIR}:/var/www/certbot"
       "$CERTBOT_IMAGE" certonly
       --standalone

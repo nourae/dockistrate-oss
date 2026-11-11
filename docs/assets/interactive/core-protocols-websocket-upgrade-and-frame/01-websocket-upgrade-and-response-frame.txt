@@ -1,0 +1,9 @@
+$ python3 /opt/dockistrate-demo-artifacts/evidence/core-protocols/protocol-client.py websocket
+HTTP/1.1 101 Switching Protocols
+Server: nginx/1.31.7
+Date: Sat, 07 Nov 2026 16:18:52 GMT
+Connection: upgrade
+Upgrade: websocket
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=
+
+�       docs-pong

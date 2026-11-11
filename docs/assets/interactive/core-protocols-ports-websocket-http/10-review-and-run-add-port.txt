@@ -1,0 +1,19 @@
+Review command
+  Command: Add Port (add-port)
+  Description: Add or expose an HTTP/HTTPS/TCP/UDP port for a backend
+
+Arguments:
+  Domain: protocol.example.com
+  Listen port: 18080
+  Backend container port: 8080
+  Protocol: http
+  Certificate: none
+  WebSocket: no
+
+CLI equivalent:
+  ./dockistrate.sh add-port protocol.example.com 18080 8080 http none no
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

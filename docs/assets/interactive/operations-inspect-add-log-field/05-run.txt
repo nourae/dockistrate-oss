@@ -1,0 +1,15 @@
+Review command
+  Command: Add Log Field (add-log-field)
+  Description: Add or insert an access log field
+
+Arguments:
+  Log field: $request_time
+  Position:
+
+CLI equivalent:
+  ./dockistrate.sh add-log-field '$request_time' ''
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

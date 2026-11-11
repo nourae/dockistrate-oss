@@ -24,7 +24,7 @@ test_tls_decrypt_capture_ignores_removed_permissive_env() {
   assertEquals "keylog file mode should remain strict when removed permissive env override is present" "600" "$(get_mode "$keylog_file")"
 
   local stop_output stop_status
-  stop_output="$(DOCKER_MOCK_PS_NAMES='nginx-capture' run_dockistrate stop-capture)"
+  stop_output="$(run_dockistrate stop-capture)"
   stop_status=$?
   assertEquals "stop-capture should succeed" 0 "$stop_status"
   assertStringContains "stop output should confirm stop" "Packet capture stopped" "$stop_output"

@@ -113,16 +113,18 @@ function acquire_transaction_lock() {
   fi
   unset TRANSACTION_LOCK_HELD
 
-  local lock_dir owner_file owner_pid owner_cmd lock_age
+  local lock_dir lock_parent owner_file owner_pid owner_cmd lock_age
   local ownerless_stale_ttl=300
   lock_dir="$(_transaction_lock_dir)"
   owner_file="$(_transaction_lock_owner_file "$lock_dir")"
+  lock_parent="$(dirname "$lock_dir" && printf '.')" || return 1
+  lock_parent="${lock_parent%$'\n.'}"
   if declare -F runtime_state_path_guard_if_declared >/dev/null 2>&1; then
-    runtime_state_path_guard_if_declared "$(dirname "$lock_dir")" "transaction lock parent directory" || return 1
+    runtime_state_path_guard_if_declared "$lock_parent" "transaction lock parent directory" || return 1
     runtime_state_path_guard_if_declared "$lock_dir" "transaction lock directory" || return 1
     runtime_state_path_guard_if_declared "$owner_file" "transaction lock owner file" || return 1
   fi
-  mkdir -p "$(dirname "$lock_dir")" || return 1
+  mkdir -p "$lock_parent" || return 1
 
   if mkdir "$lock_dir" 2>/dev/null; then
     if ! _transaction_lock_write_owner "$lock_dir"; then

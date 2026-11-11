@@ -9,14 +9,44 @@ function _prompt_args_headers_operator_value_for_display() {
   fi
 }
 
+function _prompt_args_backend_csp_summary() {
+  local records="" line="" index=0 match=-1 domain="" value=""
+  local -a owners=() values=() conflicts=()
+  records="$(__arg_choices_backend_header_records)" || return 1
+  [ -n "$records" ] || return 0
+  while IFS= read -r line; do
+    csv_parse_line "$line" || return 1
+    [ "${CSV_FIELDS[1]}" = response ] || continue
+    [ "$(_header_name_identity "${CSV_FIELDS[2]}")" = content-security-policy ] || continue
+    domain="${CSV_FIELDS[0]}"; value="${CSV_FIELDS[3]}"; match=-1
+    for ((index = 0; index < ${#owners[@]}; index++)); do
+      [ "${owners[index]}" != "$domain" ] || { match="$index"; break; }
+    done
+    if [ "$match" -lt 0 ]; then
+      owners+=("$domain"); values+=("$value"); conflicts+=(false)
+    elif [ "${values[match]}" != "$value" ]; then
+      conflicts[match]=true
+    fi
+  done <<<"$records"
+  for ((index = 0; index < ${#owners[@]}; index++)); do
+    if [ "${conflicts[index]}" = true ]; then
+      value='<conflicting values; set a replacement>'
+    else
+      value="$(_prompt_args_headers_operator_value_for_display header_value "${values[index]}")"
+    fi
+    printf '  %s=%s\n' "${owners[index]}" "$value"
+  done
+}
+
 # Return codes: 0 handled, 1 back/abort, 2 not handled
 function prompt_args_handle_headers() {
   local CMD="$1"
   case "$CMD" in
   set-hsts)
     local cur_hsts
-    cur_hsts="$(get_global_header_value "Strict-Transport-Security")"
+    cur_hsts="$(_prompt_args_header_value '' response Strict-Transport-Security)" || return 1
     read_with_editing "HSTS value (Off to remove)${cur_hsts:+ [$(_prompt_args_headers_operator_value_for_display header_value "$cur_hsts")]}: " cur_hsts "$cur_hsts"
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$cur_hsts"; then
       SELECTED_CMD=""
       SELECTED_ARGS=()
@@ -28,29 +58,17 @@ function prompt_args_handle_headers() {
     ;;
   set-csp)
     local cur_csp
-    cur_csp="$(get_global_header_value "Content-Security-Policy")"
+    cur_csp="$(_prompt_args_header_value '' response Content-Security-Policy)" || return 1
     if [ -n "$cur_csp" ]; then
       echo "[Info] Current global CSP: $(_prompt_args_headers_operator_value_for_display header_value "$cur_csp")"
     else
       echo "[Info] Current global CSP: <none>"
     fi
-    if [ -f "$BACKEND_HEADERS_FILE" ]; then
-      local b_csp
-      local line="" line_no=0
-      b_csp=""
-      while IFS= read -r line || [ -n "$line" ]; do
-        line_no=$((line_no + 1))
-        [ "$line_no" -eq 1 ] && continue
-        csv_parse_line "$line" || continue
-        [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_HEADERS_COLS" ] || continue
-        if [ "${CSV_FIELDS[1]}" = "response" ] && [ "${CSV_FIELDS[2]}" = "Content-Security-Policy" ]; then
-          b_csp="${b_csp} ${CSV_FIELDS[0]}=$(_prompt_args_headers_operator_value_for_display header_value "${CSV_FIELDS[3]}")"
-        fi
-      done <"$BACKEND_HEADERS_FILE"
-      b_csp="$(printf '%s' "$b_csp" | xargs)"
-      [ -n "$b_csp" ] && echo "[Info] Backend CSP overrides: ${b_csp}"
-    fi
+    local b_csp=""
+    b_csp="$(_prompt_args_backend_csp_summary)" || return 1
+    [ -z "$b_csp" ] || printf '[Info] Backend CSP overrides:\n%s\n' "$b_csp"
     read_with_editing "CSP value (Off to remove)${cur_csp:+ [$(_prompt_args_headers_operator_value_for_display header_value "$cur_csp")]}: " cur_csp "$cur_csp"
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$cur_csp"; then
       SELECTED_CMD=""
       SELECTED_ARGS=()
@@ -67,9 +85,9 @@ function prompt_args_handle_headers() {
       SELECTED_ARGS=()
       return 1
     fi
-    cur="$(get_backend_header_value "$domain" "Strict-Transport-Security")"
-    [ -n "$cur" ] || cur="$(get_global_header_value "Strict-Transport-Security")"
+    cur="$(_prompt_args_header_value "$domain" response Strict-Transport-Security global)" || return 1
     read_with_editing "HSTS for ${domain} (Off to remove)${cur:+ [$(_prompt_args_headers_operator_value_for_display header_value "$cur")]}: " val "$cur"
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$val"; then
       SELECTED_CMD=""
       SELECTED_ARGS=()
@@ -86,14 +104,14 @@ function prompt_args_handle_headers() {
       SELECTED_ARGS=()
       return 1
     fi
-    cur="$(get_backend_header_value "$domain" "Content-Security-Policy")"
-    [ -n "$cur" ] || cur="$(get_global_header_value "Content-Security-Policy")"
+    cur="$(_prompt_args_header_value "$domain" response Content-Security-Policy global)" || return 1
     if [ -n "$cur" ]; then
       echo "[Info] Current CSP for ${domain}: $(_prompt_args_headers_operator_value_for_display header_value "$cur")"
     else
       echo "[Info] Current CSP for ${domain}: <none>"
     fi
     read_with_editing "CSP for ${domain} (Off to remove)${cur:+ [$(_prompt_args_headers_operator_value_for_display header_value "$cur")]}: " val "$cur"
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$val"; then
       SELECTED_CMD=""
       SELECTED_ARGS=()

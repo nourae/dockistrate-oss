@@ -18,6 +18,7 @@ trap 'rm -rf "$TMP_ROOT"' EXIT
 BASE_DIR="$TMP_ROOT"
 STATE_DIR="$BASE_DIR/state"
 CONFIG_DIR="$STATE_DIR/config"
+GLOBAL_SETTINGS_FILE="$CONFIG_DIR/global_settings.csv"
 LOG_DIR="$STATE_DIR/logs"
 ERROR_LOG_DIR="$LOG_DIR/errors"
 TMP_DIR="$STATE_DIR/tmp"
@@ -28,6 +29,8 @@ LAST_POST_BACKUP_FILE="$BACKUP_DIR/last_post_backup.txt"
 CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha256"
 
 mkdir -p "$CONFIG_DIR" "$LOG_DIR" "$ERROR_LOG_DIR" "$TMP_DIR" "$BACKUP_DIR" "$CERTS_DIR/mtls/example.com"
+# Runtime rollback reloads the fixture settings before running recovery hooks.
+_save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
 
 cat >"$BACKEND_MTLS_FILE" <<EOF_MTLS
 domain,mtls_directory
@@ -45,46 +48,8 @@ mkdir -p "${mtls_dir}/newcerts"
 
 function log_msg() { :; }
 function capture_docker_logs() { :; }
-function update_nginx_config() { return 1; }
+function update_nginx_config() { : >"$TMP_ROOT/update-reached"; return 1; }
 function _ensure_tls_permissions() { :; }
-function openssl() {
-  local cmd="${1:-}" keyout="" out=""
-  shift || true
-  case "$cmd" in
-    req)
-      while [ "$#" -gt 0 ]; do
-        case "$1" in
-          -keyout)
-            shift
-            keyout="${1:-}"
-            ;;
-          -out)
-            shift
-            out="${1:-}"
-            ;;
-        esac
-        shift || true
-      done
-      [ -n "$keyout" ] && printf 'new-key\n' >"$keyout"
-      [ -n "$out" ] && printf 'new-ca\n' >"$out"
-      return 0
-      ;;
-    ca)
-      while [ "$#" -gt 0 ]; do
-        case "$1" in
-          -out)
-            shift
-            out="${1:-}"
-            ;;
-        esac
-        shift || true
-      done
-      [ -n "$out" ] && printf 'new-crl\n' >"$out"
-      return 0
-      ;;
-  esac
-  command openssl "$cmd" "$@"
-}
 
 set +e
 set +E
@@ -94,6 +59,11 @@ output="$(
 status=$?
 set -E
 set -e
+
+if [ ! -f "$TMP_ROOT/update-reached" ]; then
+  echo "[Error] Replacement did not reach injected runtime failure: $output" >&2
+  exit 1
+fi
 
 if [ "$status" -eq 0 ]; then
   echo "[Error] replace_backend_ca succeeded unexpectedly." >&2

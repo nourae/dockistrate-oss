@@ -9,7 +9,7 @@ if [ -f "${TOKENS_MODULE_DIR}/common.sh" ]; then
 fi
 
 for tokens_file in "${TOKENS_MODULE_DIR}"/*.sh; do
-  tokens_basename="$(basename "${tokens_file}")"
+  tokens_basename="${tokens_file##*/}"
   if [ "${tokens_basename}" = "common.sh" ]; then
     continue
   fi

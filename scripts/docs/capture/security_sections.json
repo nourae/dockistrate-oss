@@ -1,0 +1,300 @@
+{
+  "acl-rules": {
+    "commands": [
+      "add-acl",
+      "list-acl",
+      "update-acl",
+      "disable-acl",
+      "enable-acl",
+      "move-acl-rule",
+      "remove-acl",
+      "disable-all-acl",
+      "enable-all-acl",
+      "remove-all-acl"
+    ],
+    "journeys": [
+      "acl-rules",
+      "acl-second-rule",
+      "acl-remove-all-cancel",
+      "acl-cleanup-result",
+      "acl-config",
+      "acl-deny-client",
+      "acl-client-block-verified",
+      "acl-deny-client-remove"
+    ],
+    "journey_titles": {
+      "acl-deny-client": "Deny an actual client and choose its rejection code",
+      "acl-client-block-verified": "Verify the address denial",
+      "acl-deny-client-remove": "Remove the demonstration denial"
+    }
+  },
+  "security-rules": {
+    "commands": [
+      "add-security-rule",
+      "list-security-rules",
+      "update-security-rule",
+      "set-security-rule-mode",
+      "duplicate-security-rule",
+      "move-security-rule",
+      "disable-security-rule",
+      "enable-security-rule",
+      "remove-security-rule",
+      "disable-all-security-rules",
+      "enable-all-security-rules",
+      "remove-all-security-rules"
+    ],
+    "journeys": [
+      "security-rules",
+      "security-mode-reset",
+      "security-bulk-cancel",
+      "security-require",
+      "security-allow",
+      "security-block-after-allow",
+      "security-rules-config",
+      "security-block-verified",
+      "security-condition-branches",
+      "security-replace-conditions",
+      "security-replacement-list",
+      "security-branches-config"
+    ],
+    "journey_titles": {
+      "security-condition-branches": "Cookie, query argument, variable, IP scope and path inputs",
+      "security-replace-conditions": "Replace conditions and clear the status override",
+      "security-replacement-list": "Inspect the replacement conditions",
+      "security-branches-config": "Check the restored configuration"
+    }
+  },
+  "access-defaults": {
+    "commands": [
+      "set-acl-policy",
+      "set-acl-status",
+      "set-security-rule-status",
+      "set-backend-acl-policy",
+      "remove-backend-acl-policy",
+      "set-backend-acl-status",
+      "remove-backend-acl-status",
+      "set-backend-security-rule-status",
+      "remove-backend-security-rule-status"
+    ],
+    "journeys": [
+      "access-defaults"
+    ]
+  },
+  "certificates": {
+    "commands": [
+      "add-cert",
+      "list-certs",
+      "replace-cert",
+      "renew-certs",
+      "remove-cert"
+    ],
+    "journeys": [
+      "certificates",
+      "certificate-local-trust",
+      "certificate-acme-prerequisites",
+      "certificate-renewal-review",
+      "certificate-renewal-scan",
+      "certificate-upload",
+      "uploaded-certificate-local-trust",
+      "remove-uploaded-certificate",
+      "certificate-cleanup-config"
+    ]
+  },
+  "tls-settings": {
+    "commands": [
+      "set-tls-protocols",
+      "set-tls-ciphers",
+      "set-port-tls-protocols",
+      "remove-port-tls-protocols",
+      "set-port-tls-ciphers",
+      "remove-port-tls-ciphers"
+    ],
+    "journeys": [
+      "tls-settings",
+      "tls12-excluded",
+      "tls-settings-config"
+    ]
+  },
+  "http3": {
+    "commands": [
+      "set-port-http3",
+      "list-port-http3"
+    ],
+    "journeys": [
+      "http3",
+      "http3-verified",
+      "http3-disable",
+      "http3-custom-advertisement",
+      "http3-suppress-advertisement"
+    ],
+    "journey_titles": {
+      "http3-custom-advertisement": "Type a custom Alt-Svc value",
+      "http3-suppress-advertisement": "Keep HTTP/3 enabled and suppress its advertisement"
+    }
+  },
+  "headers": {
+    "commands": [
+      "add-backend-header",
+      "update-backend-header",
+      "remove-backend-header",
+      "list-backend-headers",
+      "remove-all-backend-headers",
+      "add-header",
+      "update-header",
+      "remove-header",
+      "list-headers",
+      "remove-all-headers",
+      "set-hsts",
+      "set-backend-hsts",
+      "set-csp",
+      "set-backend-csp",
+      "control-server-tokens",
+      "show-server-tokens"
+    ],
+    "journeys": [
+      "headers",
+      "headers-backend-removed",
+      "headers-global-removed",
+      "headers-bulk-cancel",
+      "headers-config",
+      "headers-verified"
+    ]
+  },
+  "client-ip": {
+    "commands": [
+      "set-trusted-proxies",
+      "set-real-ip-recursive",
+      "set-client-ip-header",
+      "set-proxy-ip-header",
+      "set-backend-client-ip-header",
+      "remove-backend-client-ip-header",
+      "set-backend-proxy-ip-header",
+      "remove-backend-proxy-ip-header"
+    ],
+    "journeys": [
+      "client-ip",
+      "client-ip-config",
+      "client-ip-trusted-peer",
+      "verify-client-ip",
+      "trusted-proxies-reset",
+      "real-ip-recursive-reset"
+    ]
+  },
+  "nginx-directives": {
+    "commands": [
+      "list-nginx-directive-catalog",
+      "set-nginx-directive",
+      "set-nginx-directive-raw",
+      "list-nginx-directives",
+      "remove-nginx-directive",
+      "remove-all-nginx-directives",
+      "set-nginx-directive-strict",
+      "show-nginx-directive-strict"
+    ],
+    "journeys": [
+      "directive-strict-restored",
+      "directive-config",
+      "directives-restored",
+      "body-limit-verification",
+      "scoped-directive",
+      "scoped-directive-list",
+      "scoped-directive-verified",
+      "scoped-directive-remove",
+      "scoped-directive-recovered"
+    ],
+    "journey_titles": {
+      "scoped-directive": "Limit one path",
+      "scoped-directive-list": "Inspect the path override",
+      "scoped-directive-verified": "Compare the limited path with the root path",
+      "scoped-directive-remove": "Remove the path override",
+      "scoped-directive-recovered": "Verify the original path behavior returns"
+    }
+  },
+  "http-version": {
+    "commands": [
+      "set-http-version",
+      "set-backend-http-version",
+      "remove-backend-http-version"
+    ],
+    "journeys": [
+      "http2-negotiation",
+      "http-version-inheritance"
+    ]
+  },
+  "runtime-options": {
+    "commands": [
+      "set-nginx-docker-opts",
+      "show-nginx-docker-opts",
+      "set-nginx-image",
+      "set-certbot-image"
+    ],
+    "journeys": [
+      "runtime-options-cleared",
+      "runtime-options-config",
+      "manual-nginx-image",
+      "manual-certbot-image",
+      "manual-image-config"
+    ],
+    "journey_titles": {
+      "manual-nginx-image": "Enter the proxy image reference manually",
+      "manual-certbot-image": "Enter the Certbot image reference manually",
+      "manual-image-config": "Check configuration after image selection"
+    }
+  },
+  "visibility": {
+    "commands": [
+      "set-visibility-policy",
+      "show-visibility-policy"
+    ],
+    "journeys": [
+      "redacted-status",
+      "visibility-restored",
+      "full-status"
+    ]
+  },
+  "mtls-clients": {
+    "commands": [
+      "enable-backend-mtls",
+      "add-backend-client-cert",
+      "list-backend-client-certs",
+      "disable-backend-mtls"
+    ],
+    "journeys": [
+      "mtls-clients",
+      "mtls-reenable",
+      "mtls-config",
+      "mtls-verified"
+    ]
+  },
+  "mtls-export": {
+    "commands": [
+      "export-backend-client-p12"
+    ],
+    "journeys": [
+      "mtls-export",
+      "pkcs12-inspection"
+    ]
+  },
+  "mtls-rotation": {
+    "commands": [
+      "replace-backend-client-cert",
+      "revoke-backend-client-cert",
+      "remove-backend-client-cert"
+    ],
+    "journeys": [
+      "mtls-rotation"
+    ]
+  },
+  "mtls-authority": {
+    "commands": [
+      "list-backend-cas",
+      "replace-backend-ca",
+      "remove-backend-ca"
+    ],
+    "journeys": [
+      "mtls-authority-review",
+      "mtls-authority",
+      "mtls-new-authority-client"
+    ]
+  }
+}

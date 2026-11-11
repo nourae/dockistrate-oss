@@ -1,9 +1,12 @@
 # shellcheck shell=bash
 
+# shellcheck source=review_command_options.sh
+source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/review_command_options.sh"
+
 function command_is_mutating() {
   local cmd="${1:-}"
   case "$cmd" in
-  "" | help | help-update | upgrade-preflight | status | status-all | check-config | tail-proxy-logs | list-* | show-*)
+  "" | help | help-update | upgrade-preflight | validate-domain-config | status | status-all | check-config | tail-proxy-logs | list-* | show-*)
     return 1
     ;;
   esac
@@ -76,234 +79,12 @@ function _review_operator_arg_value_for_display() {
 
 REVIEW_DISPLAY_ARGS=()
 
-function _review_sensitive_arg_consumes_remainder() {
-  local cmd="${1:-}" arg_name="${2:-}"
-  case "${cmd}:${arg_name}" in
-  set-nginx-docker-opts:docker_opts)
-    return 0
-    ;;
-  esac
-  return 1
-}
-
-function _review_sensitive_arg_redacts_trailing_words() {
-  local cmd="${1:-}" arg_name="${2:-}"
-  case "${cmd}:${arg_name}" in
-  add-header:value | update-header:value \
-  | add-backend-header:value | update-backend-header:value \
-  | set-hsts:hsts_value | set-backend-hsts:backend_hsts_value \
-  | set-csp:csp_value | set-backend-csp:backend_csp_value)
-    return 0
-    ;;
-  esac
-  return 1
-}
-
-function _review_should_redact_sensitive_remainder() {
-  local cmd="${1:-}" arg_name="${2:-}" idx="${3:-0}" arg_count="${4:-0}"
-  [ -n "$arg_name" ] || return 1
-  _review_arg_is_sensitive "$cmd" "$arg_name" || return 1
-  _review_sensitive_arg_consumes_remainder "$cmd" "$arg_name" || return 1
-  [ "$idx" -lt "$((arg_count - 1))" ] 2>/dev/null
-}
-
-function _review_is_redaction_boundary_option() {
-  local cmd="${1:-}" option="${2:-}"
-  case "${cmd}:${option}" in
-  add-backend:--no-expose)
-    return 0
-    ;;
-  esac
-  return 1
-}
-
-function _review_next_arg_is_cli_option() {
-  local cmd="${1:-}" next_arg="${2:-}" option=""
-  [ -n "$next_arg" ] || return 1
-  option="$next_arg"
-  if [[ "$next_arg" == --*=* ]]; then
-    option="${next_arg%%=*}"
-  fi
-  _review_is_redaction_boundary_option "$cmd" "$option" && return 0
-  [ -n "$(_review_arg_name_for_option "$option" || true)" ]
-}
-
-function _review_should_redact_sensitive_trailing_words() {
-  local cmd="${1:-}" arg_name="${2:-}" next_arg="${3:-}"
-  [ -n "$arg_name" ] || return 1
-  [ -n "$next_arg" ] || return 1
-  _review_arg_is_sensitive "$cmd" "$arg_name" || return 1
-  if _review_sensitive_arg_redacts_trailing_words "$cmd" "$arg_name" ||
-    [ "$arg_name" = "docker_opts" ]; then
-    ! _review_next_arg_is_cli_option "$cmd" "$next_arg"
-    return
-  fi
-  return 1
-}
-
-function _review_should_stop_after_redacted_value() {
-  local cmd="${1:-}" arg_name="${2:-}" value="${3:-}" next_arg="${4:-}"
-  _review_sensitive_arg_consumes_remainder "$cmd" "$arg_name" && return 0
-  _review_sensitive_arg_redacts_trailing_words "$cmd" "$arg_name" && return 0
-  if [ "$arg_name" = "docker_opts" ] && [[ "$value" == --* ]] &&
-    [ -n "$next_arg" ] && ! _review_next_arg_is_cli_option "$cmd" "$next_arg"; then
-    return 0
-  fi
-  return 1
-}
-
-function _review_arg_name_for_option() {
-  local option="${1:-}" normalized="" spec_arg_name=""
-  case "$option" in
-  --*) normalized="${option#--}" ;;
-  *) return 1 ;;
-  esac
-  normalized="${normalized//-/_}"
-  [ "${#CLI_SPEC_NAMES[@]}" -gt 0 ] 2>/dev/null || return 1
-
-  for spec_arg_name in "${CLI_SPEC_NAMES[@]}"; do
-    if [ "$spec_arg_name" = "$normalized" ]; then
-      printf '%s\n' "$spec_arg_name"
-      return 0
-    fi
-  done
-
-  return 1
-}
-
-function _review_arg_index_for_name() {
-  local __arg_idx_var="${1:-}" target_name="${2:-}"
-  local spec_idx=0
-
-  require_valid_var_name "$__arg_idx_var" || return 1
-  [ -n "$target_name" ] || return 1
-  [ "${#CLI_SPEC_NAMES[@]}" -gt 0 ] 2>/dev/null || return 1
-
-  for spec_idx in "${!CLI_SPEC_NAMES[@]}"; do
-    if [ "${CLI_SPEC_NAMES[$spec_idx]}" = "$target_name" ]; then
-      printf -v "$__arg_idx_var" '%s' "$spec_idx"
-      return 0
-    fi
-  done
-
-  return 1
-}
-
-function _review_arg_is_sensitive() {
-  declare -F arg_is_sensitive >/dev/null 2>&1 || return 1
-  arg_is_sensitive "$@"
-}
-
 function _review_display_args_for_command() {
-  local cmd="${1:-}"
-  shift || true
-  local args=("$@")
-  local spec="" idx=0 arg="" arg_name="" positional_idx=0
-  local consume_next_option_value=false consume_next_option_arg_name=""
-  local next_arg="" sensitive_value=false option_idx=0 consume_next_option_spec_idx=0
-
+  cli_classify_visibility_args "$@"
   REVIEW_DISPLAY_ARGS=()
-  if declare -F get_arg_spec >/dev/null 2>&1 &&
-    declare -F cli_parse_arg_spec >/dev/null 2>&1; then
-    spec="$(get_arg_spec "$cmd" 2>/dev/null || true)"
-    cli_parse_arg_spec "$spec"
-  else
-    CLI_SPEC_NAMES=()
+  if [ "${#CLI_VISIBILITY_DISPLAY_ARGS[@]}" -gt 0 ]; then
+    REVIEW_DISPLAY_ARGS=("${CLI_VISIBILITY_DISPLAY_ARGS[@]}")
   fi
-
-  if [ "${#args[@]}" -eq 0 ]; then
-    return 0
-  fi
-
-  for idx in "${!args[@]}"; do
-    arg="${args[$idx]}"
-    if [ "$consume_next_option_value" = true ]; then
-      next_arg=""
-      if [ "$idx" -lt "$((${#args[@]} - 1))" ]; then
-        next_arg="${args[$((idx + 1))]}"
-      fi
-      sensitive_value=false
-      if [ -n "$consume_next_option_arg_name" ] &&
-        _review_arg_is_sensitive "$cmd" "$consume_next_option_arg_name" "$arg"; then
-        sensitive_value=true
-        REVIEW_DISPLAY_ARGS+=("$OPERATOR_VISIBILITY_REDACTED_VALUE")
-      elif _review_should_redact_sensitive_trailing_words "$cmd" "$consume_next_option_arg_name" "$next_arg"; then
-        REVIEW_DISPLAY_ARGS+=("$OPERATOR_VISIBILITY_REDACTED_VALUE")
-        break
-      else
-        REVIEW_DISPLAY_ARGS+=("$arg")
-      fi
-      if [ "$sensitive_value" = true ] &&
-        _review_should_stop_after_redacted_value "$cmd" "$consume_next_option_arg_name" "$arg" "$next_arg"; then
-        break
-      fi
-      if [ "$positional_idx" -le "$consume_next_option_spec_idx" ] 2>/dev/null; then
-        positional_idx=$((consume_next_option_spec_idx + 1))
-      fi
-      consume_next_option_value=false
-      consume_next_option_arg_name=""
-      consume_next_option_spec_idx=0
-      continue
-    fi
-
-    if [[ "$arg" == --*=* ]] && arg_name="$(_review_arg_name_for_option "${arg%%=*}" || true)" && [ -n "$arg_name" ]; then
-      next_arg=""
-      if [ "$idx" -lt "$((${#args[@]} - 1))" ]; then
-        next_arg="${args[$((idx + 1))]}"
-      fi
-      if _review_arg_is_sensitive "$cmd" "$arg_name" "${arg#*=}"; then
-        REVIEW_DISPLAY_ARGS+=("${arg%%=*}=${OPERATOR_VISIBILITY_REDACTED_VALUE}")
-        if _review_should_stop_after_redacted_value "$cmd" "$arg_name" "${arg#*=}" "$next_arg"; then
-          break
-        fi
-      elif _review_should_redact_sensitive_trailing_words "$cmd" "$arg_name" "$next_arg"; then
-        REVIEW_DISPLAY_ARGS+=("${arg%%=*}=${OPERATOR_VISIBILITY_REDACTED_VALUE}")
-        break
-      else
-        REVIEW_DISPLAY_ARGS+=("$arg")
-      fi
-      if _review_arg_index_for_name option_idx "$arg_name" &&
-        [ "$positional_idx" -le "$option_idx" ] 2>/dev/null; then
-        positional_idx=$((option_idx + 1))
-      fi
-      continue
-    fi
-
-    arg_name="$(_review_arg_name_for_option "$arg" || true)"
-    if [ -n "$arg_name" ]; then
-      REVIEW_DISPLAY_ARGS+=("$arg")
-      consume_next_option_value=true
-      consume_next_option_arg_name="$arg_name"
-      consume_next_option_spec_idx=0
-      _review_arg_index_for_name consume_next_option_spec_idx "$arg_name" || true
-      continue
-    fi
-
-    arg_name=""
-    if [ "$positional_idx" -lt "${#CLI_SPEC_NAMES[@]}" ] 2>/dev/null; then
-      arg_name="${CLI_SPEC_NAMES[$positional_idx]}"
-    fi
-    if [[ "$arg" == --* ]] && [ -n "$arg_name" ] &&
-      ! _review_arg_is_sensitive "$cmd" "$arg_name" "$arg"; then
-      REVIEW_DISPLAY_ARGS+=("$arg")
-      continue
-    fi
-    if [ -n "$arg_name" ]; then
-      REVIEW_DISPLAY_ARGS+=("$(_review_operator_arg_value_for_display "$cmd" "$arg_name" "$arg")")
-      if _review_arg_is_sensitive "$cmd" "$arg_name" "$arg" &&
-        { _review_sensitive_arg_consumes_remainder "$cmd" "$arg_name" ||
-          _review_sensitive_arg_redacts_trailing_words "$cmd" "$arg_name"; }; then
-        break
-      fi
-      if _review_should_redact_sensitive_remainder "$cmd" "$arg_name" "$idx" "${#args[@]}"; then
-        REVIEW_DISPLAY_ARGS[${#REVIEW_DISPLAY_ARGS[@]} - 1]="$OPERATOR_VISIBILITY_REDACTED_VALUE"
-        break
-      fi
-    else
-      REVIEW_DISPLAY_ARGS+=("$arg")
-    fi
-    positional_idx=$((positional_idx + 1))
-  done
 }
 
 function format_cli_equivalent() {
@@ -379,17 +160,65 @@ function _review_command_cli_equivalent() {
   add-backend)
     _review_format_add_backend_cli_equivalent "$@"
     ;;
+  update-backend)
+    _review_format_update_backend_cli_equivalent "$@"
+    ;;
   *)
     format_cli_equivalent "$@"
     ;;
   esac
 }
 
+function _review_format_update_backend_cli_equivalent() {
+  local cmd="${1:-}"
+  shift || true
+  local args=("$@")
+  if { [ "${#args[@]}" -ne 5 ] && [ "${#args[@]}" -ne 6 ]; } || [[ "${args[1]:-}" == --* ]]; then
+    format_cli_equivalent "$cmd" "$@"
+    return 0
+  fi
+
+  local cli_args=("${args[0]}")
+  if [ -n "${args[1]:-}" ] && [ "${args[1]}" != __DEFAULT__ ]; then
+    cli_args+=(--image "${args[1]}")
+  fi
+  if [ -n "${args[2]:-}" ] && [ "${args[2]}" != __DEFAULT__ ]; then
+    cli_args+=(--container-port "${args[2]}")
+  fi
+  if [ "${args[3]:-}" = __DOCKER_OPTS_CLEAR__ ]; then
+    cli_args+=(--docker-opts "")
+  elif [ -n "${args[3]:-}" ] && [ "${args[3]}" != __DEFAULT__ ]; then
+    cli_args+=(--docker-opts "${args[3]}")
+  fi
+  if [ -n "${args[4]:-}" ] && [ "${args[4]}" != __DEFAULT__ ]; then
+    cli_args+=(--network "${args[4]}")
+  fi
+  [ -z "${args[5]:-}" ] || cli_args+=(--replace-unmanaged-container "${args[5]}")
+  # Classify this display-only command as CLI flags, rather than applying the
+  # interactive positional Docker-options index to its rendered arguments.
+  local INTERACTIVE=false
+  format_cli_equivalent "$cmd" "${cli_args[@]}"
+}
+
 function _review_command_arg_names() {
-  local cmd="${1:-}" spec=""
+  local cmd="${1:-}" spec="" scope=""
   case "$cmd" in
   add-backend)
     printf '%s\n' domain image container_port protocol listen cert_path ws docker_opts network expose redirect_pref redirect_target
+    return 0
+    ;;
+  set-nginx-directive | set-nginx-directive-raw | remove-nginx-directive)
+    scope="$(printf '%s' "${2:-}" | tr '[:upper:]' '[:lower:]')"
+    printf '%s\n' directive_scope
+    case "$scope" in
+    backend | stream-backend) printf '%s\n' domain ;;
+    port | stream-port) printf '%s\n' domain port ;;
+    path) printf '%s\n' domain port path_prefix ;;
+    esac
+    printf '%s\n' directive_name
+    if [ "$cmd" != remove-nginx-directive ]; then
+      printf '%s\n' directive_value
+    fi
     return 0
     ;;
   esac
@@ -416,6 +245,68 @@ function _review_command_display_value() {
 function _review_command_format_arg_summary() {
   local cmd="${1:-}"
   shift || true
+  case "$cmd" in
+  add-path-option | update-path-option | update-security-rule | start-nginx | uninstall-all)
+    _review_command_format_option_summary "$cmd" "$@"
+    return 0
+    ;;
+  update-acl)
+    printf '  ID: %s\n' "$(_review_command_display_value "${1:-}")"
+    shift || true
+    local acl_label="" acl_value=""
+    while [ "$#" -gt 0 ]; do
+      case "$1" in
+      --domain) acl_label=Domain ;;
+      --scope) acl_label=Scope ;;
+      --action) acl_label=Action ;;
+      --ip) acl_label='IP or CIDR' ;;
+      --code) acl_label='Status override' ;;
+      *) acl_label="$1" ;;
+      esac
+      acl_value="${2:-}"
+      if [ "$1" = --code ] && [ -z "$acl_value" ]; then acl_value='Inherited default'; fi
+      printf '  %s: %s\n' "$(_review_command_display_value "$acl_label")" "$(_review_command_display_value "$acl_value")"
+      shift
+      [ "$#" -eq 0 ] || shift
+    done
+    return 0
+    ;;
+  init-domain-config | validate-domain-config | apply-domain-config | migrate-state | restore-backup)
+    local config_target="" config_kind="backend" details_file="" config_action="Apply" option=""
+    while [ "$#" -gt 0 ]; do
+      option="$1"
+      shift
+      case "$option" in
+      --kind) config_kind="${1:-}"; shift || true ;;
+      --backend-details) details_file="${1:-}"; shift || true ;;
+      --dry-run) config_action="Review only" ;;
+      --all) config_target="All domains" ;;
+      *) config_target="$option" ;;
+      esac
+    done
+    if [ "$cmd" = restore-backup ]; then
+      printf '  Backup: %s\n' "$(_review_command_display_value "$config_target")"
+      if [ -n "$details_file" ]; then
+        printf '  Backend details CSV: %s\n' "$(_review_command_display_value "$details_file")"
+      fi
+    elif [ "$cmd" = migrate-state ]; then
+      printf '  Action: %s\n' "$config_action"
+      printf '  Backend details CSV: %s\n' "$(_review_command_display_value "${details_file:-Use existing state and containers}")"
+    else
+      printf '  Domain: %s\n' "$(_review_command_display_value "$config_target")"
+      if [ "$cmd" = init-domain-config ]; then
+        printf '  Domain kind: %s\n' "$(_review_command_display_value "$config_kind")"
+      elif [ "$cmd" = apply-domain-config ]; then
+        printf '  Action: %s\n' "$config_action"
+      fi
+    fi
+    return 0
+    ;;
+  esac
+  if [ "$cmd" = "add-port" ]; then
+    _review_command_format_add_port_arg_summary "$cmd" "$@"
+    return 0
+  fi
   if [ "$cmd" = "update-port" ]; then
     _review_command_format_update_port_arg_summary "$cmd" "$@"
     return 0
@@ -434,7 +325,7 @@ function _review_command_format_arg_summary() {
   local name
   while IFS= read -r name; do
     [ -n "$name" ] && names+=("$name")
-  done < <(_review_command_arg_names "$cmd")
+  done < <(_review_command_arg_names "$cmd" "$@")
 
   local idx=0 label=""
   for idx in "${!args[@]}"; do
@@ -449,6 +340,42 @@ function _review_command_format_arg_summary() {
 
 function _review_command_print_arg_summary() {
   _review_command_format_arg_summary "$@"
+}
+
+function _review_command_format_add_port_arg_summary() {
+  local cmd="${1:-}"
+  shift || true
+  local args=() names=(domain nginx_port container_port protocol cert_path ws)
+  _review_display_args_for_command "$cmd" "$@"
+  if [ "${#REVIEW_DISPLAY_ARGS[@]}" -gt 0 ]; then
+    args=("${REVIEW_DISPLAY_ARGS[@]}")
+  fi
+  local idx=0 http3=off alt_svc=auto option=""
+  while [ "$idx" -lt 6 ] && [ "$idx" -lt "${#args[@]}" ]; do
+    printf '  %s: %s\n' "$(arg_review_label "${names[$idx]}")" "$(_review_command_display_value "${args[$idx]}")"
+    idx=$((idx + 1))
+  done
+  while [ "$idx" -lt "${#args[@]}" ]; do
+    option="${args[$idx]}"
+    case "$option" in
+    --http3)
+      idx=$((idx + 1))
+      http3="${args[$idx]:-}"
+      ;;
+    --alt-svc)
+      idx=$((idx + 1))
+      alt_svc="${args[$idx]:-}"
+      ;;
+    *) printf '  Argument %s: %s\n' "$((idx + 1))" "$(_review_command_display_value "$option")" ;;
+    esac
+    idx=$((idx + 1))
+  done
+  if [ "${args[3]:-}" = https ]; then
+    printf '  %s: %s\n' "$(arg_review_label http3)" "$(_review_command_display_value "$http3")"
+    printf '  %s: %s\n' "$(arg_review_label alt_svc)" "$(_review_command_display_value "$alt_svc")"
+  fi
+  [ "${#args[@]}" -gt 0 ] || printf '  (none)\n'
+  return 0
 }
 
 function _review_command_format_update_port_arg_summary() {
@@ -549,8 +476,33 @@ function review_command_before_run() {
   shift || true
   local args=("$@")
 
+  case "$cmd" in
+  apply-domain-config | migrate-state)
+    local preview_arg=""
+    for preview_arg in "$@"; do
+      [ "$preview_arg" != --dry-run ] || return 0
+    done
+    ;;
+  esac
+
   if ! command_is_mutating "$cmd"; then
     return 0
+  fi
+
+  local domain_review_status=0
+  if declare -F _review_domain_config_pending >/dev/null 2>&1; then
+    _review_domain_config_pending "$cmd" "$@" || domain_review_status=$?
+    if [ "$domain_review_status" -ne 0 ]; then
+      SELECTED_CMD=""
+      SELECTED_ARGS=()
+      return "$domain_review_status"
+    fi
+  fi
+  if declare -F _review_domain_config_candidate >/dev/null 2>&1 &&
+    ! _review_domain_config_candidate "$cmd" "$@"; then
+    SELECTED_CMD=""
+    SELECTED_ARGS=()
+    return 1
   fi
 
   local idx review_prompt choose_status=0

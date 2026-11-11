@@ -1,0 +1,2 @@
+
+HSTS value (Off to remove): max-age=300

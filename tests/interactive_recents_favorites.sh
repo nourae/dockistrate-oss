@@ -25,8 +25,12 @@ source "$ROOT_DIR/lib/cli/command_description.sh"
 source "$ROOT_DIR/lib/cli/command_descriptions.sh"
 # shellcheck source=../lib/cli/choose_option.sh
 source "$ROOT_DIR/lib/cli/choose_option.sh"
+# shellcheck source=../lib/cli/command_visibility.sh
+source "$ROOT_DIR/lib/cli/command_visibility.sh"
 # shellcheck source=../lib/cli/review_command.sh
 source "$ROOT_DIR/lib/cli/review_command.sh"
+# shellcheck source=../lib/cli/pre_runtime_commands.sh
+source "$ROOT_DIR/lib/cli/pre_runtime_commands.sh"
 # shellcheck source=../lib/cli/interactive_recents.sh
 source "$ROOT_DIR/lib/cli/interactive_recents.sh"
 
@@ -72,6 +76,9 @@ function get_arg_spec() {
   start-nginx)
     printf '%s' 'nginx_image,nginx:latest;docker_opts,'
     ;;
+  fix-permissions)
+    printf '%s' 'mode,__DEFAULT__'
+    ;;
   set-nginx-docker-opts)
     printf '%s' 'docker_opts,'
     ;;
@@ -79,7 +86,7 @@ function get_arg_spec() {
     printf '%s' 'domain,;nginx_port,;container_port,;protocol,http;cert_path,none;ws,no;http3,off;alt_svc,auto'
     ;;
   update-backend)
-    printf '%s' 'domain,;image,;docker_opts,'
+    printf '%s' 'domain,;image,;container_port,;docker_opts,;network,'
     ;;
   add-header | update-header)
     printf '%s' 'req_resp,request;header,;value,'
@@ -184,7 +191,7 @@ if [ "${INTERACTIVE_SAVED_ARGS[0]}" != "comma,value" ] ||
 fi
 
 before_visible_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
-interactive_record_recent_command update-backend example.com nginx:alpine "--env TOKEN=secret"
+interactive_record_recent_command update-backend example.com nginx:alpine 8080 "--env TOKEN=secret"
 after_visible_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
 if [ "$after_visible_count" -ne "$((before_visible_count + 1))" ] || ! grep -Fq "TOKEN=secret" "$recent_file"; then
   echo "[Error] Positional docker_opts args should be written to interactive recents." >&2
@@ -303,8 +310,9 @@ assert_row_count "$favorites_file" "$STATE_INTERACTIVE_FAVORITES_HEADER" 0
 
 VISIBILITY_POLICY=redacted
 redacted_recent_count="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
-interactive_record_recent_command update-backend example.com nginx:alpine "--env TOKEN=redacted"
-if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ]; then
+interactive_record_recent_command update-backend example.com nginx:alpine 8080 "--env TOKEN=redacted"
+if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" -ne "$redacted_recent_count" ] ||
+  grep -Fq 'TOKEN=redacted' "$recent_file"; then
   echo "[Error] Redacted visibility policy should skip positional docker_opts recents." >&2
   cat "$recent_file" >&2
   exit 1
@@ -352,7 +360,7 @@ if [ "$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")" 
   exit 1
 fi
 backend_clear_count_before="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
-interactive_record_recent_command update-backend example.com nginx:alpine "__DOCKER_OPTS_CLEAR__"
+interactive_record_recent_command update-backend example.com nginx:alpine 8080 "__DOCKER_OPTS_CLEAR__"
 backend_clear_count_after="$(csv_data_row_count "$recent_file" "$STATE_INTERACTIVE_RECENTS_HEADER")"
 backend_clear_recent_row="$(sed -n '2p' "$recent_file")"
 if [ "$backend_clear_count_after" -ne "$backend_clear_count_before" ] ||
@@ -404,15 +412,15 @@ if interactive_favorite_has_entry add-header 3 "$redacted_favorite_args"; then
   cat "$favorites_file" >&2
   exit 1
 fi
-redacted_clear_favorite_args="$(_interactive_command_args_csv example.com nginx:alpine "__DOCKER_OPTS_CLEAR__")"
-interactive_favorite_command update-backend 3 "$redacted_clear_favorite_args"
-if ! interactive_favorite_has_entry update-backend 3 "$redacted_clear_favorite_args" ||
+redacted_clear_favorite_args="$(_interactive_command_args_csv example.com nginx:alpine 8080 "__DOCKER_OPTS_CLEAR__")"
+interactive_favorite_command update-backend 4 "$redacted_clear_favorite_args"
+if ! interactive_favorite_has_entry update-backend 4 "$redacted_clear_favorite_args" ||
   ! grep -Fq -- "__DOCKER_OPTS_CLEAR__" "$favorites_file"; then
   echo "[Error] Redacted visibility policy should preserve backend docker opts clear favorites." >&2
   cat "$favorites_file" >&2
   exit 1
 fi
-interactive_unfavorite_command update-backend 3 "$redacted_clear_favorite_args"
+interactive_unfavorite_command update-backend 4 "$redacted_clear_favorite_args"
 VISIBILITY_POLICY=full
 
 PREPARE_RUNTIME_CALLS=0
@@ -495,8 +503,8 @@ if [ "$AVAILABILITY_CALLS" -ne 1 ] || [ "$GUIDANCE_CALLS" -ne 1 ] || [ "$CHOICE_
   echo "[Error] Saved restore-backup manual path did not pass through guidance and review." >&2
   exit 1
 fi
-if [ "$PROMPTED_CMD" != "" ] || [ "$PREPARE_RUNTIME_CALLS" -ne 1 ]; then
-  echo "[Error] Saved restore-backup manual path should review/run the saved command without routing to another prompt." >&2
+if [ "$PROMPTED_CMD" != "" ] || [ "$PREPARE_RUNTIME_CALLS" -ne 0 ]; then
+  echo "[Error] Saved restore-backup manual path should review the saved command without runtime preparation or another prompt." >&2
   exit 1
 fi
 if [ "$SELECTED_CMD" != "restore-backup" ]; then
@@ -566,5 +574,34 @@ if interactive_favorite_has_entry status 0 ""; then
   echo "[Error] status should be removed from favorites after unfavoriting." >&2
   exit 1
 fi
+
+# Legacy saved repairs remain usable without preparing unrelated runtime state.
+# Exercise both actual CSV loaders and the review/run path, preserving the rows.
+rm -f "$recent_file" "$favorites_file"
+legacy_target="$tmp_dir/alternate keys, with spaces"
+legacy_args="$(_interactive_command_args_csv "$legacy_target")"
+interactive_record_recent_command fix-permissions "$legacy_target"
+interactive_favorite_command fix-permissions 1 "$legacy_args"
+cp "$recent_file" "$tmp_dir/recents-before"
+cp "$favorites_file" "$tmp_dir/favorites-before"
+for saved_source in recent favorites; do
+  PREPARE_RUNTIME_CALLS=0
+  AVAILABILITY_STATUS=0
+  reset_selection 0 0 0
+  if ! interactive_picker_choose_saved_entry "Saved repair" "$saved_source"; then
+    echo "[Error] Legacy $saved_source repair should remain runnable." >&2
+    exit 1
+  fi
+  if [ "$SELECTED_CMD" != fix-permissions ] || [ "$PREPARE_RUNTIME_CALLS" -ne 0 ]; then
+    echo "[Error] Legacy $saved_source repair must skip unrelated runtime preparation." >&2
+    exit 1
+  fi
+  assert_selected_args "$legacy_target"
+  if ! cmp -s "$recent_file" "$tmp_dir/recents-before" ||
+    ! cmp -s "$favorites_file" "$tmp_dir/favorites-before"; then
+    echo "[Error] Replaying a legacy repair changed saved command entries." >&2
+    exit 1
+  fi
+done
 
 echo "[tests] interactive_recents_favorites.sh: PASS"

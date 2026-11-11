@@ -1,0 +1,14 @@
+Review command
+  Command: Set Trusted Proxies (set-trusted-proxies)
+  Description: Define trusted proxy CIDRs for client IP headers
+
+Arguments:
+  ranges: 172.18.0.1/32
+
+CLI equivalent:
+  ./dockistrate.sh set-trusted-proxies 172.18.0.1/32
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

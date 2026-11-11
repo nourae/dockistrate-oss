@@ -106,6 +106,32 @@ STATE_ROOT="$TMP_ROOT/add" ROOT_DIR="$ROOT_DIR" bash -c '
     exit 1
     ;;
   esac
+
+  printf "%s\n" "$STATE_ACCESS_LOG_FIELDS_HEADER" "\$http_x_only_field" >"$ACCESS_LOG_FIELDS_FILE"
+  remove_log_field 1 >/dev/null
+  if [ "$(awk "END { print NR }" "$ACCESS_LOG_FIELDS_FILE")" -ne 1 ]; then
+    echo "Expected removing the sole access log field to leave a header-only state file." >&2
+    exit 1
+  fi
+
+  output="$(list_log_fields)"
+  case "$output" in
+  *"1:  \$realip_remote_addr"*) ;;
+  *)
+    echo "Expected listing a header-only access log state to restore the default fields." >&2
+    exit 1
+    ;;
+  esac
+  if [ "$(awk "END { print NR }" "$ACCESS_LOG_FIELDS_FILE")" -ne 9 ]; then
+    echo "Expected listing access log fields to reseed 8 defaults after sole-field removal." >&2
+    exit 1
+  fi
+
+  add_log_field "\$http_x_after_empty" >/dev/null
+  if [ "$(grep -Fxc "\$http_x_after_empty" "$ACCESS_LOG_FIELDS_FILE")" -ne 1 ]; then
+    echo "Expected add_log_field to remain usable after sole-field removal." >&2
+    exit 1
+  fi
 '
 
 echo "Access log entrypoint direct sourcing checks passed."

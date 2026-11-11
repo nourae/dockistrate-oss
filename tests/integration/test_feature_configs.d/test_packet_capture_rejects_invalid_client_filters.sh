@@ -3,7 +3,7 @@
 test_packet_capture_rejects_invalid_client_filters() {
   rm -rf "${CAPTURE_DIR}/test_capture_invalid_clients"
   local docker_log_file
-  docker_log_file="$(mktemp "${TMPDIR:-/tmp}/dockistrate.capture.invalid-clients.XXXXXX.log")"
+  docker_log_file="$(mktemp "${TMPDIR:-/tmp}/dockistrate.capture.invalid-clients.log.XXXXXX")"
   local state_file="${CONFIG_DIR}/capture_tls_decrypt.state"
   rm -f "$state_file"
   integration_seed_managed_proxy >/dev/null

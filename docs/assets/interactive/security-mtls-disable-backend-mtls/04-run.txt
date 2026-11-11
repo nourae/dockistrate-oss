@@ -1,0 +1,14 @@
+Review command
+  Command: Disable Backend mTLS (disable-backend-mtls)
+  Description: Disable backend mTLS for a domain
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh disable-backend-mtls example.com
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

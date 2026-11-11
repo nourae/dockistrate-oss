@@ -29,8 +29,14 @@ function arg_option_hint() {
   require_backup)
     echo "yes|no"
     ;;
+  pull_mode)
+    echo "always|if-missing|never"
+    ;;
   target_tag)
     echo "vMAJOR.MINOR.PATCH"
+    ;;
+  replace_unmanaged_container)
+    echo "64 lowercase hexadecimal characters"
     ;;
   uninstall_scope)
     echo "backend|config|all"

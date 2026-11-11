@@ -1,0 +1,6 @@
+
+Scope          | Domain                       | Port       | Path                 | Mode    | Directive                    | Value
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+path           | example.com                  | 80         | /limited             | managed | client_max_body_size         | 1k
+
+Press Enter to continue...

@@ -1,0 +1,19 @@
+Review command
+  Command: Set Nginx Directive (set-nginx-directive)
+  Description: Set a typed nginx directive override (global/backend/port/path/stream scopes)
+
+Arguments:
+  Directive scope: path
+  Domain: example.com
+  Listen port: 80
+  Path prefix: /limited
+  Directive name: client_max_body_size
+  Directive value: 1k
+
+CLI equivalent:
+  ./dockistrate.sh set-nginx-directive path example.com 80 /limited client_max_body_size 1k
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

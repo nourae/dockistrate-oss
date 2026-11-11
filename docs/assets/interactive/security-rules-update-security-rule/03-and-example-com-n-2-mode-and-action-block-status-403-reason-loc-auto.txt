@@ -1,0 +1,6 @@
+Select security rule:
+> 1) AND example.com (n=2, mode=AND) action=block status=403 reason=- loc=auto
+  2) AND example.com (n=2, mode=AND) action=block status=403 reason=- loc=auto
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

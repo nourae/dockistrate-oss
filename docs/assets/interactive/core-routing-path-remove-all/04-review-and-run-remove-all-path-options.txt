@@ -1,0 +1,16 @@
+Review command
+  Command: Remove All Path Options (remove-all-path-options)
+  Description: Remove path overrides (all or per backend)
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh remove-all-path-options example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

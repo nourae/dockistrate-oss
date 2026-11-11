@@ -1,0 +1,18 @@
+Review command
+  Command: Update ACL (update-acl)
+  Description: Update an ACL rule's domain, scope, action, address, or status
+
+Arguments:
+  ID: 1
+  Scope: l7
+  Action: deny
+  IP or CIDR: 203.0.113.0/24
+  Status override: 403
+
+CLI equivalent:
+  ./dockistrate.sh update-acl 1 --scope l7 --action deny --ip 203.0.113.0/24 --code 403
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

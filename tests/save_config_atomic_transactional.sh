@@ -108,9 +108,127 @@ if [ -e "$(_transaction_lock_dir)" ] || [ -L "$(_transaction_lock_dir)" ]; then
 fi
 LAST_POST_BACKUP_FILE="$safe_last_post_backup_file"
 
+# Conditional callers suppress errexit throughout the commit helper. Every
+# metadata write must still fail explicitly, restore config, and clear ownership.
+for metadata_name in last_post_backup.txt last_rollback_targets.sha256 last_rollback_state.sha256; do
+  HTTP_VERSION="http1.1"
+  save_config || fail_test "failed to seed metadata write-failure fixture"
+  cp "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.metadata-write.before"
+  metadata_path="$BACKUP_DIR/$metadata_name"
+  rm "$metadata_path"
+  mkdir "$metadata_path"
+  HTTP_VERSION="http2"
+  if save_config >"$TMP_ROOT/metadata-write.out" 2>&1; then
+    fail_test "save_config reported success after $metadata_name write failure"
+  fi
+  grep -Fq 'Failed to write transaction metadata' "$TMP_ROOT/metadata-write.out" ||
+    fail_test "$metadata_name failure did not reach the metadata write check"
+  cmp -s "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.metadata-write.before" ||
+    fail_test "$metadata_name failure did not roll back config"
+  [ "$HTTP_VERSION" = http1.1 ] || fail_test "$metadata_name failure did not reload original globals"
+  if transaction_is_active || [ -e "$(_transaction_lock_dir)" ]; then
+    fail_test "$metadata_name failure left a transaction or lock active"
+  fi
+  [ -z "$(find "$BACKUP_DIR" -name '.last_post_backup.txt.tmp.*' -print)" ] ||
+    fail_test "$metadata_name failure left a staged metadata pointer"
+  rmdir "$metadata_path"
+
+  # A subsequent transaction must snapshot the recovered state, never reuse
+  # the failed operation's post-change archive through mismatched signatures.
+  HTTP_VERSION="http1.1"
+  begin_transaction_return "after_metadata_failure" "$CONFIG_DIR" ||
+    fail_test "cannot start a transaction after $metadata_name failure"
+  HTTP_VERSION="http3"
+  _save_config_atomic_write || fail_test "cannot mutate follow-up fixture"
+  transaction_return_failure >/dev/null 2>&1 || true
+  cmp -s "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.metadata-write.before" ||
+    fail_test "$metadata_name failure poisoned rollback snapshot reuse"
+done
+
+# Staging and final publication can also fail while file writes themselves work.
+eval "$(declare -f make_temp_for_file | sed '1s/make_temp_for_file/original_make_temp_for_file/')"
+eval "$(declare -f finalize_temp_file | sed '1s/finalize_temp_file/original_finalize_temp_file/')"
+for metadata_failure_stage in stage publish; do
+  HTTP_VERSION="http1.1"
+  save_config || fail_test "failed to seed metadata publication fixture"
+  cp "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.metadata-publish.before"
+  function make_temp_for_file() {
+    if [ "$metadata_failure_stage" = stage ] && [ "${2:-}" = "$LAST_POST_BACKUP_FILE" ]; then
+      return 1
+    fi
+    original_make_temp_for_file "$@"
+  }
+  function finalize_temp_file() {
+    if [ "$metadata_failure_stage" = publish ] && [ "${1:-}" = "$LAST_POST_BACKUP_FILE" ]; then
+      return 1
+    fi
+    original_finalize_temp_file "$@"
+  }
+  HTTP_VERSION="http2"
+  if save_config >"$TMP_ROOT/metadata-publish.out" 2>&1; then
+    fail_test "save_config reported success after metadata $metadata_failure_stage failure"
+  fi
+  eval "$(declare -f original_make_temp_for_file | sed '1s/original_make_temp_for_file/make_temp_for_file/')"
+  eval "$(declare -f original_finalize_temp_file | sed '1s/original_finalize_temp_file/finalize_temp_file/')"
+  grep -Eq 'Failed to (stage|write) transaction metadata' "$TMP_ROOT/metadata-publish.out" ||
+    fail_test "metadata $metadata_failure_stage failure lacked a commit diagnostic"
+  cmp -s "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.metadata-publish.before" ||
+    fail_test "metadata $metadata_failure_stage failure did not roll back config"
+  if transaction_is_active || [ -e "$(_transaction_lock_dir)" ]; then
+    fail_test "metadata $metadata_failure_stage failure left a transaction or lock active"
+  fi
+  [ -z "$(find "$BACKUP_DIR" -name '.last_post_backup.txt.tmp.*' -print)" ] ||
+    fail_test "metadata $metadata_failure_stage failure left a staged pointer"
+done
+unset -f original_make_temp_for_file original_finalize_temp_file
+
+# Preserve the previous signature bytes while reporting a write failure. This
+# reproduces an unwritable signature without relying on non-root permissions.
+# The next transaction uses the same targets as save_config, so mismatched
+# pointer/signature metadata would otherwise reuse the failed post-change state.
+HTTP_VERSION="http1.1"
+save_config || fail_test "failed to seed signature preservation fixture"
+# Archive timestamps may have whole-second precision. Seed exactly representable
+# times so replay leaves the previous state signature reusable in this case.
+begin_transaction_return "seed_preserved_signature" "$CONFIG_DIR" ||
+  fail_test "cannot prepare signature-preservation baseline"
+find "$CONFIG_DIR" -exec touch -t 202601020304.05 {} +
+end_transaction_success || fail_test "cannot commit signature-preservation baseline"
+cp "$GLOBAL_SETTINGS_FILE" "$TMP_ROOT/cache-reuse.before"
+metadata_previous_targets="$(cat "$BACKUP_DIR/last_rollback_targets.sha256")"
+metadata_previous_state="$(cat "$BACKUP_DIR/last_rollback_state.sha256")"
+metadata_write_failure_hit=false
+function printf() {
+  if [ "${FUNCNAME[1]:-}" = end_transaction_success ] && [ "$#" -eq 2 ] &&
+    [ "$2" != "$metadata_previous_targets" ] && [[ "$2" =~ ^[0-9a-f]{64}$ ]]; then
+    metadata_write_failure_hit=true
+    builtin printf '%s\n' "$metadata_previous_state"
+    return 1
+  fi
+  builtin printf "$@"
+}
+HTTP_VERSION="http2"
+if save_config >"$TMP_ROOT/cache-reuse.out" 2>&1; then
+  fail_test "save_config ignored the preserved-signature write failure"
+fi
+unset -f printf
+[ "$metadata_write_failure_hit" = true ] || fail_test "state-signature failure was not injected"
+[ "$(cat "$BACKUP_DIR/last_rollback_state.sha256")" = "$metadata_previous_state" ] ||
+  fail_test "write-failure fixture did not preserve the previous signature"
+cmp -s "$GLOBAL_SETTINGS_FILE" "$TMP_ROOT/cache-reuse.before" ||
+  fail_test "signature failure did not restore original config"
+begin_transaction_return "after_preserved_signature_failure" "$CONFIG_DIR" ||
+  fail_test "cannot start transaction after preserved-signature failure"
+HTTP_VERSION="http3"
+_save_config_atomic_write || fail_test "cannot mutate signature-reuse fixture"
+transaction_return_failure >/dev/null 2>&1 || true
+cmp -s "$GLOBAL_SETTINGS_FILE" "$TMP_ROOT/cache-reuse.before" ||
+  fail_test "stale metadata reused the failed operation's post-change archive"
+
 cp "$GLOBAL_SETTINGS_FILE" "$GLOBAL_SETTINGS_FILE.before"
 eval "$(declare -f csv_join_row | sed '1s/csv_join_row/original_csv_join_row/')"
-_csv_join_row_fail_after=4
+# Fail the value record after the named header has already been serialized.
+_csv_join_row_fail_after=2
 csv_join_row() {
   _csv_join_row_call_count=$((_csv_join_row_call_count + 1))
   if [ "${_csv_join_row_call_count}" -eq "${_csv_join_row_fail_after}" ]; then
@@ -157,7 +275,7 @@ function original_csv_join_row() {
   printf '%s\n' "$out"
 }
 
-_csv_join_row_fail_after=4
+_csv_join_row_fail_after=2
 csv_join_row() {
   _csv_join_row_call_count=$((_csv_join_row_call_count + 1))
   if [ "${_csv_join_row_call_count}" -eq "${_csv_join_row_fail_after}" ]; then

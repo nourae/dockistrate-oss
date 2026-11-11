@@ -1,0 +1,15 @@
+Review command
+  Command: Set Port TLS Ciphers (set-port-tls-ciphers)
+  Description: Override TLS cipher string for an HTTPS port
+
+Arguments:
+  Listen port: 443
+  TLS ciphers: HIGH:!aNULL:!MD5
+
+CLI equivalent:
+  ./dockistrate.sh set-port-tls-ciphers 443 'HIGH:!aNULL:!MD5'
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

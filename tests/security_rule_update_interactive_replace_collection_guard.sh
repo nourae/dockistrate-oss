@@ -8,7 +8,7 @@ source "$ROOT_DIR/lib/cli/security_rule_update_interactive.sh"
 
 INTERACTIVE=true
 SECURITY_RULE_STATUS=403
-STATE_SECURITY_RULES_COLS=45
+STATE_SECURITY_RULES_COLS=48
 PROMPT_ARGS_COLLECTED=()
 SELECTED_ARGS=()
 SELECTED_CMD=""
@@ -56,6 +56,7 @@ function csv_parse_line() {
   CSV_FIELDS[6]="User-Agent"
   CSV_FIELDS[7]="contains"
   CSV_FIELDS[8]="BadBot"
+  CSV_FIELDS[47]="require"
   CSV_FIELD_COUNT="$STATE_SECURITY_RULES_COLS"
   return 0
 }
@@ -76,12 +77,14 @@ function read_with_editing() {
 
 function is_back_input() { return 1; }
 function is_valid_domain() { return 0; }
-function backend_exists() { return 0; }
+function domain_exists() { return 0; }
 
 function _sr_prompt_count() {
   local __var="${1:-}"
   printf -v "$__var" '%s' "2"
 }
+
+function _sr_prompt_action() { printf -v "$1" '%s' "$2"; }
 
 function _sr_prompt_mode() {
   local __var="${1:-}"

@@ -18,6 +18,7 @@ trap 'rm -rf "$TMP_ROOT"' EXIT
 BASE_DIR="$TMP_ROOT"
 STATE_DIR="$BASE_DIR/state"
 CONFIG_DIR="$STATE_DIR/config"
+GLOBAL_SETTINGS_FILE="$CONFIG_DIR/global_settings.csv"
 LOG_DIR="$STATE_DIR/logs"
 ERROR_LOG_DIR="$LOG_DIR/errors"
 TMP_DIR="$STATE_DIR/tmp"
@@ -29,6 +30,8 @@ CONFIG_CHECKSUM_FILE="$BACKUP_DIR/last_config.sha256"
 UPDATE_MARKER="$TMP_ROOT/update_called"
 
 mkdir -p "$CONFIG_DIR" "$LOG_DIR" "$ERROR_LOG_DIR" "$TMP_DIR" "$BACKUP_DIR" "$CERTS_DIR/mtls/example.com"
+# Runtime rollback reloads the fixture settings before running recovery hooks.
+_save_config_write_rows >"$GLOBAL_SETTINGS_FILE"
 
 cat >"$BACKEND_MTLS_FILE" <<EOF_MTLS
 domain,mtls_directory

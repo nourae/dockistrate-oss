@@ -60,13 +60,20 @@ function remove_path_option() {
   _RPO_PORT="$listen_port"
   _RPO_PATH_PREFIX="$path_prefix"
   if ! csv_rewrite_rows "$BACKEND_PORTS_FILE" "$STATE_BACKEND_PORTS_HEADER" "$STATE_BACKEND_PORTS_COLS" _remove_path_option_rewrite_row_cb; then
+    transaction_return_failure || true
+    return 1
+  fi
+  if ! nginx_directives_state_remove_for_paths "$domain" "$listen_port" "$path_prefix"; then
+    transaction_return_failure || true
     return 1
   fi
   local path_id
   path_id=$(_sanitize_path_for_id "$path_prefix")
   echo "[Info] Removed path override ${domain}:${listen_port}${path_prefix}."
   log_msg "Removed path override ${domain}:${listen_port}${path_prefix}"
-  create_backup "" "RemovePath_${domain}_${listen_port}_${path_id}"
-  update_nginx_config
+  if ! create_backup "" "RemovePath_${domain}_${listen_port}_${path_id}" || ! update_nginx_config; then
+    transaction_return_failure || true
+    return 1
+  fi
   _config_end_transaction_if_started "$started_txn"
 }

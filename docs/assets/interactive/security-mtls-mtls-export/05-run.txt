@@ -1,0 +1,15 @@
+Review command
+  Command: Export Backend Client P12 (export-backend-client-p12)
+  Description: Export a password-protected PKCS#12 for a backend client certificate
+
+Arguments:
+  Domain: example.com
+  Client name: guide-client
+
+CLI equivalent:
+  ./dockistrate.sh export-backend-client-p12 example.com guide-client
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

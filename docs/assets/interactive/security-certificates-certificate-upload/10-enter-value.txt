@@ -1,0 +1,4 @@
+
+[Info] Copied cert/key to /opt/dockistrate-demo/state/domains/example.com/certs/custom-9443.
+[Info] Added port mapping: domain=example.com => port 9443 (proto=https).
+Redirect HTTP port 80 to HTTPS? [Y/n]: no

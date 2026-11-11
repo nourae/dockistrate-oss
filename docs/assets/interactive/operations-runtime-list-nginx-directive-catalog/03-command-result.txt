@@ -1,0 +1,37 @@
+
+Context | Directive                    | Type             | Owner
+-------------------------------------------------------------------------------------------------
+http    | client_max_body_size         | size             | -
+http    | client_body_buffer_size      | size             | -
+http    | client_header_buffer_size    | size             | -
+http    | large_client_header_buffers  | count_size_pair  | -
+http    | proxy_connect_timeout        | time             | -
+http    | proxy_read_timeout           | time             | -
+http    | proxy_send_timeout           | time             | -
+http    | send_timeout                 | time             | -
+http    | proxy_buffering              | on_off           | -
+http    | proxy_request_buffering      | on_off           | -
+http    | proxy_buffer_size            | size             | -
+http    | proxy_buffers                | count_size_pair  | -
+http    | proxy_busy_buffers_size      | size             | -
+http    | underscores_in_headers       | on_off           | -
+http    | ignore_invalid_headers       | on_off           | -
+http    | server_tokens                | on_off           | control-server-tokens
+stream  | proxy_connect_timeout        | time             | -
+stream  | proxy_timeout                | time             | -
+stream  | proxy_protocol               | on_off           | -
+stream  | proxy_socket_keepalive       | on_off           | -
+stream  | proxy_buffer_size            | size             | -
+stream  | proxy_download_rate          | size_or_rate     | -
+stream  | proxy_upload_rate            | size_or_rate     | -
+stream  | proxy_requests               | integer          | -
+stream  | proxy_responses              | integer          | -
+stream  | proxy_next_upstream          | on_off           | -
+stream  | proxy_next_upstream_timeout  | time             | -
+stream  | proxy_next_upstream_tries    | integer          | -
+stream  | preread_buffer_size          | size             | -
+stream  | preread_timeout              | time             | -
+stream  | tcp_nodelay                  | on_off           | -
+stream  | ssl_preread                  | on_off           | -
+
+Press Enter to continue...

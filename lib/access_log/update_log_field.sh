@@ -9,7 +9,7 @@ function update_log_field() {
   local id="${1:-}"
   shift
   local field="$*"
-  if ! [[ "$id" =~ ^[0-9]+$ ]] || [ -z "$field" ]; then
+  if ! id="$(normalize_decimal_number "$id")" || [ -z "$field" ]; then
     echo "[Usage] update-log-field <id> <field>"
     exit 1
   fi

@@ -1,0 +1,15 @@
+Review command
+  Command: Add Backend Client Cert (add-backend-client-cert)
+  Description: Generate a client certificate for backend mTLS
+
+Arguments:
+  Domain: example.com
+  Client name: second-client
+
+CLI equivalent:
+  ./dockistrate.sh add-backend-client-cert example.com second-client
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

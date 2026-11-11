@@ -18,10 +18,12 @@ test_add_backend_runtime_rollback_on_failure() {
 
   assertNotEquals "add-backend should fail when downstream update-nginx-config rejects the unmanaged proxy" 0 "$status"
   assertStringContains "add-backend rollback output should mention rollback" "failed. Rolled back." "$output"
-  assertTrue "add-backend rollback should remove the newly-created container with anonymous volumes" \
-    "grep -Fq 'subcommand=rm -f -v ${cname}' '$docker_log_file'"
+  assertTrue "add-backend rollback should remove the newly-created container by full ID with anonymous volumes" \
+    "grep -Eq '^subcommand=rm -f -v [0-9a-f]{64}$' '$docker_log_file'"
   assertTrue "add-backend rollback should not use the volume-preserving remove path for the failed new container" \
-    "! grep -Fq 'subcommand=rm -f ${cname}' '$docker_log_file'"
+    "! grep -Eq '^subcommand=rm -f [0-9a-f]{64}$' '$docker_log_file'"
+  assertFalse "add-backend rollback should leave no container under the attempted backend name" \
+    "[ -f '${STATE_DIR}/tmp/.docker_mock/${cname}.meta' ]"
 
   if [ -f "${CONFIG_DIR}/backend_ports.csv" ] && grep -q "^backend,${domain}," "${CONFIG_DIR}/backend_ports.csv"; then
     fail "Backend row for ${domain} should not survive add-backend rollback"

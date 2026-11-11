@@ -6,11 +6,23 @@
 function get_arg_spec() {
   local cmd="$1"
   case "$cmd" in
+  init-domain-config)
+    echo "domain,;domain_config_kind,backend"
+    ;;
+  validate-domain-config)
+    echo "domain_config_target,"
+    ;;
+  apply-domain-config)
+    echo "domain_config_target,;domain_config_action,preview"
+    ;;
+  migrate-state)
+    echo "domain_config_action,preview;backend_details,"
+    ;;
   start-nginx)
     echo "nginx_image,$NGINX_IMAGE;docker_opts,"
     ;;
   set-certbot-image)
-    echo "certbot_image,$CERTBOT_IMAGE"
+    echo "certbot_image,$CERTBOT_IMAGE;pull_mode,${CERTBOT_PULL_MODE:-if-missing}"
     ;;
   add-backend)
     echo "domain,;image,;container_port,;protocol,http;listen,;cert_path,;ws,no;docker_opts,;network,$DEFAULT_NETWORK;expose,yes"
@@ -49,7 +61,7 @@ function get_arg_spec() {
     echo "hostname,"
     ;;
   update-backend)
-    echo "domain,;image,;container_port,;docker_opts,;network,$DEFAULT_NETWORK"
+    echo "domain,;image,;container_port,;docker_opts,;network,$DEFAULT_NETWORK;replace_unmanaged_container,"
     ;;
   replace-backend-network)
     echo "domain,;network,$DEFAULT_NETWORK"
@@ -314,15 +326,18 @@ function get_arg_spec() {
     echo "target_tag,;require_backup,no"
     ;;
   # unified ACL: legacy L3 ACL commands removed
+  list-security-rules)
+    echo "security_rule_domain,__ALL__"
+    ;;
   # These commands require no arguments
-  start-nginx | stop-nginx | remove-nginx | update-nginx-config | status | status-all | list-backends | fix-default-config | start-all-backends | stop-all-backends | restart-all-backends | remove-all-backends | list-certs | renew-certs | list-backups | list-acl | remove-all-acl | disable-all-acl | enable-all-acl | list-security-rules | remove-all-security-rules | disable-all-security-rules | enable-all-security-rules | list-log-fields | check-config | stop-capture | list-backend-cas | help-update)
+  start-nginx | stop-nginx | remove-nginx | update-nginx-config | status | status-all | list-backends | fix-default-config | start-all-backends | stop-all-backends | restart-all-backends | remove-all-backends | list-certs | renew-certs | list-backups | list-acl | remove-all-acl | disable-all-acl | enable-all-acl | remove-all-security-rules | disable-all-security-rules | enable-all-security-rules | list-log-fields | check-config | stop-capture | list-backend-cas | help-update)
     echo ""
     ;;
   move-acl-rule | move-security-rule)
     echo "from,;to,"
     ;;
   add-security-rule)
-    # Interactive flow handles dynamic groups; only need domain here
+    # Specialized flow asks domain, action, then dynamic condition groups.
     echo "domain,"
     ;;
   remove-all-security-rules | disable-all-security-rules | enable-all-security-rules)
@@ -336,6 +351,7 @@ function get_arg_spec() {
     echo "id,"
     ;;
   update-security-rule)
+    # Specialized flow preserves the existing action unless changed explicitly.
     echo "id,"
     ;;
   set-security-rule-mode)
@@ -346,7 +362,7 @@ function get_arg_spec() {
     ;;
   # legacy operator-specific commands removed
   restore-backup)
-    echo "backup,"
+    echo "backup,;backend_details,"
     ;;
   create-backup)
     echo "desc,ManualBackup"
@@ -398,7 +414,7 @@ function get_arg_spec() {
     echo ""
     ;;
   set-nginx-image)
-    echo "nginx_image,$NGINX_IMAGE"
+    echo "nginx_image,$NGINX_IMAGE;pull_mode,${NGINX_PULL_MODE:-if-missing}"
     ;;
   tail-proxy-logs)
     echo "lines,200"

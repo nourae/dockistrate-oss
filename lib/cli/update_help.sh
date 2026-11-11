@@ -15,7 +15,14 @@ Dockistrate does not fetch, discover, or apply updates for you.
 3. ./dockistrate.sh upgrade-preflight --require-backup vX.Y.Z
 4. git checkout vX.Y.Z
 5. ./dockistrate.sh upgrade-preflight --require-backup
-6. Run ./dockistrate.sh check-config if a managed proxy exists
+6. If the on-disk schema is older than the supported schema, preview migration:
+   ./dockistrate.sh migrate-state --dry-run
+   Review the result, then apply it: ./dockistrate.sh migrate-state
+7. Run ./dockistrate.sh check-config if a managed proxy exists
+
+Migration preserves pending drafts and does not activate them. If preview
+reports missing backend details, supply --backend-details as described in
+docs/guides/domain-configuration.md before proceeding.
 EOF
 }
 

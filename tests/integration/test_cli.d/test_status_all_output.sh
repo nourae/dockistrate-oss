@@ -9,8 +9,15 @@ test_status_shows_dashboard_runtime_and_backup_lines() {
   local domain="status.test"
   local full_marker="${BACKUP_DIR}/last_full_backup.txt"
   local post_marker="${BACKUP_DIR}/last_post_backup.txt"
+  run_dockistrate set-auto-backups true >/dev/null
+  assertEquals "enable full automatic backups for dashboard status" 0 $?
   _seed_status_backend "$domain"
   assertEquals "seed backend for status dashboard" 0 $?
+  # Model a previously managed backend whose immutable container disappeared.
+  # Config-only seeding deliberately leaves that ID absent from the Docker mock.
+  local missing_id="$(printf '%064d' 1)" ownership_token=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+  printf '%s\n' 'domain,container_id,ownership_token' \
+    "${domain},${missing_id},${ownership_token}" >"${CONFIG_DIR}/backend_identity.csv"
 
   mkdir -p "$BACKUP_DIR"
   printf '%s\n' "${BACKUP_DIR}/20260312_000000_full_status_test.tar.gz" >"$full_marker"
@@ -68,9 +75,10 @@ test_status_all_shows_extended_sections() {
   _seed_status_backend "$domain"
   assertEquals "seed backend for status-all" 0 $?
 
-  mkdir -p "$CONFIG_DIR"
-  printf '%s\n' "key,docker_options" >"$backend_opts_file"
-  printf '%s\n' "backend:${domain},--memory=96m --restart=on-failure:3" >>"$backend_opts_file"
+  local source_dir
+  for source_dir in "$STATE_DIR/domains/$domain/config" "$STATE_DIR/domains/$domain/runtime/applied"; do
+    printf 'position,argument\n1,--memory=96m\n2,--restart=on-failure:3\n' >"$source_dir/docker_options.csv"
+  done
 
   local output status
   output="$(run_dockistrate status-all)"

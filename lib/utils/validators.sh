@@ -1,4 +1,8 @@
 # shellcheck shell=bash
+if ! declare -F normalize_decimal_number >/dev/null 2>&1; then
+  source "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/numbers.sh"
+fi
+
 function normalize_domain() {
   local raw="${1:-}"
   printf '%s' "$raw" | tr '[:upper:]' '[:lower:]'
@@ -18,9 +22,7 @@ function is_valid_domain() {
 }
 
 function is_valid_port() {
-  local p="${1:-}"
-  [[ "$p" =~ ^[0-9]+$ ]] || return 1
-  ((p >= 1 && p <= 65535))
+  normalize_port "${1:-}" >/dev/null
 }
 
 # Accepts empty (treated as default elsewhere) or a valid port number
@@ -35,6 +37,7 @@ function is_valid_protocol() { case "${1:-}" in http | https | tcp | udp) return
 
 function validate_http_port_combination() {
   local protocol="${1:-}" listen_port="${2:-}"
+  listen_port="$(normalize_port "$listen_port")" || return 1
   if [ "$protocol" = "http" ] && [ "$listen_port" = "443" ]; then
     echo "[Error] HTTP protocol is not allowed on port 443. Use HTTPS for port 443." >&2
     return 1
@@ -103,9 +106,7 @@ function is_valid_path_match_mode() {
 }
 
 function is_valid_path_priority() {
-  local value="${1:-}"
-  [[ "$value" =~ ^[0-9]+$ ]] || return 1
-  [ "$value" -ge 1 ] 2>/dev/null
+  normalize_positive_decimal "${1:-}" >/dev/null
 }
 
 function is_valid_path_target() {
@@ -120,6 +121,29 @@ function is_valid_path_target() {
     return $?
   fi
   return 1
+}
+
+function normalize_path_target() {
+  local value="${1:-}" port=""
+  [ -n "$value" ] || return 0
+  if [[ "$value" == *:* ]]; then
+    is_valid_path_target "$value" || return 1
+    port="$(normalize_port "${value##*:}")" || return 1
+    printf '%s:%s' "${value%:*}" "$port"
+  else
+    normalize_port "$value"
+  fi
+}
+
+function normalize_redirect_code_spec() {
+  local value="${1:-}" port=""
+  is_valid_redirect_code_spec "$value" || return 1
+  if [[ "$value" == *:* ]]; then
+    port="$(normalize_port "${value#*:}")" || return 1
+    printf '%s:%s' "${value%%:*}" "$port"
+  else
+    printf '%s' "$value"
+  fi
 }
 
 function is_valid_path_rewrite_spec() {
@@ -196,6 +220,8 @@ function is_on_off() { case "${1:-}" in on | off) return 0 ;; *) return 1 ;; esa
 
 function is_true_false() { case "${1:-}" in true | false) return 0 ;; *) return 1 ;; esac }
 
+function is_valid_pull_mode() { case "${1:-}" in always | if-missing | never) return 0 ;; *) return 1 ;; esac }
+
 function is_valid_visibility_policy() { case "${1:-}" in full | redacted) return 0 ;; *) return 1 ;; esac }
 
 # IP address validation (IPv4 only)
@@ -233,55 +259,27 @@ function validate_trusted_proxy_ranges() {
   return 0
 }
 
-# Docker image reference (simplified); allow registry ports and digests.
+# Docker image reference syntax, including registry ports, IPv6, tags and digests.
+# Keep the match anchored to the entire input: splitting path components with
+# read would silently ignore a newline and the rest of a persisted value.
 function is_valid_image_ref() {
   local ref="${1:-}"
-  [[ -n "$ref" ]] || return 1
+  local path_component='[a-z0-9]+(([._]|__|-+)[a-z0-9]+)*'
+  local domain_component='[A-Za-z0-9]([A-Za-z0-9-]*[A-Za-z0-9])?'
+  local host="${domain_component}(\.${domain_component})*|\[[A-Fa-f0-9:]+\]"
+  local name="((${host})(:[0-9]+)?/)?${path_component}(/${path_component})*"
+  local tag='[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}'
+  local digest='[A-Za-z][A-Za-z0-9]*([-_+.][A-Za-z][A-Za-z0-9]*)*:[A-Fa-f0-9]{32,}'
+  local reference="^${name}(:${tag})?(@${digest})?$"
+  [[ "$ref" =~ $reference ]]
+}
 
-  local name="$ref"
-  local digest=""
-  if [[ "$name" == *@* ]]; then
-    digest="${name##*@}"
-    name="${name%@*}"
-    [[ -n "$name" ]] || return 1
-    [[ "$digest" =~ ^[A-Za-z0-9_+.-]+:[A-Fa-f0-9]{32,}$ ]] || return 1
-  fi
-
-  local last_segment="${name##*/}"
-  if [[ "$last_segment" == *:* ]]; then
-    local tag="${last_segment##*:}"
-    name="${name%:*}"
-    [[ "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}$ ]] || return 1
-  fi
-
-  if [[ -z "$name" || "$name" == /* || "$name" == */ || "$name" == *"//"* ]]; then
+function require_valid_image_ref() {
+  local image="${1:-}" label="${2:-image}"
+  if ! is_valid_image_ref "$image"; then
+    echo "[Error] Invalid Docker image reference for ${label}." >&2
     return 1
   fi
-
-  local component_re='^[a-z0-9]+([._-][a-z0-9]+)*$'
-  local first="${name%%/*}"
-  local remainder=""
-  if [[ "$name" == */* ]]; then
-    remainder="${name#*/}"
-  fi
-
-  if [[ "$first" == *:* ]]; then
-    local port="${first##*:}"
-    first="${first%%:*}"
-    [[ -n "$remainder" ]] || return 1
-    [[ "$port" =~ ^[0-9]+$ ]] || return 1
-  fi
-
-  [[ "$first" =~ $component_re ]] || return 1
-
-  if [ -n "$remainder" ]; then
-    local part
-    IFS='/' read -r -a parts <<<"$remainder"
-    for part in "${parts[@]}"; do
-      [[ "$part" =~ $component_re ]] || return 1
-    done
-  fi
-  return 0
 }
 
 # Validate shell variable names used for indirect assignments.
@@ -327,6 +325,9 @@ function normalize_validated_value() {
   case "$validator" in
   is_valid_domain)
     value="$(normalize_domain "$value")"
+    ;;
+  is_valid_port | is_valid_optional_port)
+    [ -z "$value" ] || value="$(normalize_port "$value")" || return 1
     ;;
   esac
   printf '%s' "$value"

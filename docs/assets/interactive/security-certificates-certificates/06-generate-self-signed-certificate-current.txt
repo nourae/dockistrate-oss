@@ -1,0 +1,9 @@
+Choose how to create the certificate material.
+Certificate type
+Example: selfsigned:
+> 1) Generate self-signed certificate (current)
+  2) Generate Let's Encrypt certificate
+  3) Upload existing fullchain.pem and privkey.pem
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

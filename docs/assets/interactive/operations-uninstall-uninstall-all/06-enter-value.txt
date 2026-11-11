@@ -1,0 +1,2 @@
+YES
+Scope 'all' removes Nginx container, backend containers, full config, certs, and runtime tmp/capture/acme data. Logs and backups are retained. Type YES to proceed: YES

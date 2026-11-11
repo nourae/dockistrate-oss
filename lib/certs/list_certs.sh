@@ -20,6 +20,10 @@ function _list_certs_collect_ports_for_refs() {
 
 # New list_certs function
 function list_certs() {
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    _list_domain_certs
+    return
+  fi
   local found=false
   echo "[Info] Listing certificates:"
   printf "%-12s | %-20s | %-15s | %-7s | %-19s | %-19s | %-6s\n" "Folder" "Domain" "Type" "Ports" "Created" "Expires" "InUse"
@@ -29,7 +33,7 @@ function list_certs() {
     for cert_dir in "$CERTS_DIR/$t/live"/*; do
       [ -d "$cert_dir" ] || continue
       found=true
-      local folder_name="$(basename "$cert_dir")"
+      local folder_name="${cert_dir##*/}"
       local domain_part
       local port_part
       if [[ "$folder_name" == *_* ]]; then
@@ -42,9 +46,6 @@ function list_certs() {
       local fullchain="$cert_dir/fullchain.pem"
       [ -f "$fullchain" ] || continue
       local expires created cert_type in_use
-      local issuer subject
-      issuer=$(openssl x509 -in "$fullchain" -noout -issuer 2>/dev/null)
-      subject=$(openssl x509 -in "$fullchain" -noout -subject 2>/dev/null)
       expires=$(openssl x509 -in "$fullchain" -noout -enddate 2>/dev/null | cut -d= -f2)
       created=$(cert_created_timestamp "$fullchain")
       case "$t" in
@@ -65,9 +66,10 @@ function list_certs() {
       local ports=("$port_part")
       if [ -f "$BACKEND_PORTS_FILE" ]; then
         while read -r pm_port; do
-          if [[ ! " ${ports[*]} " =~ " $pm_port " ]]; then
-            ports+=("$pm_port")
-          fi
+          case " ${ports[*]} " in
+          *" $pm_port "*) ;;
+          *) ports+=("$pm_port") ;;
+          esac
         done < <(_list_certs_collect_ports_for_refs "$rel_cert_path" "$prefixed_cert_path")
       fi
       local ports_str
@@ -82,4 +84,43 @@ function list_certs() {
   if [ "$found" = false ]; then
     echo "[Info] No certificates found."
   fi
+}
+
+function _list_domain_certs() {
+  local dir="" owner="" cert_id="" provider="" suffix="" expires="" expiry_line="" created="" kind="" in_use="" port="" ports_str="" declaration="" found=false
+  local ports=()
+  echo '[Info] Listing certificates:'
+  printf '%-32s | %-20s | %-15s | %-7s | %-19s | %-19s | %-6s | %s\n' 'Reference' 'Domain' 'Type' 'Ports' 'Created' 'Expires' 'InUse' 'State'
+  while IFS= read -r dir; do
+    domain_config_cert_ref_split owner cert_id "$dir" || continue
+    provider="$(_domain_runtime_get "$dir/certificate.csv" provider custom)" || return 1
+    suffix="$(_domain_runtime_get "$dir/certificate.csv" port_suffix 443)" || return 1
+    declaration=declared
+    if [ "$(_domain_runtime_get "$dir/certificate.csv" declared yes)" = no ]; then declaration=retained; fi
+    expires=''
+    if expiry_line="$(openssl x509 -in "$dir/fullchain.pem" -noout -enddate 2>/dev/null)"; then
+      expires="${expiry_line#notAfter=}"
+    fi
+    created="$(cert_created_timestamp "$dir/fullchain.pem")"
+    case "$provider" in
+    letsencrypt) kind="Let's Encrypt" ;;
+    selfsigned) kind='Self-Signed' ;;
+    *) kind=Custom ;;
+    esac
+    ports=("$suffix")
+    in_use=No
+    while IFS= read -r port; do
+      [ -n "$port" ] || continue
+      in_use=Yes
+      case " ${ports[*]} " in
+      *" $port "*) ;;
+      *) ports+=("$port") ;;
+      esac
+    done < <(_list_certs_collect_ports_for_refs "$owner/$cert_id" "$dir")
+    ports_str="$(IFS=,; printf '%s' "${ports[*]}")"
+    printf '%-32s | %-20s | %-15s | %-7s | %-19s | %-19s | %-6s | %s\n' \
+      "$owner/$cert_id" "$owner" "$kind" "$ports_str" "$created" "$expires" "$in_use" "$declaration"
+    found=true
+  done < <(domain_config_certificate_dirs all)
+  if [ "$found" = false ]; then echo '[Info] No certificates found.'; fi
 }

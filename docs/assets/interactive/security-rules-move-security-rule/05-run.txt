@@ -1,0 +1,15 @@
+Review command
+  Command: Move Security Rule (move-security-rule)
+  Description: Reorder security rules
+
+Arguments:
+  From position: 2
+  To position: 1
+
+CLI equivalent:
+  ./dockistrate.sh move-security-rule 2 1
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

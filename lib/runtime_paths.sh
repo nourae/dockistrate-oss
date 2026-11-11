@@ -1,21 +1,48 @@
 # shellcheck shell=bash
 
-function _runtime_path_strip_trailing_slashes() {
-  local path="${1:-}"
-  while [ "${path%/}" != "$path" ] && [ "$path" != "/" ]; do
-    path="${path%/}"
+# Assign pure string results in the caller's shell, preserving literal bytes
+# without command-substitution forks. Destinations are ordinary string variables;
+# reject our scratch names before declaring locals to avoid dynamic-scope writes.
+# Case patterns also leave the caller's BASH_REMATCH untouched.
+function _runtime_path_strip_trailing_slashes_assign() {
+  case "${1:-}" in
+  '' | [!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_]* | *[!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]* | _runtime_trim_value)
+    return 1
+    ;;
+  esac
+  local _runtime_trim_value="${2:-}"
+  while [ "${_runtime_trim_value%/}" != "$_runtime_trim_value" ] && [ "$_runtime_trim_value" != "/" ]; do
+    _runtime_trim_value="${_runtime_trim_value%/}"
   done
+  printf -v "$1" '%s' "$_runtime_trim_value"
+}
+
+function _runtime_path_strip_trailing_slashes() {
+  local path=""
+  _runtime_path_strip_trailing_slashes_assign path "${1:-}" || return 1
   printf '%s' "$path"
 }
 
-function _runtime_path_to_absolute_lexical() {
-  local path="${1:-}"
-  [ -n "$path" ] || return 1
-  path="$(_runtime_path_strip_trailing_slashes "$path")"
-  case "$path" in
-  /*) printf '%s' "$path" ;;
-  *) printf '%s/%s' "$PWD" "$path" ;;
+function _runtime_path_to_absolute_lexical_assign() {
+  case "${1:-}" in
+  '' | [!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_]* | *[!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]* | _runtime_absolute_value)
+    return 1
+    ;;
   esac
+  local _runtime_absolute_value="${2:-}"
+  [ -n "$_runtime_absolute_value" ] || return 1
+  _runtime_path_strip_trailing_slashes_assign _runtime_absolute_value "$_runtime_absolute_value" || return 1
+  case "$_runtime_absolute_value" in
+  /*) ;;
+  *) _runtime_absolute_value="$PWD/$_runtime_absolute_value" ;;
+  esac
+  printf -v "$1" '%s' "$_runtime_absolute_value"
+}
+
+function _runtime_path_to_absolute_lexical() {
+  local path=""
+  _runtime_path_to_absolute_lexical_assign path "${1:-}" || return 1
+  printf '%s' "$path"
 }
 
 function _runtime_path_realpath_portable() {
@@ -33,7 +60,9 @@ function _runtime_path_is_allowed_system_symlink() {
   local path="${1:-}" link=""
   [ -n "$path" ] || return 1
   command -v readlink >/dev/null 2>&1 || return 1
-  link="$(readlink "$path" 2>/dev/null || true)"
+  # GNU and BSD readlink -n emit the exact link target, with no delimiter.
+  link="$(readlink -n "$path" 2>/dev/null && printf '.')" || return 1
+  link="${link%.}"
 
   # macOS exposes these as root-owned system aliases. They are not operator
   # controlled runtime-state indirections, so allow them as path prefixes.
@@ -51,8 +80,8 @@ function _runtime_path_reject_symlink_prefix_components() {
   local current="/" rel="" component="" check_existing=true
 
   [ -n "$path" ] || return 1
-  path="$(_runtime_path_to_absolute_lexical "$path")" || return 1
-  path="$(_runtime_path_strip_trailing_slashes "$path")"
+  _runtime_path_to_absolute_lexical_assign path "$path" || return 1
+  _runtime_path_strip_trailing_slashes_assign path "$path" || return 1
   [ "$path" = "/" ] && return 0
 
   rel="${path#/}"
@@ -100,7 +129,7 @@ function _runtime_path_resolve_allow_missing() {
   local probe="" suffix="" base="" parent="" resolved=""
 
   [ -n "$target" ] || return 1
-  probe="$(_runtime_path_to_absolute_lexical "$target")" || return 1
+  _runtime_path_to_absolute_lexical_assign probe "$target" || return 1
 
   while [ ! -e "$probe" ] && [ ! -L "$probe" ]; do
     base="${probe##*/}"
@@ -118,7 +147,8 @@ function _runtime_path_resolve_allow_missing() {
     probe="$parent"
   done
 
-  resolved="$(_runtime_path_realpath_portable "$probe")" || return 1
+  resolved="$(_runtime_path_realpath_portable "$probe" && printf '.')" || return 1
+  resolved="${resolved%.}"
   if [ -n "$suffix" ]; then
     if [ "$resolved" = "/" ]; then
       printf '/%s' "$suffix"
@@ -131,50 +161,36 @@ function _runtime_path_resolve_allow_missing() {
 }
 
 function _runtime_state_declared_suffix() {
-  local path="${1:-}" root="${STATE_DIR:-}" abs_path="" abs_root=""
-  [ -n "$path" ] || return 1
-  [ -n "$root" ] || return 1
-
-  abs_path="$(_runtime_path_to_absolute_lexical "$path")" || return 1
-  abs_root="$(_runtime_path_to_absolute_lexical "$root")" || return 1
-
-  case "$abs_path" in
-  "$abs_root")
-    printf ''
-    return 0
-    ;;
-  "$abs_root"/*)
-    printf '%s' "${abs_path#"$abs_root"}"
-    return 0
-    ;;
-  esac
-
-  return 1
+  local declared_suffix=""
+  _runtime_state_declared_suffix_assign declared_suffix "${1:-}" || return 1
+  printf '%s' "$declared_suffix"
+  return 0
 }
 
 function _runtime_state_declared_suffix_assign() {
-  local __out_var="${1:-}" path="${2:-}" root="${STATE_DIR:-}"
-  local abs_path="" abs_root="" declared_suffix=""
-  [[ "$__out_var" =~ ^[A-Za-z_][A-Za-z0-9_]*$ ]] || return 1
-  [ -n "$path" ] || return 1
-  [ -n "$root" ] || return 1
-
-  abs_path="$(_runtime_path_to_absolute_lexical "$path")" || return 1
-  abs_root="$(_runtime_path_to_absolute_lexical "$root")" || return 1
-
-  case "$abs_path" in
-  "$abs_root")
-    declared_suffix=""
+  case "${1:-}" in
+  '' | [!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_]* | *[!abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_]* | _runtime_suffix_path | _runtime_suffix_root | _runtime_suffix_value)
+    return 1
     ;;
-  "$abs_root"/*)
-    declared_suffix="${abs_path#"$abs_root"}"
+  esac
+  local _runtime_suffix_path="${2:-}" _runtime_suffix_root="${STATE_DIR:-}" _runtime_suffix_value=""
+  [ -n "$_runtime_suffix_path" ] || return 1
+  [ -n "$_runtime_suffix_root" ] || return 1
+
+  _runtime_path_to_absolute_lexical_assign _runtime_suffix_path "$_runtime_suffix_path" || return 1
+  _runtime_path_to_absolute_lexical_assign _runtime_suffix_root "$_runtime_suffix_root" || return 1
+
+  case "$_runtime_suffix_path" in
+  "$_runtime_suffix_root") ;;
+  "$_runtime_suffix_root"/*)
+    _runtime_suffix_value="${_runtime_suffix_path#"$_runtime_suffix_root"}"
     ;;
   *)
     return 1
     ;;
   esac
 
-  printf -v "$__out_var" '%s' "$declared_suffix"
+  printf -v "$1" '%s' "$_runtime_suffix_value"
 }
 
 function runtime_state_path_is_declared() {
@@ -186,14 +202,14 @@ function _runtime_state_path_guard_declared_suffix() {
   local state_root="${STATE_DIR:-}" state_root_abs=""
 
   [ -n "$state_root" ] || return 0
-  state_root="$(_runtime_path_strip_trailing_slashes "$state_root")"
+  _runtime_path_strip_trailing_slashes_assign state_root "$state_root" || return 1
   _runtime_state_root_prefix_guard "$state_root" || return 1
   if [ -L "$state_root" ]; then
     echo "[Error] Refusing to use symlinked runtime state root: ${state_root}" >&2
     return 1
   fi
 
-  state_root_abs="$(_runtime_path_to_absolute_lexical "$state_root")" || {
+  _runtime_path_to_absolute_lexical_assign state_root_abs "$state_root" || {
     echo "[Error] Unable to resolve runtime state root: ${state_root}" >&2
     return 1
   }
@@ -207,17 +223,18 @@ function _runtime_state_reject_symlink_components() {
   [ -n "$walk_path" ] || return 1
   [ -n "${STATE_DIR:-}" ] || return 0
 
-  current="$(_runtime_path_resolve_allow_missing "$STATE_DIR")" || {
+  current="$(_runtime_path_resolve_allow_missing "$STATE_DIR" && printf '.')" || {
     echo "[Error] Unable to resolve runtime state root: ${STATE_DIR}" >&2
     return 1
   }
+  current="${current%.}"
 
   if [ -L "$current" ]; then
     echo "[Error] Refusing to use symlinked runtime state root: ${STATE_DIR}" >&2
     return 1
   fi
 
-  walk_path="$(_runtime_path_strip_trailing_slashes "$walk_path")"
+  _runtime_path_strip_trailing_slashes_assign walk_path "$walk_path" || return 1
   case "$walk_path" in
   "$current")
     return 0
@@ -255,7 +272,7 @@ function _runtime_state_reject_declared_symlink_components() {
 
   [ -n "$state_root" ] || return 1
 
-  state_root="$(_runtime_path_strip_trailing_slashes "$state_root")"
+  _runtime_path_strip_trailing_slashes_assign state_root "$state_root" || return 1
   if [ -L "$state_root" ]; then
     echo "[Error] Refusing to use symlinked runtime state root: ${state_root}" >&2
     return 1
@@ -302,7 +319,7 @@ function runtime_state_path_guard() {
   }
   [ -n "$state_root" ] || return 0
 
-  state_root="$(_runtime_path_strip_trailing_slashes "$state_root")"
+  _runtime_path_strip_trailing_slashes_assign state_root "$state_root" || return 1
   _runtime_state_root_prefix_guard "$state_root" || return 1
   if [ -L "$state_root" ]; then
     echo "[Error] Refusing to use symlinked runtime state root: ${state_root}" >&2
@@ -314,14 +331,16 @@ function runtime_state_path_guard() {
     return 0
   fi
 
-  state_root_norm="$(_runtime_path_resolve_allow_missing "$state_root")" || {
+  state_root_norm="$(_runtime_path_resolve_allow_missing "$state_root" && printf '.')" || {
     echo "[Error] Unable to resolve runtime state root: ${state_root}" >&2
     return 1
   }
-  path_norm="$(_runtime_path_resolve_allow_missing "$path")" || {
+  state_root_norm="${state_root_norm%.}"
+  path_norm="$(_runtime_path_resolve_allow_missing "$path" && printf '.')" || {
     echo "[Error] Unable to resolve ${label}: ${path}" >&2
     return 1
   }
+  path_norm="${path_norm%.}"
 
   case "$path_norm" in
   "$state_root_norm" | "$state_root_norm"/*) ;;

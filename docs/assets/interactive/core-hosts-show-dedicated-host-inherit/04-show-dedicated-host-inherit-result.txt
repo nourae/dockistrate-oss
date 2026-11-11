@@ -1,0 +1,11 @@
+
+Dedicated host: app.example.com -> example.com
+
+Inheritance settings:
+  mTLS:           yes
+  ACL:            yes
+  Security Rules: yes
+  Headers:        yes
+  Paths:          yes
+
+Press Enter to continue...

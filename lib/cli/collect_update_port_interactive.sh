@@ -27,6 +27,7 @@ function _collect_update_port_choose_from_lines() {
   _disp+=("Back")
 
   if ! choose_option idx "$prompt:" "${_disp[@]}"; then
+    [ "${CLI_CHOICE_CANCEL_REASON:-}" != eof ] || return 1
     return 2
   fi
   if [ -z "${idx:-}" ] || ! [ "$idx" -ge 0 ] 2>/dev/null || [ "$idx" -ge ${#_vals[@]} ] 2>/dev/null; then
@@ -44,6 +45,7 @@ function _collect_update_port_choose_from_lines() {
   __MANUAL__)
     [ -n "$manual_prompt" ] || manual_prompt="$prompt"
     read_with_editing "${manual_prompt}: " val "$default"
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     if is_back_input "$val"; then
       return 2
     fi

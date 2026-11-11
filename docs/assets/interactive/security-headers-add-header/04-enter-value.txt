@@ -1,0 +1,4 @@
+
+HTTP header name.
+Header name
+Example: X-Forwarded-Proto: X-Global-Guide

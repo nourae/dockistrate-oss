@@ -1,0 +1,26 @@
+Review command
+  Command: Update Path Option (update-path-option)
+  Description: Update advanced path routing overrides and metadata
+
+Arguments:
+  Domain: example.com
+  Current listen port: 80
+  Current path prefix: /api
+  New path prefix: /service
+  WebSocket: inherit
+  Redirect: inherit
+  Header set: none
+  Path match type: prefix
+  Path priority: 50
+  Upstream target: 80
+  Path rewrite: strip-prefix
+  Reason: Service demo
+  Source location: auto
+
+CLI equivalent:
+  ./dockistrate.sh update-path-option example.com 80 /api --new-path /service --ws inherit --redirect inherit --headers none --match prefix --priority 50 --target 80 --rewrite strip-prefix --reason 'Service demo' --loc auto
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

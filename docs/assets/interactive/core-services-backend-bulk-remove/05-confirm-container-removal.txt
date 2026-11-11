@@ -1,0 +1,2 @@
+YES
+Remove container 'backend-example.com' for domain 'example.com'? (y/n): y

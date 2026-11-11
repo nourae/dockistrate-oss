@@ -6,7 +6,7 @@ function prompt_args_compute_default() {
   local cmd="$1" name="$2" default="$3"
 
   if [[ "$cmd" == "update-backend" && "$name" == "image" ]]; then
-    default="$(get_backend_image "${PROMPT_ARGS_CONTEXT[0]}")"
+    default="$(get_backend_image "${PROMPT_ARGS_CONTEXT[0]}" 2>/dev/null || true)"
   fi
   if [[ "$cmd" == "update-backend" && "$name" == "container_port" ]]; then
     default="$(get_backend_port "${PROMPT_ARGS_CONTEXT[0]}")"
@@ -26,37 +26,31 @@ function prompt_args_compute_default() {
   if [[ "$cmd" == "set-nginx-docker-opts" && "$name" == "docker_opts" ]]; then
     default="$NGINX_DOCKER_OPTS"
   fi
-
-  # Header update defaults
-  if [[ "$cmd" == "update-header" && "$name" == "value" ]]; then
-    if [ -f "$CUSTOM_HEADERS_FILE" ] && [ -n "${PROMPT_ARGS_CONTEXT[0]:-}" ] && [ -n "${PROMPT_ARGS_CONTEXT[1]:-}" ]; then
-      local line="" line_no=0
-      while IFS= read -r line || [ -n "$line" ]; do
-        line_no=$((line_no + 1))
-        [ "$line_no" -eq 1 ] && continue
-        csv_parse_line "$line" || continue
-        [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || continue
-        if [ "${CSV_FIELDS[0]}" = "${PROMPT_ARGS_CONTEXT[0]}" ] && [ "${CSV_FIELDS[1]}" = "${PROMPT_ARGS_CONTEXT[1]}" ]; then
-          default="${CSV_FIELDS[2]}"
-          break
-        fi
-      done <"$CUSTOM_HEADERS_FILE"
-    fi
+  if [[ "$cmd" == "set-nginx-image" && "$name" == "pull_mode" ]]; then
+    case "${PROMPT_ARGS_CONTEXT[0]:-}" in
+    __LATEST_IF_MISSING__) default="if-missing" ;;
+    __LATEST_ALWAYS__) default="always" ;;
+    __PINNED_CURRENT__) default="${NGINX_PULL_MODE:-if-missing}" ;;
+    *) default="${NGINX_PULL_MODE:-if-missing}" ;;
+    esac
   fi
-  if [[ "$cmd" == "update-backend-header" && "$name" == "value" ]]; then
-    if [ -f "$BACKEND_HEADERS_FILE" ] && [ -n "${PROMPT_ARGS_CONTEXT[0]:-}" ] && [ -n "${PROMPT_ARGS_CONTEXT[1]:-}" ] && [ -n "${PROMPT_ARGS_CONTEXT[2]:-}" ]; then
-      local line="" line_no=0
-      while IFS= read -r line || [ -n "$line" ]; do
-        line_no=$((line_no + 1))
-        [ "$line_no" -eq 1 ] && continue
-        csv_parse_line "$line" || continue
-        [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_HEADERS_COLS" ] || continue
-        if [ "${CSV_FIELDS[0]}" = "${PROMPT_ARGS_CONTEXT[0]}" ] && [ "${CSV_FIELDS[1]}" = "${PROMPT_ARGS_CONTEXT[1]}" ] && [ "${CSV_FIELDS[2]}" = "${PROMPT_ARGS_CONTEXT[2]}" ]; then
-          default="${CSV_FIELDS[3]}"
-          break
-        fi
-      done <"$BACKEND_HEADERS_FILE"
-    fi
+  if [[ "$cmd" == "set-certbot-image" && "$name" == "pull_mode" ]]; then
+    case "${PROMPT_ARGS_CONTEXT[0]:-}" in
+    __LATEST_IF_MISSING__) default="if-missing" ;;
+    __LATEST_ALWAYS__) default="always" ;;
+    __PINNED_CURRENT__) default="${CERTBOT_PULL_MODE:-if-missing}" ;;
+    *) default="${CERTBOT_PULL_MODE:-if-missing}" ;;
+    esac
+  fi
+
+  # Resolve header names without case sensitivity from read-only applied rows.
+  if [[ "$cmd" == "update-header" && "$name" == "value" ]] &&
+    [ -n "${PROMPT_ARGS_CONTEXT[0]:-}" ] && [ -n "${PROMPT_ARGS_CONTEXT[1]:-}" ]; then
+    default="$(_prompt_args_header_value '' "${PROMPT_ARGS_CONTEXT[0]}" "${PROMPT_ARGS_CONTEXT[1]}")" || return 1
+  fi
+  if [[ "$cmd" == "update-backend-header" && "$name" == "value" ]] &&
+    [ -n "${PROMPT_ARGS_CONTEXT[0]:-}" ] && [ -n "${PROMPT_ARGS_CONTEXT[1]:-}" ] && [ -n "${PROMPT_ARGS_CONTEXT[2]:-}" ]; then
+    default="$(_prompt_args_header_value "${PROMPT_ARGS_CONTEXT[0]}" "${PROMPT_ARGS_CONTEXT[1]}" "${PROMPT_ARGS_CONTEXT[2]}")" || return 1
   fi
 
   # Per-backend header defaults

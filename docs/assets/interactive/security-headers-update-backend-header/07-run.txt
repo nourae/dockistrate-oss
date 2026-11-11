@@ -1,0 +1,17 @@
+Review command
+  Command: Update Backend Header (update-backend-header)
+  Description: Update a backend header override
+
+Arguments:
+  Domain: example.com
+  Header direction: response
+  Header name: X-Guide
+  Value: reviewed
+
+CLI equivalent:
+  ./dockistrate.sh update-backend-header example.com response X-Guide reviewed
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

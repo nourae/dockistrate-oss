@@ -1,0 +1,16 @@
+Review command
+  Command: Remove Backend Proxy IP Header (remove-backend-proxy-ip-header)
+  Description: Clear proxy IP header override for a backend
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh remove-backend-proxy-ip-header example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

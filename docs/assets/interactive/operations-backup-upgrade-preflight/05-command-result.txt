@@ -1,0 +1,8 @@
+
+[Info] Dockistrate version: 1.0.1
+[Info] Current supported state schema: 5
+[Info] On-disk state schema: 5
+[Info] Backup: found
+[Info] Upgrade preflight passed.
+
+Press Enter to continue...

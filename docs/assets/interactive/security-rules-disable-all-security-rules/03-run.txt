@@ -1,0 +1,14 @@
+Review command
+  Command: Disable All Security Rules (disable-all-security-rules)
+  Description: Disable all security rules
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh disable-all-security-rules
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

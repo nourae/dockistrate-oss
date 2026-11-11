@@ -1,0 +1,5 @@
+Client name:
+> 1) guide-client
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

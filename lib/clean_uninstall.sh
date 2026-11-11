@@ -9,7 +9,7 @@ if [ -f "${CLEAN_UNINSTALL_MODULE_DIR}/common.sh" ]; then
 fi
 
 for clean_uninstall_file in "${CLEAN_UNINSTALL_MODULE_DIR}"/*.sh; do
-  clean_uninstall_basename="$(basename "${clean_uninstall_file}")"
+  clean_uninstall_basename="${clean_uninstall_file##*/}"
   if [ "${clean_uninstall_basename}" = "common.sh" ]; then
     continue
   fi

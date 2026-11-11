@@ -1,0 +1,4 @@
+
+Docker network used to connect the backend and proxy.
+Docker network
+Example: dockistrate-net: docs-secondary

@@ -6,7 +6,7 @@ test_start_capture_backend_scope_no_unbound() {
   rm -f "$docker_log_file"
   rm -rf "${CAPTURE_DIR}/test_capture_backend_scope"
 
-  run_dockistrate add-backend "$domain" nginx:alpine 18180 http --listen 18081 >/dev/null
+  SKIP_DOCKER_CHECKS=false run_dockistrate add-backend "$domain" nginx:alpine 18180 http --listen 18081 >/dev/null
   assertEquals "seed backend for backend-scoped capture" 0 $?
   integration_seed_managed_proxy >/dev/null
   assertEquals "seed managed nginx-proxy for backend-scoped capture" 0 $?
@@ -23,7 +23,7 @@ test_start_capture_backend_scope_no_unbound() {
     "grep -Fq 'subcommand=run -d --name nginx-capture' '${docker_log_file}'"
 
   local stop_output stop_status
-  stop_output="$(DOCKER_MOCK_LOG_FILE="$docker_log_file" DOCKER_MOCK_PS_NAMES='nginx-capture' run_dockistrate stop-capture)"
+  stop_output="$(DOCKER_MOCK_LOG_FILE="$docker_log_file" run_dockistrate stop-capture)"
   stop_status=$?
   assertEquals "stop-capture after backend-scoped capture" 0 "$stop_status"
   assertStringContains "stop-capture message" "Packet capture stopped" "$stop_output"

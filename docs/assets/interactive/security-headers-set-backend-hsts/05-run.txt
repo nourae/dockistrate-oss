@@ -1,0 +1,15 @@
+Review command
+  Command: Set Backend HSTS (set-backend-hsts)
+  Description: Set or clear HSTS for a backend
+
+Arguments:
+  Domain: example.com
+  backend hsts value: max-age=600
+
+CLI equivalent:
+  ./dockistrate.sh set-backend-hsts example.com max-age=600
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

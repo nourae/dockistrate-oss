@@ -1,0 +1,7 @@
+
+[Info] Listing certificates:
+Reference                        | Domain               | Type            | Ports   | Created             | Expires             | InUse  | State
+example.com/selfsigned-443       | example.com          | Self-Signed     | 443     | 2026-11-09          | Nov  9 11:34:24 2027 GMT | Yes    | declared
+example.com/selfsigned-8443      | example.com          | Self-Signed     | 8443    | 2026-11-09          | Nov  9 11:35:01 2027 GMT | Yes    | declared
+
+Press Enter to continue...

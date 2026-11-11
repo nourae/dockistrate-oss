@@ -14,7 +14,7 @@ function remove_header() {
   if ! _config_begin_transaction_if_needed started_txn "remove_header_${type}_${name}"; then
     exit 1
   fi
-  state_csv_delete_by_keys "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER" "$STATE_CUSTOM_HEADERS_COLS" 2 "$type" "$name"
+  _header_mutate_file "$CUSTOM_HEADERS_FILE" global remove "" "$type" "$name" || return 1
   echo "[Info] Removed global $type header $name"
   create_backup "" "RemoveHeader_${name}"
   update_nginx_config

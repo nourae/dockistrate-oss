@@ -1,0 +1,17 @@
+Review command
+  Command: Set Port Redirect (set-port-redirect)
+  Description: Toggle HTTP→HTTPS redirect for a port with an optional status code
+
+Arguments:
+  Domain: example.com
+  Listen port: 80
+  On or off: on
+  Status code: 301
+
+CLI equivalent:
+  ./dockistrate.sh set-port-redirect example.com 80 on 301
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

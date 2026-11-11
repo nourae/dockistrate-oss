@@ -3,7 +3,63 @@
 function prompt_args_postprocess() {
   local CMD="$1"
   local args=()
-  args=("${PROMPT_ARGS_COLLECTED[@]-}")
+  if [ "${#PROMPT_ARGS_COLLECTED[@]}" -gt 0 ]; then
+    args=("${PROMPT_ARGS_COLLECTED[@]}")
+  fi
+
+  case "$CMD" in
+  list-security-rules)
+    if [ "${args[0]:-__ALL__}" = __ALL__ ] || [ -z "${args[0]:-}" ]; then
+      args=()
+    else
+      args=("$(normalize_domain "${args[0]}")")
+    fi
+    ;;
+  restore-backup)
+    local restore_details="${args[1]:-}"
+    args=("${args[0]:-}")
+    [ -z "$restore_details" ] || args+=(--backend-details "$restore_details")
+    ;;
+  init-domain-config)
+    args=("${args[0]:-}" --kind "${args[1]:-backend}")
+    ;;
+  apply-domain-config)
+    local domain_config_action="${args[1]:-preview}"
+    args=("${args[0]:-}")
+    if [ "$domain_config_action" = preview ]; then
+      args+=(--dry-run)
+    elif [ "$domain_config_action" != apply ]; then
+      echo '[Error] Select review or apply for the domain configuration.' >&2
+      return 1
+    fi
+    ;;
+  migrate-state)
+    local migration_action="${args[0]:-preview}" backend_details="${args[1]:-}"
+    args=()
+    if [ "$migration_action" = preview ]; then
+      args+=(--dry-run)
+    elif [ "$migration_action" != apply ]; then
+      echo '[Error] Select review or apply for the state migration.' >&2
+      return 1
+    fi
+    [ -z "$backend_details" ] || args+=(--backend-details "$backend_details")
+    ;;
+  esac
+
+  if [ "$CMD" = update-backend ]; then
+    # The picker uses sentinels; the backend command uses blank to keep these
+    # values. Docker options retain their separate keep/clear intent handling.
+    local backend_arg_index
+    for backend_arg_index in 1 2 4; do
+      if [ "${args[$backend_arg_index]:-}" = __DEFAULT__ ]; then
+        args[$backend_arg_index]=""
+      fi
+    done
+    if [ "${#args[@]}" -eq 6 ] && [ -z "${args[5]:-}" ]; then
+      # Preserve the existing managed-backend picker argument contract.
+      args=("${args[@]:0:5}")
+    fi
+  fi
 
   if [[ "$CMD" == "add-path-option" && ${#args[@]} -ge 3 ]]; then
     local ws_choice="${args[3]:-}" redirect_choice="${args[4]:-}" header_choice="${args[5]:-}"
@@ -125,21 +181,39 @@ function prompt_args_postprocess() {
     fi
   fi
   if [[ "$CMD" == "set-nginx-image" && ${#args[@]} -ge 1 ]]; then
+    local nginx_pull_mode="${args[1]:-}"
     case "${args[0]}" in
-    __LATEST_IF_MISSING__) args=("nginx:latest" "if-missing") ;;
-    __LATEST_ALWAYS__) args=("nginx:latest" "always") ;;
-    __PINNED_CURRENT__) args=("$NGINX_IMAGE" "${NGINX_PULL_MODE:-if-missing}") ;;
+    __LATEST_IF_MISSING__)
+      args=("nginx:latest" "${nginx_pull_mode:-if-missing}")
+      ;;
+    __LATEST_ALWAYS__)
+      args=("nginx:latest" "${nginx_pull_mode:-always}")
+      ;;
+    __PINNED_CURRENT__)
+      args=("$NGINX_IMAGE" "${nginx_pull_mode:-${NGINX_PULL_MODE:-if-missing}}")
+      ;;
     __MANUAL__) ;;
     esac
   fi
   if [[ "$CMD" == "set-certbot-image" && ${#args[@]} -ge 1 ]]; then
+    local certbot_pull_mode="${args[1]:-}"
     case "${args[0]}" in
-    __LATEST_IF_MISSING__) args=("certbot/certbot:latest" "if-missing") ;;
-    __LATEST_ALWAYS__) args=("certbot/certbot:latest" "always") ;;
-    __PINNED_CURRENT__) args=("$CERTBOT_IMAGE" "${CERTBOT_PULL_MODE:-if-missing}") ;;
+    __LATEST_IF_MISSING__)
+      args=("certbot/certbot:latest" "${certbot_pull_mode:-if-missing}")
+      ;;
+    __LATEST_ALWAYS__)
+      args=("certbot/certbot:latest" "${certbot_pull_mode:-always}")
+      ;;
+    __PINNED_CURRENT__)
+      args=("$CERTBOT_IMAGE" "${certbot_pull_mode:-${CERTBOT_PULL_MODE:-if-missing}}")
+      ;;
     __MANUAL__) ;;
     esac
   fi
 
-  PROMPT_ARGS_COLLECTED=("${args[@]}")
+  if [ "${#args[@]}" -gt 0 ]; then
+    PROMPT_ARGS_COLLECTED=("${args[@]}")
+  else
+    PROMPT_ARGS_COLLECTED=()
+  fi
 }

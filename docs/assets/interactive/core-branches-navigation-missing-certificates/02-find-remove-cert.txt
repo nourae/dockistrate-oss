@@ -1,0 +1,8 @@
+Search all commands:
+Filter: remove-cert
+Press S or / to search, C to clear, Enter to select, ? for help
+> 1) Certificates :: Remove Cert — Delete a certificate directory for a domain or port
+    suffix — unavailable: no certificates
+  2) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

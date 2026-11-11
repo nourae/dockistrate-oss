@@ -1,0 +1,25 @@
+Review command
+  Command: Add Backend (add-backend)
+  Description: Start a backend container and create the initial port mapping
+
+Arguments:
+  Domain: example.com
+  Container image: nginx:alpine
+  Backend container port: 80
+  Protocol: http
+  Listen port: 80
+  Certificate:
+  WebSocket: no
+  Extra Docker run options:
+  Docker network: dockistrate-net
+  Expose backend: yes
+  HTTP redirect:
+  Redirect target port: 80
+
+CLI equivalent:
+  ./dockistrate.sh add-backend example.com nginx:alpine 80 http --listen 80 --ws no --network dockistrate-net --expose yes
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

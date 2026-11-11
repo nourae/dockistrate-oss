@@ -12,9 +12,12 @@ function replace_backend_ca() {
   _resolve_backend_mtls_dir mtls_dir "$domain" || exit 1
   local started_txn="false"
   _mtls_begin_transaction_if_needed started_txn "replace_backend_ca_${domain}" "$mtls_dir" || exit 1
+  # Explicit replacement is also the recovery path for a lost owned authority.
+  # Preparation remains inside the transaction and rejects directory links.
+  _mtls_prepare_dir_for_mutation mtls_dir "$mtls_dir" || return 1
   _mtls_remove_ca_material "$mtls_dir" || return 1
-  _generate_backend_ca "$mtls_dir" "$domain" || return 1
-  _init_backend_mtls_state "$mtls_dir" || return 1
+  _generate_backend_ca "$mtls_dir" "$domain" replacement || return 1
+  _init_backend_mtls_state "$mtls_dir" fresh || return 1
   _generate_backend_crl "$mtls_dir" || return 1
   update_nginx_config || return 1
   _mtls_end_transaction_if_started "$started_txn"

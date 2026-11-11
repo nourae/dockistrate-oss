@@ -66,12 +66,14 @@ function prompt_args_handle_add_acl_interactive() {
       local __validator
       __validator="$(_validator_for "$CMD" "$name")"
       if [ -n "$__validator" ]; then
-        ensure_valid_or_prompt val "" "$name" "$default" "$__validator"
+        ensure_valid_or_prompt val "" "$name" "$default" "$__validator" || return 1
       else
         if [[ -n "$default" ]]; then
           read_with_editing "$prompt [$default]: " val "$default"
+          [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         else
           read_with_editing "$prompt: " val
+          [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
         fi
         [[ -z "$val" ]] && val="$default"
       fi
@@ -79,8 +81,10 @@ function prompt_args_handle_add_acl_interactive() {
   else
     if [[ -n "$default" ]]; then
       read_with_editing "$prompt [$default]: " val "$default"
+      [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     else
       read_with_editing "$prompt: " val
+      [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     fi
     [[ -z "$val" ]] && val="$default"
     if [ "$INTERACTIVE" = true ] && is_back_input "$val"; then
@@ -129,8 +133,10 @@ function prompt_args_handle_add_acl_interactive() {
     while true; do
       if [[ -n "$default" ]]; then
         read_with_editing "$prompt [$default]: " val "$default"
+        [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
       else
         read_with_editing "$prompt: " val
+        [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
       fi
       [[ -z "$val" ]] && val="$default"
       if is_back_input "$val"; then
@@ -183,6 +189,7 @@ function prompt_args_handle_add_acl_interactive() {
     fi
   else
     read_with_editing "$prompt [${default:-allow}]: " val "${default:-allow}"
+    [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     [[ -z "$val" ]] && val="$default"
     if is_back_input "$val"; then
       SELECTED_CMD=""
@@ -203,8 +210,10 @@ function prompt_args_handle_add_acl_interactive() {
     local ip_input=""
     if [[ -n "$default" ]]; then
       read_with_editing "$prompt [$default]: " ip_input "$default"
+      [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     else
       read_with_editing "$prompt: " ip_input
+      [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     fi
     [[ -z "$ip_input" ]] && ip_input="$default"
     if is_back_input "$ip_input"; then
@@ -234,8 +243,10 @@ function prompt_args_handle_add_acl_interactive() {
     [[ -n "$hint" ]] && hint="${hint//$'\n'/ }" && prompt+=" ($hint)"
     if [[ -n "$default" ]]; then
       read_with_editing "$prompt [$default]: " val "$default"
+      [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     else
       read_with_editing "$prompt: " val
+      [ "${INTERACTIVE:-false}" != true ] || [ "${READ_WITH_EDITING_CANCEL_REASON:-}" != eof ] || return 1
     fi
     [[ -z "$val" ]] && val="$default"
     if is_back_input "$val"; then

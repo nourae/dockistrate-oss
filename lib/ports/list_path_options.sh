@@ -13,6 +13,7 @@ function list_path_options() {
   fi
   if [ -n "$port_filter" ]; then
     require_valid_port "$port_filter"
+    port_filter="$(normalize_port "$port_filter")" || return 1
   fi
 
   if [ ! -f "$BACKEND_PORTS_FILE" ] || ! grep -q '^path,' "$BACKEND_PORTS_FILE"; then
@@ -53,7 +54,7 @@ function list_path_options() {
     ws_disp="$ws"
     [ -n "$ws_disp" ] || ws_disp="inherit"
     case "$redirect" in
-    on) redirect_disp="on(${code:-301})" ;;
+    on) redirect_disp="on(${code:-inherit})" ;;
     off) redirect_disp="off" ;;
     inherit | "") redirect_disp="inherit" ;;
     *) redirect_disp="$redirect" ;;

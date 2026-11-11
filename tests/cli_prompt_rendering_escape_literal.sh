@@ -31,17 +31,17 @@ trap 'rm -rf "$TMP_DIR"' EXIT
 function assert_prompt_rendered_safely() {
   local output="$1" helper_name="$2"
 
-  if LC_ALL=C printf '%s' "$output" | LC_ALL=C grep -Fq $'\x1b'; then
+  if LC_ALL=C grep -Fq $'\x1b' <<<"$output"; then
     echo "[Error] ${helper_name} rendered terminal escape bytes from prompt content." >&2
     exit 1
   fi
 
-  if ! printf '%s\n' "$output" | grep -Fxq 'line1'; then
+  if ! grep -Fxq 'line1' <<<"$output"; then
     echo "[Error] ${helper_name} did not render literal \\n as a newline." >&2
     exit 1
   fi
 
-  if ! printf '%s\n' "$output" | grep -Fq 'line2\e[31mRED'; then
+  if ! grep -Fq 'line2\e[31mRED' <<<"$output"; then
     echo "[Error] ${helper_name} should preserve non-newline backslash escapes literally." >&2
     exit 1
   fi

@@ -1,0 +1,10 @@
+Use HTTP/HTTPS for reverse proxy routes, or TCP/UDP for stream mappings.
+Protocol
+Example: https:
+  1) HTTP (current)
+> 2) HTTPS
+  3) TCP
+  4) UDP
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

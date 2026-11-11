@@ -1,0 +1,14 @@
+Security rule summary
+  Domain: example.com
+  Action: block
+  Conditions: 2
+  Mode: and
+  Code: 403
+  - header:User-Agent contains BadBot
+  - method equals GET
+
+Create security rule?:
+> 1) Confirm
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

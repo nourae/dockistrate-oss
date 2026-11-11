@@ -1,0 +1,25 @@
+n
+Unable to find image 'nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61' locally
+docker.io/nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61: Pulling from nicolaka/netshoot
+
+a0ad839cb2c0: Pulling fs layer
+1074353eec0d: Pulling fs layer
+61a67fefb05e: Pulling fs layer
+b97aa8523743: Pulling fs layer
+654136b38064: Pulling fs layer
+99f6108dbc31: Pulling fs layer
+fede5b6a6547: Pulling fs layer
+7a2de0fb9e87: Pulling fs layer
+4f4fb700ef54: Pulling fs layer
+77bcc34fb105: Pulling fs layer
+b1878ce537b3: Pulling fs layer
+4a1e4e1a7d5a: Pulling fs layer
+f881afc65fb8: Pulling fs layer
+d592122f7fc2: Pulling fs layer
+1074353eec0d: Extracting 1 s
+Digest: sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
+Status: Downloaded newer image for nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61
+e46e8756ee2ebcd067414c98b7431ea9a56be4fc11c6efff9b606465f6577230
+[Info] Packet capture started (scope: backends; backends: example.com image: nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61). Output: /opt/dockistrate-demo/state/pcaps/documentation-example/20261109_113450_nginx.pcap
+
+Press Enter to continue...

@@ -1,0 +1,14 @@
+Review command
+  Command: Set Security Rule Status (set-security-rule-status)
+  Description: Set the global status code for security rule violations
+
+Arguments:
+  Status code: 403
+
+CLI equivalent:
+  ./dockistrate.sh set-security-rule-status 403
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

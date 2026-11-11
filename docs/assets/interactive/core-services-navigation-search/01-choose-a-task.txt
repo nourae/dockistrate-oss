@@ -1,0 +1,23 @@
+=== Dockistrate ===
+Proxy:        unknown
+Backends:     1 configured
+Ports:        2 mappings
+Certificates: 1 cert directories
+Backups:      7 available
+Capture:      unknown
+What do you want to do?
+  1) Add a new backend
+  2) Recent commands
+  3) Favorites
+  4) Expose or update a port
+  5) Domain configuration files
+  6) Start / stop services
+  7) Certificates
+  8) Access control & security rules
+  9) Updates / release preflight
+  10) Diagnostics / troubleshoot
+> 11) Search all commands
+  12) Advanced command browser
+  13) Quit
+
+↑↓ move  Enter select  Esc back  Q back  ? help

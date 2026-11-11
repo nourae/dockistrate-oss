@@ -18,42 +18,33 @@ function audit_log() {
   timestamp="$(date '+%Y-%m-%d %H:%M:%S')"
   normalized_message="$(_normalize_audit_log_message "$*")"
   if [ -z "$audit_file" ]; then
-    if [ -n "$normalized_message" ]; then
-      echo "[$timestamp] $normalized_message" >&2
-    else
-      echo "[$timestamp]" >&2
-    fi
+    echo "[Warn] Audit entry was not saved: private log storage is unavailable." >&2
     return 0
   fi
-  ensure_log_writable "$audit_file" || {
-    if [ -n "$normalized_message" ]; then
-      echo "[$timestamp] $normalized_message" >&2
-    else
-      echo "[$timestamp]" >&2
-    fi
+  if ! _ensure_private_file_permissions_if_exists "${audit_file}.1" ||
+    ! ensure_log_writable "$audit_file"; then
+    echo "[Warn] Audit entry was not saved: private log storage is unavailable." >&2
     return 0
-  }
+  fi
   if [ -f "$audit_file" ] && [ -r "$audit_file" ]; then
     local size
     size=$(wc -c <"$audit_file" 2>/dev/null || echo 0)
     if [ "$size" -gt 1048576 ] 2>/dev/null; then
-      mv "$audit_file" "${audit_file}.1" 2>/dev/null || true
-      # Touch a fresh log and set ownership appropriately
-      ensure_log_writable "$audit_file" || return 0
+      if ! mv -f "$audit_file" "${audit_file}.1" 2>/dev/null ||
+        ! _ensure_private_file_permissions "${audit_file}.1" ||
+        ! ensure_log_writable "$audit_file"; then
+        echo "[Warn] Audit entry was not saved: private log rotation failed." >&2
+        return 0
+      fi
     fi
   fi
-  if [ -w "$audit_file" ] || touch "$audit_file" &>/dev/null; then
+  if ! {
     if [ -n "$normalized_message" ]; then
-      echo "[$timestamp] $normalized_message" >>"$audit_file"
+      printf '[%s] %s\n' "$timestamp" "$normalized_message" >>"$audit_file"
     else
-      echo "[$timestamp]" >>"$audit_file"
+      printf '[%s]\n' "$timestamp" >>"$audit_file"
     fi
-  else
-    # Fall back to stderr if not writable
-    if [ -n "$normalized_message" ]; then
-      echo "[$timestamp] $normalized_message" >&2
-    else
-      echo "[$timestamp]" >&2
-    fi
+  } 2>/dev/null; then
+    echo "[Warn] Audit entry was not saved: private log write failed." >&2
   fi
 }

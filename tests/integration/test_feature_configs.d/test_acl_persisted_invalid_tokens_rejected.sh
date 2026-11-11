@@ -7,13 +7,13 @@ test_acl_persisted_l7_injection_rejected() {
   run_dockistrate add-backend "$domain" nginx:alpine 18180 http >/dev/null
   assertEquals "seed backend" 0 $?
 
-  rules_file="${CONFIG_DIR}/security_ip_rules.csv"
+  rules_file="${STATE_DIR}/domains/${domain}/runtime/applied/acl.csv"
   http_include="${CONFIG_DIR}/nginx_conf/conf.d/security_ip/${domain}.inc"
   before_http="$(cat "$http_include")"
 
   cat >"$rules_file" <<EOF_RULE
-enabled,domain,scope,action,ip_value,status_code
-1,${domain},l7,deny,1.2.3.4; return 200;,403
+rule_id,order,enabled,scope,action,ip_value,status_code
+acl-invalid,1,1,l7,deny,1.2.3.4; return 200;,403
 EOF_RULE
 
   output="$(run_dockistrate update-nginx-config 2>&1)"
@@ -36,13 +36,13 @@ test_acl_persisted_stream_deny_injection_rejected() {
   run_dockistrate add-port "$domain" 9000 18180 tcp none >/dev/null
   assertEquals "seed tcp port" 0 $?
 
-  rules_file="${CONFIG_DIR}/security_ip_rules.csv"
+  rules_file="${STATE_DIR}/domains/${domain}/runtime/applied/acl.csv"
   stream_include="${CONFIG_DIR}/nginx_conf/stream_conf/security_ip/${domain}.inc"
   before_stream="$(cat "$stream_include")"
 
   cat >"$rules_file" <<EOF_RULE
-enabled,domain,scope,action,ip_value,status_code
-1,${domain},l7,deny,1.2.3.4; return 200;,403
+rule_id,order,enabled,scope,action,ip_value,status_code
+acl-invalid,1,1,l7,deny,1.2.3.4; return 200;,403
 EOF_RULE
 
   output="$(run_dockistrate update-nginx-config 2>&1)"
@@ -63,10 +63,10 @@ test_acl_persisted_invalid_exact_ipv4_rejected() {
   run_dockistrate add-backend "$domain" nginx:alpine 18180 http >/dev/null
   assertEquals "seed backend" 0 $?
 
-  rules_file="${CONFIG_DIR}/security_ip_rules.csv"
+  rules_file="${STATE_DIR}/domains/${domain}/runtime/applied/acl.csv"
   cat >"$rules_file" <<EOF_RULE
-enabled,domain,scope,action,ip_value,status_code
-1,${domain},l7,allow,999.999.999.999,
+rule_id,order,enabled,scope,action,ip_value,status_code
+acl-invalid,1,1,l7,allow,999.999.999.999,
 EOF_RULE
 
   output="$(run_dockistrate update-nginx-config 2>&1)"
@@ -84,10 +84,10 @@ test_acl_persisted_invalid_status_code_rejected() {
   run_dockistrate add-backend "$domain" nginx:alpine 18180 http >/dev/null
   assertEquals "seed backend" 0 $?
 
-  rules_file="${CONFIG_DIR}/security_ip_rules.csv"
+  rules_file="${STATE_DIR}/domains/${domain}/runtime/applied/acl.csv"
   cat >"$rules_file" <<EOF_RULE
-enabled,domain,scope,action,ip_value,status_code
-1,${domain},l7,deny,192.0.2.10,451; return 200;
+rule_id,order,enabled,scope,action,ip_value,status_code
+acl-invalid,1,1,l7,deny,192.0.2.10,451; return 200;
 EOF_RULE
 
   output="$(run_dockistrate update-nginx-config 2>&1)"

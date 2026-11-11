@@ -1,0 +1,4 @@
+
+[Info] Generated PKCS#12 file /opt/dockistrate-demo/state/domains/example.com/mtls/guide-client.p12
+
+Press Enter to continue...

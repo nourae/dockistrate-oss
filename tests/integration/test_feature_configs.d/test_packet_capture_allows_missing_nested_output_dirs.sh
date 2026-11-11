@@ -16,7 +16,7 @@ test_packet_capture_allows_missing_nested_output_dirs() {
     "/pcaps/new_nested_capture/deep/path/" "$output"
 
   local stop_output stop_status
-  stop_output="$(DOCKER_MOCK_PS_NAMES='nginx-capture' run_dockistrate stop-capture)"
+  stop_output="$(run_dockistrate stop-capture)"
   stop_status=$?
   assertEquals "stop-capture should succeed after nested output capture" 0 "$stop_status"
   assertStringContains "stop-capture message" "Packet capture stopped" "$stop_output"

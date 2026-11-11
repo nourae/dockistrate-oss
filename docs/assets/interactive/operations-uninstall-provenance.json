@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "scenario": "operations-uninstall",
+  "source_commit": "713ddb64b57886e0a6553d627b6ba00ce094ccb4",
+  "started_at": "2026-11-09T11:33:37.801183+00:00",
+  "capture_method": "live PTY bytes displayed by xterm; X11 window screenshot; uniform background trimmed with 14px padding",
+  "terminal": {
+    "columns": 90,
+    "rows": 48,
+    "font": "DejaVu Sans Mono",
+    "font_size": 13,
+    "padding_pixels": 14
+  },
+  "github_run_id": "42609907969",
+  "github_run_attempt": "1",
+  "scenario_module": "operations",
+  "group": "uninstall",
+  "versions": {
+    "bash": "GNU bash, version 5.3.9(1)-release (x86_64-pc-linux-gnu)",
+    "docker": "29.4.2",
+    "kernel": "Linux 7.0.0-1019-azure x86_64 GNU/Linux",
+    "curl": "curl 8.18.0 (x86_64-pc-linux-gnu) libcurl/8.18.0 OpenSSL/3.5.5 zlib/1.3.1 brotli/1.2.0 zstd/1.5.7 libidn2/2.3.8 libpsl/0.21.2 libssh2/1.11.1 nghttp2/1.68.0 librtmp/2.3 mit-krb5/1.22.1 OpenLDAP/2.6.10"
+  },
+  "images": [
+    "{\"Containers\":\"1\",\"CreatedAt\":\"2026-11-05 19:55:10 +0000 UTC\",\"CreatedSince\":\"3 days ago\",\"Digest\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"ID\":\"sha256:713fc2ebfd92e8217db451477182ee91944b123d2b1ee9fd5a8c6e91ca6c3a11\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"94.5MB\",\"Tag\":\"alpine\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-11-01 06:31:20 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"ID\":\"sha256:921e50aed7b2a67265f42ab03c7d54a32c641922cc64f0875a5ae2bcb8b37532\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/agent\",\"SharedSize\":\"N/A\",\"Size\":\"1.43GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-31 22:17:25 +0000 UTC\",\"CreatedSince\":\"8 days ago\",\"Digest\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"ID\":\"sha256:f36a9fc78aef0509ed5fa280819848cbdf099f60d7b338455ea54a5def18d6b1\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/api-proxy\",\"SharedSize\":\"N/A\",\"Size\":\"530MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-30 21:40:56 +0000 UTC\",\"CreatedSince\":\"9 days ago\",\"Digest\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"ID\":\"sha256:3719f62df6229fc6670098c3df6d7ff792a7a67ddf9c7e016a5653f39b72e1a4\",\"Repository\":\"ghcr.io/github/gh-aw-mcpg\",\"SharedSize\":\"N/A\",\"Size\":\"264MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-29 17:40:09 +0000 UTC\",\"CreatedSince\":\"10 days ago\",\"Digest\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"ID\":\"sha256:57ad85c77c5f48eeb75f4e75497bb59ea3952f16107aec618947f0bf3cae584d\",\"Repository\":\"ghcr.io/dependabot/dependabot-updater-core\",\"SharedSize\":\"N/A\",\"Size\":\"1.25GB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-21 09:49:48 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"ID\":\"sha256:250bc6ce70788207608ef74cef4397230ff2e8481218da74d6093e4bd9101132\",\"Repository\":\"ghcr.io/github/github-mcp-server\",\"SharedSize\":\"N/A\",\"Size\":\"71.8MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-20 17:48:53 +0000 UTC\",\"CreatedSince\":\"2 weeks ago\",\"Digest\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"ID\":\"sha256:34260cb89ea5d6d55b93ce13a5fe1772dbe8e1592e1200370160b7f5a0bd2ecd\",\"Repository\":\"ghcr.io/github/gh-aw-firewall/squid\",\"SharedSize\":\"N/A\",\"Size\":\"85.3MB\",\"Tag\":\"latest\",\"UniqueSize\":\"N/A\"}",
+    "{\"Containers\":\"0\",\"CreatedAt\":\"2026-10-14 18:41:41 +0000 UTC\",\"CreatedSince\":\"3 weeks ago\",\"Digest\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"ID\":\"sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47\",\"Repository\":\"nginx\",\"SharedSize\":\"N/A\",\"Size\":\"243MB\",\"Tag\":\"\\u003cnone\\u003e\",\"UniqueSize\":\"N/A\"}"
+  ],
+  "finished_at": "2026-11-09T11:35:06.718257+00:00",
+  "status": "passed",
+  "frames": [
+    {
+      "journey": "operations-uninstall-uninstall-all",
+      "journey_family": "operations-uninstall-uninstall-all",
+      "session_index": 1,
+      "step": 3,
+      "title": "Config + certs + runtime tmp/capture/acme",
+      "kind": "menu",
+      "command": "uninstall-all",
+      "image": "docs/assets/interactive/operations-uninstall-uninstall-all/03-config-certs-runtime-tmp-capture-acme.png",
+      "transcript": "docs/assets/interactive/operations-uninstall-uninstall-all/03-config-certs-runtime-tmp-capture-acme.txt",
+      "image_sha256": "77fa3b79222282cf5a29d15978c5420f5dc2d644692b702aaba4ff1315865df5",
+      "transcript_sha256": "509b9f4ed23483a7735e4ad656c560a7f5bc96eb9b5590980fcb621fc73bfa64",
+      "pty_log": "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-all.pty.log",
+      "pty_byte_offset": 67386,
+      "selected": "Config + certs + runtime tmp/capture/acme"
+    },
+    {
+      "journey": "operations-uninstall-uninstall-all",
+      "journey_family": "operations-uninstall-uninstall-all",
+      "session_index": 1,
+      "step": 4,
+      "title": "Run",
+      "kind": "menu",
+      "command": "uninstall-all",
+      "image": "docs/assets/interactive/operations-uninstall-uninstall-all/04-run.png",
+      "transcript": "docs/assets/interactive/operations-uninstall-uninstall-all/04-run.txt",
+      "image_sha256": "afefb9442205952fd8d6ce2de9650ffb0f07b7a0de46e2986228085ccc5594b6",
+      "transcript_sha256": "16d19c492af64d887dcf03e911abe4edb8327ddb939394446470a6c84a77ca1f",
+      "pty_log": "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-all.pty.log",
+      "pty_byte_offset": 67814,
+      "selected": "Run"
+    },
+    {
+      "journey": "operations-uninstall-uninstall-all",
+      "journey_family": "operations-uninstall-uninstall-all",
+      "session_index": 1,
+      "step": 5,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "uninstall-all",
+      "image": "docs/assets/interactive/operations-uninstall-uninstall-all/05-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-uninstall-uninstall-all/05-enter-value.txt",
+      "image_sha256": "2fd41fba200369d048f0e70a82f232d6412e765aea01dc8a892c797d7ee92833",
+      "transcript_sha256": "2e24aa3e9dccc22c7b771dee5dbdc1b11ad634caef798e25608c7783fb9a8efa",
+      "pty_log": "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-all.pty.log",
+      "pty_byte_offset": 67868,
+      "value": "YES"
+    },
+    {
+      "journey": "operations-uninstall-uninstall-all",
+      "journey_family": "operations-uninstall-uninstall-all",
+      "session_index": 1,
+      "step": 6,
+      "title": "Enter value",
+      "kind": "input",
+      "command": "uninstall-all",
+      "image": "docs/assets/interactive/operations-uninstall-uninstall-all/06-enter-value.png",
+      "transcript": "docs/assets/interactive/operations-uninstall-uninstall-all/06-enter-value.txt",
+      "image_sha256": "874109d2f7a618ff58f4067460e9ba2df19df2f311ca67076662af9a464a5a03",
+      "transcript_sha256": "60048a478b351d56cc5aedde3b3e4e6bfe126630076de7a3ecfd98584d2751a0",
+      "pty_log": "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-all.pty.log",
+      "pty_byte_offset": 68055,
+      "value": "YES"
+    },
+    {
+      "journey": "operations-uninstall-uninstall-all",
+      "journey_family": "operations-uninstall-uninstall-all",
+      "session_index": 1,
+      "step": 7,
+      "title": "Command result",
+      "kind": "result",
+      "command": "uninstall-all",
+      "image": "docs/assets/interactive/operations-uninstall-uninstall-all/07-command-result.png",
+      "transcript": "docs/assets/interactive/operations-uninstall-uninstall-all/07-command-result.txt",
+      "image_sha256": "7ff0761b82e994464c28f00c0040b5bb26ebf5e794d3fb1c9c128c2afae26803",
+      "transcript_sha256": "45108927fa1aa190a20ac213beb82e1848a45fc8f371317b593821bb8e3765ca",
+      "pty_log": "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-all.pty.log",
+      "pty_byte_offset": 68499,
+      "viewport": "bottom"
+    },
+    {
+      "journey": "operations-uninstall-uninstall-remaining-containers",
+      "journey_family": "operations-uninstall-uninstall-remaining-containers",
+      "session_index": 1,
+      "step": 1,
+      "title": "Verify the unrelated container remains",
+      "kind": "verification",
+      "command": null,
+      "image": "docs/assets/interactive/operations-uninstall-uninstall-remaining-containers/01-verify-the-unrelated-container-remains.png",
+      "transcript": "docs/assets/interactive/operations-uninstall-uninstall-remaining-containers/01-verify-the-unrelated-container-remains.txt",
+      "image_sha256": "4403bf9a110446c0825598816815b2837a56c62f5cddc14e63467da550fca47e",
+      "transcript_sha256": "31ef137d3dc67963b5a159ce3239311150a5c9cd79dca9824eef67a72532996d",
+      "pty_log": "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-remaining-containers.pty.log",
+      "pty_byte_offset": 73,
+      "viewport": "bottom",
+      "exit_code": 0
+    }
+  ],
+  "checks": [
+    {
+      "label": "uninstall-all-interactive-result",
+      "status": "passed",
+      "command": "uninstall-all",
+      "outcome": "command completed without reported error"
+    },
+    {
+      "label": "uninstall-remaining-containers",
+      "status": "passed",
+      "argv": [
+        "docker",
+        "ps",
+        "-a",
+        "--format",
+        "{{.Names}}"
+      ],
+      "expected_exit": 0
+    },
+    {
+      "label": "uninstall-file-retention",
+      "status": "passed",
+      "command": "uninstall-all",
+      "backup_files": 1,
+      "log_preserved": true,
+      "runtime_markers_removed": true,
+      "menu_history_present": true
+    },
+    {
+      "label": "uninstall-ownership-boundary",
+      "status": "passed",
+      "command": "uninstall-all",
+      "outcome": "owned backend/proxy removed; unrelated sentinel preserved"
+    },
+    {
+      "label": "scenario-completed",
+      "status": "passed",
+      "scenario": "operations"
+    }
+  ],
+  "import": {
+    "original_manifest_sha256": "c6983e6d406df8e09d13472c079d0e747d5d038536b25f733a6fc72076507ebc",
+    "evidence_paths_relocated": true,
+    "omitted_nonterminal_certificate_logs": [],
+    "selected_screenshot_count": 6
+  },
+  "evidence_archive": {
+    "path": "docs/assets/interactive/operations-uninstall-recordings.tar.gz",
+    "sha256": "f526a798d301726e220016396e00d0683e1a0612120f49ab841ab035f8618886",
+    "size": 14659,
+    "members": {
+      "docs/assets/interactive/evidence/operations-uninstall/001-source-commit.log": {
+        "sha256": "967c95deacff516ed39f510d83799bf7f06b48bed369dff74116c523d80c1ef3",
+        "size": 41
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/002-empty-daemon.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/003-free-demo-listeners.log": {
+        "sha256": "6123939b6f04feecdf48700ad9824d92fff3a057e35ec96fe7e2d7b5ca1a0c33",
+        "size": 37
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/004-bash-version.log": {
+        "sha256": "1cc3018d3133e114ffbb62458e98a71e1d597028241ed88c0fa74822309da75b",
+        "size": 307
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/005-docker-version.log": {
+        "sha256": "150a06a6bc044548097663d8ff3a2ee975e639d7c85179cd7b70eb4aedb901ea",
+        "size": 7
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/006-kernel-version.log": {
+        "sha256": "0e3a474db02c1e66f5ae91c1c710afdc5399cb58458388b237740216614bd387",
+        "size": 40
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/007-curl-version.log": {
+        "sha256": "4870e27617372477dc169f5899702e7181c831502810d4c9310ae350ed43a077",
+        "size": 579
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/008-fixture-image.log": {
+        "sha256": "46790117c5f87d4dfda7f0802194aa5ac90422f8245f6b37fe54908861da193c",
+        "size": 986
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/009-fixture-backups.log": {
+        "sha256": "78ea0db26657873fc4775d8376d5c74b93885637596170eb59d9b3cbfdcad46e",
+        "size": 109
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/010-fixture-backend.log": {
+        "sha256": "28e95888c3aee048fc5c089d38cf66248e0a195a2166145009e643a5509ac976",
+        "size": 2783
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/011-fixture-public-demo.log": {
+        "sha256": "c9e61f3aaeeb800b79542915c5e0941ff84a55cba98ed6afdd8800c79b3e8c0b",
+        "size": 1442
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/012-fixture-https.log": {
+        "sha256": "30d0612db7408dab3e7405902e9e357d6671cd356735747f8977b4adc53965fb",
+        "size": 1660
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/013-fixture-check.log": {
+        "sha256": "91e2b2c01856de7d05bfdbd78f1aeac8f8b7d998dc1282937db3e216e6260a16",
+        "size": 156
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/014-unmanaged-sentinel.log": {
+        "sha256": "df080a27dd02b0e1aed51645939401ef8bb5931b8d4bdb7fccc5ff0e7aca7688",
+        "size": 65
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/015-sentinel-before.log": {
+        "sha256": "3dbd6d4a1303a2be80eccb4adfb0c09b60bbdf96442722ebeb37e22dd006b940",
+        "size": 106
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/016-fixture-uninstall-backup.log": {
+        "sha256": "e9c5680a69615a0824b83f228234d48196030292dce405f751a5847bdf8c0641",
+        "size": 105
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/017-command-alias.log": {
+        "sha256": "8a4da83ec2a7dbf2e13202bbbd65a3dd03537e7c75d17942f5498df81353ac74",
+        "size": 14
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/018-resources-after-uninstall.log": {
+        "sha256": "f2e362deaf3389dfc86adde92030e760cb0229cbbf07fdbca4ad2d6b97d68703",
+        "size": 24
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/019-sentinel-after-uninstall.log": {
+        "sha256": "3dbd6d4a1303a2be80eccb4adfb0c09b60bbdf96442722ebeb37e22dd006b940",
+        "size": 106
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/020-image-identities.log": {
+        "sha256": "0308f12fefd3e0aaef43f2580d4b06b25518761973cac179cc2733a458b1a777",
+        "size": 2933
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/commands.jsonl": {
+        "sha256": "76c408a881fcd6a50f0e599509010c2aff1452a073dfedf83a61eb04faf2dcf0",
+        "size": 7329
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/display.log": {
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "size": 0
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-all.events.jsonl": {
+        "sha256": "ff706dec8f8ab4e8c17642a842dd7ff4c7a50d783fb53d4b930622a0a7546b72",
+        "size": 16518
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-all.pty.log": {
+        "sha256": "143e811d630d07b33ffbfe791262806322ede3a26b74e48bb8582c5ca28129d8",
+        "size": 76613
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-remaining-containers.events.jsonl": {
+        "sha256": "1b3623804ca65872c03459dfffb9547150cfde4b55e484e6203c8261981a8743",
+        "size": 992
+      },
+      "docs/assets/interactive/evidence/operations-uninstall/operations-uninstall-uninstall-remaining-containers.pty.log": {
+        "sha256": "bc5eeff2eb1ac3e1f5f0260b21911d54c760769f4762146e28a08056e0ac63a3",
+        "size": 73
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+Choose whether the header applies to upstream requests or downstream responses.
+Header direction (request|response)
+Example: request:
+  1) request (current)
+> 2) response
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

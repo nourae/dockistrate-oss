@@ -2,12 +2,12 @@
 set -Eeuo pipefail
 
 function print_timeout_dependency_error() {
-  echo "[tests] Error: GNU timeout is required for test timeouts (install 'timeout' or 'gtimeout'; on macOS: brew install coreutils)." >&2
+  echo "[tests] Error: GNU timeout is required for test timeouts (install 'timeout', 'gtimeout' or 'gnutimeout'; on macOS: brew install coreutils)." >&2
 }
 
 function resolve_timeout_backend() {
   local candidate version_output
-  for candidate in timeout gtimeout; do
+  for candidate in timeout gtimeout gnutimeout; do
     if ! command -v "$candidate" >/dev/null 2>&1; then
       continue
     fi
@@ -63,10 +63,34 @@ if ! timeout_backend="$(resolve_timeout_backend)"; then
 fi
 
 status_file="$(mktemp "${TMPDIR:-/tmp}/dockistrate.run_with_timeout.status.XXXXXX")"
-cleanup_status_file() {
-  rm -f "${status_file:-}"
+timeout_pid=""
+cancel_status=0
+
+function cancel_timeout() {
+  [ "$cancel_status" -eq 0 ] || return 0
+  cancel_status="$1"
+  if [ -n "$timeout_pid" ]; then
+    kill -TERM "$timeout_pid" >/dev/null 2>&1 || true
+  fi
 }
-trap cleanup_status_file EXIT
+
+function cleanup_timeout() {
+  local exit_status=$?
+  trap '' INT TERM
+  if [ -n "$timeout_pid" ]; then
+    kill -TERM "$timeout_pid" >/dev/null 2>&1 || true
+    # Pending signals can leave several stale wait statuses. The timeout
+    # process owns the bounded descendant cleanup; wait for its actual exit.
+    while ! wait "$timeout_pid" 2>/dev/null; do
+      kill -0 "$timeout_pid" 2>/dev/null || break
+    done
+  fi
+  rm -f "${status_file:-}"
+  return "$exit_status"
+}
+trap 'cancel_timeout 130' INT
+trap 'cancel_timeout 143' TERM
+trap cleanup_timeout EXIT
 
 cleanup_wait_checks=20
 cleanup_wait_seconds=$(((cleanup_wait_checks + 9) / 10))
@@ -83,6 +107,8 @@ shift 3
 
 child_pid=""
 timed_out=0
+interrupted=0
+children_cleaned=0
 tracked_descendants=()
 
 function process_group_exists() {
@@ -203,9 +229,12 @@ function wait_for_tracked_descendants_exit() {
   [ "$remaining" -eq 0 ]
 }
 
-function handle_timeout() {
-  timed_out=1
-  if [ -n "$child_pid" ]; then
+function cleanup_children() {
+  [ -n "$child_pid" ] || return 0
+  [ "$children_cleaned" -eq 0 ] || return 0
+  children_cleaned=1
+  trap "" INT TERM
+  if process_group_exists "$child_pid"; then
     snapshot_descendants "$child_pid"
     kill_process_group TERM "$child_pid"
     if [ "$grace_seconds" -gt 0 ]; then
@@ -215,40 +244,59 @@ function handle_timeout() {
       kill_process_group KILL "$child_pid"
     fi
   fi
+  wait "$child_pid" 2>/dev/null || true
+  wait_for_process_group_exit "$child_pid" "$cleanup_wait_checks" || true
+  wait_for_tracked_descendants_exit "$cleanup_wait_checks" || true
+}
+
+function cleanup_on_exit() {
+  local exit_status=$?
+  cleanup_children
+  return "$exit_status"
+}
+
+function handle_timeout() {
+  timed_out=1
+  cleanup_children
+}
+
+function handle_interrupt() {
+  interrupted=1
+  cleanup_children
 }
 
 trap "handle_timeout" TERM
+trap "handle_interrupt" INT
+trap "cleanup_on_exit" EXIT
 
 set -m
 "$@" &
 child_pid=$!
 set +m
 
+# A signal can arrive between starting the child and assigning its PID.
+if [ "$timed_out" -eq 1 ] || [ "$interrupted" -eq 1 ]; then
+  cleanup_children
+fi
+
 set +e
 wait "$child_pid"
 rc=$?
 set -e
 
+if [ "$interrupted" -eq 1 ]; then
+  write_status "exit:130"
+  exit 130
+fi
+
 if [ "$timed_out" -eq 1 ]; then
-  set +e
-  wait "$child_pid" 2>/dev/null
-  set -e
-  wait_for_process_group_exit "$child_pid" "$cleanup_wait_checks" || true
-  wait_for_tracked_descendants_exit "$cleanup_wait_checks" || true
   write_status "timeout"
   exit 124
 fi
 
 if process_group_exists "$child_pid"; then
   if ! wait_for_process_group_exit "$child_pid" "$cleanup_wait_checks"; then
-    kill_process_group TERM "$child_pid"
-    if [ "$grace_seconds" -gt 0 ]; then
-      sleep "$grace_seconds"
-    fi
-    if process_group_exists "$child_pid"; then
-      kill_process_group KILL "$child_pid"
-    fi
-    wait_for_process_group_exit "$child_pid" "$cleanup_wait_checks" || true
+    cleanup_children
   fi
 fi
 
@@ -258,9 +306,22 @@ exit "$rc"
 
 rc=0
 set +e
-"$timeout_backend" -k "$kill_after_seconds" "$timeout_seconds" bash -c "$timeout_wrapper" bash "$grace_seconds" "$cleanup_wait_checks" "$status_file" "$@"
+# Waiting for a background process lets Bash run cancellation traps immediately.
+# Give it its own group so INT is not inherited as ignored by the wrapper.
+set -m
+"$timeout_backend" -k "$kill_after_seconds" "$timeout_seconds" bash -c "$timeout_wrapper" bash "$grace_seconds" "$cleanup_wait_checks" "$status_file" "$@" &
+timeout_pid=$!
+set +m
+if [ "$cancel_status" -ne 0 ]; then
+  exit "$cancel_status"
+fi
+wait "$timeout_pid"
 rc=$?
 set -e
+if [ "$cancel_status" -ne 0 ]; then
+  exit "$cancel_status"
+fi
+timeout_pid=""
 
 status_value=""
 if [ -s "$status_file" ]; then

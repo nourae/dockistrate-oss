@@ -165,7 +165,10 @@ function _choose_command_from_prepared_entries() {
       display_cmds+=("${CHOOSE_COMMAND_ENTRY_DISPLAY_TEXTS[$idx]}")
     done
 
-    local options=("${display_cmds[@]}" "Back")
+    local options=("Back")
+    if [ "${#display_cmds[@]}" -gt 0 ]; then
+      options=("${display_cmds[@]}" "Back")
+    fi
     local num_opts=${#options[@]}
     if ((selected >= num_opts)); then
       selected=$((num_opts - 1))

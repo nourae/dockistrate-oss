@@ -8,11 +8,11 @@ test_backend_mtls_crl_revocation_and_reset() {
   assertEquals "enable-backend-mtls should succeed" 0 $?
 
   local mtls_dir
-  mtls_dir="${CERTS_DIR}/mtls/crl.test"
+  mtls_dir="${STATE_DIR}/domains/crl.test/mtls"
   assertTrue "CA directory should exist" "[ -d '${mtls_dir}' ]"
   assertTrue "CRL should be generated on enable" "[ -f '${mtls_dir}/ca.crl' ]"
 
-  assertFileContainsSubstring 'ssl_crl /etc/letsencrypt/mtls/crl.test/ca.crl;' "${CONFIG_DIR}/nginx_conf/conf.d/backends.conf"
+  assertFileContainsSubstring 'ssl_crl /etc/letsencrypt/crl.test/mtls/ca.crl;' "${CONFIG_DIR}/nginx_conf/conf.d/backends.conf"
 
   local serial_upper
   serial_upper="$(openssl x509 -in "${mtls_dir}/client1.crt" -serial -noout | cut -d= -f2 | tr '[:lower:]' '[:upper:]')"
@@ -32,5 +32,5 @@ test_backend_mtls_crl_revocation_and_reset() {
     fail "Replaced CA should not retain revoked serials"
   fi
   assertTrue "Index should reset after CA replacement" "[ ! -s '${mtls_dir}/index.txt' ]"
-  assertFileContainsSubstring 'ssl_crl /etc/letsencrypt/mtls/crl.test/ca.crl;' "${CONFIG_DIR}/nginx_conf/conf.d/backends.conf"
+  assertFileContainsSubstring 'ssl_crl /etc/letsencrypt/crl.test/mtls/ca.crl;' "${CONFIG_DIR}/nginx_conf/conf.d/backends.conf"
 }

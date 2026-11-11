@@ -1,0 +1,8 @@
+Search all commands:
+Filter: remove-all-backend-headers
+Press S or / to search, C to clear, Enter to select, ? for help
+  1) Backend Headers :: Remove All Backend Headers — Remove all header overrides for a
+    backend
+> 2) Back
+
+↑↓ move  Enter select  / search  C clear  Esc back  Q back  ? help

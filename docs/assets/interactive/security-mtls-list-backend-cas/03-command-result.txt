@@ -1,0 +1,6 @@
+
+Domain                         | Path                                     | Expires
+--------------------------------------------------------------------------------
+example.com                    | /opt/dockistrate-demo/state/domains/example.com/mtls | Nov  7 16:17:30 2027 GMT
+
+Press Enter to continue...

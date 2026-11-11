@@ -1,0 +1,14 @@
+Review command
+  Command: Start Capture (start-capture)
+  Description: Start scoped packet capture in the proxy container (optional TLS decrypt mode)
+
+Arguments:
+  folder: documentation-tls-example
+
+CLI equivalent:
+  ./dockistrate.sh start-capture documentation-tls-example
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

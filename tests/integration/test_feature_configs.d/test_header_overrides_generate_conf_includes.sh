@@ -20,18 +20,19 @@ test_header_overrides_generate_conf_includes() {
   output=$(run_dockistrate add-backend-header alias.headers.test request X-Trace Alias-Trace-Value)
   assertEquals "add-backend-header alias.headers.test" 0 $?
 
-  output=$(run_dockistrate add-backend-header other.test request X-Trace Other-Trace-Value)
+  output=$(run_dockistrate add-backend-header other.test request x-trace Other-Trace-Value)
   assertEquals "add-backend-header other.test" 0 $?
 
   assertFileContains "response,X-Frame-Options,DENY" "${CONFIG_DIR}/custom_headers.csv"
   assertFileContains "headers.test,request,X-Trace,Trace-Value" "${CONFIG_DIR}/backend_headers.csv"
   assertFileContains "alias.headers.test,request,X-Trace,Alias-Trace-Value" "${CONFIG_DIR}/backend_headers.csv"
-  assertFileContains "other.test,request,X-Trace,Other-Trace-Value" "${CONFIG_DIR}/backend_headers.csv"
+  assertFileContains "other.test,request,x-trace,Other-Trace-Value" "${CONFIG_DIR}/backend_headers.csv"
   assertFileContainsSubstring 'add_header X-Frame-Options "DENY" always;' "${CONFIG_DIR}/nginx_conf/conf.d/custom_headers.conf"
   assertFileContainsSubstring 'proxy_set_header X-Trace $backend_req_x_trace;' "${CONFIG_DIR}/nginx_conf/conf.d/backend_headers.conf"
 
   local maps_conf="${CONFIG_DIR}/nginx_conf/conf.d/backend_header_maps.conf"
   assertFileContainsSubstring 'map $dockistrate_backend_header_key $backend_req_x_trace {' "$maps_conf"
+  assertEquals 'Case variants across owners share one logical map' 1 "$(grep -Fc 'map $dockistrate_backend_header_key $backend_req_x_trace {' "$maps_conf")"
   assertFileContainsSubstring 'headers.test "Trace-Value";' "$maps_conf"
   assertFileContainsSubstring 'alias.headers.test "Alias-Trace-Value";' "$maps_conf"
   assertFileContainsSubstring 'other.test "Other-Trace-Value";' "$maps_conf"

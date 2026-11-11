@@ -33,6 +33,12 @@ function _status_run() {
 function _status_render() {
   local mode="${1:-default}"
 
+  if declare -F domain_config_active >/dev/null 2>&1 && domain_config_active; then
+    echo "=== Domain Configuration ==="
+    domain_config_status || return 1
+    echo
+  fi
+
   echo "=== Nginx Proxy Container ==="
   local managed_nginx_present=false
   local nginx_conflict_present=false
@@ -177,12 +183,12 @@ function _status_print_global_settings() {
   else
     echo "HTTP Version: $HTTP_VERSION"
   fi
-  if [ -f "$PORT_TLS_PROTOCOLS_FILE" ] && [ "$(csv_data_row_count "$PORT_TLS_PROTOCOLS_FILE" "$STATE_PORT_TLS_PROTOCOLS_HEADER" 2>/dev/null || echo 0)" -gt 0 ]; then
+  if [ -f "$PORT_TLS_PROTOCOLS_FILE" ] && [ -n "$(state_csv_column_values "$PORT_TLS_PROTOCOLS_FILE" "$STATE_PORT_TLS_PROTOCOLS_HEADER" 0 2>/dev/null)" ]; then
     echo "TLS Protocols: $TLS_PROTOCOLS (per-port overrides active)"
   else
     echo "TLS Protocols: $TLS_PROTOCOLS"
   fi
-  if [ -f "$PORT_TLS_CIPHERS_FILE" ] && [ "$(csv_data_row_count "$PORT_TLS_CIPHERS_FILE" "$STATE_PORT_TLS_CIPHERS_HEADER" 2>/dev/null || echo 0)" -gt 0 ]; then
+  if [ -f "$PORT_TLS_CIPHERS_FILE" ] && [ -n "$(state_csv_column_values "$PORT_TLS_CIPHERS_FILE" "$STATE_PORT_TLS_CIPHERS_HEADER" 0 2>/dev/null)" ]; then
     echo "TLS Ciphers: $TLS_CIPHERS (per-port overrides active)"
   else
     echo "TLS Ciphers: $TLS_CIPHERS"
@@ -232,36 +238,37 @@ function _status_print_dedicated_hosts() {
 }
 
 function _status_print_global_headers() {
+  local line="" line_no=0 found_request=false found_response=false shared_records=""
+  shared_records="$(_header_records "$CUSTOM_HEADERS_FILE" global)" || return 1
   echo "Request Headers:"
-  local line="" line_no=0 found_request=false found_response=false
-  if [ -f "$CUSTOM_HEADERS_FILE" ] && csv_require_header "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER"; then
+  if [ -n "$shared_records" ]; then
     while IFS= read -r line || [ -n "$line" ]; do
       line_no=$((line_no + 1))
       [ "$line_no" -eq 1 ] && continue
-      csv_parse_line "$line" || continue
-      [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || continue
+      csv_parse_line "$line" || return 1
+      [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || return 1
       if [ "${CSV_FIELDS[0]}" = "request" ]; then
         echo "  ${CSV_FIELDS[1]}: $(operator_value_for_display header_value "${CSV_FIELDS[2]}")"
         found_request=true
       fi
-    done <"$CUSTOM_HEADERS_FILE"
+    done <<<"$shared_records"
   fi
   if [ "$found_request" = false ]; then
     echo "  [None]"
   fi
   echo "Response Headers:"
   line_no=0
-  if [ -f "$CUSTOM_HEADERS_FILE" ] && csv_require_header "$CUSTOM_HEADERS_FILE" "$STATE_CUSTOM_HEADERS_HEADER"; then
+  if [ -n "$shared_records" ]; then
     while IFS= read -r line || [ -n "$line" ]; do
       line_no=$((line_no + 1))
       [ "$line_no" -eq 1 ] && continue
-      csv_parse_line "$line" || continue
-      [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || continue
+      csv_parse_line "$line" || return 1
+      [ "$CSV_FIELD_COUNT" -eq "$STATE_CUSTOM_HEADERS_COLS" ] || return 1
       if [ "${CSV_FIELDS[0]}" = "response" ]; then
         echo "  ${CSV_FIELDS[1]}: $(operator_value_for_display header_value "${CSV_FIELDS[2]}")"
         found_response=true
       fi
-    done <"$CUSTOM_HEADERS_FILE"
+    done <<<"$shared_records"
   fi
   if [ "$found_response" = false ]; then
     echo "  [None]"
@@ -269,21 +276,22 @@ function _status_print_global_headers() {
 }
 
 function _status_print_backend_header_overrides() {
+  local records="" line="" line_no=0 printed=false
+  records="$(_header_records "$BACKEND_HEADERS_FILE" backend)" || return 1
   echo "=== Backend Header Overrides ==="
-  if [ -f "$BACKEND_HEADERS_FILE" ] && [ "$(csv_data_row_count "$BACKEND_HEADERS_FILE" "$STATE_BACKEND_HEADERS_HEADER" 2>/dev/null || echo 0)" -gt 0 ]; then
-    printf "%-20s | %-8s | %-20s | %s\n" "Domain" "Type" "Name" "Value"
-    echo "-----------------------------------------------------------------------"
-    local line="" line_no=0
-    while IFS= read -r line || [ -n "$line" ]; do
-      line_no=$((line_no + 1))
-      [ "$line_no" -eq 1 ] && continue
-      csv_parse_line "$line" || continue
-      [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_HEADERS_COLS" ] || continue
-      printf "%-20s | %-8s | %-20s | %s\n" "${CSV_FIELDS[0]}" "${CSV_FIELDS[1]}" "${CSV_FIELDS[2]}" "$(operator_value_for_display header_value "${CSV_FIELDS[3]}")"
-    done <"$BACKEND_HEADERS_FILE"
-  else
-    echo "[None]"
-  fi
+  while IFS= read -r line || [ -n "$line" ]; do
+    line_no=$((line_no + 1))
+    [ "$line_no" -eq 1 ] && continue
+    csv_parse_line "$line" || return 1
+    [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_HEADERS_COLS" ] || return 1
+    if [ "$printed" = false ]; then
+      printf "%-20s | %-8s | %-20s | %s\n" "Domain" "Type" "Name" "Value"
+      echo "-----------------------------------------------------------------------"
+      printed=true
+    fi
+    printf "%-20s | %-8s | %-20s | %s\n" "${CSV_FIELDS[0]}" "${CSV_FIELDS[1]}" "${CSV_FIELDS[2]}" "$(operator_value_for_display header_value "${CSV_FIELDS[3]}")"
+  done <<<"$records"
+  if [ "$printed" = false ]; then echo "[None]"; fi
 }
 
 function _status_print_access_log_fields() {
@@ -336,10 +344,10 @@ function _status_print_tls_overrides() {
     ports=$(
       {
         if [ -f "$PORT_TLS_PROTOCOLS_FILE" ]; then
-          awk -F',' 'NR>1 {print $1}' "$PORT_TLS_PROTOCOLS_FILE"
+          state_csv_column_values "$PORT_TLS_PROTOCOLS_FILE" "$STATE_PORT_TLS_PROTOCOLS_HEADER" 0
         fi
         if [ -f "$PORT_TLS_CIPHERS_FILE" ]; then
-          awk -F',' 'NR>1 {print $1}' "$PORT_TLS_CIPHERS_FILE"
+          state_csv_column_values "$PORT_TLS_CIPHERS_FILE" "$STATE_PORT_TLS_CIPHERS_HEADER" 0
         fi
       } | sort -u
     )
@@ -391,39 +399,18 @@ function _status_print_backend_docker_opts() {
     echo "[None]"
     return 0
   fi
-  if ! csv_require_header "$BACKEND_DOCKER_OPTS_FILE" "$STATE_BACKEND_DOCKER_OPTS_HEADER"; then
-    return 1
-  fi
-  if [ "$(csv_data_row_count "$BACKEND_DOCKER_OPTS_FILE" "$STATE_BACKEND_DOCKER_OPTS_HEADER" 2>/dev/null || echo 0)" -le 0 ]; then
-    echo "[None]"
-    return 0
-  fi
-
   printf "%-26s | %s\n" "Backend" "Docker Opts"
   echo "------------------------------------------------------------------------"
-  local line="" line_no=0 found=false
-  while IFS= read -r line || [ -n "$line" ]; do
-    line_no=$((line_no + 1))
-    [ "$line_no" -eq 1 ] && continue
-    csv_parse_line "$line" || continue
-    [ "$CSV_FIELD_COUNT" -eq "$STATE_BACKEND_DOCKER_OPTS_COLS" ] || continue
-    local key opts domain
-    key="${CSV_FIELDS[0]}"
-    opts="${CSV_FIELDS[1]}"
-    case "$key" in
-    backend:*)
-      domain="${key#backend:}"
-      ;;
-    *)
-      continue
-      ;;
-    esac
-    found=true
-    printf "%-26s | %s\n" "$domain" "$(operator_value_for_display docker_opts "$opts")"
-  done <"$BACKEND_DOCKER_OPTS_FILE"
-  if [ "$found" = false ]; then
+  local _status_backend_options_found=false
+  _backend_docker_options_read "$BACKEND_DOCKER_OPTS_FILE" _status_print_backend_docker_options_row || return 1
+  if [ "$_status_backend_options_found" = false ]; then
     echo "[None]"
   fi
+}
+
+function _status_print_backend_docker_options_row() {
+  _status_backend_options_found=true
+  printf "%-26s | %s\n" "$3" "$(operator_value_for_display docker_opts "$4")"
 }
 
 function _status_print_port_mappings() {

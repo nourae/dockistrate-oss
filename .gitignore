@@ -1,5 +1,8 @@
 state/
+apps/
 logs/
+__pycache__/
+*.py[cod]
 
 # Ignore certificate and key files
 *.crt

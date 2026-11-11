@@ -1,0 +1,12 @@
+Security rule summary
+  Domain: example.com
+  Action: require
+  Conditions: 1
+  Code: 403
+  - header:X-Guide equals trusted
+
+Create security rule?:
+> 1) Confirm
+  2) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

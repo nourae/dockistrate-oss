@@ -1,0 +1,14 @@
+Review command
+  Command: Set Client IP Header (set-client-ip-header)
+  Description: Configure which client IP header to trust or disable
+
+Arguments:
+  Header name or off: X-Forwarded-For
+
+CLI equivalent:
+  ./dockistrate.sh set-client-ip-header X-Forwarded-For
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -77,6 +77,14 @@ function interactive_dashboard_port_count() {
 
 function interactive_dashboard_cert_count() {
   local certs_dir="${CERTS_DIR:-}" provider="" cert_dir="" count=0
+  if declare -F __arg_choices_domain_certificates_active >/dev/null 2>&1 &&
+    __arg_choices_domain_certificates_active; then
+    while IFS= read -r cert_dir; do
+      [ -n "$cert_dir" ] && count=$((count + 1))
+    done < <(domain_config_certificate_dirs all)
+    printf '%s\n' "$count"
+    return 0
+  fi
   [ -n "$certs_dir" ] || {
     printf '%s\n' "0"
     return 0

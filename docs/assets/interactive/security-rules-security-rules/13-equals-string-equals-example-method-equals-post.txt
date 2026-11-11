@@ -1,0 +1,8 @@
+Condition 2 operator:
+> 1) Equals — string equals. Example: method - equals POST
+  2) Not Equals — string not equal. Example: method - not_equals POST
+  3) In — value is in list (comma or pipe separated). Example: method - in GET,POST
+  4) Not In — value is not in list. Example: method - not_in POST
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

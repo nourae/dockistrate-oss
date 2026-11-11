@@ -9,7 +9,7 @@ if [ -f "${LOGGING_MODULE_DIR}/common.sh" ]; then
 fi
 
 for logging_file in "${LOGGING_MODULE_DIR}"/*.sh; do
-  logging_basename="$(basename "${logging_file}")"
+  logging_basename="${logging_file##*/}"
   if [ "${logging_basename}" = "common.sh" ]; then
     continue
   fi

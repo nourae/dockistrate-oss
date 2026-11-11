@@ -8,17 +8,17 @@ test_update_port_clears_cert_when_switching_to_http() {
   assertEquals "seed certificate" 0 $?
 
   local update_output
-  update_output="$(run_dockistrate update-port http-switch.test 80 --nginx-port 8443 --protocol https --cert certs/selfsigned/live/http-switch.test_443)"
+  update_output="$(run_dockistrate update-port http-switch.test 80 --nginx-port 8443 --protocol https --cert http-switch.test/selfsigned-443)"
   assertEquals "update-port https should succeed" 0 $?
   assertStringContains "https update output" "Updated port mapping" "$update_output"
 
-  assertFileContains "port,http-switch.test,,,,,8443,7600,https,selfsigned/live/http-switch.test_443,no,off," "${CONFIG_DIR}/backend_ports.csv"
+  assertFileContains "port,http-switch.test,,,,,8443,7600,https,http-switch.test/selfsigned-443,no,off," "${CONFIG_DIR}/backend_ports.csv"
 
   local list_before
   list_before="$(run_dockistrate list-certs)"
   assertEquals "list-certs before http switch" 0 $?
   local before_line
-  before_line="$(printf '%s\n' "$list_before" | grep -F 'http-switch.test_443' || true)"
+  before_line="$(printf '%s\n' "$list_before" | grep -F 'http-switch.test/selfsigned-443' || true)"
   if [[ -z "$before_line" || "$before_line" != *"8443"* ]]; then
     fail "list-certs should report port 8443 before switching to HTTP:\n${list_before}"
   fi
@@ -36,7 +36,7 @@ test_update_port_clears_cert_when_switching_to_http() {
   list_after="$(run_dockistrate list-certs)"
   assertEquals "list-certs after http switch" 0 $?
   local after_line
-  after_line="$(printf '%s\n' "$list_after" | grep -F 'http-switch.test_443' || true)"
+  after_line="$(printf '%s\n' "$list_after" | grep -F 'http-switch.test/selfsigned-443' || true)"
   if [ -z "$after_line" ]; then
     fail "list-certs output should include http-switch.test certificate after switching to HTTP:\n${list_after}"
   fi

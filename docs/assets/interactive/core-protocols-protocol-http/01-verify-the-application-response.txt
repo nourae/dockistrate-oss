@@ -1,0 +1,8 @@
+$ curl --noproxy \* -sS --max-time 10 -i -H Host:\ protocol.example.com http://127.0.0.1:18080/
+HTTP/1.1 200 OK
+Server: nginx/1.31.7
+Date: Sat, 07 Nov 2026 16:18:17 GMT
+Transfer-Encoding: chunked
+Connection: keep-alive
+
+docs-http-ok

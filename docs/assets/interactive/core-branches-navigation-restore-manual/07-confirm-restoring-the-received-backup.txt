@@ -1,0 +1,2 @@
+
+[Warn] Overwrite current config with backup '/opt/dockistrate-demo-fixtures/manual-restore.tar.gz'? (y/n): y

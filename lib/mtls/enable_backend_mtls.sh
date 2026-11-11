@@ -16,16 +16,24 @@ function enable_backend_mtls() {
     echo "[Error] Invalid client name: '$client'. Use only alphanumeric characters, hyphens, underscores, and dots." >&2
     exit 1
   fi
-  local mtls_root="${CERTS_DIR%/}/mtls" mtls_dir="" started_txn="false"
+  local mtls_root="${CERTS_DIR%/}/mtls" mtls_dir="" started_txn="false" mode=existing mapped=""
   ensure_mtls_root_dir || return 1
-  _mtls_original_dir_path mtls_dir "${mtls_root}/${domain}" || return 1
+  if declare -F domain_config_certificate_layout >/dev/null 2>&1 && domain_config_certificate_layout; then
+    domain_config_mtls_dir mtls_dir "$domain" || return 1
+  else
+    _mtls_original_dir_path mtls_dir "${mtls_root}/${domain}" || return 1
+  fi
   _mtls_reject_original_dir_symlink "$mtls_dir" "mTLS backend directory" || return 1
   _mtls_begin_transaction_if_needed started_txn "enable_backend_mtls_${domain}" "$BACKEND_MTLS_FILE" "$mtls_dir" || exit 1
-  if [ ! -f "${mtls_dir}/ca.crt" ]; then
-    _generate_backend_ca "$mtls_dir" "$domain" || return 1
+  if [ -f "$BACKEND_MTLS_FILE" ]; then
+    mapped="$(state_csv_get_two_col_value "$BACKEND_MTLS_FILE" "$STATE_BACKEND_MTLS_HEADER" "$domain" '')" || return 1
   fi
+  if [ -z "$mapped" ] && _mtls_authority_is_empty "$mtls_dir"; then
+    _generate_backend_ca "$mtls_dir" "$domain" || return 1
+    mode=fresh
+  fi
+  _init_backend_mtls_state "$mtls_dir" "$mode" || return 1
   _mtls_chmod_file "$mtls_dir" "ca.key" 600 || return 1
-  _init_backend_mtls_state "$mtls_dir" || return 1
   mkdir -p "$(dirname "$BACKEND_MTLS_FILE")" || return 1
   state_csv_upsert_two_col_value "$BACKEND_MTLS_FILE" "$STATE_BACKEND_MTLS_HEADER" "$domain" "$mtls_dir" || return 1
   if [ -n "$client" ]; then

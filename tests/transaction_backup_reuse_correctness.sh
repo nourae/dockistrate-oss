@@ -11,6 +11,7 @@ source "$ROOT_DIR/lib/utils.sh"
 source "$ROOT_DIR/lib/backups.sh"
 
 TMP_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/dockistrate_txn_backup_reuse.XXXXXX")"
+TMP_ROOT="$(cd "$TMP_ROOT" && pwd -P)"
 trap 'rm -rf "$TMP_ROOT"' EXIT
 
 function fail_test() {
@@ -97,6 +98,12 @@ printf 'cert-a\n' >"$CERTS_DIR/server.pem"
 last_post_backup="$(seed_post_backup seed_reuse "$CONFIG_DIR" "$CERTS_DIR")"
 assert_reuses_last_post reuse_unchanged "$last_post_backup" "$CONFIG_DIR" "$CERTS_DIR"
 
+# A checksum mismatch invalidates the cache even when live state is unchanged.
+reset_test_env corrupt_cached_snapshot
+last_post_backup="$(seed_post_backup seed_corrupt_cache "$CONFIG_DIR")"
+printf 'damaged archive\n' >"$last_post_backup"
+assert_creates_fresh_pre_backup corrupt_cached_snapshot "$last_post_backup" "$CONFIG_DIR"
+
 # Scenario B: config unchanged but cert state changed should force a fresh pre backup.
 reset_test_env certs_changed
 printf 'cert-before\n' >"$CERTS_DIR/server.pem"
@@ -147,8 +154,16 @@ ORIG_ROLLBACK_STATE_SIGNATURE_DEF="$(declare -f _rollback_targets_state_signatur
 # Scenario F: non-regular entries should influence the rollback target state signature.
 reset_test_env fifo_changed
 last_post_backup="$(seed_post_backup seed_fifo "$CONFIG_DIR" "$TMP_DIR")"
+fifo_signature_before="$(_rollback_targets_state_signature "$CONFIG_DIR" "$TMP_DIR")"
 mkfifo "$TMP_DIR/reuse-test.fifo"
-assert_creates_fresh_pre_backup fifo_changed "$last_post_backup" "$CONFIG_DIR" "$TMP_DIR"
+fifo_signature_after="$(_rollback_targets_state_signature "$CONFIG_DIR" "$TMP_DIR")"
+assert_not_equals "$fifo_signature_before" "$fifo_signature_after" "FIFO should change the rollback state signature"
+if begin_transaction fifo_changed "$CONFIG_DIR" "$TMP_DIR"; then
+  fail_test "Unsupported FIFO should prevent starting an unreplayable transaction"
+fi
+if transaction_is_active; then
+  fail_test "Rejected FIFO snapshot left an active transaction"
+fi
 
 # Scenario G: file churn during hashing should degrade to a missing marker instead of failing.
 reset_test_env file_churn
@@ -196,5 +211,146 @@ last_post_backup="$(seed_post_backup seed_traversal "$CONFIG_DIR" "$TMP_DIR")"
   [ "$PRE_CHANGE_BACKUP" != "$last_post_backup" ] || exit 1
   end_transaction_success || exit 1
 ) || fail_test "Expected traversal churn to fall back to a fresh pre-change backup"
+
+# Cache equality must cover metadata which filesystem rollback restores, not
+# merely file contents. Stub unrelated diagnostics/config reload for these real
+# begin -> mutate -> rollback checks.
+function log_msg() { :; }
+function capture_docker_logs() { :; }
+function load_config() { :; }
+
+function metadata_mode() {
+  stat -c '%a' "$1" 2>/dev/null || stat -f '%Lp' "$1"
+}
+
+function metadata_mtime() {
+  stat -c '%Y' "$1" 2>/dev/null || stat -f '%m' "$1"
+}
+
+function assert_metadata_change_recovers_begin_state() {
+  local kind="$1" target="" cached="" expected_mode="" expected_mtime=""
+  local state_alias="" output=""
+  reset_test_env "metadata_${kind}"
+  mkdir -p "$CONFIG_DIR/nested"
+  printf nested >"$CONFIG_DIR/nested/marker.txt"
+  printf certificate >"$CERTS_DIR/server.pem"
+  ln -s server.pem "$CERTS_DIR/server-link.pem"
+  chmod 600 "$CONFIG_DIR/settings.txt" "$CERTS_DIR/server.pem"
+  chmod 700 "$CONFIG_DIR" "$CONFIG_DIR/nested" "$CERTS_DIR"
+  touch -t 200001010101 "$CONFIG_DIR/settings.txt" "$CERTS_DIR/server.pem" \
+    "$CONFIG_DIR" "$CONFIG_DIR/nested" "$CERTS_DIR"
+  touch -h -t 200001010101 "$CERTS_DIR/server-link.pem"
+  cached="$(seed_post_backup "seed_${kind}" "$CONFIG_DIR" "$CERTS_DIR")"
+
+  case "$kind" in
+  config_mode) target="$CONFIG_DIR/settings.txt"; chmod 640 "$target" ;;
+  certificate_mode) target="$CERTS_DIR/server.pem"; chmod 640 "$target" ;;
+  target_directory_mode) target="$CONFIG_DIR"; chmod 750 "$target" ;;
+  nested_directory_mode) target="$CONFIG_DIR/nested"; chmod 750 "$target" ;;
+  file_mtime) target="$CONFIG_DIR/settings.txt"; touch -t 200202020202 "$target" ;;
+  target_directory_mtime) target="$CONFIG_DIR"; touch -t 200202020202 "$target" ;;
+  nested_directory_mtime) target="$CONFIG_DIR/nested"; touch -t 200202020202 "$target" ;;
+  symlink_mtime) target="$CERTS_DIR/server-link.pem"; touch -h -t 200202020202 "$target" ;;
+  *) fail_test "Unknown metadata regression: $kind" ;;
+  esac
+  expected_mode="$(metadata_mode "$target")"
+  expected_mtime="$(metadata_mtime "$target")"
+  state_alias="$BASE_DIR/state-alias"
+  ln -s "$STATE_DIR" "$state_alias"
+  begin_transaction_return "changed_${kind}" "$state_alias/config" "$state_alias/certs" ||
+    fail_test "Could not start metadata regression: $kind"
+  assert_not_equals "$cached" "$PRE_CHANGE_BACKUP" "Metadata-only ${kind} change reused stale backup"
+
+  printf current >"$CONFIG_DIR/settings.txt"
+  printf current >"$CERTS_DIR/server.pem"
+  chmod 600 "$CONFIG_DIR/settings.txt" "$CERTS_DIR/server.pem"
+  chmod 700 "$CONFIG_DIR" "$CONFIG_DIR/nested"
+  touch -t 200404040404 "$CONFIG_DIR/settings.txt" "$CONFIG_DIR" "$CONFIG_DIR/nested"
+  touch -h -t 200404040404 "$CERTS_DIR/server-link.pem"
+  output="$BASE_DIR/rollback.log"
+  if _rollback_handler_return >"$output" 2>&1; then
+    fail_test "Return-mode rollback unexpectedly succeeded as an operation: $kind"
+  fi
+  if ! grep -Fq 'Rolled back.' "$output"; then
+    cat "$output" >&2
+    fail_test "Metadata rollback did not complete: $kind"
+  fi
+  assert_equals "$expected_mode" "$(metadata_mode "$target")" "Rollback lost begin-time mode for $kind"
+  assert_equals "$expected_mtime" "$(metadata_mtime "$target")" "Rollback lost begin-time mtime for $kind"
+  assert_equals "config-metadata_${kind}" "$(cat "$CONFIG_DIR/settings.txt")" "Rollback lost begin-time config"
+  assert_equals certificate "$(cat "$CERTS_DIR/server.pem")" "Rollback lost begin-time certificate"
+  if transaction_is_active; then fail_test "Metadata rollback left an active transaction: $kind"; fi
+}
+
+metadata_failures=0
+for metadata_case in config_mode certificate_mode target_directory_mode nested_directory_mode \
+  file_mtime target_directory_mtime nested_directory_mtime symlink_mtime; do
+  if (assert_metadata_change_recovers_begin_state "$metadata_case"); then
+    printf '[tests] PASS: cache invalidation and rollback for %s\n' "$metadata_case"
+  else
+    metadata_failures=1
+  fi
+done
+[ "$metadata_failures" -eq 0 ] || fail_test 'Metadata-only cache regression failed'
+
+reset_test_env unchanged_metadata_alias
+printf certificate >"$CERTS_DIR/server.pem"
+chmod 640 "$CONFIG_DIR/settings.txt" "$CERTS_DIR/server.pem"
+chmod 750 "$CONFIG_DIR" "$CERTS_DIR"
+last_post_backup="$(seed_post_backup unchanged_metadata "$CONFIG_DIR" "$CERTS_DIR")"
+ln -s "$STATE_DIR" "$BASE_DIR/alias"
+touch -a -t 203001010101 "$CONFIG_DIR" "$CONFIG_DIR/settings.txt" "$CERTS_DIR/server.pem"
+assert_reuses_last_post unchanged_metadata_alias "$last_post_backup" "$BASE_DIR/alias/config" "$BASE_DIR/alias/certs"
+printf '[tests] PASS: unchanged modes/mtimes reuse across aliases and access-time changes\n'
+
+# Emulate both native stat interfaces so Bash 3 on either OS checks nanosecond
+# differences without requiring a non-portable touch option or Python.
+reset_test_env stat_precision
+for stat_flavor in gnu bsd; do
+  (
+    stat_fraction=000000001
+    function stat() {
+      case "$stat_flavor:$1" in
+      gnu:-c) printf '640|2020-01-01 00:00:00.%s +0000\n' "$stat_fraction" ;;
+      bsd:-c) return 1 ;;
+      bsd:-f) printf '100640|1577836800.%s\n' "$stat_fraction" ;;
+      *) return 1 ;;
+      esac
+    }
+    before="$(_rollback_targets_state_signature "$CONFIG_DIR")" || exit 1
+    assert_equals "$before" "$(_rollback_targets_state_signature "$CONFIG_DIR")" "Unchanged $stat_flavor metadata was unstable"
+    stat_fraction=000000002
+    after="$(_rollback_targets_state_signature "$CONFIG_DIR")" || exit 1
+    assert_not_equals "$before" "$after" "$stat_flavor subsecond-only mtime change was ignored"
+  ) || fail_test "Precise $stat_flavor stat metadata was not represented in the signature"
+done
+printf '[tests] PASS: GNU/BSD stat fingerprints retain nanosecond differences\n'
+
+# A failed/unsupported metadata read must never authorize reuse of an older
+# snapshot. Exercise both stat exit failure and success with malformed output.
+for stat_failure in unreadable malformed; do
+  reset_test_env "stat_${stat_failure}"
+  last_post_backup="$(seed_post_backup "seed_${stat_failure}" "$CONFIG_DIR")"
+  (
+    function stat() {
+      local arg=""
+      for arg in "$@"; do
+        if [ "$arg" = "$CONFIG_DIR/settings.txt" ]; then
+          [ "$stat_failure" != malformed ] || { printf 'unsupported metadata\n'; return 0; }
+          return 1
+        fi
+      done
+      command stat "$@"
+    }
+    if begin_transaction_return "stat_${stat_failure}" "$CONFIG_DIR" >"$BASE_DIR/stat.log" 2>&1; then
+      fail_test "Failed metadata read permitted cached snapshot reuse: $stat_failure"
+    fi
+    if transaction_is_active || [ -n "${PRE_CHANGE_BACKUP:-}" ] || [ -e "$(_transaction_lock_dir)" ]; then
+      fail_test "Failed metadata read leaked transaction state: $stat_failure"
+    fi
+    assert_equals "config-stat_${stat_failure}" "$(cat "$CONFIG_DIR/settings.txt")" 'Failed stat changed live state'
+  ) || fail_test "Cache did not fail closed for $stat_failure metadata"
+done
+printf '[tests] PASS: unreadable and malformed metadata fail closed before mutation\n'
 
 echo "transaction backup reuse correctness checks passed."

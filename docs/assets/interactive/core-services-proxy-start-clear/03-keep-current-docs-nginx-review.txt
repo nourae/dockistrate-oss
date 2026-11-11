@@ -1,0 +1,14 @@
+nginx image:
+> 1) Keep current: docs-nginx:review
+  2) docs-nginx:review (@6c3fee1d7a46, created 3 weeks ago) (current)
+  3) ghcr.io/dependabot/dependabot-updater-core:latest (@57ad85c77c5f, created 10 days ago)
+  4) ghcr.io/github/gh-aw-firewall/agent:latest (@921e50aed7b2, created 8 days ago)
+  5) ghcr.io/github/gh-aw-firewall/api-proxy:latest (@f36a9fc78aef, created 8 days ago)
+  6) ghcr.io/github/gh-aw-firewall/squid:latest (@34260cb89ea5, created 2 weeks ago)
+  7) ghcr.io/github/gh-aw-mcpg:latest (@3719f62df622, created 9 days ago)
+  8) ghcr.io/github/github-mcp-server:latest (@250bc6ce7078, created 2 weeks ago)
+  9) nginx:alpine (@713fc2ebfd92, created 3 days ago)
+  10) Enter manually...
+  11) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

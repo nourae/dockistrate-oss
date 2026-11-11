@@ -1,0 +1,7 @@
+HTTP version (http1.0|http1.1|http2):
+  1) http1.0
+  2) http1.1 (current)
+> 3) http2
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

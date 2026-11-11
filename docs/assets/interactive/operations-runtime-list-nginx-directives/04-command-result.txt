@@ -1,0 +1,6 @@
+
+Scope          | Domain                       | Port       | Path                 | Mode    | Directive                    | Value
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+global         | -                            | -          | -                    | managed | client_max_body_size         | 2m
+
+Press Enter to continue...

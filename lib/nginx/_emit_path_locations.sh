@@ -31,7 +31,7 @@ function _emit_path_locations() {
       if [ "$STATE_BP_RECORD_TYPE" = "path" ] && [ "$(normalize_domain "$STATE_BP_DOMAIN")" = "$domain" ] && [ "$STATE_BP_LISTEN_PORT" = "$listen_port" ]; then
         local priority_value
         priority_value="${STATE_BP_PATH_PRIORITY:-100}"
-        [[ "$priority_value" =~ ^[0-9]+$ ]] || priority_value="100"
+        priority_value="$(normalize_positive_decimal "$priority_value")" || return 1
         printf -v sort_key '%05d\t%05d' "$priority_value" $((99999 - ${#STATE_BP_PATH_PREFIX}))
         path_entries+="${sort_key}"$'\t'"$line"$'\n'
       fi
@@ -42,9 +42,7 @@ function _emit_path_locations() {
     # 2) path inheritance is enabled.
     if [ -z "$path_entries" ] && [ -n "$fallback_domain" ]; then
       local should_inherit="yes"
-      if command -v should_inherit_paths >/dev/null 2>&1; then
-        should_inherit_paths "$domain" && should_inherit="yes" || should_inherit="no"
-      fi
+      should_inherit="$(get_dedicated_host_inheritance "$domain" paths)" || return 1
       if [ "$should_inherit" = "yes" ]; then
         path_source_domain="$fallback_domain"
         line_no=0
@@ -56,7 +54,7 @@ function _emit_path_locations() {
           if [ "$STATE_BP_RECORD_TYPE" = "path" ] && [ "$(normalize_domain "$STATE_BP_DOMAIN")" = "$path_source_domain" ] && [ "$STATE_BP_LISTEN_PORT" = "$listen_port" ]; then
             local priority_value
             priority_value="${STATE_BP_PATH_PRIORITY:-100}"
-            [[ "$priority_value" =~ ^[0-9]+$ ]] || priority_value="100"
+            priority_value="$(normalize_positive_decimal "$priority_value")" || return 1
             printf -v sort_key '%05d\t%05d' "$priority_value" $((99999 - ${#STATE_BP_PATH_PREFIX}))
             path_entries+="${sort_key}"$'\t'"$line"$'\n'
           fi

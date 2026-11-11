@@ -1,0 +1,8 @@
+Default allow/deny behavior for the selected rule set.
+Policy (allow|deny)
+Example: deny:
+  1) allow
+> 2) deny (current) (current)
+  3) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

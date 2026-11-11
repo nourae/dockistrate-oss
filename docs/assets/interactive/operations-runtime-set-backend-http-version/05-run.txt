@@ -1,0 +1,15 @@
+Review command
+  Command: Set Backend HTTP Version (set-backend-http-version)
+  Description: Override HTTP version for one backend
+
+Arguments:
+  Domain: example.com
+  HTTP version: http2
+
+CLI equivalent:
+  ./dockistrate.sh set-backend-http-version example.com http2
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

@@ -1,0 +1,11 @@
+Docker network used to connect the backend and proxy.
+Docker network
+Example: dockistrate-net:
+  1) bridge
+  2) dockistrate-net (current)
+  3) host
+  4) none
+> 5) Enter manually...
+  6) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

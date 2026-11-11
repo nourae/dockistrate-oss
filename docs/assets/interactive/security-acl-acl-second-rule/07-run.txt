@@ -1,0 +1,17 @@
+Review command
+  Command: Add ACL (add-acl)
+  Description: Add an IP ACL rule (L7, L3, or both) for a domain (HTTP + TCP)
+
+Arguments:
+  Domain: example.com
+  scope: l7
+  Policy: allow
+  ip list: 198.51.100.10
+
+CLI equivalent:
+  ./dockistrate.sh add-acl example.com l7 allow 198.51.100.10
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

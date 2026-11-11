@@ -1,0 +1,16 @@
+Review command
+  Command: Remove All Backend Headers (remove-all-backend-headers)
+  Description: Remove all header overrides for a backend
+
+Arguments:
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh remove-all-backend-headers example.com
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

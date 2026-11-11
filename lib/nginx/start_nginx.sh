@@ -52,6 +52,8 @@ function start_nginx() {
     new_nginx_image="$normalized_image"
   fi
 
+  require_valid_image_ref "$new_nginx_image" "Nginx" || return 1
+
   if [ "$nginx_docker_opts_provided" = true ]; then
     local normalized_nginx_docker_opts=""
     if [ -n "$nginx_docker_opts_override" ]; then

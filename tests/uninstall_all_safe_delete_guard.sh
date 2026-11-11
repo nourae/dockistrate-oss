@@ -85,8 +85,8 @@ if [ "$status" -eq 0 ]; then
   exit 1
 fi
 
-if ! grep -Fq "outside allowed roots" <<<"$output"; then
-  echo "[Error] Expected safe-delete guard error for outside CERTS_DIR." >&2
+if ! grep -Eq "outside (allowed roots|state root)" <<<"$output"; then
+  echo "[Error] Expected containment guard error for outside CERTS_DIR." >&2
   exit 1
 fi
 

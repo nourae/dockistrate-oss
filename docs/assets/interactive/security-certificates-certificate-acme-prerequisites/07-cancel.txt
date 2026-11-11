@@ -1,0 +1,16 @@
+Review command
+  Command: Add Cert (add-cert)
+  Description: Generate or upload a certificate for a domain and optional port suffix
+
+Arguments:
+  Domain: example.com
+  Certificate port suffix: 9443
+  Certificate type: letsencrypt
+
+CLI equivalent:
+  ./dockistrate.sh add-cert example.com 9443 letsencrypt
+  1) Run
+  2) Edit previous answers
+> 3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

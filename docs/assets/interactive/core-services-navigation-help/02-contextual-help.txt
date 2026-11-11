@@ -1,0 +1,13 @@
+Help: === Dockistrate ===
+Proxy:        unknown
+Backends:     1 configured
+Ports:        2 mappings
+Certificates: 1 cert directories
+Backups:      7 available
+Capture:      unknown
+What do you want to do?
+Home shows the operator dashboard and top-level tasks.
+Use Up/Down or number keys to choose an action.
+Enter opens the selected action. Esc or Q exits interactive mode.
+
+Enter return  Esc return  Q return

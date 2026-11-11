@@ -1,0 +1,9 @@
+For :latest, always and if-missing refresh on use; never skips explicit pulls. Other tags and digests skip explicit pulls in every mode. Docker may fetch a missing reference when starting a container.
+Image pull mode (always|if-missing|never)
+Example: if-missing:
+> 1) Refresh latest-tagged images on use (existing behavior) (current)
+  2) Always pull latest-tagged images
+  3) Skip explicit pulls; Docker can fetch missing images
+  4) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

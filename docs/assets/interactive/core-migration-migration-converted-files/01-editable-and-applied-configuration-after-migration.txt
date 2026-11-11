@@ -1,0 +1,9 @@
+$ cat /opt/dockistrate-demo-fixtures/migration/state/domains/legacy.example.com/config/domain.csv /opt/dockistrate-demo-fixtures/migration/state/domains/legacy.example.com/config/backend.csv /opt/dockistrate-demo-fixtures/migration/state/domains/legacy.example.com/runtime/applied/backend.csv /opt/dockistrate-demo-fixtures/migration/state/domains/legacy.example.com/config/headers.csv
+schema_version,role,target
+5,backend,
+image,container_port,network,state
+nginx:alpine,80,dockistrate-net,stopped
+image,container_port,network,state
+nginx:alpine,80,dockistrate-net,stopped
+header_type,header_name,header_value
+response,X-Migration,"Retain, ""exactly"""

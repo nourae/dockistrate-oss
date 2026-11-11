@@ -1,0 +1,10 @@
+HTTP status code used for redirects or denials.
+Status code
+Example: 308:
+> 1) Moved Permanently (current)
+  2) Found
+  3) Permanent Redirect
+  4) Custom (e.g., 301:443)
+  5) Back
+
+↑↓ move  Enter select  Esc back  Q back  ? help

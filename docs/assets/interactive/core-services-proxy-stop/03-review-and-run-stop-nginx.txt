@@ -1,0 +1,14 @@
+Review command
+  Command: Stop Nginx (stop-nginx)
+  Description: Stop the Nginx proxy container without removing it
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh stop-nginx
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

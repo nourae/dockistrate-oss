@@ -1,0 +1,16 @@
+Review command
+  Command: Remove All Backends (remove-all-backends)
+  Description: Remove all backend containers and port mappings
+
+Arguments:
+  (none)
+
+CLI equivalent:
+  ./dockistrate.sh remove-all-backends
+
+[Warn] This command can remove or revoke existing state.
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

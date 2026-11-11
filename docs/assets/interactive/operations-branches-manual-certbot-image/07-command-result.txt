@@ -1,0 +1,7 @@
+
+[Info] CERTBOT_IMAGE set to certbot/certbot:v5.8.0@sha256:f70ad0adbb7e117f0fe42a63c553f28ea451edabc0148757b6efcd9735acaa20 and saved in /opt/dockistrate-demo/state/config/global_settings.csv.
+[Info] CERTBOT pull mode: never
+[Info] Certbot image policy: digest-pinned; explicit pull skipped.
+[Info] Docker may fetch the specified reference if it is missing locally.
+
+Press Enter to continue...

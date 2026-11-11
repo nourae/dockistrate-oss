@@ -56,6 +56,7 @@ function update_nginx_config() {
   UPDATE_SAW_FORCE="${DOCKISTRATE_FORCE_NGINX_RECREATE:-}"
   UPDATE_SAW_READY="${DOCKISTRATE_SECURITY_NGINX_READY_CHECK:-}"
   UPDATE_SAW_DEFERRED="${DOCKISTRATE_DEFERRED_SECURITY_NGINX_RECREATE:-}"
+  [ "${STUB_UPDATE_FAIL:-false}" != true ]
 }
 
 function reset_test_state() {
@@ -72,6 +73,7 @@ function reset_test_state() {
   unset DOCKISTRATE_SECURITY_NGINX_READY_CHECK
   unset DOCKISTRATE_DEFERRED_SECURITY_NGINX_RECREATE
   unset SKIP_UPDATE_NGINX_CONFIG
+  STUB_UPDATE_FAIL=false
 }
 
 if declare -F update_nginx_config_for_security_change >/dev/null 2>&1; then
@@ -107,5 +109,42 @@ assert_equals "true" "$UPDATE_SAW_DEFERRED" "deferred update should mark deferre
 assert_unset_or_empty "${DOCKISTRATE_FORCE_NGINX_RECREATE:-}" "deferred update should restore force recreate flag"
 assert_unset_or_empty "${DOCKISTRATE_SECURITY_NGINX_READY_CHECK:-}" "deferred update should restore readiness flag"
 assert_equals "true" "${DOCKISTRATE_DEFERRED_SECURITY_NGINX_RECREATE:-}" "deferred security recreate marker should remain for final update"
+
+# Identity changes must participate in the same security update boundary even
+# when these modules are sourced without the main CLI loader.
+# shellcheck disable=SC1091
+source "$ROOT_DIR/lib/headers/set_client_ip_header.sh"
+for identity_command in set_trusted_proxies set_real_ip_recursive set_client_ip_header; do
+  case "$identity_command" in
+  set_trusted_proxies) identity_value=none ;;
+  *) identity_value=off ;;
+  esac
+  reset_test_state
+  DOCKISTRATE_FORCE_NGINX_RECREATE=previous-force
+  DOCKISTRATE_SECURITY_NGINX_READY_CHECK=previous-ready
+  "$identity_command" "$identity_value" >/dev/null
+  assert_equals true "$UPDATE_SAW_FORCE" "$identity_command must request replacement"
+  assert_equals true "$UPDATE_SAW_READY" "$identity_command must request config readiness"
+  assert_equals previous-force "$DOCKISTRATE_FORCE_NGINX_RECREATE" "$identity_command must restore prior replacement flag"
+  assert_equals previous-ready "$DOCKISTRATE_SECURITY_NGINX_READY_CHECK" "$identity_command must restore prior readiness flag"
+
+  reset_test_state
+  SKIP_UPDATE_NGINX_CONFIG=true
+  "$identity_command" "$identity_value" >/dev/null
+  assert_equals true "${DOCKISTRATE_DEFERRED_SECURITY_NGINX_RECREATE:-}" "$identity_command must preserve deferred replacement"
+  assert_unset_or_empty "$UPDATE_SAW_READY" "$identity_command must defer readiness with rendering"
+
+  reset_test_state
+  cp "$GLOBAL_SETTINGS_FILE" "$TMP_ROOT/saved-before.csv"
+  STUB_UPDATE_FAIL=true
+  # The conditional deliberately suppresses errexit. Explicit error propagation
+  # must still roll back settings and restore internal flags.
+  if "$identity_command" "$identity_value" >"$TMP_ROOT/failure.log" 2>&1; then
+    fail_test "$identity_command unexpectedly succeeded after config update failure"
+  fi
+  cmp -s "$GLOBAL_SETTINGS_FILE" "$TMP_ROOT/saved-before.csv" || fail_test "$identity_command did not restore saved settings"
+  assert_unset_or_empty "${DOCKISTRATE_FORCE_NGINX_RECREATE:-}" "$identity_command failure leaked replacement flag"
+  assert_unset_or_empty "${DOCKISTRATE_SECURITY_NGINX_READY_CHECK:-}" "$identity_command failure leaked readiness flag"
+done
 
 echo "Global settings security update direct sourcing checks passed."

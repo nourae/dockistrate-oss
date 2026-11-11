@@ -7,14 +7,17 @@ test_update_port_resets_redirect_when_switching_to_https() {
   run_dockistrate set-port-redirect redirect-switch.test 80 on 301 >/dev/null
   assertEquals "enable redirect" 0 $?
 
-  mkdir -p "${CERTS_DIR}/custom/live/redirect-switch.test_443"
+  run_dockistrate add-cert redirect-switch.test 443 selfsigned >/dev/null
+  assertEquals "seed owned certificate" 0 $?
 
   local update_output
-  update_output="$(run_dockistrate update-port redirect-switch.test 80 --nginx-port 443 --protocol https --cert certs/custom/live/redirect-switch.test_443)"
+  # add-cert also establishes its HTTPS listener on 443. Convert the existing
+  # redirecting HTTP listener to a separate HTTPS port to exercise its reset.
+  update_output="$(run_dockistrate update-port redirect-switch.test 80 --nginx-port 8443 --protocol https --cert redirect-switch.test/selfsigned-443)"
   assertEquals "update-port https" 0 $?
   assertStringContains "update output" "Updated port mapping" "$update_output"
 
-  assertFileContains "port,redirect-switch.test,,,,,443,8500,https,custom/live/redirect-switch.test_443,no,off," "${CONFIG_DIR}/backend_ports.csv"
+  assertFileContains "port,redirect-switch.test,,,,,8443,8500,https,redirect-switch.test/selfsigned-443,no,off," "${CONFIG_DIR}/backend_ports.csv"
 
   local conf
   conf="$(cat "${CONFIG_DIR}/nginx_conf/conf.d/backends.conf")"

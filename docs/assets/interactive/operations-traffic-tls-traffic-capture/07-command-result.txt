@@ -1,0 +1,12 @@
+y
+[Warn] TLS decrypt capture explicitly enabled: command=start-capture scope=all backends=all clients=all
+[Info] Nginx image nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47 (digest-pinned; explicit pull skipped).
+[Info] Building TLS keylog helper using Nginx image: nginx:1.31.7@sha256:6c3fee1d7a4686ea271e9cc60d9c741cdfbc44ecf11d343025e1cff4c5522f47
+[Info] Creating Nginx container with published ports: 443/tcp 80/tcp
+3cee0c4cda8391274839118551b7599a1194dcf73ea3734363a2eaf6af4fb119
+[Warn] TLS decrypt capture enabled for this session. Session keys are sensitive and stored with restricted permissions.
+[Info] TLS key log file: /opt/dockistrate-demo/state/pcaps/tls-keys/tlskeys_20261109_113516.0ysELn
+86dd632591bc45d80ee66a5c68696309898f09129f6946fb96f399fc6d7ea6c8
+[Info] Packet capture started (scope: all; full traffic image: nicolaka/netshoot@sha256:47b907d662d139d1e2f22bfe14f4efca1e3f1feed283572f47c970c780c03b61 tls-decrypt: enabled). Output: /opt/dockistrate-demo/state/pcaps/documentation-tls-example/20261109_113515_nginx.pcap
+
+Press Enter to continue...

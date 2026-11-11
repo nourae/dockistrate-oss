@@ -156,7 +156,17 @@ function upgrade_preflight_backup_exists() {
     esac
 
     if [ -d "$item" ] && [ -d "$item/config" ] && [ ! -L "$item/config" ]; then
-      return 0
+      local backup_schema=""
+      if [ -f "$item/config/state_schema_version" ] && [ ! -L "$item/config/state_schema_version" ]; then
+        IFS= read -r backup_schema <"$item/config/state_schema_version" || true
+      fi
+      if [ "$backup_schema" = 2 ] || [ "$backup_schema" = 3 ] || [ "$backup_schema" = 4 ] || [ "$backup_schema" = 5 ] || [ -e "$item/backup_manifest.csv" ] || [ -d "$item/domains" ]; then
+        [ -f "$item/backup_manifest.csv" ] && [ ! -L "$item/backup_manifest.csv" ] &&
+          [ -d "$item/domains" ] && [ ! -L "$item/domains" ] &&
+          [ -d "$item/shared" ] && [ ! -L "$item/shared" ] && return 0
+      else
+        return 0
+      fi
     fi
 
     case "$base" in
@@ -170,7 +180,7 @@ function upgrade_preflight_backup_exists() {
 }
 
 function upgrade_preflight_backup_archive_is_full() {
-  local archive="${1:-}" base="${2:-}" backup_root=""
+  local archive="${1:-}" base="${2:-}" backup_root="" backup_schema="" require_domains=false
 
   [ -f "$archive" ] && [ -s "$archive" ] && [ ! -L "$archive" ] || return 1
   case "$base" in
@@ -187,11 +197,24 @@ function upgrade_preflight_backup_archive_is_full() {
     return 1
   fi
 
+  # Reading a short member to stdout does not extract anything. Domain-schema
+  # config-only archives are incomplete even when their config folder exists.
+  backup_schema="$(LC_ALL=C tar -xOzf "$archive" \
+    "$backup_root/config/state_schema_version" "./$backup_root/config/state_schema_version" 2>/dev/null |
+    head -c 64 || true)"
+  case "$backup_schema" in 2 | 3 | 4 | 5) require_domains=true ;; esac
+  if [ "$require_domains" = true ] && ! (
+    set -o pipefail
+    LC_ALL=C tar -tzf "$archive" 2>/dev/null |
+      upgrade_preflight_backup_archive_validate_listing "$backup_root" true
+  ); then return 1; fi
+
   return 0
 }
 
 function upgrade_preflight_backup_archive_validate_listing() {
-  local backup_root="${1:-}" entry="" found_config=false
+  local backup_root="${1:-}" entry="" found_config=false found_manifest=false found_domains=false found_shared=false
+  local require_domains="${2:-false}"
   local entry_count=0 max_entries="${UPGRADE_PREFLIGHT_BACKUP_ARCHIVE_MAX_ENTRIES:-20000}"
   local max_entry_length="${UPGRADE_PREFLIGHT_BACKUP_ARCHIVE_MAX_ENTRY_LENGTH:-4096}"
 
@@ -234,10 +257,16 @@ function upgrade_preflight_backup_archive_validate_listing() {
     "$backup_root/config" | "$backup_root/config/" | "$backup_root/config/"*)
       found_config=true
       ;;
+    "$backup_root/backup_manifest.csv") found_manifest=true ;;
+    "$backup_root/domains" | "$backup_root/domains/" | "$backup_root/domains/"*) found_domains=true ;;
+    "$backup_root/shared" | "$backup_root/shared/" | "$backup_root/shared/"*) found_shared=true ;;
     esac
   done
 
-  [ "$found_config" = true ]
+  [ "$found_config" = true ] || return 1
+  if [ "$require_domains" = true ] || [ "$found_manifest" = true ] || [ "$found_domains" = true ]; then
+    [ "$found_manifest" = true ] && [ "$found_domains" = true ] && [ "$found_shared" = true ]
+  fi
 }
 
 function upgrade_preflight_check_backup() {
@@ -269,7 +298,7 @@ function upgrade_preflight_compare_schema() {
 }
 
 function upgrade_preflight_warn_security_rule_operator_fix() {
-  local rules_file="${SECURITY_RULES_DB:-${SECURITY_RULES_FILE:-}}" header="" line="" line_no=0 affected_rows=0
+  local rules_file="${SECURITY_RULES_DB:-${SECURITY_RULES_FILE:-}}" header="" line="" line_no=0 affected_rows=0 expected_columns=0
   [ -n "$rules_file" ] || return 0
   [ -f "$rules_file" ] || return 0
 
@@ -286,15 +315,20 @@ function upgrade_preflight_warn_security_rule_operator_fix() {
   if ! IFS= read -r header <"$rules_file"; then
     return 0
   fi
-  if [ "$header" != "$STATE_SECURITY_RULES_HEADER" ]; then
-    return 0
-  fi
+  # Preflight inspects installations before explicit migration. Both aggregate
+  # formats retain the condition offsets; inspect each with its exact width
+  # without changing the current codec or repairing persisted files.
+  case "${header%$'\r'}" in
+  "$STATE_SECURITY_RULES_HEADER") expected_columns="$STATE_SECURITY_RULES_COLS" ;;
+  "${STATE_SECURITY_RULES_LEGACY_HEADER:-${STATE_SECURITY_RULES_HEADER%,action}}") expected_columns=47 ;;
+  *) return 0 ;;
+  esac
 
   while IFS= read -r line || [ -n "$line" ]; do
     line_no=$((line_no + 1))
     [ "$line_no" -eq 1 ] && continue
     csv_parse_line "$line" || continue
-    [ "$CSV_FIELD_COUNT" -eq "$STATE_SECURITY_RULES_COLS" ] || continue
+    [ "$CSV_FIELD_COUNT" -eq "$expected_columns" ] || continue
 
     local i base cond row_affected=false
     for i in 1 2 3 4 5 6 7 8 9 10; do
@@ -313,7 +347,7 @@ function upgrade_preflight_warn_security_rule_operator_fix() {
   done <"$rules_file"
 
   if [ "$affected_rows" -gt 0 ]; then
-    echo "[Warn] Security rules: ${affected_rows} persisted rule row(s) use operators whose generated behavior was corrected to match documented allowed-traffic semantics." >&2
+    echo "[Warn] Security rules: ${affected_rows} persisted rule row(s) use operators whose generated behavior was corrected to match documented condition semantics; each rule action determines rejection behavior." >&2
   fi
 }
 

@@ -1,0 +1,15 @@
+Review command
+  Command: Set Security Rule Mode (set-security-rule-mode)
+  Description: Set how a rule's conditions combine while preserving its action
+
+Arguments:
+  ID: 1
+  mode: and
+
+CLI equivalent:
+  ./dockistrate.sh set-security-rule-mode 1 and
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

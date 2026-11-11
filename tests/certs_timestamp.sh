@@ -24,6 +24,18 @@ real_stat=$(command -v stat)
 stub_dir="${TMP_DIR}/stub"
 mkdir -p "${stub_dir}"
 cat <<'STUB' >"${stub_dir}/stat"
+#!/usr/bin/env bash
+if [ "${STAT_STUB_GNU_ONLY:-false}" = "true" ]; then
+  if [ "$1" = "-f" ]; then
+    printf '  File: "%s"\n' "${!#}"
+    printf '    ID: mocked Namelen: 255 Type: apfs\n'
+    exit 1
+  fi
+  if [ "$1" = "-c" ]; then
+    printf '2024-01-02 12:34:00.000000000 +0000\n'
+    exit 0
+  fi
+fi
 if [ "$1" = "-f" ]; then
   # Simulate BSD stat -f "%Sm" -t "%Y-%m-%d" output
   echo "2024-01-02"
@@ -37,6 +49,13 @@ darwin_created=$(REAL_STAT="${real_stat}" PATH="${stub_dir}:${PATH}" CERTS_UNAME
   cert_created_timestamp "${cert_file}")
 if [ "${darwin_created}" != "2024-01-02" ]; then
   echo "Expected Darwin timestamp 2024-01-02, got ${darwin_created}" >&2
+  exit 1
+fi
+
+darwin_gnu_created=$(STAT_STUB_GNU_ONLY=true REAL_STAT="${real_stat}" PATH="${stub_dir}:${PATH}" \
+  CERTS_UNAME="Darwin" cert_created_timestamp "${cert_file}")
+if [ "${darwin_gnu_created}" != "2024-01-02" ]; then
+  echo "Expected Darwin GNU-stat fallback timestamp 2024-01-02, got ${darwin_gnu_created}" >&2
   exit 1
 fi
 

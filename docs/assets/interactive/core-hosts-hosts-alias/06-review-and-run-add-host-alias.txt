@@ -1,0 +1,15 @@
+Review command
+  Command: Add Host Alias (add-host-alias)
+  Description: Add an alternate hostname that maps to an existing backend
+
+Arguments:
+  Alias: www.example.com
+  Domain: example.com
+
+CLI equivalent:
+  ./dockistrate.sh add-host-alias www.example.com example.com
+> 1) Run
+  2) Edit previous answers
+  3) Cancel
+
+↑↓ move  Enter select  Esc back  Q back  ? help

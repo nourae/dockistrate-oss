@@ -17,6 +17,8 @@ source "$ROOT_DIR/lib/security_rules/_sr_selectors.sh"
 source "$ROOT_DIR/lib/security_rules/_sr_db.sh"
 # shellcheck source=../lib/security_rules/_sr_builders.sh
 source "$ROOT_DIR/lib/security_rules/_sr_builders.sh"
+# shellcheck source=../lib/security_rules/_sr_identity.sh
+source "$ROOT_DIR/lib/security_rules/_sr_identity.sh"
 # shellcheck source=../lib/security_rules/build_security_rules_inc.sh
 source "$ROOT_DIR/lib/security_rules/build_security_rules_inc.sh"
 
@@ -32,6 +34,11 @@ SECURITY_RULES_DB="$CONFIG_DIR/security_rules.csv"
 SECURITY_RULES_INC="$NGINX_HTTP_CONF_DIR/security_rules.inc"
 SECURITY_IP_RULES_DB="$CONFIG_DIR/security_ip_rules.csv"
 mkdir -p "$NGINX_HTTP_CONF_DIR"
+BACKEND_PORTS_FILE="$CONFIG_DIR/backend_ports.csv"
+BACKEND_ALIASES_FILE="$CONFIG_DIR/backend_aliases.csv"
+printf '%s\n' "$STATE_BACKEND_PORTS_HEADER" \
+  'backend,example.com,127.0.0.1:8080,dockistrate-net,,,,,,,,,,,,,,,,,' >"$BACKEND_PORTS_FILE"
+printf '%s\n' "$STATE_BACKEND_ALIASES_HEADER" >"$BACKEND_ALIASES_FILE"
 
 function build_security_ip_includes() { :; }
 function get_backend_security_rule_status() { printf '%s\n' 403; }
@@ -53,7 +60,7 @@ function write_security_rule_row() {
         printf ',,,,'
       fi
     done
-    printf ',%s,%s\n' "$reason" "$loc"
+    printf ',%s,%s,require\n' "$reason" "$loc"
   } >"$SECURITY_RULES_DB"
 }
 
@@ -83,6 +90,24 @@ if is_valid_loc_value 'rule:$host'; then
 fi
 if ! _sr_validate_rule_triplet 'header:X-Test' 'matches' '^foo$' 'regex anchors should remain valid'; then
   echo "[Error] Regex condition value with dollar anchor should remain valid." >&2
+  exit 1
+fi
+empty_value_probe_error="${TMP_ROOT}/empty-value-list.err"
+set +e
+(
+  _sr_value_list_contains_cidr ""
+  empty_value_status=$?
+  [ "$empty_value_status" -eq 1 ]
+) 2>"$empty_value_probe_error"
+empty_value_probe_status=$?
+set -e
+if [ "$empty_value_probe_status" -ne 0 ]; then
+  echo "[Error] Empty security-rule value-list validation crashed or returned an unexpected status." >&2
+  cat "$empty_value_probe_error" >&2
+  exit 1
+fi
+if grep -Fq "unbound variable" "$empty_value_probe_error"; then
+  echo "[Error] Empty security-rule value-list validation hit a Bash 3 unbound-variable failure." >&2
   exit 1
 fi
 expr="$(_sr_exprs matches '^foo$')"
